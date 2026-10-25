@@ -1,0 +1,13 @@
+# Software-engineering multi-rater panels added 2026-10-26
+
+Selected from the verification survey of 2026-10-26 (20 candidates; criteria: individual per-rater ratings released, subjective ordinal scale, ≥ 3 raters per item). Commit-message datasets are excluded by project rule. Dorn (code readability, 360 × 161–267 raters) lives in `code/code_readability/data/dorn/` (see `SOURCE.md` there).
+
+| dir | dataset | items × raters | scale | licence | source |
+|---|---|---|---|---|---|
+| `crupi2025/` | Crupi, Tufano, Velasco, Mastropaolo, Poshyvanyk, Bavota 2025, *On the effectiveness of LLM-as-a-judge for code generation and summarization* (arXiv 2507.16587) — code-summarization benchmark | 1,163 summaries (594 Java + 569 Python; 198 functions × 6 generators) × **3 expert raters** × 3 criteria (Content Adequacy, Conciseness, Fluency), 1–5 | not stated in the repository (research use; cite) | https://github.com/crupig/LLMs-as-a-judge-for-SE-tse_RP (`code_summarization_benchmark/CS-benchmark-{Java,Python}.csv`) |
+| `jetbrains_readability/` | Sergeyuk et al. 2024 (JetBrains), *Reassessing Java Code Readability Models with a Human-Centered Approach* (ICPC RENE) | 120 AI-generated Java snippets × **11–31 professional developers**; overall Readable/Unreadable + 11 bipolar aspects −2…+2 | CC-BY-4.0 | https://zenodo.org/records/10550937 (`readability.zip` → `data/`) |
+| `roy2021/` | Roy, Fakhoury, Arnaoudova 2021, *Reassessing automatic evaluation metrics for code summarization tasks* (FSE) | 2,292 summaries (382 functions × 6 systems), **1–7 raters each (median 3)**, 226 raters; Content Adequacy / Conciseness / Fluency 0–5 in half points | CC0 | https://github.com/devjeetr/Re-assessing-automatic-evaluation-metrics-for-source-code-summarization-tasks (`data/responses.csv`, `demographics.csv`); summary texts not included here (join on `sourcerer_id` with funcom if needed) |
+| `mlcq/` | Madeyski & Lewowski 2020, *MLCQ: Industry-relevant code smell data set* (EASE) | 9,517 (sample, smell) pairs, **2,041 with ≥ 3 professional reviewers** (max 5), 26 reviewers; severity none < minor < major < critical | CC-BY-4.0 | https://zenodo.org/records/3666840 (`MLCQCodeSmellSamples.csv`); code via GitHub permalinks in the file |
+
+Verified by download on 2026-10-26; counts recomputed locally (`data_panels.py` loaders `crupi_*`, `jb_*`, `roy_*`, `mlcq3`).
+Not added (reasons): Wang et al. ISSTA 2025 (2-rater means only), CRScore (2 author raters), ToxiCR (binary, aggregated), Novielli 2018 (binary per emotion), Scalabrino understandability (binary/continuous, IEEE DataPort login), Haque 2022 (rater count 6 vs 30 unresolved), CoReEval (repackages Dorn/BW/Scalabrino with averaged labels).

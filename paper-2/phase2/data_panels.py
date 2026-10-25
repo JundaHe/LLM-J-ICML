@@ -350,3 +350,63 @@ def load_dorn_python(): return _load_dorn(("python",))
 def load_dorn_cuda(): return _load_dorn(("cuda",))
 def load_dorn_all(): return _load_dorn(("java", "python", "cuda"))
 LOADERS.update({"dorn_java": load_dorn_java, "dorn_python": load_dorn_python, "dorn_cuda": load_dorn_cuda, "dorn_all": load_dorn_all})
+
+# ----------------------------------------------------------------------------------------------- SE multi-rater panels added 2026-10-26 (data/SE_PANELS_SOURCE.md). Generic prompt scaffolding; the learner-free analyses use H only.
+SEDATA = LLMJ + "/paper-2/phase2/data"
+def _generic_prompts(tpl, lv_offset=0):
+    def prompt(text): return tpl + text + "\n\nEnd of the item. Please present your rating in the required JSON format."
+    def prompt_hist(text, hist):
+        blk = _GENERIC_HIST_HEAD.format(k=len(hist))
+        for j, (t, lv) in enumerate(hist, 1): blk += f"### Item {j} (this rater's score: {lv + lv_offset})\n{_trunc(t, 1200)}\n\n"
+        return tpl + blk + "### Item to evaluate\n" + text + "\n\nEnd of the item. Please present your rating in the required JSON format."
+    return prompt, prompt_hist
+
+# Crupi et al. 2025 code-summarization benchmark: 1,163 (function, generator) summaries × 3 expert raters × {CA, Conciseness, Fluency}, 1–5; Java + Python pooled; groups = function (target_id)
+_CRUPI_TPL = {"CA": "Rate the CONTENT ADEQUACY of the summary for the given code (1 = misses or misstates the code's purpose, 5 = fully captures it).\n",
+              "Conciseness": "Rate the CONCISENESS of the summary for the given code (1 = verbose or redundant, 5 = concise).\n",
+              "Fluency": "Rate the FLUENCY and understandability of the summary (1 = hard to read, 5 = fluent).\n"}
+def _load_crupi(crit="CA", max_chars=3000):
+    d = pd.concat([pd.read_csv(f"{SEDATA}/crupi2025/CS-benchmark-{L}.csv").assign(lang=L) for L in ("Java", "Python")], ignore_index=True)
+    H = d[[f"{crit}_{i}" for i in (1, 2, 3)]].to_numpy(int) - 1; assert H.min() >= 0 and H.max() <= 4
+    texts = [f"CODE:\n{str(c)[:max_chars]}\n\nSUMMARY:\n{str(s)[:max_chars]}" for c, s in zip(d.target, d.summary_postprocessed)]
+    tpl = _CRUPI_TPL[crit] + "Respond ONLY with JSON:\n{\n\"score\": \"1-5\"\n}\nPlease ensure the complete JSON format is placed between the three quotes ``` ``` for easy extraction.\n\n"
+    prompt, prompt_hist = _generic_prompts(tpl, 1)
+    return dict(name=f"crupi_{crit.lower()}", texts=texts, H=H, K=5, item_ids=np.array([f"{l}_{t}_{g}" for l, t, g in zip(d.lang, d.target_id, d.generated_by)]), groups=np.array([f"{l}_{t}" for l, t in zip(d.lang, d.target_id)]),
+                rater_ids=np.array(["expert1", "expert2", "expert3"]), prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-Coder-7B-Instruct")
+LOADERS.update({"crupi_ca": lambda: _load_crupi("CA"), "crupi_conc": lambda: _load_crupi("Conciseness"), "crupi_flu": lambda: _load_crupi("Fluency")})
+
+# Sergeyuk et al. 2024 (JetBrains) readability: 120 AI-generated Java snippets × 11–31 professional developers; 12 bipolar aspects −2..+2 (K=5) → m = 11 positions (seeded subsample); groups = snippet
+JB_ASPECTS = ("short", "top_bottom", "sufficient_info", "clear_goal", "basic", "logical_separation", "flat", "action_per_line", "constants", "naming", "style_guide", "balance")
+def _load_jb(aspect="naming", m=11, seed=0, max_chars=3000):
+    a = pd.read_csv(f"{SEDATA}/jetbrains_readability/data/aggregated.csv"); s = pd.read_csv(f"{SEDATA}/jetbrains_readability/data/snippets.csv").set_index("snip_id")
+    a["sid"] = a.snippet.str.replace(".png", "", regex=False); rng = np.random.RandomState(seed); g = a.groupby("sid"); keep = sorted(k for k, grp in g if len(grp) >= m)
+    H = np.array([rng.permutation(g.get_group(k)[aspect].to_numpy(int))[:m] + 2 for k in keep]); assert H.min() >= 0 and H.max() <= 4
+    texts = [str(s.loc[k, "snippet"])[:max_chars] if k in s.index else k for k in keep]
+    tpl = (f"You are an experienced Java developer. Rate the following code on the aspect '{aspect.replace('_', ' ')}' of readability on a scale from -2 (strongly disagree) to +2 (strongly agree).\n"
+           "Respond ONLY with JSON:\n{\n\"score\": \"-2..2\"\n}\nPlease ensure the complete JSON format is placed between the three quotes ``` ``` for easy extraction.\n\n")
+    prompt, prompt_hist = _generic_prompts(tpl, -2)
+    return dict(name=f"jb_{aspect}", texts=texts, H=H, K=5, item_ids=np.array(keep), groups=np.array(keep), rater_ids=np.array([f"pos{i}" for i in range(m)]), prompt=prompt, prompt_hist=prompt_hist,
+                LEVEL_STRS=[str(l) for l in range(-2, 3)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-Coder-7B-Instruct")
+LOADERS.update({f"jb_{asp}": (lambda asp=asp: _load_jb(asp)) for asp in JB_ASPECTS})
+
+# Roy et al. FSE 2021 code-summarization human study: (function, system) summaries with >= m ratings (m = 3; 226 raters), 0–5 in half points → 11 ordinal levels (K = 11); groups = function; summary texts not shipped (placeholder)
+def _load_roy(crit="Content Adequacy", m=3, seed=0):
+    r = pd.read_csv(f"{SEDATA}/roy2021/responses.csv").dropna(subset=[crit]); rng = np.random.RandomState(seed); g = r.groupby(["question_id", "mid"]); keep = [k for k, grp in g if len(grp) >= m]
+    H = np.array([rng.permutation(np.round(g.get_group(k)[crit].to_numpy(float) * 2).astype(int))[:m] for k in keep]); assert H.min() >= 0 and H.max() <= 10
+    ids = np.array([f"{q}_{mid}" for q, mid in keep]); texts = [f"[Roy et al. 2021 summary {i}; text not shipped]" for i in ids]
+    prompt, prompt_hist = _generic_prompts("Rate the summary (0–5).\nRespond ONLY with JSON:\n{\n\"score\": \"0-5\"\n}\n\n")
+    short = {"Content Adequacy": "ca", "Conciseness": "conc", "Fluency": "flu"}[crit]
+    return dict(name=f"roy_{short}", texts=texts, H=H, K=11, item_ids=ids, groups=np.array([str(q) for q, mid in keep]), rater_ids=np.array([f"pos{i}" for i in range(m)]), prompt=prompt, prompt_hist=prompt_hist,
+                LEVEL_STRS=[str(l / 2) for l in range(11)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-Coder-7B-Instruct")
+LOADERS.update({"roy_ca": lambda: _load_roy("Content Adequacy"), "roy_conc": lambda: _load_roy("Conciseness"), "roy_flu": lambda: _load_roy("Fluency")})
+
+# MLCQ (Madeyski & Lewowski 2020) code-smell severity: (sample, smell) pairs with >= 3 professional reviews (2,041 items; m = 3 positions), none < minor < major < critical (K = 4); groups = sample; code via permalink (not inline)
+def load_mlcq3(m=3, seed=0):
+    d = pd.read_csv(f"{SEDATA}/mlcq/MLCQCodeSmellSamples.csv", sep=";"); lv = {"none": 0, "minor": 1, "major": 2, "critical": 3}; rng = np.random.RandomState(seed)
+    g = d.groupby(["sample_id", "smell"]); keep = [k for k, grp in g if len(grp) >= m]
+    H = np.array([rng.permutation(g.get_group(k).severity.map(lv).to_numpy(int))[:m] for k in keep]); assert H.min() >= 0 and H.max() <= 3
+    texts = [f"{g.get_group(k).code_name.iloc[0]} ({k[1]}) {g.get_group(k).link.iloc[0]}" for k in keep]
+    prompt, prompt_hist = _generic_prompts("Rate the severity of the code smell (0 = none, 1 = minor, 2 = major, 3 = critical).\nRespond ONLY with JSON:\n{\n\"score\": \"0-3\"\n}\n\n")
+    return dict(name="mlcq3", texts=texts, H=H, K=4, item_ids=np.array([f"{s}_{sm.replace(' ', '-')}" for s, sm in keep]), groups=np.array([str(s) for s, sm in keep]), rater_ids=np.array([f"pos{i}" for i in range(m)]),
+                prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(4)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-Coder-7B-Instruct")
+LOADERS.update({"mlcq3": load_mlcq3})
