@@ -14,7 +14,9 @@ Symmetrised: the roles of P1/P2 are swapped (comparator from P2, decoder fitted 
 Bootstrap: item-cluster replicates re-assign folds, refit q_T / PCA / ridge (α fixed per fold at the full-data choice), redraw R_boot splits.
 Usage: python decode_residual.py --panel summeval_coherence8 [--a 4] [--R 10] [--B 500] [--R_boot 3] [--d 64] [--feat_key E_last] [--tag x]
 """
-import sys, os, json, argparse, time, numpy as np
+import sys, os, json, argparse, time
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"): os.environ.setdefault(_v, "4")   # small dense ops: BLAS oversubscription on the shared 32-core node made a 6 s run take > 15 min
+import numpy as np
 from scipy.stats import spearmanr
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import data_panels
@@ -35,7 +37,7 @@ E = F[args.feat_key].astype(np.float64)
 # label-free pre-reduction (uses features only, never ratings)
 if args.d_pre > 0 and args.d_pre < E.shape[1]:
     mu0 = E.mean(0); U, S, Vt = np.linalg.svd(E - mu0, full_matrices=False); E = (E - mu0) @ Vt[: args.d_pre].T
-ALPHAS = [1e-2, 1e-1, 1, 10, 100, 1000] if args.d > 0 else [1e-1, 1, 10, 100, 1000, 10000]
+ALPHAS = [1e-2, 1e-1, 1, 10, 100, 1000, 1e4, 1e5] if args.d > 0 else [1e-1, 1, 10, 100, 1000, 1e4, 1e5, 1e6]   # Amendment 1: top extended so that "no signal" (r̂ → 0) is representable
 if args.a is None: args.a = (M + 1) // 2 if M <= 12 else 20
 if args.b is None: args.b = (M - args.a) if M <= 12 else min(20, M - args.a)
 assert args.a + args.b <= M
@@ -45,9 +47,12 @@ def ridge_fit(X, Y, alpha):
     mx, my = X.mean(0), Y.mean(0); Xc = X - mx; W = np.linalg.solve(Xc.T @ Xc + alpha * np.eye(X.shape[1]), Xc.T @ (Y - my)); return W, mx, my
 def ridge_pred(X, W, mx, my): return (X - mx) @ W + my
 def project(Xtr, Xte, d):
-    """standardise on the training rows and PCA to d components (fitted on training rows only)"""
-    mu, sd = Xtr.mean(0), Xtr.std(0) + 1e-6; Ztr = (Xtr - mu) / sd; Zte = (Xte - mu) / sd
-    if d <= 0 or d >= Ztr.shape[1]: return Ztr, Zte
+    """d > 0: centre on the training rows and whitened PCA to d components fitted on training rows only (as probe_mean2; NO per-dimension standardisation — that would
+    equalise the variances of the pre-reduced scores and make the component choice arbitrary). d <= 0: standardise all dimensions (full-feature ridge)."""
+    mu = Xtr.mean(0)
+    if d <= 0 or d >= Xtr.shape[1]:
+        sd = Xtr.std(0) + 1e-6; return (Xtr - mu) / sd, (Xte - mu) / sd
+    Ztr = Xtr - mu; Zte = Xte - mu
     dd = min(d, len(Ztr) // 4); U, S, Vt = np.linalg.svd(Ztr, full_matrices=False); Wp = Vt[:dd].T / (S[:dd] / np.sqrt(len(Ztr)) + 1e-6)
     return Ztr @ Wp, Zte @ Wp
 def select_alpha(X, Y, groups):
