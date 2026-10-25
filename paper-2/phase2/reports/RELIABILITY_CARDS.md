@@ -4,25 +4,25 @@ A1x > 0: the raw a-rater histogram predicts a new rater WORSE than the exact mod
 
 | panel | domain | items | raters/item | K | a | A1x | A1 [95 %] | ρ_smooth | support | ΔLL thresholds | ΔLL dispersion | X_obs / X_sim(M1) / X_sim(M2) |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| bw | SE code readability | 100 | 121 | 5 | 120 (loo) | +0.0007 | -0.0138 [-0.0173, -0.0051] | 1.01 | 0.89 | — | — | — |
-| scalabrino | SE code readability | 124 | 9 | 5 | 8 (loo) | +0.0029 | -0.0034 [-0.0056, +0.0088] | 0.58 | 0.69 | — | — | — |
-| dorn_java | SE code readability (Java) | 121 | 160 | 5 | 40 | +0.0006 | -0.0010 [-0.0017, +0.0004] | 0.60 | — | — | — | — |
+| bw | SE code readability | 100 | 121 | 5 | 120 (loo) | +0.0007 | -0.0138 [-0.0173, -0.0051] | 1.01 | 0.89 | +0.111 | +0.007 | -0.00012 / +0.00010 / +0.00027 |
+| scalabrino | SE code readability | 124 | 9 | 5 | 8 (loo) | +0.0029 | -0.0034 [-0.0056, +0.0088] | 0.58 | 0.69 | +0.156 | -0.017 | +0.00067 / -0.00002 / +0.00020 |
+| dorn_java | SE code readability (Java) | 121 | 160 | 5 | 40 | +0.0006 | -0.0010 [-0.0017, +0.0004] | 0.60 | — | — | +0.004 | +0.00033 / — / +0.00036 |
 | crupi_conc | SE code summary — conciseness | 1163 | 3 | 5 | 2 (loo) | -0.0000 | +0.0106 [+0.0090, +0.0141] | 0.11 | 0.00 | — | — | — |
 | crupi_ca | SE code summary — content adequacy | 1163 | 3 | 5 | 2 (loo) | +0.0000 | +0.0105 [+0.0095, +0.0135] | 0.12 | 0.00 | — | — | — |
 | crupi_flu | SE code summary — fluency | 1163 | 3 | 5 | 2 (loo) | +0.0000 | +0.0156 [+0.0132, +0.0187] | 0.08 | 0.00 | — | — | — |
 | mlcq3 | SE code-smell severity | 2041 | 3 | 4 | 2 (loo) | +0.0000 | +0.0329 [+0.0312, +0.0371] | 0.05 | 0.00 | — | — | — |
 | chaosnli_mnli | NLP NLI (nominal) | 1599 | 100 | 3 | 99 (loo) | -0.0210 | -0.0226 [-0.0261, -0.0193] | 0.97 | 1.00 | — | — | — |
 | chaosnli_snli | NLP NLI (nominal) | 1514 | 100 | 3 | 99 (loo) | -0.0193 | -0.0214 [-0.0239, -0.0176] | 1.02 | 0.99 | — | — | — |
-| dices | NLP conversational safety | 350 | 104 | 3 | 103 (loo) | +0.0001 | -0.0046 [-0.0060, -0.0020] | 0.99 | 1.00 | — | — | — |
-| dices990 | NLP conversational safety | 990 | 60 | 3 | 59 (loo) | +0.0001 | -0.0017 [-0.0025, -0.0005] | 0.79 | 1.00 | — | — | — |
+| dices | NLP conversational safety | 350 | 104 | 3 | 103 (loo) | +0.0001 | -0.0046 [-0.0060, -0.0020] | 0.99 | 1.00 | +0.146 | +0.001 | +0.00003 / +0.00001 / -0.00000 |
+| dices990 | NLP conversational safety | 990 | 60 | 3 | 59 (loo) | +0.0001 | -0.0017 [-0.0025, -0.0005] | 0.79 | 1.00 | — | +0.000 | +0.00002 / — / +0.00004 |
 | dices_raw | NLP conversational safety (all 123 raters) | 350 | 123 | 3 | 122 (loo) | +0.0000 | -0.0039 [-0.0058, -0.0017] | 0.92 | 0.99 | — | — | — |
-| hs2_help5 | NLP helpfulness | 4786 | 5 | 5 | 4 (loo) | +0.0038 | +0.0264 [+0.0254, +0.0283] | 0.06 | 0.45 | — | — | — |
-| popquorn_off8 | NLP offensiveness | 1366 | 8 | 5 | 7 (loo) | +0.0030 | +0.0056 [+0.0046, +0.0072] | 0.29 | 0.69 | — | — | — |
-| popquorn_pol5 | NLP politeness | 3690 | 5 | 5 | 4 (loo) | +0.0045 | +0.0154 [+0.0149, +0.0169] | 0.08 | 0.42 | — | — | — |
-| csc6 | NLP sarcasm | 1920 | 6 | 6 | 5 (loo) | +0.0052 | +0.0132 [+0.0119, +0.0158] | 0.15 | 0.72 | — | — | — |
-| summeval_coherence8 | NLP summarisation | 1600 | 8 | 5 | 7 (loo) | +0.0015 | +0.0075 [+0.0063, +0.0094] | 0.23 | 0.87 | — | — | — |
-| summeval_relevance8 | NLP summarisation | 1600 | 8 | 5 | 7 (loo) | +0.0008 | +0.0045 [+0.0032, +0.0061] | 0.30 | 0.79 | — | — | — |
-| emobank_reader_v5 | NLP valence | 3000 | 5 | 5 | 4 (loo) | +0.0004 | +0.0082 [+0.0071, +0.0095] | 0.18 | 0.14 | — | — | — |
+| hs2_help5 | NLP helpfulness | 4786 | 5 | 5 | 4 (loo) | +0.0038 | +0.0264 [+0.0254, +0.0283] | 0.06 | 0.45 | — | -0.025 | +0.00055 / — / +0.00015 |
+| popquorn_off8 | NLP offensiveness | 1366 | 8 | 5 | 7 (loo) | +0.0030 | +0.0056 [+0.0046, +0.0072] | 0.29 | 0.69 | — | -0.012 | +0.00023 / — / +0.00034 |
+| popquorn_pol5 | NLP politeness | 3690 | 5 | 5 | 4 (loo) | +0.0045 | +0.0154 [+0.0149, +0.0169] | 0.08 | 0.42 | — | -0.047 | +0.00013 / — / +0.00012 |
+| csc6 | NLP sarcasm | 1920 | 6 | 6 | 5 (loo) | +0.0052 | +0.0132 [+0.0119, +0.0158] | 0.15 | 0.72 | — | -0.028 | +0.00023 / — / +0.00032 |
+| summeval_coherence8 | NLP summarisation | 1600 | 8 | 5 | 7 (loo) | +0.0015 | +0.0075 [+0.0063, +0.0094] | 0.23 | 0.87 | +0.104 | +0.012 | +0.00175 / -0.00006 / +0.00022 |
+| summeval_relevance8 | NLP summarisation | 1600 | 8 | 5 | 7 (loo) | +0.0008 | +0.0045 [+0.0032, +0.0061] | 0.30 | 0.79 | +0.047 | +0.004 | +0.00161 / +0.00006 / +0.00034 |
+| emobank_reader_v5 | NLP valence | 3000 | 5 | 5 | 4 (loo) | +0.0004 | +0.0082 [+0.0071, +0.0095] | 0.18 | 0.14 | — | -0.075 | +0.00075 / — / +0.00002 |
 | chaosnli_alphanli | NLP αNLI (binary control) | 1532 | 100 | 2 | 20 | -0.0000 | +0.0003 [+0.0001, +0.0004] | 0.41 | — | — | — | — |
 
 ## Dense-panel curves: A1 (smoothed comparator) and ρ by number of ratings a
