@@ -1,0 +1,1 @@
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dorn_all --n_eval_raters 24 --a_list 1,2,4,8,16 --device cpu > logs/budget_dorn_all.log 2>&1
