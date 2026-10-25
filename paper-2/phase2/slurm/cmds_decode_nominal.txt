@@ -1,0 +1,2 @@
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_mnli --R 10 --B 500 --R_boot 3 > logs/decode_chaosnli_mnli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_snli --R 10 --B 500 --R_boot 3 > logs/decode_chaosnli_snli.log 2>&1
