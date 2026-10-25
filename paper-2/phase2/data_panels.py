@@ -327,3 +327,26 @@ def load_csc6(seed=0, max_chars=3000):
     return dict(name="csc6", texts=texts, H=H, K=6, item_ids=np.array([k for k, v in keep]), groups=groups, rater_ids=np.array([f"pos{i}" for i in range(6)]), prompt=prompt, prompt_hist=prompt_hist,
                 LEVEL_STRS=[str(l + 1) for l in range(6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct")
 LOADERS.update({"csc6": load_csc6})
+
+# ----------------------------------------------------------------------------------------------- Dorn (2012) readability: 360 snippets (Java 121 / Python 119 / CUDA 120) × 161–267 ratings each from 5,468 developers (each rated ~5 snippets), 1–5 Likert, K=5
+# Source: Scalabrino's replication site (DatasetDorn.zip; code/code_readability/data/SOURCE.md). scores/<lang>.csv: one row per annotator (first column = annotator id), one column per snippet,
+# columns assumed to follow the sorted snippet-file ids (java 101..221, python/cuda 0..118/119); the learner-free analyses do not depend on this mapping, the feature-based ones do.
+# Raters are not persistent across items (median 5 ratings each) → m fixed POSITIONS per item from a seeded random subsample of the item's ratings (as DICES-990 / POPQUORN).
+DORN = LLMJ + "/code/code_readability/data/dorn"
+def _load_dorn(langs=("java",), m=160, seed=0, max_hist_chars=1500):
+    rng = np.random.RandomState(seed); Hs, texts, ids, groups = [], [], [], []
+    for lang in langs:
+        S = pd.read_csv(f"{DORN}/scores/{lang}.csv", header=None).iloc[:, 1:]
+        snips = sorted(int(f.split(".")[0]) for f in os.listdir(f"{DORN}/snippets/{lang}")); assert len(snips) == S.shape[1], (lang, len(snips), S.shape)
+        for j, sid in enumerate(snips):
+            r = S.iloc[:, j].dropna().to_numpy(int); assert len(r) >= m and r.min() >= 1 and r.max() <= 5, (lang, sid, len(r))
+            Hs.append(rng.permutation(r)[:m] - 1); texts.append(open(f"{DORN}/snippets/{lang}/{sid}.jsnp", encoding="utf-8", errors="replace").read()); ids.append(f"{lang}_{sid}"); groups.append(f"{lang}_{sid}")
+    H = np.array(Hs); bw = load_bw(max_hist_chars)          # same CoReEval Java template / history block as Buse–Weimer and Scalabrino
+    name = "dorn_all" if len(langs) == 3 else f"dorn_{langs[0]}"
+    return dict(name=name, texts=texts, H=H, K=5, item_ids=np.array(ids), groups=np.array(groups), rater_ids=np.array([f"pos{i}" for i in range(m)]), prompt=bw["prompt"], prompt_hist=bw["prompt_hist"],
+                LEVEL_STRS=bw["LEVEL_STRS"], PREFIX=bw["PREFIX"], model="Qwen/Qwen2.5-Coder-7B-Instruct")
+def load_dorn_java(): return _load_dorn(("java",))
+def load_dorn_python(): return _load_dorn(("python",))
+def load_dorn_cuda(): return _load_dorn(("cuda",))
+def load_dorn_all(): return _load_dorn(("java", "python", "cuda"))
+LOADERS.update({"dorn_java": load_dorn_java, "dorn_python": load_dorn_python, "dorn_cuda": load_dorn_cuda, "dorn_all": load_dorn_all})
