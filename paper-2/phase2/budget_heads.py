@@ -20,12 +20,14 @@ ap.add_argument("--steps", type=int, default=1500); ap.add_argument("--seeds", t
 ap.add_argument("--n_eval_raters", type=int, required=True); ap.add_argument("--a_list", default="1,2,4,8"); ap.add_argument("--budgets", default="1,2", help="multiples of n_full × a_min")
 ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--tag", default=""); args = ap.parse_args(); DEV = args.device; torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"]))
 PAN = data_panels.load(args.panel); H0 = PAN["H"].astype(int); N, M = H0.shape; K = PAN["K"]; LV = np.arange(K, dtype=float); NOMINAL = args.panel.startswith("chaosnli"); P = Panel(K, NOMINAL)
-assert not NOMINAL, "ordinal panels only (nominal heads use the KL-to-reference instrument of probe_nominal)"
+# nominal panels (ChaosNLI): the score is the KL from the held-out-position reference histogram to the prediction (T5 instrument), reported in the same `pop_rps` column
 F = np.load(f"{HERE}/features/{args.panel}/{PAN['model'].split('/')[-1]}.npz", allow_pickle=True); E = F[args.feat_key].astype(np.float32); assert np.array_equal(np.asarray(PAN["item_ids"]).astype(str), F["item_ids"].astype(str))
 OUT = f"{HERE}/results/budget_heads/{args.panel}{args.tag}"; os.makedirs(OUT, exist_ok=True)
 A_LIST = [int(x) for x in args.a_list.split(",")]; BUDGETS = [int(x) for x in args.budgets.split(",")]; A_LIST = [a for a in A_LIST if a <= M - args.n_eval_raters]
 
 def rps(Pm, y): cdf = np.cumsum(Pm, 1); step = (LV[None, :] >= y[:, None]).astype(float); return ((cdf - step) ** 2).sum(1) / (K - 1)
+def kl_ref(Pm, Hte):
+    ref = np.stack([np.bincount(r, minlength=K) for r in Hte]) / Hte.shape[1]; return (ref * (np.log(ref + 1e-9) - np.log(Pm + 1e-9))).sum(1)
 class MLP(nn.Module):
     def __init__(s, d, hid): super().__init__(); s.f = nn.Sequential(nn.Linear(d, hid), nn.GELU(), nn.Linear(hid, K))
     def forward(s, x): return s.f(x)
@@ -66,8 +68,9 @@ def run(seed, isplit, rsplit):
                 z, t, key, stat = P.T_of(Htr); fold = folds_for(G[tr], 1 + 7 * isplit, 5); targets["qT"] = P.exactT_q(fold, z, key, stat, h)
             for name, tgt_ in targets.items():
                 m_, vl = train(X[tr], tgt_, X[va], Hva, rng, args.steps); Pm = pmf(m_, X[te])
-                row = dict(seed=seed, isplit=isplit, rsplit=rsplit, budget_mult=bm, budget=int(n_groups * a), a=a, n_groups=n_groups, n_items=len(tr), arm=name,
-                           pop_rps=float(np.mean([rps(Pm, Hte[:, j]).mean() for j in range(len(R_eval))])), mean_spearman=float(pd.Series(Pm @ LV).corr(pd.Series(Hte.mean(1)), method="spearman")), val_ce=vl)
+                score = kl_ref(Pm, Hte).mean() if NOMINAL else np.mean([rps(Pm, Hte[:, j]).mean() for j in range(len(R_eval))])
+                row = dict(seed=seed, isplit=isplit, rsplit=rsplit, budget_mult=bm, budget=int(n_groups * a), a=a, n_groups=n_groups, n_items=len(tr), arm=name, metric=("kl_ref" if NOMINAL else "rps"),
+                           pop_rps=float(score), mean_spearman=float(pd.Series(Pm @ LV).corr(pd.Series(Hte.mean(1)), method="spearman")), val_ce=vl)
                 rows.append(row); print(f"  s{seed} i{isplit} r{rsplit} B×{bm} a={a:2d} n={len(tr):5d} {name:4s} popRPS {row['pop_rps']:.4f}", flush=True)
     return rows
 

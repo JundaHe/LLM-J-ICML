@@ -1,0 +1,34 @@
+# Prior-art check of the four 2026-10-26 conclusions (research-agent survey, verified abstracts/HTML unless marked)
+
+Purpose: before any of these conclusions enters the paper, know what is already known and what the defensible delta is. Verdicts: **known / partially known / new**.
+
+## Claim 1 — at fixed rating budget, more items × 1 rating beats fewer items × many ratings for TRAINING a judge
+| paper | what | states our conclusion? |
+|---|---|---|
+| Sheng, Provost & Ipeirotis, *Get Another Label?*, KDD 2008; Ipeirotis et al., DMKD 2014 | fixed-budget repeated vs single labeling, simulated binary noise, tree learners | partly opposite: repeated labeling wins when noise is high and new items are costly; hard labels |
+| Lin, Mausam & Weld, *To Re(label), or Not To Re(label)*, HCOMP 2014 | fixed budget, simulated workers, classifiers of varying capacity | partly ours: noisy single labels often better; depends on classifier/worker accuracy |
+| Khetan, Lipton & Anandkumar, *Learning from Noisy Singly-Labeled Data*, ICLR 2018 | bound + ImageNet/COCO | **yes for hard-label classification**: label many once rather than few many times when worker quality is above a threshold |
+| Zhang, Gong & Choi, *Learning with Different Amounts of Annotation*, EMNLP 2021 | fixed total labels, RoBERTa on SNLI/MNLI + ChaosNLI | **opposite on ChaosNLI**: trading 5k single-label items for 500 ten-label items cuts KL 0.548 → 0.211 (nominal NLI, large single-label base) |
+| Wei et al., *To Aggregate or Not?*, KDD 2023 | separate vs aggregated labels, fixed items | orthogonal |
+| Gheibi & Ghazizadeh 2026 (SLS); Kohli 2026 (saturation N ≈ 10); Pandita et al. AAAI-26 (N,K trade-off for *evaluation*, K > 10 best) | — | no items-vs-raters trade for training |
+Nothing found for LLM judges / reward models.
+**Verdict: partially known.** Delta: first fixed-budget items-vs-raters comparison with soft-label targets and distributional (RPS) evaluation on ordinal quality ratings, 9 head panels + an end-to-end LoRA LLM judge; and — most importantly — a **reconciliation** with Zhang et al. 2021: under the two-reliabilities account, multi-rater items should pay off exactly where the disagreement shape is text-predictable (ChaosNLI; our decoding G > 0) and not where it is not (ordinal quality ratings; G ≈ 0). **Registered prediction (2026-10-26 06:10, before the run):** budget_heads on ChaosNLI MNLI/SNLI (KL to the 50-annotation reference) will NOT show the ordinal pattern — at fixed budget, a > 1 ratings per item will match or beat 1 rating per item — in contrast to the 9 ordinal panels. Job queued (budgetN).
+
+## Claim 2 — disagreement shape reproducible across rater panels yet not decodable from the text representation (ordinal), decodable on ChaosNLI
+Closest: Zhou, Nie & Bansal, *Distributed NLI*, Findings ACL 2022 (ChaosNLI distributions partly predictable from text — consistent with our nominal half; cite as precedent); Zhang et al., *Diverging Preferences*, ICML 2025 (disagreement detection AUROC 0.58–0.65); Wan, Kim & Kang, AAAI 2023 (text-inherent vs perspective-driven disagreement via demographics — closest conceptual precedent); Zhang & Çöltekin 2026 (predicting variance of graded ratings: moderate only); Baan et al. EMNLP 2022 / EACL 2024 (conceptual); Wong & Paritosh, *k-Rater Reliability*, ACL 2022 and *Cross-replication Reliability*, ACL 2021 (reliability of aggregates across replication panels — the tool, never linked to predictability); Inoshita 2026 (predictability ceilings with annotator split; single-label emotion).
+**Verdict: new as stated.** No prior work measures split-panel reproducibility of the shape *conditional on mode and mean* and contrasts it with decodability from a frozen LLM representation, nor contrasts ordinal (not decodable) with ChaosNLI (decodable). Reviewers will cite Wan et al. 2023 and Diverging Preferences as "weak predictability already shown".
+
+## Claim 3 — beyond item location, ordinal structure is rater thresholds, not item shape
+Mechanism is textbook psychometrics: many-facet Rasch rater severity (Linacre 1989; Eckes 2011 — verified via citations only), hierarchical rater model (Patz et al. 2002; DeCarlo 2005), response styles (Greenleaf 1992; Baumgartner & Steenkamp 2001); NLP annotation models (Dawid & Skene 1979; MACE, Hovy et al. 2013; Passonneau & Carpenter 2014; Paun et al. TACL 2018); ordinal crowd models (Zhou et al. ICML 2014; Lakshminarayanan & Teh 2013); annotator-aware architectures (Rodrigues & Pereira AAAI 2018; Deng et al. *You Are What You Annotate*, Findings EMNLP 2023). MFRM applied to LLM judges in 2026: Cong et al. AACL-IJCNLP 2026 (SummEval, 17 judges), Sachdeva & Boudol 2026, Sunkavalli 2026 — judges differ from humans in severity; none asks whether a trained judge can learn human thresholds.
+**Verdict: mechanism known, finding new.** Delta: (i) after conditioning on exact mode+mean, dense ordinal panels show no reproducible item-specific shape; (ii) the inference that the unlearnable residual of Claim 2 is a rater-side quantity, so no text-conditioned judge can recover it without rater identity. Present as an ordered-probit decomposition citing MFRM/HRM explicitly.
+
+## Claim 4 — training-target construction is irrelevant once location is kept; one-hot costs
+One-hot penalty well established (Peterson et al. ICCV 2019; Uma et al. HCOMP 2020 / JAIR 2021; Fornaciari et al. NAACL 2021). Counter-evidence to a strong reading: Kohli 2026 (uniform smoothing *replacing* the human distribution loses entropy correlation), Pavlovic et al. 2026 (synthetic soft labels fail to align, MNIST), Wu et al. Findings EMNLP 2023 (constructions differ on hard-label eval), Benito-Santos & Ghajari EMNLP 2025 (calibrated construction best on ordinal STS). Collins, Bhatt & Weller HCOMP 2022 (comparable performance with ~8× fewer annotators) is in spirit with us.
+**Verdict: partially known; frame as a corollary of Claim 3**, narrowly: frozen-feature heads, ordinal scales, RPS, smoothing applied *on top of* the human distribution; the learner needs only location because shape beyond location is rater-driven.
+
+## The three papers most likely cited against us
+1. Zhang, Gong & Choi, EMNLP 2021 (Claim 1) — must be reconciled, not ignored: the ChaosNLI budget run above is the test.
+2. Kohli, arXiv 2605.29797 (Claims 1 and 4) — "N ≈ 10–50 annotators needed; smoothing cannot replace soft labels": agree for nominal NLI; our claim is about ordinal quality ratings and training (not evaluation) sets.
+3. Zhang et al., *Diverging Preferences*, ICML 2025 (Claim 2) — weak predictability of disagreement from text; our decoding gives the per-task number and the ordinal/nominal contrast. Runner-up: Wan et al. AAAI 2023.
+
+Unverified beyond secondary citation: Linacre 1989, Eckes 2011, Greenleaf 1992, Patz et al. 2002, Lin et al. 2014 venue.

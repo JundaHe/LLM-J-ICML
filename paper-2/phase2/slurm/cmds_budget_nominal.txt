@@ -1,0 +1,2 @@
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel chaosnli_mnli --n_eval_raters 50 --a_list 1,2,4,8,16,32 --device cpu > logs/budget_chaosnli_mnli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel chaosnli_snli --n_eval_raters 50 --a_list 1,2,4,8,16,32 --device cpu > logs/budget_chaosnli_snli.log 2>&1
