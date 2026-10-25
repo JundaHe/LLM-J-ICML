@@ -1,0 +1,47 @@
+# Residual decoding from frozen features — protocol, frozen before any result is computed
+Committed 2026-10-26 (user go-ahead "直接按照我们的计划做", 2026-10-25). Follows Codex round 18 (reviews/codex_round18_2026-10-23.md §B) and the ICML brainstorm (reviews/codex_icml_brainstorm_2026-10-25.md, item 1 / Gate D). CPU only; no model is trained beyond ridge regressions.
+Any change after the first result is computed is logged under "Amendments" with a reason.
+
+## Question
+The finite-rater analysis (T9) found annotation-side residual signal beyond exact mode and mean (A2 > 0 on SummEval coherence/relevance, HelpSteer2, EmoBank; A1x < 0 on ChaosNLI), while the learned-judge contrasts for the same intervention are ≈ 0 (T2b, T3b, T3c). That gap does not separate
+(a) the residual is not predictable from the text (or from the frozen representation the heads use) from
+(b) the residual is predictable but the training pipeline does not transmit it.
+This experiment asks whether the residual of panel-1 ratings, relative to the exact mode-and-mean comparator, is **linearly decodable from the frozen features** when scored on an **independent panel-2** of raters. A positive result places the failure in the training pipeline (objective / optimisation / decoder), not in the representation. A null result supports only "not linearly decodable from these frozen features", never "unpredictable from text".
+
+## Notation (as in FINITE_RATER_PROTOCOL.md)
+Item i has ratings over K levels; C = cumulative operator (ordinal, n = K − 1 outputs; nominal: identity, n = 1 normalisation as in finite_rater.py). For each repetition r the rating positions of every item are permuted and split into two disjoint panels P1 (a ratings, histogram h1) and P2 (b ratings, histogram h2).
+T = exact retained statistics of P1: ordinal (mode by z_label, exact mean); nominal (modal class, modal count).
+q_T = the **exact-T comparator** of finite_rater.py (`exactT_q`): cross-fitted over 5 outer item folds grouped by PAN["groups"]; other-fold exact-T cell mean of P1 histograms when the cell has ≥ 3 items, else the KL projection of the other-fold mode prototype. It reproduces mode and mean of P1 exactly, so r1 = C(h1 − q_T) is the P1 residual **beyond exact mode and mean**. r2 = C(h2 − q_T) is the independent panel-2 residual relative to the same comparator.
+Features: the frozen Qwen2.5-7B-Instruct (Qwen2.5-Coder-7B-Instruct on bw / scalabrino) last-token features `E_last` already used by the heads (features/<panel>/*.npz, rows aligned with the panel).
+
+## Decoder
+Multi-output ridge regression from features to r1 (n outputs), **group-cross-fitted** over the same 5 outer item folds used for q_T: for the items of fold f the decoder is fitted on the other folds only. Features are first reduced by a **label-free** PCA to 256 components fitted on all items of the panel (uses features only, never ratings; a fixed preprocessing that makes the bootstrap tractable). Within the training folds: standardise, PCA to d = 64 components fitted on the training folds only (heads default), ridge penalty α chosen by **nested 4-fold grouped CV inside the training folds** from the grid α ∈ {10⁻², 10⁻¹, 1, 10, 10², 10³} (penalty on the PCA scores, mean-squared error on r1). Prediction r̂_i for every held-out item. The same decoder, fitted on r1, is evaluated against r2 — never against r1.
+Sensitivities (point estimates only): d = 0 (full standardised 3,584-dim features, same α grid shifted ×10), feature key `E_mean`.
+
+## Estimands (per panel; item means; symmetrised over the P1/P2 swap, i.e. the decoder is also fitted on r2 and scored on r1, and the two directions are averaged)
+1. **Covariance** V = ⟨r̂, r2⟩ / n: positive ⇔ the decoded residual points in the direction of an independent panel's residual.
+2. **Proper-score gain** G = (2⟨r̂, r2⟩ − ‖r̂‖²) / n. Exactly, G = E_y∈P2[S(q_T, y) − S(q_T + C⁻¹r̂, y)]: the reduction in RPS (Brier) of the forecast q_T + r̂ over q_T on panel-2 ratings. **G is primary.** The forecast q_T + C⁻¹r̂ is not forced onto the simplex; a sensitivity clips it to [0, 1] and renormalises (reported, not primary).
+3. **Reference quantities on the same splits**: −A1x = 2X − M (the gain of the raw P1 histogram over q_T, i.e. r̂ := r1) and X (cross-panel agreement). G is compared with them descriptively; a ratio G / Δ̂ ("decodable fraction") is reported only on dense panels where Δ̂ (the comparator error, Δ_x of FINITE_RATER_PROTOCOL.md) has a 95 % interval excluding 0.
+4. **Positive control (pipeline check)**: the same ridge pipeline predicting the P1 **mean** (ordinal) / modal share (nominal), scored by the out-of-fold Spearman correlation with the P2 mean. Must be clearly positive on every panel; otherwise the features / alignment are broken and no residual result is interpreted.
+5. **Null control (within-T feature permutation)**: features are permuted among items within the same exact-T cell (mode, exact-T key) of P1 before fitting; singleton cells keep their own features (fraction permuted reported). Under the null that features carry no residual information beyond T, G_perm ≈ 0 (≤ 0 in expectation because of the ‖r̂‖² penalty). Reported with the same bootstrap.
+
+## Panels and splits
+Primary: **SummEval coherence** (m = 8, a = b = 4). Replication: **SummEval relevance** (a = b = 4).
+Secondary ordinal (same rule a = ⌈m/2⌉, b = m − a, symmetrised): POPQUORN offensiveness (4/4), POPQUORN politeness (3/2), HelpSteer2 (3/2), EmoBank (3/2), CSC sarcasm (3/3), Scalabrino (5/4), Buse–Weimer (a = b = 20 of 121; 100 items — descriptive only), DICES-350 (20/20), DICES-990 (20/20).
+Secondary nominal: ChaosNLI MNLI, SNLI (a = b = 20; Brier, identity C). αNLI is a zero-residual control (exact-T comparator = h1 ⇒ r1 = 0, G must be ≈ 0 up to ridge intercept noise).
+R = 10 split repetitions, averaged within item before any bootstrap.
+
+## Inference
+Item-cluster bootstrap over PAN["groups"] (B = 500): each replicate resamples groups, re-assigns the 5 outer folds, refits q_T, the PCA, the ridge (α fixed at the full-data choice per fold), redraws R_boot = 3 splits, and recomputes G, V, the control G_perm and the reference quantities. 95 % percentile intervals. Re-selecting α inside every replicate is a sensitivity on SummEval coherence only.
+
+## Gate D (prespecified; decides only the *mechanistic* story, not the shrinkage method)
+PASS if, on SummEval coherence, the symmetrised proper-score gain G has a 95 % interval excluding 0 with G > 0, the within-T permutation control's interval includes 0 or lies below 0, the positive control is clearly positive, **and** G > 0 (point estimate) on SummEval relevance.
+If PASS: the paper states that residual information beyond exact mode and mean is linearly decodable from the frozen representation and that the evaluated training pipelines did not transmit it; the decoded residual becomes a candidate covariate for the shrinkage method (SHRINKAGE_PROTOCOL.md).
+If FAIL: the paper states only that the residual was not linearly decodable from these frozen features at this precision; the shrinkage method proceeds regardless (Codex: "This gate does not kill the method").
+Secondary panels are reported in full regardless of sign (one table; no selection).
+
+## Forbidden statements
+"The text does not contain residual information"; "the judge cannot learn the residual"; any ratio with a denominator whose interval covers 0; any claim about a > m/2 or full-m histograms from these half-panel decoders.
+
+## Amendments
+(none)

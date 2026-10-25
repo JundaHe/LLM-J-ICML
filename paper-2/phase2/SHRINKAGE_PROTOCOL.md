@@ -1,0 +1,48 @@
+# Reliability-shrunk distributional targets — protocol, frozen before any result is computed
+Committed 2026-10-26 (user go-ahead 2026-10-25). Follows the ICML brainstorm (reviews/codex_icml_brainstorm_2026-10-25.md, item 2; Gates A and H) and the finite-rater identity of FINITE_RATER_PROTOCOL.md (A1 = M − 2X). Steps 1–2 are CPU only. Step 3 (LoRA) is **not** specified here; it will be added by amendment after Gate H and after the base-model decision (Qwen2.5-7B vs a 2025–26 family), which is open.
+Any change after the first result is computed is logged under "Amendments" with a reason.
+
+## Idea and prior art
+For an item with empirical histogram h (m ratings) and a statistic-preserving comparator q_T (same exact mode and mean), the family q_λ = q_T + λ (h − q_T), λ ∈ [0, 1], interpolates between the two-statistic target (λ = 0) and the raw histogram (λ = 1). With r = C(h − q_T), the expected proper score against a new rater of the same population satisfies S(q_λ) − S(q_T) = λ² M − 2 λ X (M = E‖r‖²/n, X = E⟨r, r_new⟩/n), minimised at **λ* = X / M** with improvement X² / M over q_T; the raw histogram beats q_T only when X / M > ½, whereas the optimally shrunk target beats it whenever X > 0.
+The coefficient is the elementary forecast-combination / projection coefficient and is **not** claimed as novel. Mandatory prior art to cite and to run as baselines: James–Stein-type shrinkage of multinomial proportions (Hausser & Strimmer 2009), Dirichlet / pseudo-count smoothing, label smoothing (Szegedy et al. 2016; Lukasik et al. 2020), Dawid–Skene-style annotator models (conceptually different: latent true label). What is claimed: the recipient-specific **statistic-preserving** comparator, the cross-fitted estimate of λ from **cross-panel residual agreement**, and its use as a **supervision target**.
+
+## Comparator and residual
+Primary comparator q_T = exact-T comparator (`exactT_q` of finite_rater.py; cross-fitted, reproduces mode and mean of the ratings it is computed from). Secondary: the response-based smoothed comparator (primary comparator of FINITE_RATER_PROTOCOL.md Amendment 1 item 5), which does not preserve T exactly; results with it are labelled "smoothed".
+
+## Estimating λ (global, cross-fitted; per-item ratios are forbidden as a primary estimator)
+λ̂ = clip( Σ_i X_i / Σ_i M_i , 0, 1 ), with the sums over **other-fold** items only (5 outer folds grouped by PAN["groups"]), so that the λ applied to an item never uses that item's ratings.
+X_i and M_i are estimated at the annotation count that the target will have: for a training histogram of m ratings, the leave-one-rating-out construction of T9(a) is used — for each held-out position j (drawn independently per item, R = 20 repetitions): r_{−j} = C(h_{−j} − q_T(h_{−j})), r_j = C(e_{y_j} − q_T(h_{−j})); M_i = mean_j ‖r_{−j}‖²/n, X_i = mean_j ⟨r_{−j}, r_j⟩/n. This is λ* for an (m − 1)-rater histogram predicting one new rater, the closest available proxy for the m-rater target; the mismatch is stated.
+Covariate-conditional λ(T) (secondary, only if the global version passes Gate A): λ̂(cell) = clip(ΣX/ΣM within exact-T mode cells with ≥ 30 other-fold items, else the global value). Any finer conditioning (entropy, decoded residual from DECODING_PROTOCOL.md) is exploratory and appendix-only unless it beats the global coefficient out of sample on the prespecified pooled test.
+
+## Step 1 — annotation side (learner-free; Gate A)
+For each panel, repeated splits (R = 20) of each item's ratings into a target panel P1 (a = m − 1 for small panels; a ∈ {5, 10, 20} on dense panels) and one held-out rating (|P2| = 1; position drawn independently per item). Forecasts of the held-out rating, all built from P1 only and cross-fitted where they involve other items:
+- **raw** (λ = 1): h1;
+- **q_T** (λ = 0);
+- **shrunk-λ̂** (the method): q_T + λ̂ (h1 − q_T), λ̂ from other-fold items as above;
+- **shrunk-λ_cv**: λ chosen on a grid {0, .1, …, 1} by other-fold held-out-rating score (a tuned-baseline ceiling for the one-parameter family);
+- **JS**: Hausser–Strimmer James–Stein shrinkage of h1 toward the uniform (and toward the other-fold mode prototype, "JS-proto");
+- **Dirichlet**: (a h1 + κ π_z)/(a + κ), π_z = other-fold mode prototype, κ by other-fold CV (this is the heads' `shrunk` arm);
+- **label smoothing**: (1 − ε) h1 + ε/K, ε by other-fold CV;
+- **smoothed comparator** (FINITE_RATER_PROTOCOL.md primary q) and shrunk-λ̂ toward it ("smoothed" variants).
+Scores: RPS (ordinal) / Brier (nominal) against the held-out rating; contrasts vs raw and vs q_T; item-cluster bootstrap B = 500 with refitting of q_T, λ̂ and all CV choices in every replicate.
+**Gate A** (PASS requires all three):
+(i) shrunk-λ̂ − raw < 0 and shrunk-λ̂ − q_T < 0, each with a 95 % interval excluding 0, on the **pooled small ordinal panels** (SummEval coherence/relevance, POPQUORN offensiveness/politeness, CSC, Scalabrino, HelpSteer2, EmoBank; inverse-variance pooling of per-panel contrasts; SummEval criteria and POPQUORN attributes are not independent — stated);
+(ii) the same two contrasts negative with intervals excluding 0 on **both** ChaosNLI MNLI and SNLI at a = 5 and a = 10 (where the raw histogram is noisy; at a = 20 the raw already approaches optimality and the contrast vs raw may be ≈ 0 — reported, not gated);
+(iii) no primary panel shows material harm: shrunk-λ̂ − min(raw, q_T) has a 95 % interval excluding values above +0.001 RPS (ordinal) / +0.002 Brier (nominal).
+If Gate A fails, the method is dropped (Codex: "kill the method immediately"); the annotation-side table is still reported as a negative result.
+
+## Step 2 — frozen-feature heads (Gate H)
+Only if Gate A passes. The heads pipeline of probe_mean2.py (same splits: 5 RNG streams × 3 group-disjoint item splits × 2 annotation-position splits; PCA-64; MLP; KL to the target; early stopping on validation items vs training positions; RPS on held-out positions) with the training target set to each of: soft (raw), mean2 (≈ q_T, projected prototype), cond (cross-fitted E[h | z, mean-bin]), **shrunk-λ̂** (toward the exact-T comparator built from the training positions; λ̂ from other-fold training items by the leave-one-rating-out rule above), shrunk (Dirichlet toward prototype, existing arm), shrunk_res (existing arm toward mean2), label smoothing, JS. Ten ordinal panels + ChaosNLI MNLI/SNLI (KL to the 50-annotation reference, as in T5).
+**Gate H**: shrunk-λ̂ − soft and shrunk-λ̂ − best generic shrinkage baseline (min over shrunk, shrunk_res, label smoothing, JS, chosen per panel on validation items, not test) both negative on the pooled ordinal panels and on both ChaosNLI panels; configuration-level descriptive SEMs as in T2b plus a panel-cluster bootstrap over the 30 configurations for the pooled contrast. Expected magnitudes are small (the learner already smooths: T2b cond − soft within ±0.0026); the gate is about sign and consistency, and the paper will report the absolute size honestly next to the mode-only penalty.
+
+## Step 3 — LoRA judges
+Not specified here. To be amended after Gate H with: base-model decision; SummEval coherence + a **user-id-held-out** POPQUORN block (loader change required; see sensitivity_popquorn_users.py); arms chen / q_T / shrunk-λ̂ / SLS-multipass (Gheibi & Ghazizadeh baseline); same crossed bootstrap as T3b/T3c. GPU use requires explicit user approval (HANDOFF §7 rule 7).
+
+## Fixed-budget decision experiment (brainstorm item 7; annotation side only, after Gate A)
+On dense panels, hold the total number of ratings fixed (budget = n_items × a for a ∈ {2, 3, 5, 10, 20}) and compare held-out score of raw / q_T / shrunk-λ̂ targets as forecasts; report the frontier per panel without a universal threshold claim (the 1/a model was falsified in T9).
+
+## Forbidden statements
+λ* = X/M as a novel estimator; "optimal" without "under the one-parameter family and the stated comparator"; equivalence; any theoretical break-even rater count; polarisation wording; results on commit-message panels (excluded permanently).
+
+## Amendments
+(none)
