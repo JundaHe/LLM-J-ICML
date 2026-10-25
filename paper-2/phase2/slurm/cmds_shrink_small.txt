@@ -1,0 +1,8 @@
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel summeval_coherence8 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel summeval_relevance8 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_summeval_relevance8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel popquorn_off8 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel csc6 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel emobank_reader_v5 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel popquorn_pol5 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_popquorn_pol5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel scalabrino --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_scalabrino.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel hs2_help5 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_hs2_help5.log 2>&1

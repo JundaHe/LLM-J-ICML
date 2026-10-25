@@ -1,0 +1,11 @@
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel summeval_coherence8 --n_eval_raters 2 --device cpu > logs/probe_shrink_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel popquorn_off8 --n_eval_raters 2 --device cpu > logs/probe_shrink_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel hs2_help5 --n_eval_raters 1 --device cpu > logs/probe_shrink_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel emobank_reader_v5 --n_eval_raters 1 --device cpu > logs/probe_shrink_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel csc6 --n_eval_raters 1 --device cpu > logs/probe_shrink_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel popquorn_pol5 --n_eval_raters 1 --device cpu > logs/probe_shrink_popquorn_pol5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel scalabrino --n_eval_raters 2 --device cpu > logs/probe_shrink_scalabrino.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel summeval_relevance8 --n_eval_raters 2 --device cpu > logs/probe_shrink_summeval_relevance8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel bw --n_eval_raters 24 --device cpu > logs/probe_shrink_bw.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel dices --n_eval_raters 24 --device cpu > logs/probe_shrink_dices.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel dices990 --n_eval_raters 15 --device cpu > logs/probe_shrink_dices990.log 2>&1
