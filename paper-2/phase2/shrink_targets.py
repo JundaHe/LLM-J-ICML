@@ -70,31 +70,32 @@ def js_shrink(h, a, target):
 def lambda_hat_inner(H1_oth, g_oth, rng):
     """From P1 ratings of the other-fold items ONLY (training-time information): inner leave-one-rating-out (R_in draws) with an inner 5-fold exact-T comparator.
     Returns λ̂ = clip(ΣX/ΣM) and, on the same inner held-out ratings, the Dirichlet κ and label-smoothing ε that minimise the inner score (fair, P1-only versions of the tuned baselines)."""
-    n, a = H1_oth.shape; sx = sm = 0.0; lx = lm = 0.0; sk = {k_: 0.0 for k_ in KAPPA_GRID}; se = {e_: 0.0 for e_ in EPS_GRID}
+    n, a = H1_oth.shape; sx = sm = 0.0; lx = lm = 0.0; sk = {k_: 0.0 for k_ in KAPPA_GRID}; se = {e_: 0.0 for e_ in EPS_GRID}; sg = {e_: 0.0 for e_ in EPS_GRID}
     for r in range(args.R_in):
         hp = rng.randint(0, a, n); keep = np.ones((n, a), bool); keep[np.arange(n), hp] = False
         Hm1 = H1_oth[keep].reshape(n, a - 1); y = H1_oth[np.arange(n), hp][:, None]
-        hm1 = P.hist(Hm1); z, t, key, stat = P.T_of(Hm1); fi = folds_for(g_oth, 5000 + r, 5); q = P.exactT_q(fi, z, key, stat, hm1); pin = protos(fi, z, hm1)
+        hm1 = P.hist(Hm1); z, t, key, stat = P.T_of(Hm1); fi = folds_for(g_oth, 5000 + r, 5); q = P.exactT_q(fi, z, key, stat, hm1); pin = protos(fi, z, hm1); marg = hm1.mean(0)
         r1 = C(hm1 - q); r2 = C(np.eye(K)[y[:, 0]] - q); sx += (r1 * r2).sum(); sm += (r1 ** 2).sum()
         d1 = loc(hm1) - loc(pin); d2 = loc(np.eye(K)[y[:, 0]]) - loc(pin); lx += (d1 * d2).sum(); lm += (d1 ** 2).sum()     # location reliability (Amendment 1)
         for k_ in KAPPA_GRID: sk[k_] += P.score(((a - 1) * hm1 + k_ * pin) / (a - 1 + k_), y).sum()
-        for e_ in EPS_GRID: se[e_] += P.score((1 - e_) * hm1 + e_ / K, y).sum()
+        for e_ in EPS_GRID: se[e_] += P.score((1 - e_) * hm1 + e_ / K, y).sum(); sg[e_] += P.score((1 - e_) * hm1 + e_ * marg, y).sum()     # Amendment 2: smoothing toward the marginal
     lam = float(np.clip(sx / sm, 0, 1)) if sm > 1e-12 else 0.0; rho_loc = float(np.clip(lx / lm, 0, 1)) if lm > 1e-12 else 0.0
-    return lam, min(sk, key=sk.get), min(se, key=se.get), rho_loc
+    return lam, min(sk, key=sk.get), min(se, key=se.get), rho_loc, min(sg, key=sg.get)
 
 def one_rep(Hm, groups, rep, fold_seed, loo_pos=None):
     H1, Y2 = splits(Hm, args.a, args.b, rep, loo_pos); h1 = P.hist(H1); z, t, key, stat = P.T_of(H1); fold = folds_for(groups, fold_seed)
     qT = P.exactT_q(fold, z, key, stat, h1); pi = protos(fold, z, h1); n = len(h1)
     S = {}; S["raw"] = P.score(h1, Y2); S["qT"] = P.score(qT, Y2)
     # tuned ceilings and the method, fold by fold
-    shr = np.zeros_like(h1); shr_cv = np.zeros_like(h1); dirq = np.zeros_like(h1); lsq = np.zeros_like(h1); dir_in = np.zeros_like(h1); ls_in = np.zeros_like(h1); locq = np.zeros_like(h1); shr2 = np.zeros_like(h1)
+    shr = np.zeros_like(h1); shr_cv = np.zeros_like(h1); dirq = np.zeros_like(h1); lsq = np.zeros_like(h1); dir_in = np.zeros_like(h1); ls_in = np.zeros_like(h1); locq = np.zeros_like(h1); shr2 = np.zeros_like(h1); lsm_in = np.zeros_like(h1)
     lam_hat = {}; lam_cv = {}; kap = {}; eps = {}; rho_loc = {}
     rng = np.random.RandomState(777_001 + rep)
     for f in np.unique(fold):
         te = fold == f; oth = ~te
-        lam_hat[int(f)], k_in, e_in, rho_loc[int(f)] = lambda_hat_inner(H1[oth], groups[oth], rng)
+        lam_hat[int(f)], k_in, e_in, rho_loc[int(f)], em_in = lambda_hat_inner(H1[oth], groups[oth], rng)
         shr[te] = qT[te] + lam_hat[int(f)] * (h1[te] - qT[te])
         dir_in[te] = (args.a * h1[te] + k_in * pi[te]) / (args.a + k_in); ls_in[te] = (1 - e_in) * h1[te] + e_in / K      # P1-only tuned baselines (fair comparison with shr)
+        lsm_in[te] = (1 - em_in) * h1[te] + em_in * h1[oth].mean(0)                                                       # Amendment 2: smoothing toward the other-fold marginal
         # Amendment 1: two-reliability target — location shrunk toward the mode prototype's location by ρ_loc, shape by λ̂
         loc_t = loc(pi[te]) + rho_loc[int(f)] * (loc(h1[te]) - loc(pi[te])); locq[te] = loc_target(pi[te], z[te], loc_t); shr2[te] = locq[te] + lam_hat[int(f)] * (h1[te] - qT[te])
         # ceilings: choose on other-fold items' held-out ratings
@@ -102,7 +103,7 @@ def one_rep(Hm, groups, rep, fold_seed, loo_pos=None):
         bk = min(KAPPA_GRID, key=lambda k_: P.score((args.a * h1[oth] + k_ * pi[oth]) / (args.a + k_), Y2[oth]).mean()); kap[int(f)] = bk; dirq[te] = (args.a * h1[te] + bk * pi[te]) / (args.a + bk)
         be = min(EPS_GRID, key=lambda e_: P.score((1 - e_) * h1[oth] + e_ / K, Y2[oth]).mean()); eps[int(f)] = be; lsq[te] = (1 - be) * h1[te] + be / K
     S["shr"] = P.score(shr, Y2); S["shr_cv"] = P.score(shr_cv, Y2); S["dir"] = P.score(dirq, Y2); S["ls"] = P.score(lsq, Y2); S["dir_in"] = P.score(dir_in, Y2); S["ls_in"] = P.score(ls_in, Y2)
-    S["loc"] = P.score(locq, Y2); S["shr2"] = P.score(shr2, Y2)
+    S["loc"] = P.score(locq, Y2); S["shr2"] = P.score(shr2, Y2); S["lsm_in"] = P.score(lsm_in, Y2)
     jsu, _ = js_shrink(h1, args.a, np.full_like(h1, 1 / K)); jsp, _ = js_shrink(h1, args.a, pi); S["js"] = P.score(jsu, Y2); S["jsp"] = P.score(jsp, Y2)
     out = dict(scores=S, lam_hat=float(np.mean(list(lam_hat.values()))), lam_cv=float(np.mean(list(lam_cv.values()))), kappa=float(np.mean(list(kap.values()))), eps=float(np.mean(list(eps.values()))), rho_loc=float(np.mean(list(rho_loc.values()))))
     if not args.no_smooth:
@@ -114,7 +115,7 @@ def one_rep(Hm, groups, rep, fold_seed, loo_pos=None):
         S["shr_s"] = P.score(shr_s, Y2)
     return out
 
-ARMS = ["raw", "qT", "shr", "shr_cv", "js", "jsp", "dir", "ls", "dir_in", "ls_in", "loc", "shr2"] + ([] if args.no_smooth else ["qs", "shr_s"])
+ARMS = ["raw", "qT", "shr", "shr_cv", "js", "jsp", "dir", "ls", "dir_in", "ls_in", "loc", "shr2", "lsm_in"] + ([] if args.no_smooth else ["qs", "shr_s"])
 def aggregate(reps):
     sc = {k: float(np.mean([o["scores"][k].mean() for o in reps])) for k in ARMS}
     return dict(score=sc, vs_raw={k: sc[k] - sc["raw"] for k in ARMS}, vs_qT={k: sc[k] - sc["qT"] for k in ARMS},

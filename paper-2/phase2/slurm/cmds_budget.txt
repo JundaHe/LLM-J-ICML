@@ -1,0 +1,10 @@
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dices990 --n_eval_raters 15 --a_list 1,2,4,8,15 --device cpu > logs/budget_dices990.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dices --n_eval_raters 24 --a_list 1,2,4,8,16 --device cpu > logs/budget_dices.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel bw --n_eval_raters 24 --a_list 1,2,4,8,16 --device cpu > logs/budget_bw.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dorn_java --n_eval_raters 24 --a_list 1,2,4,8,16 --device cpu > logs/budget_dorn_java.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dorn_all --n_eval_raters 24 --a_list 1,2,4,8,16 --device cpu > logs/budget_dorn_all.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel summeval_coherence8 --n_eval_raters 2 --a_list 1,2,3,6 --device cpu > logs/budget_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel popquorn_off8 --n_eval_raters 2 --a_list 1,2,3,6 --device cpu > logs/budget_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel hs2_help5 --n_eval_raters 1 --a_list 1,2,4 --device cpu > logs/budget_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel emobank_reader_v5 --n_eval_raters 1 --a_list 1,2,4 --device cpu > logs/budget_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel csc6 --n_eval_raters 1 --a_list 1,2,5 --device cpu > logs/budget_csc6.log 2>&1

@@ -1,0 +1,2 @@
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel summeval_coherence8 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python shrink_targets.py --panel summeval_relevance8 --R 20 --B 500 --R_boot 5 --R_in 3 > logs/shrink_summeval_relevance8.log 2>&1

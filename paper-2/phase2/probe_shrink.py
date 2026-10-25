@@ -51,17 +51,17 @@ def loc_target(pi, z, loc_t):
     return np.stack([tgt.nominal_zc(pi[i], int(z[i]), float(np.clip(loc_t[i], 1 / K + 1e-6, 1))) for i in range(len(pi))])
 def inner_estimates(Htr, groups, rng):
     """λ̂, κ_in, ε_in, ρ_loc from the training items' training positions only (inner leave-one-rating-out + inner 5-fold exact-T comparator)"""
-    n, a = Htr.shape; sx = sm = lx = lm = 0.0; sk = {k_: 0.0 for k_ in KAPPA_GRID}; se = {e_: 0.0 for e_ in EPS_GRID}
+    n, a = Htr.shape; sx = sm = lx = lm = 0.0; sk = {k_: 0.0 for k_ in KAPPA_GRID}; se = {e_: 0.0 for e_ in EPS_GRID}; sg = {e_: 0.0 for e_ in EPS_GRID}
     for r in range(args.R_in):
         hp = rng.randint(0, a, n); keep = np.ones((n, a), bool); keep[np.arange(n), hp] = False
         Hm1 = Htr[keep].reshape(n, a - 1); y = Htr[np.arange(n), hp][:, None]
-        hm1 = P.hist(Hm1); z, t, key, stat = P.T_of(Hm1); fi = folds_for(groups, 5000 + r, 5); q = P.exactT_q(fi, z, key, stat, hm1); pin = protos(fi, z, hm1)
+        hm1 = P.hist(Hm1); z, t, key, stat = P.T_of(Hm1); fi = folds_for(groups, 5000 + r, 5); q = P.exactT_q(fi, z, key, stat, hm1); pin = protos(fi, z, hm1); marg = hm1.mean(0)
         r1 = C(hm1 - q); r2 = C(np.eye(K)[y[:, 0]] - q); sx += (r1 * r2).sum(); sm += (r1 ** 2).sum()
         d1 = loc(hm1) - loc(pin); d2 = loc(np.eye(K)[y[:, 0]]) - loc(pin); lx += (d1 * d2).sum(); lm += (d1 ** 2).sum()
         for k_ in KAPPA_GRID: sk[k_] += P.score(((a - 1) * hm1 + k_ * pin) / (a - 1 + k_), y).sum()
-        for e_ in EPS_GRID: se[e_] += P.score((1 - e_) * hm1 + e_ / K, y).sum()
+        for e_ in EPS_GRID: se[e_] += P.score((1 - e_) * hm1 + e_ / K, y).sum(); sg[e_] += P.score((1 - e_) * hm1 + e_ * marg, y).sum()
     lam = float(np.clip(sx / sm, 0, 1)) if sm > 1e-12 else 0.0; rho_loc = float(np.clip(lx / lm, 0, 1)) if lm > 1e-12 else 0.0
-    return lam, min(sk, key=sk.get), min(se, key=se.get), rho_loc
+    return lam, min(sk, key=sk.get), min(se, key=se.get), rho_loc, min(sg, key=sg.get)
 
 class MLP(nn.Module):
     def __init__(s, d, hid): super().__init__(); s.f = nn.Sequential(nn.Linear(d, hid), nn.GELU(), nn.Linear(hid, K))
@@ -92,14 +92,16 @@ def run(seed, isplit, rsplit):
     dd = min(args.d, len(tr) // 4); mu_e = E[tr].mean(0); U, Sv, Vt = np.linalg.svd(E[tr] - mu_e, full_matrices=False); W = Vt[:dd].T / (Sv[:dd] / math.sqrt(len(tr)) + 1e-6); X = ((E - mu_e) @ W).astype(np.float32)
     Htr = H0[np.ix_(tr, R_train)]; Hva = H0[np.ix_(va, R_train)]; Hte = H0[np.ix_(te, R_eval)]; n_r = len(R_train); assert n_r >= 3, "need >= 3 training positions for the inner leave-one-rating-out"
     h = P.hist(Htr); z, t, key, stat = P.T_of(Htr); fold = folds_for(G[tr], 1 + 7 * isplit, 5); qT = P.exactT_q(fold, z, key, stat, h); pi = protos(fold, z, h)
-    lam, k_in, e_in, rho_loc = inner_estimates(Htr, G[tr], np.random.RandomState(99 + seed))
-    T = {"soft": h, "hard": np.eye(K)[z], "qT": qT, "shr": qT + lam * (h - qT), "dir_in": (n_r * h + k_in * pi) / (n_r + k_in), "ls_in": (1 - e_in) * h + e_in / K}
+    lam, k_in, e_in, rho_loc, em_in = inner_estimates(Htr, G[tr], np.random.RandomState(99 + seed))
+    marg = np.zeros_like(h)
+    for f_ in np.unique(fold): marg[fold == f_] = h[fold != f_].mean(0)          # other-fold marginal (climatology) for the marginal-smoothing arm
+    T = {"soft": h, "hard": np.eye(K)[z], "qT": qT, "shr": qT + lam * (h - qT), "dir_in": (n_r * h + k_in * pi) / (n_r + k_in), "ls_in": (1 - e_in) * h + e_in / K, "lsm_in": (1 - em_in) * h + em_in * marg}
     locq = loc_target(pi, z, loc(pi) + rho_loc * (loc(h) - loc(pi))); T["loc"] = locq; T["shr2"] = locq + lam * (h - qT)
     # response-based smoothed comparator from a split of the TRAINING positions (predictor half -> response half), fitted on other-fold items
     if n_r >= 4:
         half = n_r // 2; Hp, Hr = Htr[:, :half], Htr[:, half:]; zp, tp, _, _ = P.T_of(Hp); hr = P.hist(Hr); bw, lam_s = P.select_bw_lam(G[tr], zp, tp, hr, Hr); qs = P.fit_q(fold, zp, tp, hr, bw, lam_s)
         T["qs"] = qs; T["shr_s"] = qs + lam * (h - qT)
-    rows = []; meta = dict(seed=seed, isplit=isplit, rsplit=rsplit, lam_hat=lam, rho_loc=rho_loc, kappa_in=k_in, eps_in=e_in, n_train_pos=n_r)
+    rows = []; meta = dict(seed=seed, isplit=isplit, rsplit=rsplit, lam_hat=lam, rho_loc=rho_loc, kappa_in=k_in, eps_in=e_in, eps_marg_in=em_in, n_train_pos=n_r)
     def score(name, Pm, extra=None):
         Pm = np.clip(Pm, 1e-9, None); Pm = Pm / Pm.sum(1, keepdims=True)
         row = dict(meta, arm=name, pop_rps=float(np.mean([rps(Pm, Hte[:, j]).mean() for j in range(len(R_eval))])), mean_spearman=float(pd.Series(Pm @ LV).corr(pd.Series(Hte.mean(1)), method="spearman")))

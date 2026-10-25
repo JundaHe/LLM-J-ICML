@@ -1,0 +1,2 @@
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel summeval_coherence8 --n_eval_raters 2 --device cpu > logs/probe_shrink_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel popquorn_off8 --n_eval_raters 2 --device cpu > logs/probe_shrink_popquorn_off8.log 2>&1
