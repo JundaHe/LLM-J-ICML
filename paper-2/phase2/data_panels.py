@@ -81,7 +81,9 @@ def load_dices(max_hist_chars=1200, quality=True):
     return dict(name="dices", texts=texts, H=H, K=3, item_ids=items.item_id.to_numpy(), rater_ids=pv.columns.astype(str).to_numpy(), prompt=prompt, prompt_hist=prompt_hist,
                 LEVEL_STRS=[str(l) for l in range(3)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct")
 
-LOADERS = {"bw": load_bw, "dices": load_dices}
+def load_dices_raw():
+    P = load_dices(quality=False); P["name"] = "dices_raw"; P["groups"] = np.asarray(P["item_ids"]); return P
+LOADERS = {"bw": load_bw, "dices": load_dices, "dices_raw": load_dices_raw}   # dices_raw: all 123 raters incl. the 19 flagged by the authors (RATER_QUALITY_PROTOCOL.md Q1)
 def load(panel, verbose=False):
     """Every panel must declare `groups` (the unit for group-disjoint splits). Single-row panels (bw, dices, scalabrino, chaosnli_*) use item_ids; multi-row panels must declare
     their sharing unit explicitly (SummEval: source document; HelpSteer2: prompt; POPQUORN/EmoBank/CSC: item or context). Codex round 13 found that commit/HelpSteer2 lacked this."""
