@@ -1,0 +1,57 @@
+{
+ "arm": "chen",
+ "panel": "summeval_coherence8",
+ "fold": 2,
+ "evaluator": 2,
+ "evaluator_id": "expert2",
+ "split": 0,
+ "perm_seed": 1000,
+ "opt_seed": 2000,
+ "alpha": 0.8,
+ "eps": 0.25,
+ "tau": 0.1,
+ "hist_k": 4,
+ "n_items": 1600,
+ "n_raters": 8,
+ "parts": {
+  "train": 960,
+  "calib": 160,
+  "test": 480
+ },
+ "model": "Qwen/Qwen2.5-7B-Instruct",
+ "train_frac": 0.5,
+ "train_pos": 4,
+ "budget_seed": 3002,
+ "n_train_full": 960,
+ "n_train_used": 480,
+ "rating_budget": 1920,
+ "n_steps": 240,
+ "final_loss": 0.7109007755294442,
+ "train_time_s": 667.8790080547333,
+ "max_prompt_tokens": 993,
+ "targets": [
+  0,
+  1,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "R_eval": [
+  5,
+  3,
+  1,
+  7,
+  6,
+  0,
+  4
+ ],
+ "evals": [
+  0,
+  1,
+  2
+ ],
+ "lora": true,
+ "note": "LoRA; rc arms condition on k rater-history examples from the train pool (evaluator: calib pool)"
+}

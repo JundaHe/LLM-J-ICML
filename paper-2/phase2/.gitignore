@@ -3,8 +3,10 @@ logs/
 __pycache__/
 *.log
 !results/lora/**/train.log
+!results/lora_budget/**/train.log
 # LoRA adapter weights (≈150 MB per run; retrain with lora_chain_*.sh). Predictions, items, meta and train logs ARE tracked.
 results/lora/**/lora/
+results/lora_budget/**/lora/
 # features of the removed commit panels
 features/commit_what/
 features/commit_why/
