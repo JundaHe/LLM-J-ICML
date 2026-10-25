@@ -1,0 +1,23 @@
+{
+ "arm": "chen0",
+ "fold": 1,
+ "split": 0,
+ "perm_seed": 1000,
+ "opt_seed": 2000,
+ "alpha": 0.8,
+ "eps": 0.25,
+ "n_steps": 120,
+ "final_loss": 0.4063644838053733,
+ "train_time_s": 1082.909878730774,
+ "target_raters": [
+  0,
+  2,
+  3,
+  4,
+  5
+ ],
+ "evaluator": 1,
+ "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+ "lora": true,
+ "note": "LoRA instead of Chen's full fine-tuning; no released code to parity-test"
+}

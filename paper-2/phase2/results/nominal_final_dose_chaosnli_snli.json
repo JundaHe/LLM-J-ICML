@@ -1,0 +1,90 @@
+{
+ "5": {
+  "mode": {
+   "mapped": 1.0,
+   "donor_tv_zero": 0.0,
+   "final_changed": 1.0,
+   "final_changed_1e8": 1.0,
+   "final_changed_1e6": 1.0,
+   "final_changed_f32": 1.0,
+   "final_tv_all": 0.28898678414096923,
+   "final_tv_changed": 0.28898678414096923
+  },
+  "zc": {
+   "mapped": 0.4111600587371512,
+   "donor_tv_zero": 0.0,
+   "final_changed": 0.4111600587371512,
+   "final_changed_1e8": 0.4111600587371512,
+   "final_changed_1e6": 0.4111600587371512,
+   "final_changed_f32": 0.4111600587371512,
+   "final_tv_all": 0.10807635793832598,
+   "final_tv_changed": 0.2627768085074757
+  }
+ },
+ "10": {
+  "mode": {
+   "mapped": 1.0,
+   "donor_tv_zero": 0.0,
+   "final_changed": 1.0,
+   "final_changed_1e8": 1.0,
+   "final_changed_1e6": 1.0,
+   "final_changed_f32": 1.0,
+   "final_tv_all": 0.23612334801762117,
+   "final_tv_changed": 0.23612334801762117
+  },
+  "zc": {
+   "mapped": 0.656754772393539,
+   "donor_tv_zero": 0.0,
+   "final_changed": 0.6317914831130689,
+   "final_changed_1e8": 0.5825991189427312,
+   "final_changed_1e6": 0.5825991189427312,
+   "final_changed_f32": 0.656754772393539,
+   "final_tv_all": 0.09935205545915932,
+   "final_tv_changed": 0.15725980660379837
+  }
+ },
+ "20": {
+  "mode": {
+   "mapped": 1.0,
+   "donor_tv_zero": 0.0,
+   "final_changed": 1.0,
+   "final_changed_1e8": 1.0,
+   "final_changed_1e6": 1.0,
+   "final_changed_f32": 1.0,
+   "final_tv_all": 0.21648311306901613,
+   "final_tv_changed": 0.21648311306901613
+  },
+  "zc": {
+   "mapped": 0.8935389133627019,
+   "donor_tv_zero": 0.0,
+   "final_changed": 0.7808370044052864,
+   "final_changed_1e8": 0.6563876651982379,
+   "final_changed_1e6": 0.6563876651982379,
+   "final_changed_f32": 0.8935389133627019,
+   "final_tv_all": 0.08791134731506164,
+   "final_tv_changed": 0.11274978884597177
+  }
+ },
+ "50": {
+  "mode": {
+   "mapped": 1.0,
+   "donor_tv_zero": 0.0,
+   "final_changed": 1.0,
+   "final_changed_1e8": 1.0,
+   "final_changed_1e6": 1.0,
+   "final_changed_f32": 1.0,
+   "final_tv_all": 0.19536710719530104,
+   "final_tv_changed": 0.19536710719530104
+  },
+  "zc": {
+   "mapped": 0.9717327459618209,
+   "donor_tv_zero": 0.0,
+   "final_changed": 0.8571953010279001,
+   "final_changed_1e8": 0.7694566813509546,
+   "final_changed_1e6": 0.7694566813509546,
+   "final_changed_f32": 0.9698972099853156,
+   "final_tv_all": 0.07625524905164731,
+   "final_tv_changed": 0.08895412412370696
+  }
+ }
+}

@@ -1,0 +1,15 @@
+\begin{table}[t]\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{LoRA judges (Qwen2.5-7B-Instruct; three optimizer seeds, each paired with one item-assignment seed; three held-out folds; split 0). Raw RPS contrasts with 95\% crossed-bootstrap intervals over the three joint seed clusters and test documents (SummEval) or test items (POPQUORN); calibrated sensitivities resample calibration units and refit maps. Seed-marginal raw means, perm $-$ chen: SummEval -0.0007 / +0.0007 / -0.0002, POPQUORN -0.0002 / -0.0002 / +0.0005; perm\_mode $-$ chen: SummEval +0.0095 / +0.0130 / +0.0136, POPQUORN +0.0028 / +0.0024 / +0.0036. Dose: SummEval perm changed 80.5--82.6\% of targets (TV among changed 0.335--0.351), POPQUORN 68.7--71.7\% (0.295--0.301); perm\_mode changed 100\%. POPQUORN position folds hold out ratings, not persons; a rater-aware (item $\times$ user) bootstrap widens its intervals (Section~4).}
+\label{tab:summeval}
+\resizebox{\columnwidth}{!}{\begin{tabular}{llll}\toprule
+contrast & raw & common map & arm-specific \\ \midrule
+\multicolumn{4}{l}{\emph{SummEval coherence (3 persistent experts held out; document-level inference)}} \\
+perm $-$ chen (mode+mean preserved) & $-0.0001$ [-0.0011, +0.0011] & $+0.0000$ [-0.0006, +0.0008] & $+0.0003$ [-0.0015, +0.0022] \\
+perm\_mode $-$ chen (mode only) & $+0.0120$ [+0.0086, +0.0155] & $+0.0077$ [+0.0053, +0.0109] & $+0.0084$ [+0.0051, +0.0121] \\
+perm\_mode $-$ perm & $+0.0121$ [+0.0091, +0.0150] & $+0.0077$ [+0.0053, +0.0107] & $+0.0081$ [+0.0050, +0.0115] \\
+\midrule
+\multicolumn{4}{l}{\emph{POPQUORN offensiveness (3 annotation positions held out; item-level inference conditional on the rater panel)}} \\
+perm $-$ chen (mode+mean preserved) & $+0.0000$ [-0.0009, +0.0009] & $+0.0000$ [-0.0007, +0.0008] & $-0.0000$ [-0.0009, +0.0008] \\
+perm\_mode $-$ chen (mode only) & $+0.0029$ [+0.0009, +0.0050] & $+0.0039$ [+0.0022, +0.0060] & $+0.0034$ [+0.0016, +0.0053] \\
+perm\_mode $-$ perm & $+0.0029$ [+0.0009, +0.0050] & $+0.0038$ [+0.0021, +0.0059] & $+0.0035$ [+0.0017, +0.0053] \\
+\bottomrule\end{tabular}}\end{table}

@@ -1,0 +1,36 @@
+{
+ "arm": "perm",
+ "fold": 5,
+ "split": 0,
+ "perm_seed": 1000,
+ "opt_seed": 2000,
+ "alpha": 0.8,
+ "eps": 0.25,
+ "n_train": 480,
+ "n_changed": 159,
+ "changed_fraction": 0.33125,
+ "dose_tv_mean": 0.4062893081761005,
+ "dose_tv_max": 0.6000000000000001,
+ "panel": "commit",
+ "criterion": "why",
+ "n_items": 800,
+ "parts": {
+  "train": 480,
+  "calib": 80,
+  "test": 240
+ },
+ "n_steps": 120,
+ "final_loss": 0.6751170400879346,
+ "train_time_s": 1314.0254335403442,
+ "target_raters": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "evaluator": 5,
+ "model": "deepseek-ai/deepseek-coder-6.7b-instruct",
+ "lora": true,
+ "note": "LoRA instead of Chen's full fine-tuning; no released code to parity-test"
+}

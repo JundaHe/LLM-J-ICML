@@ -1,0 +1,11 @@
+You are reviewing an in-progress empirical ML paper (AI top venue target) as a hostile but fair methodologist. Read-only access to /mnt/hdd2/jundahe/LLM-J/paper-2/phase2/. Read first: PROGRESS.md Hours 18–20, RESULTS_TABLES.md T8 (new bridge) and T2b/T2c, your previous rounds reviews/codex_round9_2026-10-11.md, bridge_commit.py, results/bridge/commit_what.jsonl and commit_why.jsonl.
+New since round 9:
+1. Heads-vs-LoRA bridge on commit (T8): heads trained on exactly the LoRA partition with the LoRA's own realised perm_mode donor assignment (asserted equal to the LoRA certificates, 12/12). Heads show a positive mode-only penalty in 12/12 folds (What +0.0038 fold-SEM 0.0012; Why +0.0090 fold-SEM 0.0019; optimizer-seed SEM ≤ 0.0013); single-run LoRA perm_mode − chen is fold-heterogeneous with both signs (What −0.0007; Why +0.0005; range −0.0086…+0.0059). LoRA hard − chen is 0.4–0.6× the heads' hard − soft.
+2. DICES heads: pmode contrast −0.0015±0.0008 (old code version), +0.0022±0.0011 (v6), +0.0039±0.0014 (gxr run) — same code logic, different RNG streams; BW v6 identical to v3 (unique vectors). 
+3. chain7b SummEval perm arms (histogram matching) finished for seeds 2001/2002; s0 rerun and perm_mode pending; block analysis ≈ 3 h away. The chain7b commit block (optimizer seeds 2001/2002 × folds 0–2 × arms) follows.
+Questions:
+A. Bridge interpretation: what may we conclude from T8, and what exactly may we not? Give the paragraph you would accept. Does it justify presenting frozen-feature heads as the primary multi-panel instrument and LoRA as a two-panel confirmation (currently the reverse)? What additional bridge arm would discriminate "objective (adversarial term)" from "representation updating" from "optimizer variance" at modest cost (we have GPU 0 after the chains; LoRA run ≈ 10–18 min)?
+B. The LoRA conditional CIs (item-clustered, conditional on one trained model) vs fold-to-fold spread: how must the T3 intervals be labelled, and what is the minimum optimizer-seed design that makes a LoRA perm_mode − chen claim on commit defensible?
+C. DICES pmode sign instability across RNG streams: how to report, and does it affect the G×R held-out table (DICES was a "✓")?
+D. Anything in Hours 18–20 you would veto; the top three actions before a first draft, updated.
+Write markdown with sections A–D and a short verdict.

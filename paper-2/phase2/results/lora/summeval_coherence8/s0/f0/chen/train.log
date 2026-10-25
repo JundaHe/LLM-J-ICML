@@ -1,0 +1,27 @@
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.24it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.26it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.27it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.32it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:03<00:00,  1.30it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/240 loss 4.3230 38s maxlen 938 mem 16.7GB
+step 20/240 loss 0.8634 76s maxlen 944 mem 16.7GB
+step 30/240 loss 0.7740 113s maxlen 987 mem 16.7GB
+step 40/240 loss 0.7079 154s maxlen 993 mem 16.7GB
+step 50/240 loss 0.7336 195s maxlen 993 mem 16.7GB
+step 60/240 loss 0.7491 234s maxlen 993 mem 16.7GB
+step 70/240 loss 0.7791 271s maxlen 993 mem 16.7GB
+step 80/240 loss 0.7352 309s maxlen 993 mem 16.7GB
+step 90/240 loss 0.7501 349s maxlen 993 mem 16.7GB
+step 100/240 loss 0.7648 388s maxlen 993 mem 16.7GB
+step 110/240 loss 0.7639 427s maxlen 993 mem 16.7GB
+step 120/240 loss 0.7579 465s maxlen 993 mem 16.7GB
+step 130/240 loss 0.7159 504s maxlen 993 mem 16.7GB
+step 140/240 loss 0.7313 543s maxlen 993 mem 16.7GB
+step 150/240 loss 0.6887 583s maxlen 993 mem 16.8GB
+step 160/240 loss 0.6896 622s maxlen 993 mem 16.8GB
+step 170/240 loss 0.7000 660s maxlen 993 mem 16.8GB
+step 180/240 loss 0.8070 698s maxlen 993 mem 16.8GB
+step 190/240 loss 0.6742 738s maxlen 993 mem 16.8GB
+step 200/240 loss 0.6636 777s maxlen 993 mem 16.8GB
+step 210/240 loss 0.7448 815s maxlen 993 mem 16.8GB
+step 220/240 loss 0.7352 854s maxlen 993 mem 16.8GB
+step 230/240 loss 0.6555 895s maxlen 993 mem 16.8GB
+step 240/240 loss 0.6623 935s maxlen 993 mem 16.8GB
+done

@@ -1,0 +1,24 @@
+# --- not needed / regenerable ---
+logs/
+__pycache__/
+*.log
+!results/lora/**/train.log
+# LoRA adapter weights (≈150 MB per run; retrain with lora_chain_*.sh). Predictions, items, meta and train logs ARE tracked.
+results/lora/**/lora/
+# features of the removed commit panels
+features/commit_what/
+features/commit_why/
+# features > 100 MB are tracked as split parts (*.npz.part-*); run ./restore_features.sh after cloning
+features/hs2_help5/Qwen2.5-7B-Instruct.npz
+features/popquorn_pol5/Qwen2.5-7B-Instruct.npz
+# LaTeX build artefacts
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.bbl
+latex/*.blg
+latex/*.toc
+latex/build*.log
+latex/bib.log
+latex/page-*.png
+latex/body_raw.tex

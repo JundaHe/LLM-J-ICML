@@ -1,0 +1,1 @@
+until ! ps -eo cmd | grep -q '[b]ash /mnt/hdd2/jundahe/LLM-J/paper-2/idea-stage/pilot/run_queue.sh 0 why'; do sleep 60; done; bash /mnt/hdd2/jundahe/LLM-J/paper-2/idea-stage/pilot/run_queue.sh 0 why chen0:0:1 chen0:3:1 chen0:0:2 chen0:3:2

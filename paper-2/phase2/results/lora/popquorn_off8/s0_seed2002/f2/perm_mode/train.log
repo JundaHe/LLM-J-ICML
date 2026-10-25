@@ -1,0 +1,25 @@
+[perm certificate] changed 819/819 = 1.000; dose TV mean 0.276; |Δmean| max 2.000
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:02,  1.29it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:01<00:01,  1.32it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:02<00:00,  1.32it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.37it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:02<00:00,  1.35it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/205 loss 3.1791 21s maxlen 240 mem 16.1GB
+step 20/205 loss 0.6158 42s maxlen 240 mem 16.1GB
+step 30/205 loss 0.6540 61s maxlen 240 mem 16.1GB
+step 40/205 loss 0.5371 81s maxlen 240 mem 16.1GB
+step 50/205 loss 0.4588 101s maxlen 240 mem 16.1GB
+step 60/205 loss 0.4940 121s maxlen 240 mem 16.1GB
+step 70/205 loss 0.5850 140s maxlen 240 mem 16.1GB
+step 80/205 loss 0.5443 160s maxlen 240 mem 16.1GB
+step 90/205 loss 0.4940 181s maxlen 240 mem 16.1GB
+step 100/205 loss 0.5470 202s maxlen 240 mem 16.1GB
+step 110/205 loss 0.4684 222s maxlen 240 mem 16.1GB
+step 120/205 loss 0.4794 242s maxlen 240 mem 16.1GB
+step 130/205 loss 0.4750 261s maxlen 240 mem 16.1GB
+step 140/205 loss 0.5275 282s maxlen 240 mem 16.1GB
+step 150/205 loss 0.5005 302s maxlen 240 mem 16.1GB
+step 160/205 loss 0.4824 322s maxlen 240 mem 16.1GB
+step 170/205 loss 0.4781 342s maxlen 240 mem 16.1GB
+step 180/205 loss 0.4570 362s maxlen 240 mem 16.1GB
+step 190/205 loss 0.4676 382s maxlen 240 mem 16.1GB
+step 200/205 loss 0.4833 403s maxlen 240 mem 16.1GB
+step 205/205 loss 0.4796 413s maxlen 240 mem 16.1GB
+done

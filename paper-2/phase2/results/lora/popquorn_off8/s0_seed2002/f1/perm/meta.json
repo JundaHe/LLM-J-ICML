@@ -1,0 +1,62 @@
+{
+ "arm": "perm",
+ "panel": "popquorn_off8",
+ "fold": 1,
+ "evaluator": 1,
+ "evaluator_id": "pos1",
+ "split": 0,
+ "perm_seed": 2502,
+ "opt_seed": 2002,
+ "alpha": 0.8,
+ "eps": 0.25,
+ "tau": 0.1,
+ "hist_k": 4,
+ "n_items": 1366,
+ "n_raters": 8,
+ "parts": {
+  "train": 819,
+  "calib": 137,
+  "test": 410
+ },
+ "model": "Qwen/Qwen2.5-7B-Instruct",
+ "mapping_hash": "d2d9ed16a233c82e545d5280581364c2846b980d",
+ "target_hash": "c1e57ada0a69496744763c00b49e3ae8df4458b3",
+ "n_train": 819,
+ "n_changed": 581,
+ "changed_fraction": 0.7094017094017094,
+ "n_tv_zero": 0,
+ "matching": "histogram_class",
+ "dose_tv_mean": 0.30046717482173585,
+ "dose_tv_max": 0.5714285714285714,
+ "mean_shift_mean": 0.0,
+ "mean_shift_max": 0.0,
+ "n_steps": 205,
+ "final_loss": 0.42423173394054176,
+ "train_time_s": 452.87797570228577,
+ "max_prompt_tokens": 240,
+ "targets": [
+  0,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7
+ ],
+ "R_eval": [
+  5,
+  3,
+  7,
+  2,
+  4,
+  6,
+  0
+ ],
+ "evals": [
+  0,
+  1,
+  2
+ ],
+ "lora": true,
+ "note": "LoRA; rc arms condition on k rater-history examples from the train pool (evaluator: calib pool)"
+}

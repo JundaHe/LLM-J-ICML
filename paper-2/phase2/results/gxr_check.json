@@ -1,0 +1,36 @@
+{
+ "sign_concordance": 0.75,
+ "spearman_GR_E": 0.5476190476190477,
+ "per_panel": {
+  "GR": {
+   "bw": 0.0029,
+   "commit_what": 0.0415,
+   "commit_why": 0.029,
+   "dices": 0.0373,
+   "hs2_help5": 0.0005,
+   "scalabrino": -0.0075,
+   "summeval_coherence8": 0.089,
+   "summeval_relevance8": 0.0535
+  },
+  "E": {
+   "bw": -0.0009,
+   "commit_what": 0.008,
+   "commit_why": 0.0124,
+   "dices": 0.0039,
+   "hs2_help5": 0.0003,
+   "scalabrino": 0.0017,
+   "summeval_coherence8": 0.0061,
+   "summeval_relevance8": 0.0035
+  }
+ },
+ "sign_match": {
+  "bw": false,
+  "commit_what": true,
+  "commit_why": true,
+  "dices": true,
+  "hs2_help5": true,
+  "scalabrino": false,
+  "summeval_coherence8": true,
+  "summeval_relevance8": true
+ }
+}

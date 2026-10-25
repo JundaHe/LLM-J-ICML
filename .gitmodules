@@ -1,0 +1,9 @@
+[submodule "paper-2/phase2/data/dices_repo"]
+	path = paper-2/phase2/data/dices_repo
+	url = https://github.com/google-research-datasets/dices-dataset
+[submodule "paper-2/phase2/data/popquorn"]
+	path = paper-2/phase2/data/popquorn
+	url = https://github.com/Jiaxin-Pei/potato-prolific-dataset
+[submodule "paper-2/phase2/data/emobank"]
+	path = paper-2/phase2/data/emobank
+	url = https://github.com/JULIELab/EmoBank

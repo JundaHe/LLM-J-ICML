@@ -1,0 +1,28 @@
+{
+ "arm": "perm",
+ "fold": 3,
+ "split": 1,
+ "perm_seed": 1001,
+ "opt_seed": 2001,
+ "alpha": 0.8,
+ "eps": 0.25,
+ "n_train": 480,
+ "n_changed": 137,
+ "changed_fraction": 0.28541666666666665,
+ "dose_tv_mean": 0.4014598540145985,
+ "dose_tv_max": 0.6,
+ "n_steps": 120,
+ "final_loss": 0.46792634573066605,
+ "train_time_s": 1195.6455538272858,
+ "target_raters": [
+  0,
+  1,
+  2,
+  4,
+  5
+ ],
+ "evaluator": 3,
+ "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+ "lora": true,
+ "note": "LoRA instead of Chen's full fine-tuning; no released code to parity-test"
+}

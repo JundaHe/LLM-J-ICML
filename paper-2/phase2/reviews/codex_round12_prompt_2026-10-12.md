@@ -1,0 +1,8 @@
+You are reviewing the near-final TEXT of an empirical ML paper (AI top venue target) as a hostile but fair reviewer and a careful copy-editor of claims. Read-only access to /mnt/hdd2/jundahe/LLM-J/paper-2/phase2/. Read in this order: PAPER_DRAFT.md (all sections: abstract, §1 intro, §1b related-work stub, §2 design, §3 heads results, §4 LoRA results, §5 G×R, §5b discussion stub, §6 limitations), RESULTS_TABLES.md (T2b/T2c, T3, T3b, T4, T5, T7, T8), results/MANIFEST.json (hashes of every artefact), your previous rounds reviews/codex_round11_2026-10-12.md and codex_round10_2026-10-11.md. PROGRESS.md Hours 24–27 explain the state: GPU 0 hardware fault has blocked the fixed-donor commit block since 01:06; everything else is frozen.
+Tasks:
+A. Sentence-level vetoes on §1 (intro), §5b (discussion) and §6 (limitations): quote each sentence you would not accept and give a replacement. Check every quantitative claim in §1/§5b/§6 against the tables.
+B. Consistency audit: abstract vs §3/§4 vs T2b/T3b/T5 — list every number or qualifier that disagrees (including rounding, dose figures, "every seed and fold" style claims, interval labels).
+C. §3/§4 prose: anything that over-reads descriptive SEMs, anything that reads as a mechanism claim, anything that violates your earlier vetoes (list in PAPER_OUTLINE.md rounds 9–11 blocks).
+D. The three biggest remaining risks for an AI-venue submission (methodological or framing), each with the cheapest mitigation available without a GPU, and what to do if the commit block cannot be completed before submission.
+E. Suggest a title and a one-sentence contribution statement consistent with the evidence.
+Write markdown with sections A–E and a short verdict.

@@ -1,0 +1,10 @@
+canonical values: 780; 4-decimal numbers in draft: 82; unmatched: 0
+OK   perm−chen raw in draft
+OK   perm_mode−chen raw est+interval together in draft (some occurrence)
+OK   mode-only positive in all seed/fold marginals
+OK   T2b lists exactly ten primary ordinal panels
+OK   DICES-990 pmmx dose 0.985 (TV>1e-9 rule) in draft
+OK   pmmx range −0.0024…+0.0006 in draft (no stale +0.0005 range)
+OK   zero-TV wording is pre-projection only
+OK   no commit / bridge / VERIFY / arXiv-id residue in draft
+OK   required artefacts present

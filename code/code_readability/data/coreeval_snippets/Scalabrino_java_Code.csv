@@ -1,0 +1,3209 @@
+snippet_id,code_snippet,min_score,max_score,mean_score,language,LOC,cyclomatic_complexity,code_type,Dataset
+1,"@Override
+    public void runTest(final Test test, final TestResult result) {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // inlined due to limitation in VA/Java
+                    //ActiveTestSuite.super.runTest(test, result);
+                    test.run(result);
+                } finally {
+                    ActiveTestSuite.this.runFinished();
+                }
+            }
+        };
+        t.start();
+    }",2.0,5.0,4.222222222222222,java,14,2,Code,Scalabrino
+2,"/**
+     * ...as the moon sets over the early morning Merlin, Oregon
+     * mountains, our intrepid adventurers type...
+     */
+    static public Test createTest(Class<?> theClass, String name) {
+        Constructor<?> constructor;
+        try {
+            constructor = getTestConstructor(theClass);
+        } catch (NoSuchMethodException e) {
+            return warning(""Class "" + theClass.getName() + "" has no public constructor TestCase(String name) or TestCase()"");
+        }
+        Object test;
+        try {
+            if (constructor.getParameterTypes().length == 0) {
+                test = constructor.newInstance(new Object[0]);
+                if (test instanceof TestCase) {
+                    ((TestCase) test).setName(name);
+                }
+            } else {
+                test = constructor.newInstance(new Object[]{name});
+            }
+        } catch (InstantiationException e) {
+            return (warning(""Cannot instantiate test case: "" + name + "" ("" + exceptionToString(e) + "")""));
+        } catch (InvocationTargetException e) {
+            return (warning(""Exception in constructor: "" + name + "" ("" + exceptionToString(e.getTargetException()) + "")""));
+        } catch (IllegalAccessException e) {
+            return (warning(""Cannot access test case: "" + name + "" ("" + exceptionToString(e) + "")""));
+        }
+        return (Test) test;
+    }",2.0,5.0,3.555555555555556,java,26,7,Code,Scalabrino
+3,"/**
+     * Provides serialization support.
+     *
+     * @param stream  the input stream (<code>null</code> not permitted).
+     *
+     * @throws IOException  if there is an I/O error.
+     * @throws ClassNotFoundException  if there is a classpath problem.
+     */
+    private void readObject(ObjectInputStream stream)
+        throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
+        this.titlePaint = SerialUtilities.readPaint(stream);
+        this.subtitlePaint = SerialUtilities.readPaint(stream);
+        this.chartBackgroundPaint = SerialUtilities.readPaint(stream);
+        this.legendBackgroundPaint = SerialUtilities.readPaint(stream);
+        this.legendItemPaint = SerialUtilities.readPaint(stream);
+        this.plotBackgroundPaint = SerialUtilities.readPaint(stream);
+        this.plotOutlinePaint = SerialUtilities.readPaint(stream);
+        this.labelLinkPaint = SerialUtilities.readPaint(stream);
+        this.baselinePaint = SerialUtilities.readPaint(stream);
+        this.domainGridlinePaint = SerialUtilities.readPaint(stream);
+        this.rangeGridlinePaint = SerialUtilities.readPaint(stream);
+        this.crosshairPaint = SerialUtilities.readPaint(stream);
+        this.axisLabelPaint = SerialUtilities.readPaint(stream);
+        this.tickLabelPaint = SerialUtilities.readPaint(stream);
+        this.itemLabelPaint = SerialUtilities.readPaint(stream);
+        this.shadowPaint = SerialUtilities.readPaint(stream);
+        this.thermometerPaint = SerialUtilities.readPaint(stream);
+        this.wallPaint = SerialUtilities.readPaint(stream);
+        this.errorIndicatorPaint = SerialUtilities.readPaint(stream);
+        this.gridBandPaint = SerialUtilities.readPaint(stream);
+        this.gridBandAlternatePaint = SerialUtilities.readPaint(stream);
+    }",2.0,5.0,3.555555555555556,java,25,1,Code,Scalabrino
+4,"/**
+     * Constructs a panel that displays the specified chart.
+     *
+     * @param chart  the chart.
+     */
+    public ChartPanel(JFreeChart chart) {
+
+        this(
+            chart,
+            DEFAULT_WIDTH,
+            DEFAULT_HEIGHT,
+            DEFAULT_MINIMUM_DRAW_WIDTH,
+            DEFAULT_MINIMUM_DRAW_HEIGHT,
+            DEFAULT_MAXIMUM_DRAW_WIDTH,
+            DEFAULT_MAXIMUM_DRAW_HEIGHT,
+            DEFAULT_BUFFER_USED,
+            true,  // properties
+            true,  // save
+            true,  // print
+            true,  // zoom
+            true   // tooltips
+        );
+
+    }",3.0,5.0,4.333333333333333,java,17,1,Code,Scalabrino
+5,"/**
+     * static initializer, register all appropriate notations.
+     */
+    static void init() {
+        NotationProviderFactory2 npf = NotationProviderFactory2.getInstance();
+        NotationName name = /*Notation.findNotation(""Java"");*/
+            Notation.makeNotation(
+                    ""Java"",
+                    null,
+                    ResourceLoaderWrapper.lookupIconResource(""JavaNotation""));
+
+        npf.addNotationProvider(
+                NotationProviderFactory2.TYPE_NAME,
+                name, ModelElementNameNotationJava.class);
+        npf.addNotationProvider(
+                NotationProviderFactory2.TYPE_ATTRIBUTE,
+                name, AttributeNotationJava.class);
+        npf.addNotationProvider(
+                NotationProviderFactory2.TYPE_OPERATION,
+                name, OperationNotationJava.class);
+        npf.addNotationProvider(
+                NotationProviderFactory2.TYPE_ASSOCIATION_END_NAME,
+                name, AssociationEndNameNotationJava.class);
+        npf.addNotationProvider(
+                NotationProviderFactory2.TYPE_ASSOCIATION_NAME,
+                name, AssociationNameNotationJava.class);
+    }",3.0,5.0,4.0,java,23,1,Code,Scalabrino
+6,"/**
+     * {@inheritDoc}
+     *
+     * Overridden to find the start of a line-end.
+     */
+    public boolean addChar(char c) {
+	if (c == '\n') {
+	    hasLf = true;
+	    return true;
+	}
+
+	if (c == '\r') {
+	    hasCr = true;
+	    return true;
+	}
+
+	return false;
+    }",3.0,5.0,4.555555555555555,java,11,3,Code,Scalabrino
+7,"/**
+     * Loads the bundle (if not already loaded).
+     *
+     * @param name The name of the bundle to load.
+     */
+    private static void loadBundle(String name) {
+        if (bundles.containsKey(name)) {
+            return;
+        }
+        String resource = BUNDLES_PATH + ""."" + name;
+        ResourceBundle bundle = null;
+        try {
+            LOG.debug(""Loading "" + resource);
+            bundle = ResourceBundle.getBundle(resource, Locale.getDefault());
+        } catch (MissingResourceException e1) {
+            LOG.debug(""Resource "" + resource
+		      + "" not found in the default class loader."");
+
+	    Iterator iter = classLoaders.iterator();
+	    while (iter.hasNext()) {
+		ClassLoader cl = (ClassLoader) iter.next();
+		try {
+		    LOG.debug(""Loading "" + resource + "" from "" + cl);
+		    bundle =
+			ResourceBundle.getBundle(resource,
+						 Locale.getDefault(),
+						 cl);
+		    break;
+		} catch (MissingResourceException e2) {
+		    LOG.debug(""Resource "" + resource + "" not found in "" + cl);
+		}
+	    }
+        }
+
+        bundles.put(name, bundle);
+    }",1.0,5.0,3.0,java,29,5,Code,Scalabrino
+8,"protected synchronized String evalToString(
+            Object self,
+            String expr,
+            String sep)
+    	throws ExpansionException {
+
+        _scratchBindings.put(""self"", self);
+        java.util.List values = eval(_scratchBindings, expr);
+        _strBuf.setLength(0);
+        Iterator iter = values.iterator();
+        while (iter.hasNext()) {
+            Object v = iter.next();
+            if (Model.getFacade().isAModelElement(v)) {
+                v = Model.getFacade().getName(v);
+                if ("""".equals(v)) {
+                    v = Translator.localize(""misc.name.anon"");
+                }
+            }
+            if (Model.getFacade().isAExpression(v)) {
+                v = Model.getFacade().getBody(v);
+                if ("""".equals(v)) {
+                    v = ""(unspecified)"";
+                }
+            }
+            if (!"""".equals(v)) {
+                _strBuf.append(v);
+                if (iter.hasNext()) {
+                    _strBuf.append(sep);
+                }
+            }
+        }
+        return _strBuf.toString();
+    }",1.0,5.0,3.111111111111111,java,32,8,Code,Scalabrino
+9,"/**
+     * Notify all listeners that have registered interest for
+     * notification on this event type.  The event instance
+     * is lazily created using the parameters passed into
+     * the fire method.
+     * @see EventListenerList
+     */
+    public void fireTreeStructureChanged(
+					 Object source,
+					 Object[] path,
+					 int[] childIndices,
+					 Object[] children) {
+
+        // Guaranteed to return a non-null array
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        // Process the listeners last to first, notifying
+        // those that are interested in this event
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == TreeModelListener.class) {
+                // Lazily create the event:
+                if (e == null)
+                    e =
+                        new TreeModelEvent(
+					   source,
+					   path,
+					   childIndices,
+					   children);
+                ((TreeModelListener) listeners[i + 1]).treeStructureChanged(e);
+            }
+        }
+    }",2.0,5.0,3.7777777777777777,java,20,1,Code,Scalabrino
+10,"private void myDoubleClick(Object src) {
+	Object sel = null;
+	Diagram d = null;
+	if (src == resultsTable) {
+	    int row = resultsTable.getSelectionModel().getMinSelectionIndex();
+	    if (row < 0) {
+                return;
+            }
+	    sel = results.elementAt(row);
+	    d = (Diagram) diagrams.elementAt(row);
+	} else if (src == relatedTable) {
+	    int row = relatedTable.getSelectionModel().getMinSelectionIndex();
+	    if (row < 0) {
+                return;
+            }
+	    numJumpToRelated++;
+	    sel = related.elementAt(row);
+	}
+
+	if (d != null) {
+            LOG.debug(""go "" + sel + "" in "" + d.getName());
+            TargetManager.getInstance().setTarget(d);
+        }
+	TargetManager.getInstance().setTarget(sel);
+    }",2.0,5.0,3.2222222222222223,java,24,6,Code,Scalabrino
+11,"public void propertyChange(PropertyChangeEvent evt) {
+        // the project changed
+        if (evt.getPropertyName()
+            .equals(ProjectManager.CURRENT_PROJECT_PROPERTY_NAME)) {
+            Project p = (Project) evt.getNewValue();
+            if (p != null) {
+                titleHandler.buildTitle(p.getName(), null);
+                //Designer.TheDesigner.getToDoList().removeAllElements();
+                Designer.setCritiquingRoot(p);
+                // update all panes
+                TargetManager.getInstance().setTarget(p.getInitialTarget());
+            }
+        }
+    }",2.0,5.0,4.0,java,11,3,Code,Scalabrino
+13,"private Object createTestUsingFieldInjection() throws Exception {
+            List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+            if (annotatedFieldsByParameter.size() != fParameters.length) {
+                throw new Exception(""Wrong number of parameters and @Parameter fields."" +
+                        "" @Parameter fields counted: "" + annotatedFieldsByParameter.size() + "", available parameters: "" + fParameters.length + ""."");
+            }
+            Object testClassInstance = getTestClass().getJavaClass().newInstance();
+            for (FrameworkField each : annotatedFieldsByParameter) {
+                Field field = each.getField();
+                Parameter annotation = field.getAnnotation(Parameter.class);
+                int index = annotation.value();
+                try {
+                    field.set(testClassInstance, fParameters[index]);
+                } catch (IllegalArgumentException iare) {
+                    throw new Exception(getTestClass().getName() + "": Trying to set "" + field.getName() +
+                            "" with the value "" + fParameters[index] +
+                            "" that is not the right type ("" + fParameters[index].getClass().getSimpleName() + "" instead of "" +
+                            field.getType().getSimpleName() + "")."", iare);
+                }
+            }
+            return testClassInstance;
+        }",2.0,5.0,3.555555555555556,java,22,2,Code,Scalabrino
+14,"@Override
+        protected void validateFields(List<Throwable> errors) {
+            super.validateFields(errors);
+            if (fieldsAreAnnotated()) {
+                List<FrameworkField> annotatedFieldsByParameter = getAnnotatedFieldsByParameter();
+                int[] usedIndices = new int[annotatedFieldsByParameter.size()];
+                for (FrameworkField each : annotatedFieldsByParameter) {
+                    int index = each.getField().getAnnotation(Parameter.class).value();
+                    if (index < 0 || index > annotatedFieldsByParameter.size() - 1) {
+                        errors.add(
+                                new Exception(""Invalid @Parameter value: "" + index + "". @Parameter fields counted: "" +
+                                        annotatedFieldsByParameter.size() + "". Please use an index between 0 and "" +
+                                        (annotatedFieldsByParameter.size() - 1) + ""."")
+                        );
+                    } else {
+                        usedIndices[index]++;
+                    }
+                }
+                for (int index = 0; index < usedIndices.length; index++) {
+                    int numberOfUse = usedIndices[index];
+                    if (numberOfUse == 0) {
+                        errors.add(new Exception(""@Parameter("" + index + "") is never used.""));
+                    } else if (numberOfUse > 1) {
+                        errors.add(new Exception(""@Parameter("" + index + "") is used more than once ("" + numberOfUse + "").""));
+                    }
+                }
+            }
+        }",2.0,5.0,3.555555555555556,java,28,4,Code,Scalabrino
+15,"String[] parseOptions(String[] args) {
+        for (int i = 0; i != args.length; ++i) {
+            String arg = args[i];
+
+            try {
+                if (arg.equals(""--"")) {
+                    return copyArray(args, i + 1, args.length);
+                } else if (arg.startsWith(""--"")) {
+                    if (arg.startsWith(""--filter="") || arg.equals(""--filter"")) {
+                        String filterSpec;
+                        if (arg.equals(""--filter"")) {
+                            ++i;
+
+                            if (i < args.length) {
+                                filterSpec = args[i];
+                            } else {
+                                parserErrors.add(new CommandLineParserError(arg + "" value not specified""));
+
+                                break;
+                            }
+                        } else {
+                            filterSpec = arg.substring(arg.indexOf('=') + 1);
+                        }
+
+                        filter = filter.intersect(FilterFactories.createFilterFromFilterSpec(
+                                createSuiteDescription(arg), filterSpec));
+                    } else {
+                        parserErrors.add(new CommandLineParserError(""JUnit knows nothing about the "" + arg + "" option""));
+                    }
+                } else {
+                    return copyArray(args, i, args.length);
+                }
+            } catch (FilterFactory.FilterNotCreatedException e) {
+                parserErrors.add(e);
+            }
+        }
+
+        return new String[]{};
+    }",1.0,5.0,2.6666666666666665,java,34,9,Code,Scalabrino
+16,"private static Set<String> buildHintsSet() {
+		HashSet<String> hints = new HashSet<String>();
+		hints.add( HINT_TIMEOUT );
+		hints.add( SPEC_HINT_TIMEOUT );
+		hints.add( HINT_COMMENT );
+		hints.add( HINT_FETCH_SIZE );
+		hints.add( HINT_CACHE_REGION );
+		hints.add( HINT_CACHEABLE );
+		hints.add( HINT_READONLY );
+		hints.add( HINT_CACHE_MODE );
+		hints.add( HINT_FLUSH_MODE );
+		hints.add( HINT_NATIVE_LOCKMODE );
+		hints.add( HINT_FETCHGRAPH );
+		hints.add( HINT_LOADGRAPH );
+		return java.util.Collections.unmodifiableSet( hints );
+	}",3.0,5.0,4.444444444444445,java,16,1,Code,Scalabrino
+18,"/**
+	 * Constructs a PostgresPlusDialect
+	 */
+	public PostgresPlusDialect() {
+		super();
+
+		registerFunction( ""ltrim"", new StandardSQLFunction( ""ltrim"" ) );
+		registerFunction( ""rtrim"", new StandardSQLFunction( ""rtrim"" ) );
+		registerFunction( ""soundex"", new StandardSQLFunction( ""soundex"" ) );
+		registerFunction( ""sysdate"", new NoArgSQLFunction( ""sysdate"", StandardBasicTypes.DATE, false ) );
+		registerFunction( ""rowid"", new NoArgSQLFunction( ""rowid"", StandardBasicTypes.LONG, false ) );
+		registerFunction( ""rownum"", new NoArgSQLFunction( ""rownum"", StandardBasicTypes.LONG, false ) );
+		registerFunction( ""instr"", new StandardSQLFunction( ""instr"", StandardBasicTypes.INTEGER ) );
+		registerFunction( ""lpad"", new StandardSQLFunction( ""lpad"", StandardBasicTypes.STRING ) );
+		registerFunction( ""replace"", new StandardSQLFunction( ""replace"", StandardBasicTypes.STRING ) );
+		registerFunction( ""rpad"", new StandardSQLFunction( ""rpad"", StandardBasicTypes.STRING ) );
+		registerFunction( ""translate"", new StandardSQLFunction( ""translate"", StandardBasicTypes.STRING ) );
+		registerFunction( ""substring"", new StandardSQLFunction( ""substr"", StandardBasicTypes.STRING ) );
+		registerFunction( ""coalesce"", new NvlFunction() );
+		registerFunction( ""atan2"", new StandardSQLFunction( ""atan2"", StandardBasicTypes.FLOAT ) );
+		registerFunction( ""mod"", new StandardSQLFunction( ""mod"", StandardBasicTypes.INTEGER ) );
+		registerFunction( ""nvl"", new StandardSQLFunction( ""nvl"" ) );
+		registerFunction( ""nvl2"", new StandardSQLFunction( ""nvl2"" ) );
+		registerFunction( ""power"", new StandardSQLFunction( ""power"", StandardBasicTypes.FLOAT ) );
+		registerFunction( ""add_months"", new StandardSQLFunction( ""add_months"", StandardBasicTypes.DATE ) );
+		registerFunction( ""months_between"", new StandardSQLFunction( ""months_between"", StandardBasicTypes.FLOAT ) );
+		registerFunction( ""next_day"", new StandardSQLFunction( ""next_day"", StandardBasicTypes.DATE ) );
+	}",2.0,5.0,4.0,java,24,1,Code,Scalabrino
+19,"/**
+	 * Constructs a Oracle8iDialect
+	 */
+	public Oracle8iDialect() {
+		super();
+		registerCharacterTypeMappings();
+		registerNumericTypeMappings();
+		registerDateTimeTypeMappings();
+		registerLargeObjectTypeMappings();
+		registerReverseHibernateTypeMappings();
+		registerFunctions();
+		registerDefaultProperties();
+	}",3.0,5.0,4.0,java,10,1,Code,Scalabrino
+20,"/**
+	 * Constructs a InterbaseDialect
+	 */
+	public InterbaseDialect() {
+		super();
+		registerColumnType( Types.BIT, ""smallint"" );
+		registerColumnType( Types.BIGINT, ""numeric(18,0)"" );
+		registerColumnType( Types.SMALLINT, ""smallint"" );
+		registerColumnType( Types.TINYINT, ""smallint"" );
+		registerColumnType( Types.INTEGER, ""integer"" );
+		registerColumnType( Types.CHAR, ""char(1)"" );
+		registerColumnType( Types.VARCHAR, ""varchar($l)"" );
+		registerColumnType( Types.FLOAT, ""float"" );
+		registerColumnType( Types.DOUBLE, ""double precision"" );
+		registerColumnType( Types.DATE, ""date"" );
+		registerColumnType( Types.TIME, ""time"" );
+		registerColumnType( Types.TIMESTAMP, ""timestamp"" );
+		registerColumnType( Types.VARBINARY, ""blob"" );
+		registerColumnType( Types.NUMERIC, ""numeric($p,$s)"" );
+		registerColumnType( Types.BLOB, ""blob"" );
+		registerColumnType( Types.CLOB, ""blob sub_type 1"" );
+		registerColumnType( Types.BOOLEAN, ""smallint"" );
+		
+		registerFunction( ""concat"", new VarArgsSQLFunction( StandardBasicTypes.STRING, ""("",""||"","")"" ) );
+		registerFunction( ""current_date"", new NoArgSQLFunction( ""current_date"", StandardBasicTypes.DATE, false ) );
+
+		getDefaultProperties().setProperty( Environment.STATEMENT_BATCH_SIZE, NO_BATCH );
+	}",2.0,5.0,3.888888888888889,java,23,1,Code,Scalabrino
+21,"/**
+	 * Constructs a SybaseASE157Dialect
+	 */
+	public SybaseASE157Dialect() {
+		super();
+
+		registerFunction( ""create_locator"", new SQLFunctionTemplate( StandardBasicTypes.BINARY, ""create_locator(?1, ?2)"" ) );
+		registerFunction( ""locator_literal"", new SQLFunctionTemplate( StandardBasicTypes.BINARY, ""locator_literal(?1, ?2)"" ) );
+		registerFunction( ""locator_valid"", new SQLFunctionTemplate( StandardBasicTypes.BOOLEAN, ""locator_valid(?1)"" ) );
+		registerFunction( ""return_lob"", new SQLFunctionTemplate( StandardBasicTypes.BINARY, ""return_lob(?1, ?2)"" ) );
+		registerFunction( ""setdata"", new SQLFunctionTemplate( StandardBasicTypes.BOOLEAN, ""setdata(?1, ?2, ?3)"" ) );
+		registerFunction( ""charindex"", new SQLFunctionTemplate( StandardBasicTypes.INTEGER, ""charindex(?1, ?2, ?3)"" ) );
+	}",3.0,5.0,4.0,java,9,1,Code,Scalabrino
+22,"public String extractConstraintName(SQLException sqle) {
+			try {
+				final int sqlState = Integer.valueOf( JdbcExceptionHelper.extractSqlState( sqle ) );
+				switch (sqlState) {
+					// CHECK VIOLATION
+					case 23514: return extractUsingTemplate( ""violates check constraint \"""",""\"""", sqle.getMessage() );
+					// UNIQUE VIOLATION
+					case 23505: return extractUsingTemplate( ""violates unique constraint \"""",""\"""", sqle.getMessage() );
+					// FOREIGN KEY VIOLATION
+					case 23503: return extractUsingTemplate( ""violates foreign key constraint \"""",""\"""", sqle.getMessage() );
+					// NOT NULL VIOLATION
+					case 23502: return extractUsingTemplate( ""null value in column \"""",""\"" violates not-null constraint"", sqle.getMessage() );
+					// TODO: RESTRICT VIOLATION
+					case 23001: return null;
+					// ALL OTHER
+					default: return null;
+				}
+			}
+			catch (NumberFormatException nfe) {
+				return null;
+			}
+		}",4.0,5.0,4.555555555555555,java,16,7,Code,Scalabrino
+25,"/**
+	 * Constructs a FrontBaseDialect
+	 */
+	public FrontBaseDialect() {
+		super();
+
+		registerColumnType( Types.BIT, ""bit"" );
+		registerColumnType( Types.BIGINT, ""longint"" );
+		registerColumnType( Types.SMALLINT, ""smallint"" );
+		registerColumnType( Types.TINYINT, ""tinyint"" );
+		registerColumnType( Types.INTEGER, ""integer"" );
+		registerColumnType( Types.CHAR, ""char(1)"" );
+		registerColumnType( Types.VARCHAR, ""varchar($l)"" );
+		registerColumnType( Types.FLOAT, ""float"" );
+		registerColumnType( Types.DOUBLE, ""double precision"" );
+		registerColumnType( Types.DATE, ""date"" );
+		registerColumnType( Types.TIME, ""time"" );
+		registerColumnType( Types.TIMESTAMP, ""timestamp"" );
+		registerColumnType( Types.VARBINARY, ""bit varying($l)"" );
+		registerColumnType( Types.NUMERIC, ""numeric($p,$s)"" );
+		registerColumnType( Types.BLOB, ""blob"" );
+		registerColumnType( Types.CLOB, ""clob"" );
+	}",3.0,5.0,4.222222222222222,java,19,1,Code,Scalabrino
+27,"private void considerExplicitFieldAndPropertyAccess() {
+		for ( XProperty property : fieldAccessMap.values() ) {
+			Access access = property.getAnnotation( Access.class );
+			if ( access == null ) {
+				continue;
+			}
+
+			// see ""2.3.2 Explicit Access Type"" of JPA 2 spec
+			// the access type for this property is explicitly set to AccessType.FIELD, hence we have to
+			// use field access for this property even if the default access type for the class is AccessType.PROPERTY
+			AccessType accessType = AccessType.getAccessStrategy( access.value() );
+            if (accessType == AccessType.FIELD) {
+				propertyAccessMap.put(property.getName(), property);
+			}
+            else {
+				LOG.debug( ""Placing @Access(AccessType.FIELD) on a field does not have any effect."" );
+			}
+		}
+
+		for ( XProperty property : propertyAccessMap.values() ) {
+			Access access = property.getAnnotation( Access.class );
+			if ( access == null ) {
+				continue;
+			}
+
+			AccessType accessType = AccessType.getAccessStrategy( access.value() );
+
+			// see ""2.3.2 Explicit Access Type"" of JPA 2 spec
+			// the access type for this property is explicitly set to AccessType.PROPERTY, hence we have to
+			// return use method access even if the default class access type is AccessType.FIELD
+            if (accessType == AccessType.PROPERTY) {
+				fieldAccessMap.put(property.getName(), property);
+			}
+            else {
+				LOG.debug( ""Placing @Access(AccessType.PROPERTY) on a field does not have any effect."" );
+			}
+		}
+	}",2.0,5.0,3.7777777777777777,java,28,2,Code,Scalabrino
+28,"private static Ejb3DiscriminatorColumn processDiscriminatorProperties(XClass clazzToProcess, Mappings mappings, InheritanceState inheritanceState, EntityBinder entityBinder) {
+		Ejb3DiscriminatorColumn discriminatorColumn = null;
+		javax.persistence.DiscriminatorColumn discAnn = clazzToProcess.getAnnotation(
+				javax.persistence.DiscriminatorColumn.class
+		);
+		DiscriminatorType discriminatorType = discAnn != null ?
+				discAnn.discriminatorType() :
+				DiscriminatorType.STRING;
+
+		org.hibernate.annotations.DiscriminatorFormula discFormulaAnn = clazzToProcess.getAnnotation(
+				org.hibernate.annotations.DiscriminatorFormula.class
+		);
+		if ( !inheritanceState.hasParents() ) {
+			discriminatorColumn = Ejb3DiscriminatorColumn.buildDiscriminatorColumn(
+					discriminatorType, discAnn, discFormulaAnn, mappings
+			);
+		}
+		if ( discAnn != null && inheritanceState.hasParents() ) {
+			LOG.invalidDiscriminatorAnnotation( clazzToProcess.getName() );
+		}
+
+		String discrimValue = clazzToProcess.isAnnotationPresent( DiscriminatorValue.class ) ?
+				clazzToProcess.getAnnotation( DiscriminatorValue.class ).value() :
+				null;
+		entityBinder.setDiscriminatorValue( discrimValue );
+
+		DiscriminatorOptions discriminatorOptions = clazzToProcess.getAnnotation( DiscriminatorOptions.class );
+		if ( discriminatorOptions != null) {
+			entityBinder.setForceDiscriminator( discriminatorOptions.force() );
+			entityBinder.setInsertableDiscriminator( discriminatorOptions.insert() );
+		}
+
+		return discriminatorColumn;
+	}",1.0,5.0,2.333333333333333,java,30,1,Code,Scalabrino
+29,"private static boolean isEntityClassType(XClass clazzToProcess, AnnotatedClassType classType) {
+		if ( AnnotatedClassType.EMBEDDABLE_SUPERCLASS.equals( classType ) //will be processed by their subentities
+				|| AnnotatedClassType.NONE.equals( classType ) //to be ignored
+				|| AnnotatedClassType.EMBEDDABLE.equals( classType ) //allow embeddable element declaration
+				) {
+			if ( AnnotatedClassType.NONE.equals( classType )
+					&& clazzToProcess.isAnnotationPresent( org.hibernate.annotations.Entity.class ) ) {
+				LOG.missingEntityAnnotation( clazzToProcess.getName() );
+			}
+			return false;
+		}
+
+		if ( !classType.equals( AnnotatedClassType.ENTITY ) ) {
+			throw new AnnotationException(
+					""Annotated class should have a @javax.persistence.Entity, @javax.persistence.Embeddable or @javax.persistence.EmbeddedSuperclass annotation: "" + clazzToProcess
+							.getName()
+			);
+		}
+
+		return true;
+	}",3.0,5.0,3.6666666666666665,java,19,2,Code,Scalabrino
+30,"public void redefineColumnName(String columnName, String propertyName, boolean applyNamingStrategy) {
+		if ( applyNamingStrategy ) {
+			if ( StringHelper.isEmpty( columnName ) ) {
+				if ( propertyName != null ) {
+					mappingColumn.setName(
+							mappings.getObjectNameNormalizer().normalizeIdentifierQuoting(
+									mappings.getNamingStrategy().propertyToColumnName( propertyName )
+							)
+					);
+				}
+				//Do nothing otherwise
+			}
+			else {
+				columnName = mappings.getObjectNameNormalizer().normalizeIdentifierQuoting( columnName );
+				columnName = mappings.getNamingStrategy().columnName( columnName );
+				columnName = mappings.getObjectNameNormalizer().normalizeIdentifierQuoting( columnName );
+				mappingColumn.setName( columnName );
+			}
+		}
+		else {
+			if ( StringHelper.isNotEmpty( columnName ) ) {
+				mappingColumn.setName( mappings.getObjectNameNormalizer().normalizeIdentifierQuoting( columnName ) );
+			}
+		}
+	}",2.0,5.0,3.4444444444444446,java,24,5,Code,Scalabrino
+31,"private static void parseFilter(Element filterElement, Filterable filterable, Mappings model) {
+		final String name = filterElement.attributeValue( ""name"" );
+		String condition = filterElement.getTextTrim();
+		if ( StringHelper.isEmpty(condition) ) {
+			condition = filterElement.attributeValue( ""condition"" );
+		}
+		//TODO: bad implementation, cos it depends upon ordering of mapping doc
+		//      fixing this requires that Collection/PersistentClass gain access
+		//      to the Mappings reference from Configuration (or the filterDefinitions
+		//      map directly) sometime during Configuration.build
+		//      (after all the types/filter-defs are known and before building
+		//      persisters).
+		if ( StringHelper.isEmpty(condition) ) {
+			condition = model.getFilterDefinition(name).getDefaultFilterCondition();
+		}
+		if ( condition==null) {
+			throw new MappingException(""no filter condition found for filter: "" + name);
+		}
+		Iterator aliasesIterator = filterElement.elementIterator(""aliases"");
+		java.util.Map<String, String> aliasTables = new HashMap<String, String>();
+		while (aliasesIterator.hasNext()){
+			Element alias = (Element) aliasesIterator.next();
+			aliasTables.put(alias.attributeValue(""alias""), alias.attributeValue(""table""));
+		}
+		LOG.debugf( ""Applying filter [%s] as [%s]"", name, condition );
+		String autoAliasInjectionText = filterElement.attributeValue(""autoAliasInjection"");
+		boolean autoAliasInjection = StringHelper.isEmpty(autoAliasInjectionText) ? true : Boolean.parseBoolean(autoAliasInjectionText);
+		filterable.addFilter(name, condition, autoAliasInjection, aliasTables, null);
+	}",2.0,5.0,3.2222222222222223,java,23,6,Code,Scalabrino
+32,"/**
+     * Retrieves a PropertyAccessor instance based on the given property definition and
+     * entity mode.
+     *
+     * @param property The property for which to retrieve an accessor.
+     * @param mode The mode for the resulting entity.
+     * @return An appropriate accessor.
+     * @throws MappingException
+     */
+	public static PropertyAccessor getPropertyAccessor(AttributeBinding property, EntityMode mode) throws MappingException {
+		//TODO: this is temporary in that the end result will probably not take a Property reference per-se.
+	    if ( null == mode || EntityMode.POJO.equals( mode ) ) {
+		    return getPojoPropertyAccessor( property.getPropertyAccessorName() );
+	    }
+	    else if ( EntityMode.MAP.equals( mode ) ) {
+		    return getDynamicMapPropertyAccessor();
+	    }
+	    else {
+		    throw new MappingException( ""Unknown entity mode ["" + mode + ""]"" );
+	    }
+	}",3.0,5.0,4.333333333333333,java,11,4,Code,Scalabrino
+33,"/**
+	 * Execute given <tt>PreparedStatement</tt>, advance to the first result and return SQL <tt>ResultSet</tt>.
+	 */
+	protected final ResultSet getResultSet(
+			final PreparedStatement st,
+			final RowSelection selection,
+			final LimitHandler limitHandler,
+			final boolean autodiscovertypes,
+			final SessionImplementor session)
+	throws SQLException, HibernateException {
+
+		try {
+			ResultSet rs = session.getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().extract( st );
+			rs = wrapResultSetIfEnabled( rs , session );
+
+			if ( !limitHandler.supportsLimitOffset() || !LimitHelper.useLimit( limitHandler, selection ) ) {
+				advance( rs, selection );
+			}
+
+			if ( autodiscovertypes ) {
+				autoDiscoverTypes( rs );
+			}
+			return rs;
+		}
+		catch ( SQLException sqle ) {
+			session.getTransactionCoordinator().getJdbcCoordinator().release( st );
+			throw sqle;
+		}
+	}",3.0,5.0,4.0,java,23,5,Code,Scalabrino
+34,"/**
+	 * Generate a select list of columns containing all properties of the entity classes
+	 */
+	protected final String selectString(List associations)
+	throws MappingException {
+
+		if ( associations.size()==0 ) {
+			return """";
+		}
+		else {
+			StringBuilder buf = new StringBuilder( associations.size() * 100 );
+			int entityAliasCount=0;
+			int collectionAliasCount=0;
+			for ( int i=0; i<associations.size(); i++ ) {
+				OuterJoinableAssociation join = (OuterJoinableAssociation) associations.get(i);
+				OuterJoinableAssociation next = (i == associations.size() - 1)
+				        ? null
+				        : ( OuterJoinableAssociation ) associations.get( i + 1 );
+				final Joinable joinable = join.getJoinable();
+				final String entitySuffix = ( suffixes == null || entityAliasCount >= suffixes.length )
+				        ? null
+				        : suffixes[entityAliasCount];
+				final String collectionSuffix = ( collectionSuffixes == null || collectionAliasCount >= collectionSuffixes.length )
+				        ? null
+				        : collectionSuffixes[collectionAliasCount];
+				final String selectFragment = joinable.selectFragment(
+						next == null ? null : next.getJoinable(),
+						next == null ? null : next.getRHSAlias(),
+						join.getRHSAlias(),
+						entitySuffix,
+				        collectionSuffix,
+						join.getJoinType()==JoinType.LEFT_OUTER_JOIN
+				);
+				if (selectFragment.trim().length() > 0) {
+					buf.append("", "").append(selectFragment);
+				}
+				if ( joinable.consumesEntityAlias() ) entityAliasCount++;
+				if ( joinable.consumesCollectionAlias() && join.getJoinType()==JoinType.LEFT_OUTER_JOIN ) collectionAliasCount++;
+			}
+			return buf.toString();
+		}
+	}",1.0,5.0,2.555555555555556,java,38,14,Code,Scalabrino
+36,"public boolean equals(Table table) {
+		if (null == table) {
+			return false;
+		}
+		if (this == table) {
+			return true;
+		}
+
+		return isQuoted() ? name.equals(table.getName()) : name.equalsIgnoreCase(table.getName())
+			&& ((schema == null && table.getSchema() != null) ? false : (schema == null) ? true : isSchemaQuoted() ? schema.equals(table.getSchema()) : schema.equalsIgnoreCase(table.getSchema()))
+			&& ((catalog == null && table.getCatalog() != null) ? false : (catalog == null) ? true : isCatalogQuoted() ? catalog.equals(table.getCatalog()) : catalog.equalsIgnoreCase(table.getCatalog()));
+	}",1.0,4.0,2.2222222222222223,java,11,14,Code,Scalabrino
+37,"public int getSqlTypeCode(Mapping mapping) throws MappingException {
+        org.hibernate.type.Type type = getValue().getType();
+        try {
+            int sqlTypeCode = type.sqlTypes( mapping )[getTypeIndex()];
+            if ( getSqlTypeCode() != null && getSqlTypeCode() != sqlTypeCode ) {
+                throw new MappingException( ""SQLType code's does not match. mapped as "" + sqlTypeCode + "" but is "" + getSqlTypeCode() );
+            }
+            return sqlTypeCode;
+        }
+        catch ( Exception e ) {
+            throw new MappingException(
+                    ""Could not determine type for column "" +
+                            name +
+                            "" of type "" +
+                            type.getClass().getName() +
+                            "": "" +
+                            e.getClass().getName(),
+                    e
+            );
+        }
+    }",2.0,5.0,3.7777777777777777,java,21,4,Code,Scalabrino
+38,"/**
+     * Provides serialization support.
+     *
+     * @param stream  the output stream.
+     *
+     * @throws IOException  if there is an I/O error.
+     */
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+
+        SerialUtilities.writeShape(this.legendItemShape, stream);
+        SerialUtilities.writePaint(this.seriesPaint, stream);
+        SerialUtilities.writePaint(this.baseSeriesPaint, stream);
+        SerialUtilities.writePaint(this.seriesOutlinePaint, stream);
+        SerialUtilities.writePaint(this.baseSeriesOutlinePaint, stream);
+        SerialUtilities.writeStroke(this.seriesOutlineStroke, stream);
+        SerialUtilities.writeStroke(this.baseSeriesOutlineStroke, stream);
+        SerialUtilities.writePaint(this.labelPaint, stream);
+        SerialUtilities.writePaint(this.axisLinePaint, stream);
+        SerialUtilities.writeStroke(this.axisLineStroke, stream);
+    }",3.0,5.0,4.222222222222222,java,13,1,Code,Scalabrino
+39,"/**
+     * Tests another object for equality with this object.
+     *
+     * @param obj  the object to test (<code>null</code> permitted).
+     *
+     * @return A boolean.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof PinNeedle)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        return true;
+    }",4.0,5.0,4.777777777777778,java,13,4,Code,Scalabrino
+40,"/**
+     * Tests this dataset for equality with an arbitrary object.
+     *
+     * @param obj  the object (<code>null</code> permitted).
+     *
+     * @return A boolean.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof CategoryDataset)) {
+            return false;
+        }
+        CategoryDataset that = (CategoryDataset) obj;
+        if (!getRowKeys().equals(that.getRowKeys())) {
+            return false;
+        }
+        if (!getColumnKeys().equals(that.getColumnKeys())) {
+            return false;
+        }
+        int rowCount = getRowCount();
+        int colCount = getColumnCount();
+        for (int r = 0; r < rowCount; r++) {
+            for (int c = 0; c < colCount; c++) {
+                Number v1 = getValue(r, c);
+                Number v2 = that.getValue(r, c);
+                if (v1 == null) {
+                    if (v2 != null) {
+                        return false;
+                    }
+                }
+                else if (!v1.equals(v2)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }",3.0,5.0,4.222222222222222,java,33,10,Code,Scalabrino
+41,"/**
+     * Returns the minimum and maximum values for the dataset's range
+     * (y-values), assuming that the series in one category are stacked.
+     *
+     * @param dataset  the dataset (<code>null</code> not permitted).
+     * @param base  the base value for the bars.
+     *
+     * @return The range (<code>null</code> if the dataset contains no values).
+     */
+    public static Range findStackedRangeBounds(CategoryDataset dataset,
+            double base) {
+        ParamChecks.nullNotPermitted(dataset, ""dataset"");
+        Range result = null;
+        double minimum = Double.POSITIVE_INFINITY;
+        double maximum = Double.NEGATIVE_INFINITY;
+        int categoryCount = dataset.getColumnCount();
+        for (int item = 0; item < categoryCount; item++) {
+            double positive = base;
+            double negative = base;
+            int seriesCount = dataset.getRowCount();
+            for (int series = 0; series < seriesCount; series++) {
+                Number number = dataset.getValue(series, item);
+                if (number != null) {
+                    double value = number.doubleValue();
+                    if (value > 0.0) {
+                        positive = positive + value;
+                    }
+                    if (value < 0.0) {
+                        negative = negative + value;
+                        // '+', remember value is negative
+                    }
+                }
+            }
+            minimum = Math.min(minimum, negative);
+            maximum = Math.max(maximum, positive);
+        }
+        if (minimum <= maximum) {
+            result = new Range(minimum, maximum);
+        }
+        return result;
+
+    }",3.0,5.0,4.111111111111111,java,31,7,Code,Scalabrino
+42,"/**
+     * Tests the equality of this object against an arbitrary Object.
+     * <P>
+     * This method will return true ONLY if the object is a Second object
+     * representing the same second as this instance.
+     *
+     * @param obj  the object to compare (<code>null</code> permitted).
+     *
+     * @return <code>true</code> if second and minute of this and the object
+     *         are the same.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Second)) {
+            return false;
+        }
+        Second that = (Second) obj;
+        if (this.second != that.second) {
+            return false;
+        }
+        if (this.minute != that.minute) {
+            return false;
+        }
+        if (this.hour != that.hour) {
+            return false;
+        }
+        if (!this.day.equals(that.day)) {
+            return false;
+        }
+        return true;
+    }",4.0,5.0,4.666666666666667,java,23,7,Code,Scalabrino
+43,"private void handleFireEvent(ArgoEvent event, ArgoEventListener listener) {
+        if (event.getEventType() == ArgoEventTypes.ANY_EVENT) {
+            if (listener instanceof ArgoModuleEventListener) {
+                handleFireModuleEvent((ArgoModuleEvent) event,
+				      (ArgoModuleEventListener) listener);
+            }
+            if (listener instanceof ArgoNotationEventListener) {
+                handleFireNotationEvent((ArgoNotationEvent) event,
+					(ArgoNotationEventListener) listener);
+            }
+        } else {
+            if (event.getEventType() >= ArgoEventTypes.ANY_MODULE_EVENT
+                && event.getEventType() < ArgoEventTypes.LAST_MODULE_EVENT) {
+                if (listener instanceof ArgoModuleEventListener) {
+                    handleFireModuleEvent((ArgoModuleEvent) event,
+					  (ArgoModuleEventListener) listener);
+                }
+            }
+            if (event.getEventType() >= ArgoEventTypes.ANY_NOTATION_EVENT
+                && event.getEventType() < ArgoEventTypes.LAST_NOTATION_EVENT) {
+                if (listener instanceof ArgoNotationEventListener) {
+                    handleFireNotationEvent((ArgoNotationEvent) event,
+					(ArgoNotationEventListener) listener);
+                }
+            }
+            if (event.getEventType() >= ArgoEventTypes.ANY_GENERATOR_EVENT
+                && event.getEventType() < ArgoEventTypes.LAST_GENERATOR_EVENT) {
+                if (listener instanceof ArgoGeneratorEventListener) {
+                    handleFireGeneratorEvent((ArgoGeneratorEvent) event,
+                            (ArgoGeneratorEventListener) listener);
+                }
+            }
+        }
+    }",1.0,4.0,2.888888888888889,java,34,13,Code,Scalabrino
+44,"/**
+     * Find an element in the list.
+     *
+     * This is a little more complex than the simple lookup since it might be
+     * that we are indexing with a class and the list contains interfaces.
+     *
+     * Since the hashtable lookup is a lot faster than the linear search we
+     * add the result of the linear search to the hashtable so that the next
+     * time we need not do it.
+     *
+     * @return Checklist or null if noone exist.
+     * @param cls the class to lookup.
+     */
+    private static Checklist lookupChecklist(Class cls) {
+        if (lists.contains(cls)) {
+            return (Checklist) lists.get(cls);
+	}
+
+        // Now lets search
+        Enumeration enumeration = lists.keys();
+
+        while (enumeration.hasMoreElements()) {
+            Object clazz = enumeration.nextElement();
+
+            Class[] intfs = cls.getInterfaces();
+            for (int i = 0; i < intfs.length; i++) {
+                if (intfs[i].equals(clazz)) {
+                    // We found it!
+                    Checklist chlist = (Checklist) lists.get(clazz);
+
+                    // Enter the class to speed up the next search.
+                    lists.put(cls, chlist);
+                    return chlist;
+                }
+            }
+        }
+
+        return null;
+    }",3.0,5.0,4.0,java,18,5,Code,Scalabrino
+45,"/**
+     * @return a list of all the types
+     */
+    public static Vector getTypes() {
+        if (types == null) {
+            types = new Vector();
+            types.addElement(new KnowledgeTypeNode(Critic.KT_DESIGNERS));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_CORRECTNESS));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_COMPLETENESS));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_CONSISTENCY));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_SYNTAX));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_SEMANTICS));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_OPTIMIZATION));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_PRESENTATION));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_ORGANIZATIONAL));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_EXPERIENCIAL));
+            types.addElement(new KnowledgeTypeNode(Critic.KT_TOOL));
+        }
+        return types;
+    }",2.0,5.0,4.333333333333333,java,17,2,Code,Scalabrino
+46,"public void toDoItemsRemoved(ToDoListEvent tde) {
+	LOG.debug(""toDoItemRemoved"");
+        Vector items = tde.getToDoItems();
+        int nItems = items.size();
+        
+	ToDoList list = Designer.theDesigner().getToDoList(); //source?
+	Object[] path = new Object[2];
+	path[0] = Designer.theDesigner().getToDoList();
+
+
+	Enumeration elems = list.getPosters().elements();
+ 	while (elems.hasMoreElements()) {
+	    Poster p = (Poster) elems.nextElement();
+            boolean anyInPoster = false;
+            for (int i = 0; i < nItems; i++) {
+                ToDoItem item = (ToDoItem) items.elementAt(i);
+                Poster post = item.getPoster();
+                if (post == p) { 
+                    anyInPoster = true;
+                    break;
+                }
+            }
+            if (!anyInPoster) { 
+                continue;
+            }
+	    path[1] = p;
+	    fireTreeStructureChanged(path);
+	}
+    }",2.0,5.0,3.333333333333333,java,26,5,Code,Scalabrino
+47,"public void updateListener(PropertyChangeListener listener, 
+            Object modelElement,
+            PropertyChangeEvent pce) {
+        Object obj = pce.getSource();
+        if ((obj == modelElement) 
+                && ""stereotype"".equals(pce.getPropertyName())) {
+            if (pce instanceof AddAssociationEvent 
+                    && Model.getFacade().isAStereotype(pce.getNewValue())) {
+                // new stereotype
+                addElementListener(
+                        listener, 
+                        pce.getNewValue(), 
+                        new String[] {""name"", ""remove""});
+            }
+            if (pce instanceof RemoveAssociationEvent 
+                    && Model.getFacade().isAStereotype(pce.getOldValue())) {
+                // removed stereotype
+                removeElementListener(
+                        listener, 
+                        pce.getOldValue());
+            }
+        }
+    }",3.0,5.0,3.6666666666666665,java,21,7,Code,Scalabrino
+48,"/**
+     * @param filename the filename to read from
+     */
+    public void read(String filename) {
+        try {
+            FileReader f = new FileReader(filename);
+            BufferedReader fr = new BufferedReader(f);
+
+            String line = """";
+            String content = """";
+            boolean inSection = false;
+            while (line != null) {
+                line = fr.readLine();
+                if (line != null) {
+                    if (inSection) {
+                        String sectionId = getSectId(line);
+                        if (sectionId != null) {
+                            inSection = false;
+                            mAry.put(sectionId, content);
+                            content = """";
+                        } else {
+                            content += line + LINE_SEPARATOR;
+                        }
+                    } else {
+                        String sectionId = getSectId(line);
+                        if (sectionId != null) {
+                            inSection = true;
+                        }
+                    }
+                }
+            }
+            fr.close();
+        } catch (IOException e) {
+            LOG.error(""Error: "" + e.toString());
+        }
+    }",3.0,5.0,4.111111111111111,java,32,7,Code,Scalabrino
+49,"private boolean saveGraphicsToFile(File theFile, CmdSaveGraphics cmd,
+            boolean overwrite) throws IOException {
+        if ( theFile.exists() && !overwrite ) {
+            int response =
+		JOptionPane.showConfirmDialog(ArgoFrame.getInstance(),
+                    Translator.messageFormat(""optionpane.confirm-overwrite"",
+                            new Object[] {theFile}),
+                    Translator.localize(""optionpane.confirm-overwrite-title""),
+                    JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.NO_OPTION) return false;
+        }
+        FileOutputStream fo = null;
+        try {
+            fo = new FileOutputStream( theFile );
+            cmd.setStream(fo);
+            cmd.setScale(Configuration.getInteger(
+                    SaveGraphicsManager.KEY_GRAPHICS_RESOLUTION, 1));
+            cmd.doIt();
+        } finally {
+            if (fo != null) {
+                fo.close();
+            }
+        }
+        return true;
+    }",1.0,5.0,2.7777777777777777,java,25,5,Code,Scalabrino
+50,"public void targetAdded(TargetEvent e) {
+            if (!updatingSelection) {
+                updatingSelection = true;
+                Object[] targets = e.getAddedTargets();
+
+                int rows = getRowCount();
+                for (int i = 0; i < targets.length; i++) {
+                    Object target = targets[i];
+                    if (target instanceof Fig) {
+                        target = ((Fig) target).getOwner();
+                    }
+                    for (int j = 0; j < rows; j++) {
+                        Object rowItem =
+                            ((DefaultMutableTreeNode)
+                                    getPathForRow(j).getLastPathComponent())
+                            .getUserObject();
+                        if (rowItem == target) {
+                            updatingSelectionViaTreeSelection = true;
+                            addSelectionRow(j);
+                            updatingSelectionViaTreeSelection = false;
+                        }
+                    }
+                }
+
+                if (getSelectionCount() > 0) {
+                    scrollRowToVisible(getSelectionRows()[0]);
+                }
+                updatingSelection = false;
+            }
+            // setTargets(e.getNewTargets());
+        }",1.0,5.0,3.111111111111111,java,28,7,Code,Scalabrino
+51,"/**
+     * Saves the given actions in the configuration file
+     * 
+     * @param newActions
+     *            the actions array
+     */
+    public static void saveShortcuts(Action[] newActions) {
+        for (int i = 0; i < newActions.length; i++) {
+            Action oldAction = (Action) shortcutHash
+                    .get(newActions[i].getKey());
+            if (newActions[i].getCurrentShortcut() == null
+                    && newActions[i].getDefaultShortcut() != null) {
+                // if a default action was voided then we have to save it
+                Configuration.setString(Configuration.makeKey(oldAction
+                        .getKey()), """");
+            } else if (newActions[i].getCurrentShortcut() != null
+                    && !newActions[i].getCurrentShortcut().equals(
+                            newActions[i].getDefaultShortcut())) {
+                // if a not-default current shortcut was added, then we have to
+                // save it
+                Configuration.setString(Configuration.makeKey(oldAction
+                        .getKey()), KeyEventUtils.formatKeyStroke(newActions[i]
+                        .getCurrentShortcut()));
+            } else {
+                // if the actual is not going to be saved, then try to remove it
+                // (as it could have been cancelled)
+                Configuration.removeKey(Configuration.makeKey(oldAction
+                        .getKey()));
+            }
+        }
+    }",2.0,5.0,3.4444444444444446,java,20,6,Code,Scalabrino
+52,"protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
+        for (Class<?> eachClass : getSuperClasses(fClass)) {
+            for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
+                addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
+            }
+            // ensuring fields are sorted to make sure that entries are inserted
+            // and read from fieldForAnnotations in a deterministic order
+            for (Field eachField : getSortedDeclaredFields(eachClass)) {
+                addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
+            }
+        }
+    }",3.0,5.0,4.0,java,10,4,Code,Scalabrino
+54,"private static Description makeDescription(Test test) {
+        if (test instanceof TestCase) {
+            TestCase tc = (TestCase) test;
+            return Description.createTestDescription(tc.getClass(), tc.getName(),
+                    getAnnotations(tc));
+        } else if (test instanceof TestSuite) {
+            TestSuite ts = (TestSuite) test;
+            String name = ts.getName() == null ? createSuiteDescription(ts) : ts.getName();
+            Description description = Description.createSuiteDescription(name);
+            int n = ts.testCount();
+            for (int i = 0; i < n; i++) {
+                Description made = makeDescription(ts.testAt(i));
+                description.addChild(made);
+            }
+            return description;
+        } else if (test instanceof Describable) {
+            Describable adapter = (Describable) test;
+            return adapter.getDescription();
+        } else if (test instanceof TestDecorator) {
+            TestDecorator decorator = (TestDecorator) test;
+            return makeDescription(decorator.getTest());
+        } else {
+            // This is the best we can do in this case
+            return Description.createSuiteDescription(test.getClass());
+        }
+    }",3.0,5.0,4.111111111111111,java,25,7,Code,Scalabrino
+55,"private EntityManager internalCreateEntityManager(SynchronizationType synchronizationType, Map map) {
+		validateNotClosed();
+
+		//TODO support discardOnClose, persistencecontexttype?, interceptor,
+		return new EntityManagerImpl(
+				this,
+				PersistenceContextType.EXTENDED,
+				synchronizationType,
+				transactionType,
+				discardOnClose,
+				sessionInterceptorClass,
+				map
+		);
+	}",1.0,5.0,4.222222222222222,java,12,1,Code,Scalabrino
+58,"public static void main(String[] args) {
+		CustomVersionOneStrategy strategy = new CustomVersionOneStrategy();
+
+		for ( int i = 0; i < 1000; i++ ) {
+			System.out.println( ""Generation # "" + i + "" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+			byte[] loBits = new byte[8];
+
+			long sysTime = System.currentTimeMillis();
+			short hiTime = (short) ( System.currentTimeMillis() >>> 32 );
+			int loTime = (int) sysTime;
+			System.arraycopy( BytesHelper.fromShort( hiTime ), 0, loBits, 0, 2 );
+			System.arraycopy( BytesHelper.fromInt( loTime ), 0, loBits, 2, 4 );
+			System.arraycopy( Helper.getCountBytes(), 0, loBits, 6, 2 );
+
+			System.out.println( ""    before bit setting ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+			System.out.println( ""       loBits[0] : "" + BytesHelper.toBinaryString( loBits[0] ) );
+			System.out.println( ""             lsb : "" + BytesHelper.toBinaryString( BytesHelper.asLong( loBits ) ) );
+			System.out.println( ""    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+
+			loBits[0] &= 0x3f;
+			loBits[0] |= ((byte)2 << (byte)6);
+
+			System.out.println( ""    after bit setting ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+			System.out.println( ""       loBits[0] : "" + BytesHelper.toBinaryString( loBits[0] ) );
+			long leastSignificantBits = BytesHelper.asLong( loBits );
+			System.out.println( ""             lsb : "" + BytesHelper.toBinaryString( leastSignificantBits ) );
+			System.out.println( ""    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+
+
+			UUID uuid = new UUID( strategy.mostSignificantBits, leastSignificantBits );
+			System.out.println( ""  uuid : "" + uuid.toString() );
+			System.out.println( ""  variant : "" + uuid.variant() );
+			System.out.println( ""  version : "" + uuid.version() );
+			if ( uuid.variant() != 2 ) {
+				throw new RuntimeException( ""bad variant"" );
+			}
+			System.out.println( ""~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"" );
+		}
+	}",1.0,5.0,3.555555555555556,java,32,3,Code,Scalabrino
+59,"public void doTestWithTupleSubsetResultTransformerNullAliases(TupleSubsetResultTransformer transformer) throws Exception {
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { true, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { true, true, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { false, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { true, false } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] { false, true, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] {true, false, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] {true, true, false } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] {false, false, true } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] {false, true, false } ) ) );
+		doTest( buildBasicKey( CacheableResultTransformer.create( transformer, null, new boolean[] {false, false, true } ) ) );
+	}",2.0,5.0,3.7777777777777777,java,13,1,Code,Scalabrino
+60,"public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Person)) return false;
+
+        Person person = (Person) o;
+
+        if (id != person.id) return false;
+        if (name != null ? !name.equals(person.name) : person.name != null) return false;
+        if (surname != null ? !surname.equals(person.surname) : person.surname != null) return false;
+
+        return true;
+    }",3.0,5.0,3.888888888888889,java,9,8,Code,Scalabrino
+61,"private void readAndSetAddress(Scanner scanner, Person p) {
+        Address old = p.getAddress();
+
+        String input = scanner.nextLine();
+        if (""NULL"".equals(input)) {
+            p.setAddress(null);
+            if (old != null) {
+                old.getPersons().remove(p);
+            }
+        } else if ("""".equals(input)) {
+        } else {
+            try {
+                Integer id = Integer.valueOf(input);
+
+                Address a = entityManager.find(Address.class, id);
+
+                if (a == null) {
+                    System.err.println(""Unknown address id, setting to NULL."");
+                    p.setAddress(null);
+                    if (old != null) {
+                        old.getPersons().remove(p);
+                    }
+                } else {
+                    p.setAddress(a);
+
+                    a.getPersons().add(p);
+
+                    if (old != null) {
+                        old.getPersons().remove(p);
+                    }
+                }
+            } catch (NumberFormatException e) {
+                System.err.println(""Invalid address id, setting to NULL."");
+                p.setAddress(null);
+                if (old != null) {
+                    old.getPersons().remove(p);
+                }
+            }
+        }
+    }",2.0,5.0,3.888888888888889,java,35,9,Code,Scalabrino
+62,"/**
+	 * add statistics report of a DB query
+	 *
+	 * @param rows rows count returned
+	 * @param time time taken
+	 */
+	void executed(long rows, long time) {
+		// read lock is enough, concurrent updates are supported by the underlying type AtomicLong
+		// this only guards executed(long, long) to be called, when another thread is executing getExecutionAvgTime()
+		readLock.lock();
+		try {
+			// Less chances for a context switch
+			for (long old = executionMinTime.get(); (time < old) && !executionMinTime.compareAndSet(old, time); old = executionMinTime.get());
+			for (long old = executionMaxTime.get(); (time > old) && !executionMaxTime.compareAndSet(old, time); old = executionMaxTime.get());
+			executionCount.getAndIncrement();
+			executionRowCount.addAndGet(rows);
+			totalExecutionTime.addAndGet(time);
+		} finally {
+			readLock.unlock();
+		}
+	}",2.0,5.0,3.333333333333333,java,12,5,Code,Scalabrino
+63,"public String toString() {
+		return new StringBuilder()
+				.append(""QueryStatistics"")
+				.append(""[cacheHitCount="").append(this.cacheHitCount)
+				.append("",cacheMissCount="").append(this.cacheMissCount)
+				.append("",cachePutCount="").append(this.cachePutCount)
+				.append("",executionCount="").append(this.executionCount)
+				.append("",executionRowCount="").append(this.executionRowCount)
+				.append("",executionAvgTime="").append(this.getExecutionAvgTime())
+				.append("",executionMaxTime="").append(this.executionMaxTime)
+				.append("",executionMinTime="").append(this.executionMinTime)
+				.append(']')
+				.toString();
+	}",3.0,5.0,4.0,java,14,1,Code,Scalabrino
+64,"public String toString() {
+		StringBuilder buf = new StringBuilder()
+				.append(""SecondLevelCacheStatistics"")
+				.append(""[hitCount="").append(this.hitCount)
+				.append("",missCount="").append(this.missCount)
+				.append("",putCount="").append(this.putCount);
+		//not sure if this would ever be null but wanted to be careful
+		if (region != null) {
+			buf.append("",elementCountInMemory="").append(this.getElementCountInMemory())
+					.append("",elementCountOnDisk="").append(this.getElementCountOnDisk())
+					.append("",sizeInMemory="").append(this.getSizeInMemory());
+		}
+		buf.append(']');
+		return buf.toString();
+	}",2.0,5.0,3.888888888888889,java,14,2,Code,Scalabrino
+65,"Object processEntity(Object value, EntityType entityType) throws HibernateException {
+
+		if (value!=null) {
+			getSession().getPersistenceContext().reassociateIfUninitializedProxy(value);
+			// if it is an initialized proxy, let cascade
+			// handle it later on
+		}
+
+		return null;
+	}",4.0,5.0,4.555555555555555,java,6,2,Code,Scalabrino
+66,"/**
+	 * 1. Recreate the collection key -> collection map
+	 * 2. rebuild the collection entries
+	 * 3. call Interceptor.postFlush()
+	 */
+	protected void postFlush(SessionImplementor session) throws HibernateException {
+
+		LOG.trace( ""Post flush"" );
+
+		final PersistenceContext persistenceContext = session.getPersistenceContext();
+		persistenceContext.getCollectionsByKey().clear();
+		
+		// the database has changed now, so the subselect results need to be invalidated
+		// the batch fetching queues should also be cleared - especially the collection batch fetching one
+		persistenceContext.getBatchFetchQueue().clear();
+
+		for ( Map.Entry<PersistentCollection, CollectionEntry> me : IdentityMap.concurrentEntries( persistenceContext.getCollectionEntries() ) ) {
+			CollectionEntry collectionEntry = me.getValue();
+			PersistentCollection persistentCollection = me.getKey();
+			collectionEntry.postFlush(persistentCollection);
+			if ( collectionEntry.getLoadedPersister() == null ) {
+				//if the collection is dereferenced, remove from the session cache
+				//iter.remove(); //does not work, since the entrySet is not backed by the set
+				persistenceContext.getCollectionEntries()
+						.remove(persistentCollection);
+			}
+			else {
+				//otherwise recreate the mapping between the collection and its key
+				CollectionKey collectionKey = new CollectionKey(
+						collectionEntry.getLoadedPersister(),
+						collectionEntry.getLoadedKey()
+				);
+				persistenceContext.getCollectionsByKey().put(collectionKey, persistentCollection);
+			}
+		}
+
+	}",1.0,5.0,3.4444444444444446,java,22,3,Code,Scalabrino
+67,"/**
+		 * Build a ParameterMemento from the given parameter registration
+		 *
+		 * @param registration The parameter registration from a ProcedureCall
+		 *
+		 * @return The memento
+		 */
+		public static ParameterMemento fromRegistration(ParameterRegistrationImplementor registration) {
+			return new ParameterMemento(
+					registration.getPosition(),
+					registration.getName(),
+					registration.getMode(),
+					registration.getType(),
+					registration.getHibernateType()
+			);
+		}",4.0,5.0,4.666666666666667,java,9,1,Code,Scalabrino
+70,"public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof OuterKey)) return false;
+
+		final OuterKey cidDetailID = (OuterKey) o;
+
+		if (detailId != null ? !detailId.equals(cidDetailID.detailId) : cidDetailID.detailId != null) return false;
+		if (master != null ? !master.equals(cidDetailID.master) : cidDetailID.master != null) return false;
+
+		return true;
+	}",2.0,5.0,3.2222222222222223,java,8,7,Code,Scalabrino
+73,"@Override
+    public void runTest(final Test test, final TestResult result) {
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    // inlined due to limitation in VA/Java
+                    //ActiveTestSuite.super.runTest(test, result);
+                    test.run(result);
+                } finally {
+                    ActiveTestSuite.this.runFinished();
+                }
+            }
+        };
+        t.start();
+    }
+",4.0,5.0,4.555555555555555,java,14,2,Code,Scalabrino
+74,"public boolean equalsFoo(Foo other) {
+		if ( _bytes!=other._bytes ) {
+			if ( _bytes==null || other._bytes==null ) return false;
+			if ( _bytes.length!=other._bytes.length ) return false;
+			for ( int i=0; i< _bytes.length; i++) {
+				if ( _bytes[i] != other._bytes[i] ) return false;
+			}
+		}
+
+		return ( this._bool == other._bool )
+		&& ( ( this._boolean == other._boolean ) || ( this._boolean.equals(other._boolean) ) )
+		&& ( ( this._byte == other._byte ) || ( this._byte.equals(other._byte) ) )
+		//&& ( ( this._date == other._date ) || ( this._date.getDate() == other._date.getDate() && this._date.getMonth() == other._date.getMonth() && this._date.getYear() == other._date.getYear() ) )
+		&& ( ( this._double == other._double ) || ( this._double.equals(other._double) ) )
+		&& ( ( this._float == other._float ) || ( this._float.equals(other._float) ) )
+		&& ( this._int == other._int )
+		&& ( ( this._integer == other._integer ) || ( this._integer.equals(other._integer) ) )
+		&& ( ( this._long == other._long ) || ( this._long.equals(other._long) ) )
+		&& ( this._null == other._null )
+		&& ( ( this._short == other._short ) || ( this._short.equals(other._short) ) )
+		&& ( ( this._string == other._string) || ( this._string.equals(other._string) ) )
+		//&& ( ( this._timestamp==other._timestamp) || ( this._timestamp.getDate() == other._timestamp.getDate() && this._timestamp.getYear() == other._timestamp.getYear() && this._timestamp.getMonth() == other._timestamp.getMonth() ) )
+		&& ( this._zero == other._zero )
+		&& ( ( this._foo == other._foo ) || ( this._foo.getKey().equals( other._foo.getKey() ) ) )
+		&& ( ( this.blob == other.blob ) || ( this.blob.equals(other.blob) ) )
+		&& ( this.yesno == other.yesno )
+		&& ( ( this.binary == other.binary ) || java.util.Arrays.equals(this.binary, other.binary) )
+		&& ( this.key.equals(other.key) )
+		&& ( this.theLocale.equals(other.theLocale) )
+		&& ( ( this.custom == other.custom ) || ( this.custom[0].equals(other.custom[0]) && this.custom[1].equals(other.custom[1]) ) );
+
+	}",1.0,5.0,1.8888888888888888,java,28,38,Code,Scalabrino
+76,"@Override
+	protected void prepareTest() throws Exception {
+	    Session s = openSession();
+	    Transaction t = s.beginTransaction();
+	    Child child_1_1 = new Child( ""achild1-1"");
+	    Child child_1_2 = new Child( ""ychild1-2"");
+	    Child child_1_3 = new Child( ""dchild1-3"");
+	    Child child_2_1 = new Child( ""bchild2-1"");
+	    Child child_2_2 = new Child( ""cchild2-2"");
+	    Child child_2_3 = new Child( ""zchild2-3"");
+	
+	    s.save( child_1_1 );
+	    s.save( child_2_1 );
+	    s.save( child_1_2 );
+	    s.save( child_2_2 );
+	    s.save( child_1_3 );
+	    s.save( child_2_3 );
+	
+	    s.flush();
+	
+	    Parent p1 = new Parent( ""parent1"" );
+	    p1.addChild( child_1_1 );
+	    p1.addChild( child_1_2 );
+	    p1.addChild( child_1_3 );
+	    s.save( p1 );
+	
+	    Parent p2 = new Parent( ""parent2"" );
+	    p2.addChild( child_2_1 );
+	    p2.addChild( child_2_2 );
+	    p2.addChild( child_2_3 );
+	    s.save( p2 );
+	
+	    t.commit();
+	    s.close();
+	}",4.0,5.0,4.444444444444445,java,30,1,Code,Scalabrino
+84,"/**
+	 * Build a normal attribute.
+	 *
+	 * @param ownerType The descriptor of the attribute owner (aka declarer).
+	 * @param property The Hibernate property descriptor for the attribute
+	 * @param <X> The type of the owner
+	 * @param <Y> The attribute type
+	 *
+	 * @return The built attribute descriptor or null if the attribute is not part of the JPA 2 model (eg backrefs)
+	 */
+	@SuppressWarnings({""unchecked""})
+	public <X, Y> AttributeImplementor<X, Y> buildAttribute(AbstractManagedType<X> ownerType, Property property) {
+		if ( property.isSynthetic() ) {
+			// hide synthetic/virtual properties (fabricated by Hibernate) from the JPA metamodel.
+			LOG.tracef( ""Skipping synthetic property %s(%s)"", ownerType.getTypeName(), property.getName() );
+			return null;
+		}
+		LOG.trace( ""Building attribute ["" + ownerType.getTypeName() + ""."" + property.getName() + ""]"" );
+		final AttributeContext<X> attributeContext = wrap( ownerType, property );
+		final AttributeMetadata<X, Y> attributeMetadata =
+				determineAttributeMetadata( attributeContext, normalMemberResolver );
+		if ( attributeMetadata == null ) {
+			return null;
+		}
+		if ( attributeMetadata.isPlural() ) {
+			return buildPluralAttribute( (PluralAttributeMetadata) attributeMetadata );
+		}
+		final SingularAttributeMetadata<X, Y> singularAttributeMetadata = (SingularAttributeMetadata<X, Y>) attributeMetadata;
+		final Type<Y> metaModelType = getMetaModelType( singularAttributeMetadata.getValueContext() );
+		return new SingularAttributeImpl<X, Y>(
+				attributeMetadata.getName(),
+				attributeMetadata.getJavaType(),
+				ownerType,
+				attributeMetadata.getMember(),
+				false,
+				false,
+				property.isOptional(),
+				metaModelType,
+				attributeMetadata.getPersistentAttributeType()
+		);
+	}
+",1.0,4.0,2.888888888888889,java,30,4,Code,Scalabrino
+95,"private void releaseStatement(Session session, PreparedStatement ps) {
+		if ( ps != null ) {
+			try {
+				( (SessionImplementor) session ).getTransactionCoordinator().getJdbcCoordinator().release( ps );
+			}
+			catch ( Throwable ignore ) {
+				// ignore...
+			}
+		}
+	}",1.0,5.0,3.888888888888889,java,9,3,Code,Scalabrino
+100,"public void afterSessionFactoryBuilt() {
+		super.afterSessionFactoryBuilt();
+		final Session session = sessionFactory().openSession();
+		session.doWork(
+				new Work() {
+					@Override
+					public void execute(Connection connection) throws SQLException {
+						Statement st = ((SessionImplementor)session).getTransactionCoordinator().getJdbcCoordinator().getStatementPreparer().createStatement();
+						try {
+							((SessionImplementor)session).getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().execute( st, ""drop table Point"");
+						}
+						catch (Exception ignored) {
+						}
+						((SessionImplementor)session).getTransactionCoordinator().getJdbcCoordinator().getResultSetReturn().execute( st, ""create table Point (\""x\"" number(19,2) not null, \""y\"" number(19,2) not null, description varchar2(255) )"");
+						((SessionImplementor)session).getTransactionCoordinator().getJdbcCoordinator().release( st );
+					}
+				}
+		);
+		session.close();
+	}",2.0,5.0,3.6666666666666665,java,20,3,Code,Scalabrino
+102,"/**
+	 * Throws {@link org.hibernate.PropertyValueException} if there are any unresolved
+	 * entity insert actions that depend on non-nullable associations with
+	 * a transient entity. This method should be called on completion of
+	 * an operation (after all cascades are completed) that saves an entity.
+	 *
+	 * @throws org.hibernate.PropertyValueException if there are any unresolved entity
+	 * insert actions; {@link org.hibernate.PropertyValueException#getEntityName()}
+	 * and {@link org.hibernate.PropertyValueException#getPropertyName()} will
+	 * return the entity name and property value for the first unresolved
+	 * entity insert action.
+	 */
+	public void checkNoUnresolvedActionsAfterOperation() throws PropertyValueException {
+		if ( isEmpty() ) {
+			LOG.trace( ""No entity insert actions have non-nullable, transient entity dependencies."" );
+		}
+		else {
+			final AbstractEntityInsertAction firstDependentAction =
+					dependenciesByAction.keySet().iterator().next();
+
+			logCannotResolveNonNullableTransientDependencies( firstDependentAction.getSession() );
+
+			final NonNullableTransientDependencies nonNullableTransientDependencies =
+					dependenciesByAction.get( firstDependentAction );
+			final Object firstTransientDependency =
+					nonNullableTransientDependencies.getNonNullableTransientEntities().iterator().next();
+			final String firstPropertyPath =
+					nonNullableTransientDependencies.getNonNullableTransientPropertyPaths( firstTransientDependency ).iterator().next();
+
+			throw new TransientPropertyValueException(
+					""Not-null property references a transient value - transient instance must be saved before current operation"",
+					firstDependentAction.getSession().guessEntityName( firstTransientDependency ),
+					firstDependentAction.getEntityName(),
+					firstPropertyPath
+			);
+		}
+	}",2.0,5.0,3.333333333333333,java,22,2,Code,Scalabrino
+103,"/**
+	 * Handle sending notifications needed for natural-id after saving
+	 *
+	 * @param generatedId The generated entity identifier
+	 */
+	public void handleNaturalIdPostSaveNotifications(Serializable generatedId) {
+		if ( isEarlyInsert() ) {
+			// with early insert, we still need to add a local (transactional) natural id cross-reference
+			getSession().getPersistenceContext().getNaturalIdHelper().manageLocalNaturalIdCrossReference(
+					getPersister(),
+					generatedId,
+					state,
+					null,
+					CachedNaturalIdValueSource.INSERT
+			);
+		}
+		// after save, we need to manage the shared cache entries
+		getSession().getPersistenceContext().getNaturalIdHelper().manageSharedNaturalIdCrossReference(
+				getPersister(),
+				getId(),
+				state,
+				null,
+				CachedNaturalIdValueSource.INSERT
+		);
+	}",3.0,5.0,3.888888888888889,java,18,2,Code,Scalabrino
+104,"private boolean initializeLazyProperty(
+			final String fieldName,
+			final Object entity,
+			final SessionImplementor session,
+			final Object[] snapshot,
+			final int j,
+			final Object propValue) {
+		setPropertyValue( entity, lazyPropertyNumbers[j], propValue );
+		if ( snapshot != null ) {
+			// object have been loaded with setReadOnly(true); HHH-2236
+			snapshot[ lazyPropertyNumbers[j] ] = lazyPropertyTypes[j].deepCopy( propValue, factory );
+		}
+		return fieldName.equals( lazyPropertyNames[j] );
+	}",2.0,5.0,3.888888888888889,java,13,2,Code,Scalabrino
+105,"private void initOrdinaryPropertyPaths(Mapping mapping) throws MappingException {
+		for ( int i = 0; i < getSubclassPropertyNameClosure().length; i++ ) {
+			propertyMapping.initPropertyPaths( getSubclassPropertyNameClosure()[i],
+					getSubclassPropertyTypeClosure()[i],
+					getSubclassPropertyColumnNameClosure()[i],
+					getSubclassPropertyColumnReaderClosure()[i],
+					getSubclassPropertyColumnReaderTemplateClosure()[i],
+					getSubclassPropertyFormulaTemplateClosure()[i],
+					mapping );
+		}
+	}",1.0,5.0,3.888888888888889,java,11,2,Code,Scalabrino
+106,"/**
+	 * Delete an object
+	 */
+	public void delete(Serializable id, Object version, Object object, SessionImplementor session)
+			throws HibernateException {
+		final int span = getTableSpan();
+		boolean isImpliedOptimisticLocking = !entityMetamodel.isVersioned() && isAllOrDirtyOptLocking();
+		Object[] loadedState = null;
+		if ( isImpliedOptimisticLocking ) {
+			// need to treat this as if it where optimistic-lock=""all"" (dirty does *not* make sense);
+			// first we need to locate the ""loaded"" state
+			//
+			// Note, it potentially could be a proxy, so doAfterTransactionCompletion the location the safe way...
+			final EntityKey key = session.generateEntityKey( id, this );
+			Object entity = session.getPersistenceContext().getEntity( key );
+			if ( entity != null ) {
+				EntityEntry entry = session.getPersistenceContext().getEntry( entity );
+				loadedState = entry.getLoadedState();
+			}
+		}
+
+		final String[] deleteStrings;
+		if ( isImpliedOptimisticLocking && loadedState != null ) {
+			// we need to utilize dynamic delete statements
+			deleteStrings = generateSQLDeletStrings( loadedState );
+		}
+		else {
+			// otherwise, utilize the static delete statements
+			deleteStrings = getSQLDeleteStrings();
+		}
+
+		for ( int j = span - 1; j >= 0; j-- ) {
+			delete( id, version, j, object, deleteStrings[j], session, loadedState );
+		}
+
+	}",2.0,5.0,3.555555555555556,java,24,7,Code,Scalabrino
+107,"private UniqueEntityLoader getAppropriateLoader(LockOptions lockOptions, SessionImplementor session) {
+		if ( queryLoader != null ) {
+			// if the user specified a custom query loader we need to that
+			// regardless of any other consideration
+			return queryLoader;
+		}
+		else if ( isAffectedByEnabledFilters( session ) ) {
+			// because filters affect the rows returned (because they add
+			// restrictions) these need to be next in precedence
+			return createEntityLoader(lockOptions, session.getLoadQueryInfluencers() );
+		}
+		else if ( session.getLoadQueryInfluencers().getInternalFetchProfile() != null && LockMode.UPGRADE.greaterThan( lockOptions.getLockMode() ) ) {
+			// Next, we consider whether an 'internal' fetch profile has been set.
+			// This indicates a special fetch profile Hibernate needs applied
+			// (for its merge loading process e.g.).
+			return ( UniqueEntityLoader ) getLoaders().get( session.getLoadQueryInfluencers().getInternalFetchProfile() );
+		}
+		else if ( isAffectedByEnabledFetchProfiles( session ) ) {
+			// If the session has associated influencers we need to adjust the
+			// SQL query used for loading based on those influencers
+			return createEntityLoader(lockOptions, session.getLoadQueryInfluencers() );
+		}
+		else if ( isAffectedByEntityGraph( session ) ) {
+			return createEntityLoader( lockOptions, session.getLoadQueryInfluencers() );
+		}
+		else if ( lockOptions.getTimeOut() != LockOptions.WAIT_FOREVER ) {
+			return createEntityLoader( lockOptions, session.getLoadQueryInfluencers() );
+		}
+		else {
+			return ( UniqueEntityLoader ) getLoaders().get( lockOptions.getLockMode() );
+		}
+	}",3.0,5.0,3.888888888888889,java,23,8,Code,Scalabrino
+108,"public String[] toColumns(String alias, String propertyName) throws QueryException {
+		if ( propertyName.equals(CollectionPropertyNames.COLLECTION_ELEMENTS) ) {
+			return memberPersister.getElementColumnNames(alias);
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_INDICES) ) {
+			if ( !memberPersister.hasIndex() ) throw new QueryException(""unindexed collection in indices()"");
+			return memberPersister.getIndexColumnNames(alias);
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_SIZE) ) {
+			String[] cols = memberPersister.getKeyColumnNames();
+			return new String[] { ""count("" + alias + '.' + cols[0] + ')' };
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_MAX_INDEX) ) {
+			if ( !memberPersister.hasIndex() ) throw new QueryException(""unindexed collection in maxIndex()"");
+			String[] cols = memberPersister.getIndexColumnNames(alias);
+			if ( cols.length!=1 ) throw new QueryException(""composite collection index in maxIndex()"");
+			return new String[] { ""max("" + cols[0] + ')' };
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_MIN_INDEX) ) {
+			if ( !memberPersister.hasIndex() ) throw new QueryException(""unindexed collection in minIndex()"");
+			String[] cols = memberPersister.getIndexColumnNames(alias);
+			if ( cols.length!=1 ) throw new QueryException(""composite collection index in minIndex()"");
+			return new String[] { ""min("" + cols[0] + ')' };
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_MAX_ELEMENT) ) {
+			String[] cols = memberPersister.getElementColumnNames(alias);
+			if ( cols.length!=1 ) throw new QueryException(""composite collection element in maxElement()"");
+			return new String[] { ""max("" + cols[0] + ')' };
+		}
+		else if ( propertyName.equals(CollectionPropertyNames.COLLECTION_MIN_ELEMENT) ) {
+			String[] cols = memberPersister.getElementColumnNames(alias);
+			if ( cols.length!=1 ) throw new QueryException(""composite collection element in minElement()"");
+			return new String[] { ""min("" + cols[0] + ')' };
+		}
+		else {
+			//return memberPersister.toColumns(alias, propertyName);
+			throw new QueryException(""illegal syntax near collection: "" + propertyName);
+		}
+	}",2.0,5.0,3.333333333333333,java,38,15,Code,Scalabrino
+109,"private void bindIndex(final Mappings mappings) {
+		if ( !indexColumn.isImplicit() ) {
+			PropertyHolder valueHolder = PropertyHolderBuilder.buildPropertyHolder(
+					this.collection,
+					StringHelper.qualify( this.collection.getRole(), ""key"" ),
+					null,
+					null, propertyHolder, mappings
+			);
+			List list = (List) this.collection;
+			if ( !list.isOneToMany() ) indexColumn.forceNotNull();
+			indexColumn.setPropertyHolder( valueHolder );
+			SimpleValueBinder value = new SimpleValueBinder();
+			value.setColumns( new Ejb3Column[] { indexColumn } );
+			value.setExplicitType( ""integer"" );
+			value.setMappings( mappings );
+			SimpleValue indexValue = value.make();
+			indexColumn.linkWithValue( indexValue );
+			list.setIndex( indexValue );
+			list.setBaseIndex( indexColumn.getBase() );
+			if ( list.isOneToMany() && !list.getKey().isNullable() && !list.isInverse() ) {
+				String entityName = ( (OneToMany) list.getElement() ).getReferencedEntityName();
+				PersistentClass referenced = mappings.getClass( entityName );
+				IndexBackref ib = new IndexBackref();
+				ib.setName( '_' + propertyName + ""IndexBackref"" );
+				ib.setUpdateable( false );
+				ib.setSelectable( false );
+				ib.setCollectionRole( list.getRole() );
+				ib.setEntityName( list.getOwner().getEntityName() );
+				ib.setValue( list.getIndex() );
+				referenced.addProperty( ib );
+			}
+		}
+		else {
+			Collection coll = this.collection;
+			throw new AnnotationException(
+					""List/array has to be annotated with an @OrderColumn (or @IndexColumn): ""
+							+ coll.getRole()
+			);
+		}
+	}",1.0,5.0,3.0,java,40,6,Code,Scalabrino
+110,"/**
+	 * Perform {@link org.hibernate.action.spi.Executable#execute()} on each element of the list
+	 * 
+	 * @param list The list of Executable elements to be performed
+	 *
+	 * @throws HibernateException
+	 */
+	private <E extends Executable & Comparable<?> & Serializable> void executeActions(ExecutableList<E> list) throws HibernateException {
+		// todo : consider ways to improve the double iteration of Executables here:
+		//		1) we explicitly iterate list here to perform Executable#execute()
+		//		2) ExecutableList#getQuerySpaces also iterates the Executables to collect query spaces.
+		try {
+			for ( E e : list ) {
+				try {
+					e.execute();
+				}
+				finally {
+					beforeTransactionProcesses.register( e.getBeforeTransactionCompletionProcess() );
+					afterTransactionProcesses.register( e.getAfterTransactionCompletionProcess() );
+				}
+			}
+		}
+		finally {
+			if ( session.getFactory().getSettings().isQueryCacheEnabled() ) {
+				// Strictly speaking, only a subset of the list may have been processed if a RuntimeException occurs.
+				// We still invalidate all spaces. I don't see this as a big deal - after all, RuntimeExceptions are
+				// unexpected.
+				Set<Serializable> propertySpaces = list.getQuerySpaces();
+				invalidateSpaces( propertySpaces.toArray( new Serializable[propertySpaces.size()] ) );
+			}
+		}
+
+		list.clear();
+		session.getTransactionCoordinator().getJdbcCoordinator().executeBatch();
+	}",2.0,5.0,3.555555555555556,java,21,3,Code,Scalabrino
+111,"@SuppressWarnings( {""SimplifiableIfStatement""})
+	private boolean isUnequivocallyNonDirty(Object entity) {
+
+		if(entity instanceof SelfDirtinessTracker)
+			return ((SelfDirtinessTracker) entity).$$_hibernate_hasDirtyAttributes();
+
+		final CustomEntityDirtinessStrategy customEntityDirtinessStrategy =
+				persistenceContext.getSession().getFactory().getCustomEntityDirtinessStrategy();
+		if ( customEntityDirtinessStrategy.canDirtyCheck( entity, getPersister(), (Session) persistenceContext.getSession() ) ) {
+			return ! customEntityDirtinessStrategy.isDirty( entity, getPersister(), (Session) persistenceContext.getSession() );
+		}
+
+		if ( getPersister().hasMutableProperties() ) {
+			return false;
+		}
+
+		if ( getPersister().getInstrumentationMetadata().isInstrumented() ) {
+			// the entity must be instrumented (otherwise we cant check dirty flag) and the dirty flag is false
+			return ! getPersister().getInstrumentationMetadata().extractInterceptor( entity ).isDirty();
+		}
+
+		return false;
+	}",1.0,4.0,3.0,java,17,5,Code,Scalabrino
+112,"public static String expandBatchIdPlaceholder(
+			String sql,
+			Serializable[] ids,
+			String alias,
+			String[] keyColumnNames,
+			Dialect dialect) {
+		if ( keyColumnNames.length == 1 ) {
+			// non-composite
+			return StringHelper.replace( sql, BATCH_ID_PLACEHOLDER, repeat( ""?"", ids.length, "","" ) );
+		}
+		else {
+			// composite
+			if ( dialect.supportsRowValueConstructorSyntaxInInList() ) {
+				final String tuple = ""("" + StringHelper.repeat( ""?"", keyColumnNames.length, "","" );
+				return StringHelper.replace( sql, BATCH_ID_PLACEHOLDER, repeat( tuple, ids.length, "","" ) );
+			}
+			else {
+				final String keyCheck = joinWithQualifier( keyColumnNames, alias, "" and "" );
+				return replace( sql, BATCH_ID_PLACEHOLDER, repeat( keyCheck, ids.length, "" or "" ) );
+			}
+		}
+	}",3.0,5.0,3.888888888888889,java,20,3,Code,Scalabrino
+113,"/**
+	 * Interpret a long as its binary form
+	 *
+	 * @param longValue The long to interpret to binary
+	 *
+	 * @return The binary
+	 */
+	public static byte[] fromLong(long longValue) {
+		byte[] bytes = new byte[8];
+		bytes[0] = (byte) ( longValue >> 56 );
+		bytes[1] = (byte) ( ( longValue << 8 ) >> 56 );
+		bytes[2] = (byte) ( ( longValue << 16 ) >> 56 );
+		bytes[3] = (byte) ( ( longValue << 24 ) >> 56 );
+		bytes[4] = (byte) ( ( longValue << 32 ) >> 56 );
+		bytes[5] = (byte) ( ( longValue << 40 ) >> 56 );
+		bytes[6] = (byte) ( ( longValue << 48 ) >> 56 );
+		bytes[7] = (byte) ( ( longValue << 56 ) >> 56 );
+		return bytes;
+	}",2.0,5.0,4.111111111111111,java,12,1,Code,Scalabrino
+114,"/**
+     * Tests this instance for equality with an arbitrary object.
+     *
+     * @param obj  the object (<code>null</code> permitted).
+     *
+     * @return A boolean.
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof OHLC)) {
+            return false;
+        }
+        OHLC that = (OHLC) obj;
+        if (this.open != that.open) {
+            return false;
+        }
+        if (this.close != that.close) {
+            return false;
+        }
+        if (this.high != that.high) {
+            return false;
+        }
+        if (this.low != that.low) {
+            return false;
+        }
+        return true;
+    }",4.0,5.0,4.666666666666667,java,23,7,Code,Scalabrino
+115,"public final void caseSList() throws RecognitionException, TokenStreamException {
+		
+		
+		{
+		_loop119:
+		do {
+			if ((_tokenSet_6.member(LA(1)))) {
+				statement();
+			}
+			else {
+				break _loop119;
+			}
+			
+		} while (true);
+		}
+	}",1.0,5.0,3.333333333333333,java,13,3,Code,Scalabrino
+116,"public void write(BufferedReader reader,
+                      BufferedWriter writer,
+                      Stack parseStateStack) throws IOException {
+        ParseState parseState = (ParseState) parseStateStack.peek();
+        Object mInterface = /*(MInterface)*/ parseState.newClassifier(name);
+
+	if (mInterface != null) {
+	    parseStateStack.push(new ParseState(mInterface));
+	    StringBuffer sbText =
+		GeneratorJava.getInstance().generateClassifierStart(mInterface);
+	    if (sbText != null) {
+		writer.write (sbText.toString());
+	    }
+            // dispose code piece in reader
+            ffCodePiece(reader, null);
+        } else {
+            // not in model, so write the original code
+            ffCodePiece(reader, writer);
+        }
+    }",2.0,5.0,3.555555555555556,java,17,3,Code,Scalabrino
+117,"protected final void mHEX_DIGIT(boolean _createToken) throws RecognitionException, CharStreamException, TokenStreamException {
+		int _ttype; Token _token=null; int _begin=text.length();
+		_ttype = HEX_DIGIT;
+		int _saveIndex;
+		
+		{
+		switch ( LA(1)) {
+		case '0':  case '1':  case '2':  case '3':
+		case '4':  case '5':  case '6':  case '7':
+		case '8':  case '9':
+		{
+			matchRange('0','9');
+			break;
+		}
+		case 'A':  case 'B':  case 'C':  case 'D':
+		case 'E':  case 'F':
+		{
+			matchRange('A','F');
+			break;
+		}
+		case 'a':  case 'b':  case 'c':  case 'd':
+		case 'e':  case 'f':
+		{
+			matchRange('a','f');
+			break;
+		}
+		default:
+		{
+			throw new NoViableAltForCharException((char)LA(1), getFilename(), getLine(), getColumn());
+		}
+		}
+		}
+		if ( _createToken && _token==null && _ttype!=Token.SKIP ) {
+			_token = makeToken(_ttype);
+			_token.setText(new String(text.getBuffer(), _begin, text.length()-_begin));
+		}
+		_returnToken = _token;
+	}",1.0,5.0,3.555555555555556,java,37,26,Code,Scalabrino
+118,"/**
+     * The constructor.
+     */
+    public TabChecklist() {
+	super(""tab.checklist"");
+
+	tableModel = new TableModelChecklist(this);
+	table.setModel(tableModel);
+
+	Font labelFont = LookAndFeelMgr.getInstance().getStandardFont();
+	table.setFont(labelFont);
+
+	table.setIntercellSpacing(new Dimension(0, 1));
+	table.setShowVerticalLines(false);
+	table.getSelectionModel().addListSelectionListener(this);
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+
+	TableColumn checkCol = table.getColumnModel().getColumn(0);
+	TableColumn descCol = table.getColumnModel().getColumn(1);
+	checkCol.setMinWidth(20);
+	checkCol.setMaxWidth(30);
+	checkCol.setWidth(30);
+	descCol.setPreferredWidth(900);
+	table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+	table.sizeColumnsToFit(-1);
+
+	JScrollPane sp = new JScrollPane(table);
+
+	setLayout(new BorderLayout());
+	add(new JLabel(Translator.localize(""tab.checklist.warning"")),
+	    BorderLayout.NORTH);
+	add(sp, BorderLayout.CENTER);
+	
+	addComponentListener(this);
+    }",2.0,5.0,3.888888888888889,java,25,1,Code,Scalabrino
+119,"public void vetoableChange(PropertyChangeEvent pce) {
+        if (""ownedElement"".equals(pce.getPropertyName())) {
+            Vector oldOwned = (Vector) pce.getOldValue();
+            Object eo = pce.getNewValue();
+            Object me = Model.getFacade().getModelElement(eo);
+            if (oldOwned.contains(eo)) {
+                LOG.debug(""model removed "" + me);
+                if (Model.getFacade().isANode(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isANodeInstance(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAComponent(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAComponentInstance(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAClass(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAInterface(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAObject(me)) {
+                    removeNode(me);
+                }
+                if (Model.getFacade().isAAssociation(me)) {
+                    removeEdge(me);
+                }
+                if (Model.getFacade().isADependency(me)) {
+                    removeEdge(me);
+                }
+                if (Model.getFacade().isALink(me)) {
+                    removeEdge(me);
+                }
+            } else {
+                LOG.debug(""model added "" + me);
+            }
+        }
+    }",2.0,5.0,4.111111111111111,java,42,13,Code,Scalabrino
+120,"public List getInEdges(Object port) {
+	Vector res = new Vector(); //wasteful!
+	if (Model.getFacade().isAClassifierRole(port)) {
+	    Object cr = port;
+	    Collection ends = Model.getFacade().getAssociationEnds(cr);
+	    if (ends == null) {
+                return res; // empty Vector
+            }
+	    Iterator iter = ends.iterator();
+	    while (iter.hasNext()) {
+		Object aer = iter.next();
+		res.addElement(Model.getFacade().getAssociation(aer));
+	    }
+	}
+	return res;
+    }
+",3.0,5.0,3.888888888888889,java,16,4,Code,Scalabrino
+121,"/**
+     * Displays visual indications of pending ToDoItems.
+     * Please note that the list of advices (ToDoList) is not the same
+     * as the list of element known by the FigNode (_figs). Therefore,
+     * it is necessary to check if the graphic item exists before drawing
+     * on it. See ClAttributeCompartment for an example.
+     * @param g the graphics device
+     * @see org.argouml.uml.cognitive.critics.ClAttributeCompartment
+     */
+    public void paintClarifiers(Graphics g) {
+        int iconX = getX();
+        int iconY = getY() - 10;
+        ToDoList list = Designer.theDesigner().getToDoList();
+        Vector items = list.elementsForOffender(getOwner());
+        int size = items.size();
+        for (int i = 0; i < size; i++) {
+            ToDoItem item = (ToDoItem) items.elementAt(i);
+            Icon icon = item.getClarifier();
+            if (icon instanceof Clarifier) {
+                ((Clarifier) icon).setFig(this);
+                ((Clarifier) icon).setToDoItem(item);
+            }
+            if (icon != null) {
+                icon.paintIcon(null, g, iconX, iconY);
+                iconX += icon.getIconWidth();
+            }
+        }
+        items = list.elementsForOffender(this);
+        size = items.size();
+        for (int i = 0; i < size; i++) {
+            ToDoItem item = (ToDoItem) items.elementAt(i);
+            Icon icon = item.getClarifier();
+            if (icon instanceof Clarifier) {
+                ((Clarifier) icon).setFig(this);
+                ((Clarifier) icon).setToDoItem(item);
+            }
+            if (icon != null) {
+                icon.paintIcon(null, g, iconX, iconY);
+                iconX += icon.getIconWidth();
+            }
+        }
+    }",1.0,4.0,3.333333333333333,java,33,7,Code,Scalabrino
+122,"public void mouseMoved(MouseEvent me) {
+	//- RedrawManager.lock();
+	translateMouseEvent(me);
+	Globals.curEditor(this);
+	setUnderMouse(me);
+        Fig currentFig = getCurrentFig();
+	if (currentFig != null && Globals.getShowFigTips()) {
+	    String tip = currentFig.getTipString(me);
+	    if (tip != null && (getJComponent() != null)) {
+	        JComponent c = getJComponent();
+	        if (c.getToolTipText() == null
+		    || !(c.getToolTipText().equals(tip))) {
+	            c.setToolTipText(tip);
+	        }
+            }
+	} else if (getJComponent() != null
+		   && getJComponent().getToolTipText() != null) {
+            getJComponent().setToolTipText(null); //was """"
+	}
+
+	_selectionManager.mouseMoved(me);
+	_modeManager.mouseMoved(me);
+	//- RedrawManager.unlock();
+	//- _redrawer.repairDamage();
+    }",1.0,5.0,3.2222222222222223,java,21,9,Code,Scalabrino
+123,"public Set getDependencies(Object parent) {
+        if (Model.getFacade().isAClass(parent)) {
+	    Set set = new HashSet();
+	    set.add(parent);
+	    set.addAll(Model.getFacade().getAttributes(parent));
+	    set.addAll(Model.getFacade().getOperations(parent));
+	    set.addAll(Model.getFacade().getAssociationEnds(parent));
+	    set.addAll(Model.getFacade().getSupplierDependencies(parent));
+	    set.addAll(Model.getFacade().getClientDependencies(parent));
+	    set.addAll(Model.getFacade().getGeneralizations(parent));
+	    set.addAll(Model.getFacade().getSpecializations(parent));
+	    return set;
+	}
+
+	return null;
+    }",4.0,5.0,4.666666666666667,java,15,2,Code,Scalabrino
+125,"private Exception createTimeoutException(Thread thread) {
+        StackTraceElement[] stackTrace = thread.getStackTrace();
+        final Thread stuckThread = fLookForStuckThread ? getStuckThread(thread) : null;
+        Exception currThreadException = new Exception(String.format(
+                ""test timed out after %d %s"", fTimeout, fTimeUnit.name().toLowerCase()));
+        if (stackTrace != null) {
+            currThreadException.setStackTrace(stackTrace);
+            thread.interrupt();
+        }
+        if (stuckThread != null) {
+            Exception stuckThreadException = 
+                new Exception (""Appears to be stuck in thread "" +
+                               stuckThread.getName());
+            stuckThreadException.setStackTrace(getStackTrace(stuckThread));
+            return new MultipleFailureException    
+                (Arrays.<Throwable>asList(currThreadException, stuckThreadException));
+        } else {
+            return currThreadException;
+        }
+    }",2.0,4.0,2.888888888888889,java,20,4,Code,Scalabrino
+126,"/**
+	 * Build the metamodel using the information from the collection of Hibernate
+	 * {@link PersistentClass} models as well as the Hibernate {@link org.hibernate.SessionFactory}.
+	 *
+	 * @param persistentClasses Iterator over the Hibernate (config-time) metamodel
+	 * @param mappedSuperclasses All known MappedSuperclasses
+	 * @param sessionFactory The Hibernate session factory.
+     * @param ignoreUnsupported ignore unsupported/unknown annotations (like @Any)
+	 *
+	 * @return The built metamodel
+	 */
+	public static MetamodelImpl buildMetamodel(
+			Iterator<PersistentClass> persistentClasses,
+			Set<MappedSuperclass> mappedSuperclasses,
+			SessionFactoryImplementor sessionFactory,
+            boolean ignoreUnsupported) {
+		MetadataContext context = new MetadataContext( sessionFactory, mappedSuperclasses, ignoreUnsupported );
+		while ( persistentClasses.hasNext() ) {
+			PersistentClass pc = persistentClasses.next();
+			locateOrBuildEntityType( pc, context );
+		}
+		handleUnusedMappedSuperclasses( context );
+		context.wrapUp();
+		return new MetamodelImpl( context.getEntityTypeMap(), context.getEmbeddableTypeMap(), context.getMappedSuperclassTypeMap(), context.getEntityTypesByEntityName() );
+	}",2.0,5.0,3.111111111111111,java,14,2,Code,Scalabrino
+132,"private InfinispanRegionFactory createRegionFactory(final EmbeddedCacheManager manager, Properties p) {
+      final InfinispanRegionFactory factory = new SingleNodeTestCase.TestInfinispanRegionFactory() {
+
+         @Override
+         protected org.infinispan.transaction.lookup.TransactionManagerLookup createTransactionManagerLookup(Settings settings, Properties properties) {
+            return new HibernateTransactionManagerLookup(null, null) {
+               @Override
+               public TransactionManager getTransactionManager() throws Exception {
+                  AbstractJtaPlatform jta = new JBossStandAloneJtaPlatform();
+                  jta.injectServices(ServiceRegistryBuilder.buildServiceRegistry());
+                  return jta.getTransactionManager();
+               }
+            };
+         }
+
+         @Override
+         protected EmbeddedCacheManager createCacheManager(Properties properties) throws CacheException {
+            if (manager != null)
+               return manager;
+            else
+               return super.createCacheManager(properties);
+         }
+
+      };
+
+      factory.start(null, p);
+      return factory;
+   }",1.0,4.0,2.888888888888889,java,24,3,Code,Scalabrino
+139,"public CollectionListeners( SessionFactory sf) {
+		preCollectionRecreateListener = new PreCollectionRecreateListener( this );
+		initializeCollectionListener = new InitializeCollectionListener( this );
+		preCollectionRemoveListener = new PreCollectionRemoveListener( this );
+		preCollectionUpdateListener = new PreCollectionUpdateListener( this );
+		postCollectionRecreateListener = new PostCollectionRecreateListener( this );
+		postCollectionRemoveListener = new PostCollectionRemoveListener( this );
+		postCollectionUpdateListener = new PostCollectionUpdateListener( this );
+
+		EventListenerRegistry registry = ( (SessionFactoryImplementor) sf ).getServiceRegistry().getService( EventListenerRegistry.class );
+		registry.setListeners( EventType.INIT_COLLECTION, initializeCollectionListener );
+
+		registry.setListeners( EventType.PRE_COLLECTION_RECREATE, preCollectionRecreateListener );
+		registry.setListeners( EventType.POST_COLLECTION_RECREATE, postCollectionRecreateListener );
+
+		registry.setListeners( EventType.PRE_COLLECTION_REMOVE, preCollectionRemoveListener );
+		registry.setListeners( EventType.POST_COLLECTION_REMOVE, postCollectionRemoveListener );
+
+		registry.setListeners( EventType.PRE_COLLECTION_UPDATE, preCollectionUpdateListener );
+		registry.setListeners( EventType.POST_COLLECTION_UPDATE, postCollectionUpdateListener );
+	}",3.0,5.0,4.111111111111111,java,17,1,Code,Scalabrino
+141,"public int hashCode() {
+        final int PRIME = 31;
+        int result = 1;
+        if ( name != null ) {
+            result += name.hashCode();
+        }
+        result *= PRIME;
+        if ( num != null ) {
+            result += num.hashCode();
+        }
+        return result;
+    }",3.0,5.0,4.333333333333333,java,12,3,Code,Scalabrino
+143,"public LoadPlan buildLoadPlan(
+			SessionFactoryImplementor sf,
+			OuterJoinLoadable persister,
+			LoadQueryInfluencers influencers,
+			LockMode lockMode) {
+		FetchStyleLoadPlanBuildingAssociationVisitationStrategy strategy = new FetchStyleLoadPlanBuildingAssociationVisitationStrategy(
+				sf,
+				influencers,
+				lockMode
+				);
+		return MetamodelDrivenLoadPlanBuilder.buildRootEntityLoadPlan( strategy, persister );
+	}",1.0,4.0,3.333333333333333,java,12,1,Code,Scalabrino
+144,"private void compare(JoinWalker walker, LoadQueryDetails details) {
+		System.out.println( ""------ SQL -----------------------------------------------------------------"" );
+		System.out.println( ""WALKER    : "" + walker.getSQLString() );
+		System.out.println( ""LOAD-PLAN : "" + details.getSqlStatement() );
+		System.out.println( ""----------------------------------------------------------------------------"" );
+		System.out.println( );
+		System.out.println( ""------ SUFFIXES ------------------------------------------------------------"" );
+		System.out.println( ""WALKER    : "" + StringHelper.join( "", "",  walker.getSuffixes() ) + "" : ""
+									+ StringHelper.join( "", "", walker.getCollectionSuffixes() ) );
+		System.out.println( ""----------------------------------------------------------------------------"" );
+		System.out.println( );
+	}",4.0,5.0,4.888888888888889,java,12,1,Code,Scalabrino
+146,"private void doBasicPluralAttributeBinding(PluralAttributeSource source, AbstractPluralAttributeBinding binding) {
+		binding.setFetchTiming( source.getFetchTiming() );
+		binding.setFetchStyle( source.getFetchStyle() );
+		binding.setCascadeStyles( source.getCascadeStyles() );
+
+		binding.setCaching( source.getCaching() );
+
+		binding.getHibernateTypeDescriptor().setJavaTypeName(
+				source.getPluralAttributeNature().reportedJavaType().getName()
+		);
+		binding.getHibernateTypeDescriptor().setExplicitTypeName( source.getTypeInformation().getName() );
+		binding.getHibernateTypeDescriptor().getTypeParameters().putAll( source.getTypeInformation().getParameters() );
+
+		if ( StringHelper.isNotEmpty( source.getCustomPersisterClassName() ) ) {
+			binding.setCollectionPersisterClass(
+					currentBindingContext.<CollectionPersister>locateClassByName( source.getCustomPersisterClassName() )
+			);
+		}
+
+		if ( source.getCustomPersisterClassName() != null ) {
+			binding.setCollectionPersisterClass(
+					metadata.<CollectionPersister>locateClassByName( source.getCustomPersisterClassName() )
+			);
+		}
+
+		binding.setCustomLoaderName( source.getCustomLoaderName() );
+		binding.setCustomSqlInsert( source.getCustomSqlInsert() );
+		binding.setCustomSqlUpdate( source.getCustomSqlUpdate() );
+		binding.setCustomSqlDelete( source.getCustomSqlDelete() );
+		binding.setCustomSqlDeleteAll( source.getCustomSqlDeleteAll() );
+
+		binding.setMetaAttributeContext(
+				buildMetaAttributeContext(
+						source.metaAttributes(),
+						binding.getContainer().getMetaAttributeContext()
+				)
+		);
+
+		doBasicAttributeBinding( source, binding );
+	}",2.0,4.0,2.7777777777777777,java,33,3,Code,Scalabrino
+147,"private void pushHibernateTypeInformationDownIfNeeded(
+			HibernateTypeDescriptor hibernateTypeDescriptor,
+			Value value,
+			Type resolvedHibernateType) {
+		if ( resolvedHibernateType == null ) {
+			return;
+		}
+		if ( hibernateTypeDescriptor.getResolvedTypeMapping() == null ) {
+			hibernateTypeDescriptor.setResolvedTypeMapping( resolvedHibernateType );
+		}
+
+		// java type information ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+		if ( hibernateTypeDescriptor.getJavaTypeName() == null ) {
+			hibernateTypeDescriptor.setJavaTypeName( resolvedHibernateType.getReturnedClass().getName() );
+		}
+
+	   // todo : this can be made a lot smarter, but for now this will suffice.  currently we only handle single value bindings
+
+	   if ( SimpleValue.class.isInstance( value ) ) {
+		   SimpleValue simpleValue = ( SimpleValue ) value;
+		   if ( simpleValue.getDatatype() == null ) {
+			   simpleValue.setDatatype(
+					   new Datatype(
+							   resolvedHibernateType.sqlTypes( metadata )[0],
+							   resolvedHibernateType.getName(),
+							   resolvedHibernateType.getReturnedClass()
+					   )
+			   );
+		   }
+	   }
+	}",2.0,5.0,3.4444444444444446,java,26,6,Code,Scalabrino
+148,"public static Iterable<AttributeDefinition> getCompositeCollectionIndexSubAttributes(CompositeCollectionElementDefinition compositionElementDefinition){
+		final QueryableCollection collectionPersister =
+				(QueryableCollection) compositionElementDefinition.getCollectionDefinition().getCollectionPersister();
+		return getSingularSubAttributes(
+				compositionElementDefinition.getSource(),
+				(OuterJoinLoadable) collectionPersister.getOwnerEntityPersister(),
+				(CompositeType) collectionPersister.getIndexType(),
+				collectionPersister.getTableName(),
+				collectionPersister.getIndexColumnNames()
+		);
+	}",1.0,4.0,3.0,java,11,1,Code,Scalabrino
+149,"/**
+	 * As per sections 12.2.3.23.9, 12.2.4.8.9 and 12.2.5.3.6 of the JPA 2.0
+	 * specification, the element-collection subelement completely overrides the
+	 * mapping for the specified field or property.  Thus, any methods which
+	 * might in some contexts merge with annotations must not do so in this
+	 * context.
+	 */
+	private void getElementCollection(List<Annotation> annotationList, XMLContext.Default defaults) {
+		for ( Element element : elementsForProperty ) {
+			if ( ""element-collection"".equals( element.getName() ) ) {
+				AnnotationDescriptor ad = new AnnotationDescriptor( ElementCollection.class );
+				addTargetClass( element, ad, ""target-class"", defaults );
+				getFetchType( ad, element );
+				getOrderBy( annotationList, element );
+				getOrderColumn( annotationList, element );
+				getMapKey( annotationList, element );
+				getMapKeyClass( annotationList, element, defaults );
+				getMapKeyTemporal( annotationList, element );
+				getMapKeyEnumerated( annotationList, element );
+				getMapKeyColumn( annotationList, element );
+				buildMapKeyJoinColumns( annotationList, element );
+				Annotation annotation = getColumn( element.element( ""column"" ), false, element );
+				addIfNotNull( annotationList, annotation );
+				getTemporal( annotationList, element );
+				getEnumerated( annotationList, element );
+				getLob( annotationList, element );
+				//Both map-key-attribute-overrides and attribute-overrides
+				//translate into AttributeOverride annotations, which need
+				//need to be wrapped in the same AttributeOverrides annotation.
+				List<AttributeOverride> attributes = new ArrayList<AttributeOverride>();
+				attributes.addAll( buildAttributeOverrides( element, ""map-key-attribute-override"" ) );
+				attributes.addAll( buildAttributeOverrides( element, ""attribute-override"" ) );
+				annotation = mergeAttributeOverrides( defaults, attributes, false );
+				addIfNotNull( annotationList, annotation );
+				annotation = getAssociationOverrides( element, defaults, false );
+				addIfNotNull( annotationList, annotation );
+				getCollectionTable( annotationList, element, defaults );
+				annotationList.add( AnnotationFactory.create( ad ) );
+				getAccessType( annotationList, element );
+			}
+		}
+	}",1.0,4.0,2.888888888888889,java,32,3,Code,Scalabrino
+150,"@Override
+	public void release() {
+		if ( reader == null ) {
+			return;
+		}
+		try {
+			reader.close();
+		}
+		catch (IOException ignore) {
+		}
+	}",3.0,5.0,4.777777777777778,java,11,3,Code,Scalabrino
+151,"@Override
+	protected XMLEvent internalNextEvent() throws XMLStreamException {
+		//If there is an iterator to read from reset was called, use the iterator
+		//until it runs out of events.
+		if (this.bufferReader != null) {
+			final XMLEvent event = this.bufferReader.next();
+
+			//If nothing left in the iterator, remove the reference and fall through to direct reading
+			if (!this.bufferReader.hasNext()) {
+				this.bufferReader = null;
+			}
+
+			return event;
+		}
+
+		//Get the next event from the underlying reader
+		final XMLEvent event = this.getParent().nextEvent();
+
+		//if buffering add the event
+		if (this.eventLimit != 0) {
+			this.eventBuffer.offer(event);
+
+			//If limited buffer size and buffer is too big trim the buffer.
+			if (this.eventLimit > 0 && this.eventBuffer.size() > this.eventLimit) {
+				this.eventBuffer.poll();
+			}
+		}
+
+		return event;
+	}",3.0,5.0,4.555555555555555,java,18,6,Code,Scalabrino
+152,"@Override
+	public final String getElementText() throws XMLStreamException {
+		XMLEvent event = this.previousEvent;
+		if (event == null) {
+			throw new XMLStreamException(""Must be on START_ELEMENT to read next text, element was null"");
+		}
+		if (!event.isStartElement()) {
+			throw new XMLStreamException(""Must be on START_ELEMENT to read next text"", event.getLocation());
+		}
+
+		final StringBuilder text = new StringBuilder();
+		while (!event.isEndDocument()) {
+			switch (event.getEventType()) {
+				case XMLStreamConstants.CHARACTERS:
+				case XMLStreamConstants.SPACE:
+				case XMLStreamConstants.CDATA: {
+					final Characters characters = event.asCharacters();
+					text.append(characters.getData());
+					break;
+				}
+				case XMLStreamConstants.ENTITY_REFERENCE: {
+					final EntityReference entityReference = (EntityReference)event;
+					final EntityDeclaration declaration = entityReference.getDeclaration();
+					text.append(declaration.getReplacementText());
+					break;
+				}
+				case XMLStreamConstants.COMMENT:
+				case XMLStreamConstants.PROCESSING_INSTRUCTION: {
+					//Ignore
+					break;
+				}
+				default: {
+					throw new XMLStreamException(""Unexpected event type '"" + XMLStreamConstantsUtils.getEventName(event.getEventType()) + ""' encountered. Found event: "" + event, event.getLocation());
+				}
+			}
+
+			event = this.nextEvent();
+		}
+
+		return text.toString();
+	}",2.0,5.0,4.111111111111111,java,37,10,Code,Scalabrino
+153,"public Point getClosestPoint(Point anotherPt) {
+        Rectangle r = getBounds();
+        int[] xs = {r.x + r.width / 2,
+                    r.x + r.width,
+                    r.x + r.width / 2,
+                    r.x,
+                    r.x + r.width / 2,
+        };
+        int[] ys = {r.y,
+                    r.y + r.height / 2,
+                    r.y + r.height,
+                    r.y + r.height / 2,
+                    r.y,
+        };
+        Point p =
+            Geometry.ptClosestTo(
+                xs,
+                ys,
+                5,
+                anotherPt);
+        return p;
+    }",2.0,5.0,4.333333333333333,java,22,1,Code,Scalabrino
+154,"protected void modelChanged(PropertyChangeEvent mee) {
+        super.modelChanged(mee);
+        final Object trCollection = mee.getNewValue();
+        final String eName = mee.getPropertyName();
+        final Object owner = getOwner();
+        /*
+         * A Concurrent region cannot have incoming or outgoing transitions so
+         * incoming or outgoing transitions are redirected to its concurrent
+         * composite state container.
+         */
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                Object tr = null;
+                // TODO: Is this comparison correct?
+                // Where is the string created?
+                if (eName == ""incoming"") {
+                    if (!((Collection) trCollection).isEmpty()) {
+                        tr = ((Collection) trCollection).iterator().next();
+                    }
+                    if (tr != null
+                            && Model.getFacade().isATransition(tr)) {
+                        Model.getCommonBehaviorHelper().setTarget(tr,
+                                Model.getFacade().getContainer(owner));
+                    }
+                } else if (eName == ""outgoing"") {
+                    if (!((Collection) trCollection).isEmpty()) {
+                        tr = ((Collection) trCollection).iterator().next();
+                    }
+                    if (tr != null
+                            && Model.getFacade().isATransition(tr))
+                    {
+                        Model.getStateMachinesHelper().setSource(tr,
+                                Model.getFacade().getContainer(owner));
+                    }
+                }
+            }
+        });
+    }",2.0,4.0,3.0,java,31,10,Code,Scalabrino
+155,"public void setEnclosingFig(Fig encloser) {
+        if (getOwner() != null) {
+            Object nod = getOwner();
+            if (encloser != null) {
+                Object comp = encloser.getOwner();
+                if (Model.getFacade().isAComponentInstance(comp)) {
+                    if (Model.getFacade().getComponentInstance(nod) != comp) {
+                        Model.getCommonBehaviorHelper()
+                                .setComponentInstance(nod, comp);
+                        super.setEnclosingFig(encloser);
+                    }
+                } else if (Model.getFacade().isANode(comp)) {
+                    super.setEnclosingFig(encloser);
+                }
+            } else if (encloser == null) {
+                if (isVisible() 
+                        // If we are not visible most likely 
+                        // we're being deleted.
+                    // TODO: This indicates a more fundamental problem that should
+                    // be investigated - tfm - 20061230
+                    && Model.getFacade().getComponentInstance(nod) 
+                                    != null) {
+                    Model.getCommonBehaviorHelper()
+                            .setComponentInstance(nod, null);
+                    super.setEnclosingFig(encloser);
+                }
+            }
+        }
+
+        if (getLayer() != null) {
+            // elementOrdering(figures);
+            Collection contents = new ArrayList(getLayer().getContents());
+            Iterator it = contents.iterator();
+            while (it.hasNext()) {
+                Object o = it.next();
+                if (o instanceof FigEdgeModelElement) {
+                    FigEdgeModelElement figedge = (FigEdgeModelElement) o;
+                    figedge.getLayer().bringToFront(figedge);
+                }
+            }
+        }
+    }",1.0,4.0,2.888888888888889,java,36,12,Code,Scalabrino
+156,"protected Object[] getUmlActions() {
+        Object[] actions = {
+            getActionPackage(),
+            getActionClass(),
+            null,
+            getAssociationActions(),
+            getAggregationActions(),
+            getCompositionActions(),
+            getActionAssociationEnd(),
+            getActionGeneralization(),
+            null,
+            getActionInterface(),
+            getActionRealization(),
+            null,
+            getDependencyActions(),
+            null,
+            getActionAttribute(),
+            getActionOperation(),
+            getActionAssociationClass(),
+            null,
+            getDataTypeActions(),
+        };
+
+        return actions;
+    }",1.0,5.0,3.2222222222222223,java,24,1,Code,Scalabrino
+157,"public void buildModel() {
+        if (getTarget() != null) {
+            Object target = getTarget();
+            Object kind = Model.getFacade().getAggregation(target);
+            if (kind == null
+                    || kind.equals(
+                            Model.getAggregationKind().getNone())) {
+                setSelected(ActionSetAssociationEndAggregation.NONE_COMMAND);
+            } else {
+		if (kind.equals(
+		        Model.getAggregationKind().getAggregate())) {
+		    setSelected(ActionSetAssociationEndAggregation
+		            .AGGREGATE_COMMAND);
+		} else {
+		    if (kind.equals(
+		            Model.getAggregationKind()
+		            	.getComposite())) {
+			setSelected(ActionSetAssociationEndAggregation
+			        .COMPOSITE_COMMAND);
+		    } else {
+		        setSelected(ActionSetAssociationEndAggregation
+
+			        .NONE_COMMAND);
+		    }
+		}
+            }
+        }
+    }",2.0,3.0,2.555555555555556,java,27,6,Code,Scalabrino
+158,"/**
+     * Construct a property panel for Node Instance elements.
+     */
+    public PropPanelNodeInstance() {
+        super(""Node Instance"", lookupIcon(""NodeInstance""),
+                ConfigLoader.getTabPropsOrientation());
+
+        addField(Translator.localize(""label.name""), getNameTextField());
+        addField(Translator.localize(""label.namespace""),
+                getNamespaceSelector());
+
+        addSeparator();
+
+        addField(Translator.localize(""label.stimili-sent""),
+                getStimuliSenderScroll());
+
+        addField(Translator.localize(""label.stimili-received""),
+                getStimuliReceiverScroll());
+
+        JList resList = new UMLLinkedList(new UMLContainerResidentListModel());
+        addField(Translator.localize(""label.residents""),
+                new JScrollPane(resList));
+
+        addSeparator();
+        AbstractActionAddModelElement a =
+            new ActionAddInstanceClassifier(Model.getMetaTypes().getNode());
+        JScrollPane classifierScroll =
+                new JScrollPane(new UMLMutableLinkedList(
+	                new UMLInstanceClassifierListModel(),
+	            a, null, null, true));
+	addField(Translator.localize(""label.classifiers""),
+                    classifierScroll);
+
+
+        addAction(new ActionNavigateContainerElement());
+        addAction(new ActionNewStereotype());
+        addAction(getDeleteAction());
+    }",1.0,4.0,2.6666666666666665,java,27,1,Code,Scalabrino
+164,"/**
+	 * Get the value mapped to this key, or null if no value is mapped to this key.
+	 *
+	 * @param key The cache key
+	 *
+	 * @return The cached data
+	 */
+	public final Object get(Object key) {
+		try {
+			final Element element = getCache().get( key );
+			if ( element == null ) {
+				return null;
+			}
+			else {
+				return element.getObjectValue();
+			}
+		}
+		catch (net.sf.ehcache.CacheException e) {
+			if ( e instanceof NonStopCacheException ) {
+				HibernateNonstopCacheExceptionHandler.getInstance()
+						.handleNonstopCacheException( (NonStopCacheException) e );
+				return null;
+			}
+			else {
+				throw new CacheException( e );
+			}
+		}
+	}",3.0,5.0,4.222222222222222,java,21,4,Code,Scalabrino
+169,"@Override
+	public boolean equals(Object obj) {
+		if ( this == obj ) {
+			return true;
+		}
+		if ( !super.equals( obj ) ) {
+			return false;
+		}
+		if ( getClass() != obj.getClass() ) {
+			return false;
+		}
+		VersionsJoinTableRangeTestAlternateEntity other = (VersionsJoinTableRangeTestAlternateEntity) obj;
+		if ( alternateValue == null ) {
+			if ( other.alternateValue != null ) {
+				return false;
+			}
+		}
+		else if ( !alternateValue.equals( other.alternateValue ) ) {
+			return false;
+		}
+		return true;
+	}",3.0,5.0,4.222222222222222,java,22,7,Code,Scalabrino
+170,"private Element createMiddleEntityXml(String auditMiddleTableName, String auditMiddleEntityName, String where) {
+		final String schema = mainGenerator.getSchema(
+				propertyAuditingData.getJoinTable().schema(),
+				propertyValue.getCollectionTable()
+		);
+		final String catalog = mainGenerator.getCatalog(
+				propertyAuditingData.getJoinTable().catalog(),
+				propertyValue.getCollectionTable()
+		);
+
+		final Element middleEntityXml = MetadataTools.createEntity(
+				xmlMappingData.newAdditionalMapping(),
+				new AuditTableData( auditMiddleEntityName, auditMiddleTableName, schema, catalog ), null, null
+		);
+		final Element middleEntityXmlId = middleEntityXml.addElement( ""composite-id"" );
+
+		// If there is a where clause on the relation, adding it to the middle entity.
+		if ( where != null ) {
+			middleEntityXml.addAttribute( ""where"", where );
+		}
+
+		middleEntityXmlId.addAttribute( ""name"", mainGenerator.getVerEntCfg().getOriginalIdPropName() );
+
+		// Adding the revision number as a foreign key to the revision info entity to the composite id of the
+		// middle table.
+		mainGenerator.addRevisionInfoRelation( middleEntityXmlId );
+
+		// Adding the revision type property to the entity xml.
+		mainGenerator.addRevisionType(
+				isEmbeddableElementType() ? middleEntityXmlId : middleEntityXml,
+				middleEntityXml
+		);
+
+		// All other properties should also be part of the primary key of the middle entity.
+		return middleEntityXmlId;
+	}",2.0,4.0,3.111111111111111,java,25,3,Code,Scalabrino
+171,"private void addTransactionFactories(StrategySelectorImpl strategySelector) {
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, JdbcTransactionFactory.SHORT_NAME, JdbcTransactionFactory.class );
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, ""org.hibernate.transaction.JDBCTransactionFactory"", JdbcTransactionFactory.class );
+
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, JtaTransactionFactory.SHORT_NAME, JtaTransactionFactory.class );
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, ""org.hibernate.transaction.JTATransactionFactory"", JtaTransactionFactory.class );
+
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, CMTTransactionFactory.SHORT_NAME, CMTTransactionFactory.class );
+		strategySelector.registerStrategyImplementor( TransactionFactory.class, ""org.hibernate.transaction.CMTTransactionFactory"", CMTTransactionFactory.class );
+	}",3.0,5.0,3.888888888888889,java,8,1,Code,Scalabrino
+172,"@Override
+      public String call() throws Exception {
+         try {
+            if (isTrace)
+               log.tracef(""[%s] Wait for all executions paths to be ready to perform calls"", title(warmup));
+            barrier.await();
+
+            long start = System.nanoTime();
+            int runs = 0;
+            if (isTrace)
+               log.tracef(""[%s] Start time: %d"", title(warmup), start);
+
+//            while (USE_TIME && PutFromLoadStressTestCase.this.run.get()) {
+//               if (runs % 100000 == 0)
+//                  log.infof(""[%s] Query run # %d"", title(warmup), runs);
+//
+////               Customer customer = query();
+////               deleteCached(customer);
+
+               queryItems();
+//               deleteCachedItems();
+//
+//               runs++;
+//            }
+            long end = System.nanoTime();
+            long duration = end - start;
+            if (isTrace)
+               log.tracef(""[%s] End time: %d, duration: %d, runs: %d"",
+                     title(warmup), start, duration, runs);
+
+            return opsPerMS(duration, runs);
+         } finally {
+            if (isTrace)
+               log.tracef(""[%s] Wait for all execution paths to finish"", title(warmup));
+
+            barrier.await();
+         }
+      }",2.0,5.0,3.6666666666666665,java,23,5,Code,Scalabrino
+174,"@Override
+	protected void prepareBootstrapRegistryBuilder(BootstrapServiceRegistryBuilder builder) {
+		super.prepareBootstrapRegistryBuilder( builder );
+		builder.with(
+				new Integrator() {
+
+				    @Override
+					public void integrate(
+							Configuration configuration,
+							SessionFactoryImplementor sessionFactory,
+							SessionFactoryServiceRegistry serviceRegistry) {
+                        integrate(serviceRegistry);
+					}
+
+                    @Override
+				    public void integrate( MetadataImplementor metadata,
+				                           SessionFactoryImplementor sessionFactory,
+				                           SessionFactoryServiceRegistry serviceRegistry ) {
+                        integrate(serviceRegistry);
+				    }
+
+                    private void integrate( SessionFactoryServiceRegistry serviceRegistry ) {
+                        serviceRegistry.getService( EventListenerRegistry.class ).prependListeners(EventType.LOAD,
+                                                                                                   new CustomLoadListener());
+                    }
+
+					@Override
+					public void disintegrate(
+							SessionFactoryImplementor sessionFactory, SessionFactoryServiceRegistry serviceRegistry) {
+					}
+				}
+		);
+	}",3.0,4.0,3.4444444444444446,java,29,4,Code,Scalabrino
+182,"@Override
+	protected void applyRootReturnSelectFragments(SelectStatementBuilder selectStatementBuilder) {
+		selectStatementBuilder.appendSelectClauseFragment(
+			getQueryableCollection().selectFragment(
+					getCollectionReferenceAliases().getCollectionTableAlias(),
+					getCollectionReferenceAliases().getCollectionColumnAliases().getSuffix()
+			)
+		);
+		if ( getQueryableCollection().isManyToMany() ) {
+			final OuterJoinLoadable elementPersister = (OuterJoinLoadable) getQueryableCollection().getElementPersister();
+			selectStatementBuilder.appendSelectClauseFragment(
+					elementPersister.selectFragment(
+							getCollectionReferenceAliases().getElementTableAlias(),
+							getCollectionReferenceAliases().getEntityElementAliases().getColumnAliases().getSuffix()
+					)
+			);
+		}
+		super.applyRootReturnSelectFragments( selectStatementBuilder );
+	}",1.0,5.0,3.333333333333333,java,19,2,Code,Scalabrino
+183,"@Override
+	public void startingCollectionElements(CollectionElementDefinition elementDefinition) {
+		final Type elementType = elementDefinition.getType();
+		log.tracef(
+				""%s Starting collection element graph : %s"",
+				StringHelper.repeat( "">>"", fetchSourceStack.size() ),
+				elementDefinition.getCollectionDefinition().getCollectionPersister().getRole()
+		);
+
+		final CollectionReference collectionReference = currentCollection();
+		final CollectionFetchableElement elementGraph = collectionReference.getElementGraph();
+
+		if ( elementType.isAssociationType() || elementType.isComponentType() ) {
+			if ( elementGraph == null ) {
+				throw new IllegalStateException(
+						""CollectionReference did not return an expected element graph : "" +
+								elementDefinition.getCollectionDefinition().getCollectionPersister().getRole()
+				);
+			}
+			if ( !elementType.isAnyType() ) {
+				pushToStack( (ExpandingFetchSource) elementGraph );
+			}
+		}
+		else {
+			if ( elementGraph != null ) {
+				throw new IllegalStateException(
+						""CollectionReference returned an unexpected element graph : "" +
+								elementDefinition.getCollectionDefinition().getCollectionPersister().getRole()
+				);
+			}
+		}
+	}",2.0,5.0,3.555555555555556,java,30,6,Code,Scalabrino
+184,"@Override
+	protected void beforeTransactionCommit() {
+		transactionCoordinator().sendBeforeTransactionCompletionNotifications( this );
+
+		final boolean flush = ! transactionCoordinator().getTransactionContext().isFlushModeNever() &&
+				( isDriver || ! transactionCoordinator().getTransactionContext().isFlushBeforeCompletionEnabled() );
+
+		if ( flush ) {
+			// if an exception occurs during flush, user must call rollback()
+			transactionCoordinator().getTransactionContext().managedFlush();
+		}
+
+		if ( isDriver && isInitiator ) {
+			transactionCoordinator().getTransactionContext().beforeTransactionCompletion( this );
+		}
+
+		closeIfRequired();
+	}",3.0,5.0,4.222222222222222,java,13,6,Code,Scalabrino
+190,"protected void resetRegionUsageState(CacheAccessListener localListener, CacheAccessListener remoteListener) {
+		String stdName = StandardQueryCache.class.getName();
+		String acctName = Account.class.getName();
+
+		localListener.getSawRegionModification( stdName );
+		localListener.getSawRegionModification( acctName );
+
+		localListener.getSawRegionAccess( stdName );
+		localListener.getSawRegionAccess( acctName );
+
+		remoteListener.getSawRegionModification( stdName );
+		remoteListener.getSawRegionModification( acctName );
+
+		remoteListener.getSawRegionAccess( stdName );
+		remoteListener.getSawRegionAccess( acctName );
+
+		log.info( ""Region usage state cleared"" );
+	}",1.0,5.0,3.7777777777777777,java,13,1,Code,Scalabrino
+191,"@Override
+	public void configure(Configuration cfg) {
+		super.configure( cfg );
+		cfg.setProperty( Environment.USE_SECOND_LEVEL_CACHE, ""true"" );
+		cfg.setProperty( Environment.GENERATE_STATISTICS, ""true"" );
+		cfg.setProperty( Environment.USE_QUERY_CACHE, ""false"" );
+		cfg.setProperty( Environment.CACHE_REGION_FACTORY, getCacheRegionFactory().getName() );
+		cfg.setProperty( Environment.TRANSACTION_STRATEGY, getTransactionFactoryClass().getName() );
+		cfg.getProperties().put( AvailableSettings.JTA_PLATFORM, getJtaPlatform() );
+		cfg.setProperty( Environment.CONNECTION_PROVIDER, getConnectionProviderClass().getName() );
+	}",3.0,5.0,4.444444444444445,java,11,1,Code,Scalabrino
+193,"protected AnnotationInstance parserPrimaryKeyJoinColumnList(List<JaxbPrimaryKeyJoinColumn> primaryKeyJoinColumnList, AnnotationTarget target) {
+		if ( MockHelper.isNotEmpty( primaryKeyJoinColumnList ) ) {
+			if ( primaryKeyJoinColumnList.size() == 1 ) {
+				return parserPrimaryKeyJoinColumn( primaryKeyJoinColumnList.get( 0 ), target );
+			}
+			else {
+				return create(
+						PRIMARY_KEY_JOIN_COLUMNS,
+						target,
+						nestedPrimaryKeyJoinColumnList( ""value"", primaryKeyJoinColumnList, null )
+				);
+			}
+		}
+
+		return null;
+
+	}",2.0,5.0,3.7777777777777777,java,15,3,Code,Scalabrino
+194,"public static <T> JaxbRoot<T> unmarshallXml(String fileName, String schemaName, Class<T> clazz, ClassLoaderService classLoaderService)
+            throws JAXBException {
+        Schema schema = getMappingSchema( schemaName, classLoaderService );
+        InputStream in = classLoaderService.locateResourceStream( fileName );
+        JAXBContext jc = JAXBContext.newInstance( clazz );
+        Unmarshaller unmarshaller = jc.createUnmarshaller();
+        unmarshaller.setSchema( schema );
+        StreamSource stream = new StreamSource( in );
+        JAXBElement<T> elem = unmarshaller.unmarshal( stream, clazz );
+        Origin origin = new Origin( null, fileName );
+        return new JaxbRoot<T>( elem.getValue(), origin );
+    }",1.0,4.0,3.111111111111111,java,12,1,Code,Scalabrino
+195,"private AnnotationInstance overrideSchemaCatalogByDefault(AnnotationInstance annotationInstance, EntityMappingsMocker.Default defaults) {
+		List<AnnotationValue> newAnnotationValueList = new ArrayList<AnnotationValue>();
+		newAnnotationValueList.addAll( annotationInstance.values() );
+		boolean schemaDefined = false;
+		boolean catalogDefined = false;
+		if ( annotationInstance.value( ""schema"" ) != null ) {
+			schemaDefined = true;
+		}
+		if ( annotationInstance.value( ""catalog"" ) != null ) {
+			catalogDefined = true;
+		}
+		if ( schemaDefined && catalogDefined ) {
+			return annotationInstance;
+		}
+		if ( !catalogDefined && StringHelper.isNotEmpty( defaults.getCatalog() ) ) {
+			newAnnotationValueList.add(
+					AnnotationValue.createStringValue(
+							""catalog"", defaults.getCatalog()
+					)
+			);
+		}
+		if ( !schemaDefined && StringHelper.isNotEmpty( defaults.getSchema() ) ) {
+			newAnnotationValueList.add(
+					AnnotationValue.createStringValue(
+							""schema"", defaults.getSchema()
+					)
+			);
+		}
+		return MockHelper.create(
+				annotationInstance.name(),
+				annotationInstance.target(),
+				MockHelper.toArray( newAnnotationValueList )
+		);
+	}",1.0,5.0,3.333333333333333,java,34,9,Code,Scalabrino
+196,"public AbstractRowReader(ReaderCollector readerCollector) {
+		this.entityReferenceInitializers = readerCollector.getEntityReferenceInitializers() != null
+				? new ArrayList<EntityReferenceInitializer>( readerCollector.getEntityReferenceInitializers() )
+				: Collections.<EntityReferenceInitializer>emptyList();
+		this.arrayReferenceInitializers = readerCollector.getArrayReferenceInitializers() != null
+				? new ArrayList<CollectionReferenceInitializer>( readerCollector.getArrayReferenceInitializers() )
+				: Collections.<CollectionReferenceInitializer>emptyList();
+		this.collectionReferenceInitializers = readerCollector.getNonArrayCollectionReferenceInitializers() != null
+				? new ArrayList<CollectionReferenceInitializer>( readerCollector.getNonArrayCollectionReferenceInitializers() )
+				: Collections.<CollectionReferenceInitializer>emptyList();
+	}",1.0,5.0,2.555555555555556,java,11,4,Code,Scalabrino
+197,"private void resolveEntityKey(
+			ResultSet resultSet,
+			ResultSetProcessingContextImpl context,
+			FetchSource fetchSource,
+			Map<EntityReference,EntityReferenceInitializer> initializerByEntityReference) throws SQLException {
+		// Resolve any bidirectional entity references first.
+		for ( BidirectionalEntityReference bidirectionalEntityReference : fetchSource.getBidirectionalEntityReferences() ) {
+			final EntityReferenceInitializer targetEntityReferenceInitializer = initializerByEntityReference.get(
+					bidirectionalEntityReference.getTargetEntityReference()
+			);
+			resolveEntityKey(
+					resultSet,
+					context,
+					targetEntityReferenceInitializer,
+					initializerByEntityReference
+			);
+			targetEntityReferenceInitializer.hydrateEntityState( resultSet, context );
+		}
+		for ( Fetch fetch : fetchSource.getFetches() ) {
+			if ( EntityFetch.class.isInstance( fetch ) ) {
+				final EntityFetch entityFetch = (EntityFetch) fetch;
+				final EntityReferenceInitializer  entityReferenceInitializer = initializerByEntityReference.get( entityFetch );
+				if ( entityReferenceInitializer != null ) {
+					resolveEntityKey(
+							resultSet,
+							context,
+							entityReferenceInitializer,
+							initializerByEntityReference
+					);
+					entityReferenceInitializer.hydrateEntityState( resultSet, context );
+				}
+			}
+			else if ( CompositeFetch.class.isInstance( fetch ) ) {
+				resolveEntityKey(
+						resultSet,
+						context,
+						(CompositeFetch) fetch,
+						initializerByEntityReference );
+			}
+		}
+	}",2.0,4.0,3.0,java,40,2,Code,Scalabrino
+198,"public EntityKey interpretEntityKey(
+			SessionImplementor session,
+			String optionalEntityName,
+			Serializable optionalId,
+			Object optionalObject) {
+		if ( optionalEntityName != null ) {
+			final EntityPersister entityPersister;
+			if ( optionalObject != null ) {
+				entityPersister = session.getEntityPersister( optionalEntityName, optionalObject );
+			}
+			else {
+				entityPersister = session.getFactory().getEntityPersister( optionalEntityName );
+			}
+			if ( entityPersister.isInstance( optionalId ) &&
+					!entityPersister.getEntityMetamodel().getIdentifierProperty().isVirtual() &&
+					entityPersister.getEntityMetamodel().getIdentifierProperty().isEmbedded() ) {
+				// non-encapsulated composite identifier
+				final Serializable identifierState = ((CompositeType) entityPersister.getIdentifierType()).getPropertyValues(
+						optionalId,
+						session
+				);
+				return session.generateEntityKey( identifierState, entityPersister );
+			}
+			else {
+				return session.generateEntityKey( optionalId, entityPersister );
+			}
+		}
+		else {
+			return null;
+		}
+	}",2.0,4.0,3.0,java,30,6,Code,Scalabrino

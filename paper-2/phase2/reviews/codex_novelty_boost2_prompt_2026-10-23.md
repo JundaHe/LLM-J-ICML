@@ -1,0 +1,13 @@
+# Codex consult, follow-up — disagreement-type stratification (2026-10-23)
+
+Context: your previous answer is at /mnt/hdd2/jundahe/LLM-J/paper-2/phase2/reviews/codex_novelty_boost_2026-10-23.md (A/G first: annotation-side split-panel contrast + residual reliability; B after; kill C/D/E). The manuscript is /mnt/hdd2/jundahe/LLM-J/paper-2/phase2/PAPER_DRAFT.md; numbers in RESULTS_TABLES.md.
+
+The user proposes a qualitative angle: look at WHY some items have disagreement and others do not (in an earlier SE paper we did a content analysis of code-summary / commit-message / readability items; finding: disagreement peaks in the "adequate-but-not-great" middle band, driven by unstable thresholds such as "how complete must a description be for a 3 vs a 2", and multi-responsibility functions). Commit panels are out of paper 2 (user decision), so any SE content would be qualitative illustration only.
+
+My proposed bridge to paper 2: mode+mean cannot represent *polarisation* (same mean, "half 1s / half 5s" vs "all 3s"). Hypothesis H: residual shape carries predictive value mainly on items with *systematic polarisation* (two camps that replicate across independent rater panels), and little on unimodal-spread or threshold items; ordinal panels show ~0 audit effects because stable polarisation is rare, while ChaosNLI nominal items often have stable two-label splits. Plan: (1) define a disagreement typology per item from ratings only (unimodal-spread / threshold-adjacent-levels / polarised-bimodal), with the label assigned on one rater half and its *stability* checked on the other half (to avoid labelling sampling noise as polarisation); (2) estimate your residual-reliability statistic G and the annotation-side contrast A *within each type*; (3) re-estimate the existing heads pmmx−soft (and the LoRA perm−chen on SummEval/POPQUORN) restricted to test items of each type; (4) a small qualitative appendix with verbatim examples per type from the dense panels (DICES m=60, ChaosNLI ~100, POPQUORN m=8) — and optionally SE examples from the earlier paper.
+
+Questions (≤ 700 words):
+1. Is H a genuine novelty/significance gain on top of A/G, or a re-labelling of G (stable residual variance) that reviewers will see as post hoc? How should it be pre-specified to avoid that?
+2. Statistical traps: typing items from the same ratings used for targets/evaluation; selection/regression to the mean; small per-type n; the test-set restriction for the learned-judge contrast (the judge was trained on all types). Concrete fixes.
+3. Is a qualitative content analysis worth any page space at an ML venue here, and if so in what form (one figure? appendix only?).
+4. Final recommendation: fold H into the A/G plan, run it as a secondary analysis, or drop it.
