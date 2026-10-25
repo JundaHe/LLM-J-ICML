@@ -1,0 +1,33 @@
+# Paper 3 — Calibrating LLM judges to the people they stand in for: protocol (frozen before any result)
+Committed 2026-10-26 after the user's go-ahead ("好，那我们先这么做吧"). Builds on paper 2's findings (paper-2/phase2/reports/STORY_2026-10-26.md): on ordinal rating tasks a text-conditioned judge learns the item's location; the structure beyond location is mostly rater thresholds (harshness), a property of the people, not the text. Scope: deployment-level questions, no new training objective, no theory beyond the ordered-probit mapping. SE framing (review-team standards) with NLP panels as replication. Rules of HANDOFF §7 apply (protocol before results, honest reporting, atomic commits).
+
+## The mapping used throughout
+A judge produces a continuous score s(x) for item x (a head's expected rating; a black-box judge's score; an LLM's expected score from its token distribution). A **panel map** turns s into the rating distribution of a target pool P of raters: ordered probit with location θ = α_P + β_P · s and pool cut-points c_P (K − 1 increasing; per-rater cut-points c_r shrunk toward c_P when the rater has ≥ 5 ratings). Fitted by penalised maximum likelihood on the ratings of pool P on **calibration items** (never test items). The map has K + 1 parameters per pool; the judge is untouched.
+
+## G1 — pool adaptation (does a judge trained on pool A need retraining for pool B?)
+Panels (rater identity + metadata available): DICES-350 (gender, race, age, education), DICES-990 (+ locale), POPQUORN offensiveness/politeness (gender, race, age, education, occupation), SummEval coherence (3 persistent experts vs the crowd positions), Buse–Weimer (no metadata: random rater halves as the null pool shift), MLCQ (26 reviewers: individual reviewers as pools), Dorn (experience groups once the experience columns are decoded; otherwise omitted).
+Pools: for each metadata variable with ≥ 2 groups of ≥ 10 raters, pool A = the largest group, pool B = each other group; plus the random-halves null on every panel.
+Design per (panel, A → B): group-disjoint item split 60/10/30 (train/calib/test, 3 splits) × 5 seeds. The judge = frozen-feature head (probe_shrink.py machinery) trained on pool A's ratings of the training items (soft target over pool A's raters). Arms evaluated on pool B's ratings of the test items (RPS to each rater, averaged; and RPS of the predicted distribution to the pool-B histogram):
+- **none**: the head's own distribution;
+- **map-A**: panel map fitted on pool A's calibration ratings (controls for the map itself);
+- **map-B(n)**: panel map fitted on n ∈ {10, 20, 50, 100, all} pool-B ratings drawn from the calibration items;
+- **dir-B(n)**: generic post-hoc calibration of the head's distribution on the same n pool-B ratings (temperature + Dirichlet/climatology mixture, the T2b calibration map) — the fair generic baseline;
+- **oracle-B**: head trained on pool B's ratings of the training items (upper reference);
+- **rater-B(n)**: per-rater cut-points for pool-B raters with ≥ 5 calibration ratings (individual prediction).
+Prespecified reading: a *pool shift* exists when none − oracle-B > 0 with a 95 % interval (crossed bootstrap over seeds and test groups) excluding 0; **adaptation works** when map-B(n) closes ≥ 50 % of that gap at n ≤ 50 and beats dir-B(n) at the same n. The random-halves null must show no shift (none ≈ oracle) — otherwise the instrument is biased. Report every panel/group; no selection.
+
+## G2 — black-box judge → human distribution
+Judges: (a) the frozen model's zero-shot score distribution Q0 (features/<panel>/*.npz; weak judge available on every panel); (b) paper 1's released judge scores on Crupi and Scalabrino (GPT-5.5, Claude Opus 4.8, Gemini 3.1 Pro, Mistral Large, GPT-4-turbo) once copied; (c) the paper-2 LoRA judges on SummEval/POPQUORN (chen, full data) as "trained judge" references. s = expected score (a, c) or the reported score (b).
+Arms (fitted on calibration items' ratings, evaluated on test items vs held-out raters, leave-one-rater-out where identities persist, as in paper 1's CSJE): judge's own distribution (a, c only); temperature scaling; Dirichlet/climatology mixture; **panel map**; panel map + per-rater cut-points. Metric: RPS (ordinal) against held-out ratings; also the HCA-style human-ceiling comparison of paper 1 for the SE panels. Prespecified reading: the panel map must beat temperature scaling and the Dirichlet mixture at equal calibration data to be claimed; otherwise it is reported as equivalent.
+
+## G3 — which items will people disagree on?
+Targets: observed dispersion of the held-out raters' ratings per test item (variance; and the "contested" indicator = range ≥ 2 on a 5-point scale, as paper 1's Low stratum). Predictors, each a single number per item: (i) judge confidence (entropy / max-prob of the judge's own distribution); (ii) **map-implied dispersion** (variance of the panel-map distribution at s(x) — large when θ sits between cut-points); (iii) a direct LLM question ("how much would annotators disagree about this item?", 1–5; frozen Qwen2.5-7B-Instruct zero-shot, GPU via Slurm; and one frontier judge if paper 1's outputs include it); (iv) paper 2's decoded residual dispersion (ridge from features; Amendment 2(b)). Metrics: Spearman with observed dispersion; AUROC for the contested indicator; item-cluster bootstrap. Prespecified reading: (ii) ≥ (i) is the hypothesis; (iii) is the practitioner's default to beat; no claim beyond the per-panel numbers.
+
+## Deliverables
+paper-3/pools.py (identity-preserving long-format loaders with metadata), paper-3/pool_adapt.py (G1), paper-3/judge_map.py (G2), paper-3/contested.py (G3), results in paper-3/results/, reports in paper-3/reports/. Every result committed with its protocol version; amendments appended below with reasons.
+
+## Forbidden statements
+"Raters of group X are harsher" as a social claim (report threshold estimates as panel properties of this dataset's raters only); any claim that adaptation makes judges "fair"; any use of demographic groups other than as pre-registered pool-shift instances; no commit-message datasets.
+
+## Amendments
+(none)
