@@ -1,0 +1,13 @@
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel bw --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_bw.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel dices --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_dices.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel summeval_coherence8 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel scalabrino --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_scalabrino.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel popquorn_off8 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel hs2_help5 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel emobank_reader_v5 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel csc6 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel dices990 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_dices990.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel dorn_java --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_dorn_java.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel jb_naming --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_jb_naming.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel summeval_relevance8 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_summeval_relevance8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel popquorn_pol5 --folds 5 --sims 20 --R 5 --iters 300 > logs/rater_item_popquorn_pol5.log 2>&1
