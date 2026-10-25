@@ -15,7 +15,8 @@ X_i and M_i are estimated at the annotation count that the target will have: for
 Covariate-conditional λ(T) (secondary, only if the global version passes Gate A): λ̂(cell) = clip(ΣX/ΣM within exact-T mode cells with ≥ 30 other-fold items, else the global value). Any finer conditioning (entropy, decoded residual from DECODING_PROTOCOL.md) is exploratory and appendix-only unless it beats the global coefficient out of sample on the prespecified pooled test.
 
 ## Step 1 — annotation side (learner-free; Gate A)
-For each panel, repeated splits (R = 20) of each item's ratings into a target panel P1 (a = m − 1 for small panels; a ∈ {5, 10, 20} on dense panels) and one held-out rating (|P2| = 1; position drawn independently per item). Forecasts of the held-out rating, all built from P1 only and cross-fitted where they involve other items:
+For each panel, repeated splits (R = 20) of each item's ratings into a target panel P1 and held-out ratings P2: small panels a = m − 1, |P2| = 1 (position drawn independently per item); dense panels (m ≥ 60: BW, DICES-350/990, ChaosNLI, Dorn) a ∈ {5, 10, 20} with |P2| = 20 (scoring against 20 held-out ratings is the same estimand with less noise).
+The method's coefficient λ̂ uses **only P1 ratings** (inner leave-one-rating-out within P1 of other-fold items); the tuned baselines (λ_cv, Dirichlet κ, label-smoothing ε) are tuned on other-fold items' **held-out** ratings and are therefore ceilings that a training-time method cannot use — stated in every table. Forecasts of the held-out rating, all built from P1 only and cross-fitted where they involve other items:
 - **raw** (λ = 1): h1;
 - **q_T** (λ = 0);
 - **shrunk-λ̂** (the method): q_T + λ̂ (h1 − q_T), λ̂ from other-fold items as above;
@@ -23,7 +24,8 @@ For each panel, repeated splits (R = 20) of each item's ratings into a target pa
 - **JS**: Hausser–Strimmer James–Stein shrinkage of h1 toward the uniform (and toward the other-fold mode prototype, "JS-proto");
 - **Dirichlet**: (a h1 + κ π_z)/(a + κ), π_z = other-fold mode prototype, κ by other-fold CV (this is the heads' `shrunk` arm);
 - **label smoothing**: (1 − ε) h1 + ε/K, ε by other-fold CV;
-- **smoothed comparator** (FINITE_RATER_PROTOCOL.md primary q) and shrunk-λ̂ toward it ("smoothed" variants).
+- **smoothed comparator** (FINITE_RATER_PROTOCOL.md primary q) and shrunk-λ̂ toward it ("smoothed" variants);
+- **P1-only tuned baselines** `dir_in`, `ls_in`: κ and ε chosen by the same inner leave-one-rating-out on other-fold items' P1 that produces λ̂ — the fair, training-time-feasible comparison for the method (added 2026-10-26 00:50 after the 2-split smoke run showed the held-out-tuned Dirichlet ceiling beating shr on SummEval coherence; no R = 20 or bootstrap result had been computed). Gate A/H's "best generic shrinkage baseline" refers to these P1-only versions and to the closed-form JS variants; the held-out-tuned versions are reported as ceilings.
 Scores: RPS (ordinal) / Brier (nominal) against the held-out rating; contrasts vs raw and vs q_T; item-cluster bootstrap B = 500 with refitting of q_T, λ̂ and all CV choices in every replicate.
 **Gate A** (PASS requires all three):
 (i) shrunk-λ̂ − raw < 0 and shrunk-λ̂ − q_T < 0, each with a 95 % interval excluding 0, on the **pooled small ordinal panels** (SummEval coherence/relevance, POPQUORN offensiveness/politeness, CSC, Scalabrino, HelpSteer2, EmoBank; inverse-variance pooling of per-panel contrasts; SummEval criteria and POPQUORN attributes are not independent — stated);
