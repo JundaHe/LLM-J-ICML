@@ -41,6 +41,9 @@ p.add_argument("--perm_seed", type=int, default=None); p.add_argument("--opt_see
 p.add_argument("--lr", type=float, default=1e-4); p.add_argument("--epochs", type=float, default=None); p.add_argument("--accum", type=int, default=8)
 p.add_argument("--lora_r", type=int, default=16); p.add_argument("--max_steps", type=int, default=-1); p.add_argument("--n_eval", type=int, default=-1)
 p.add_argument("--eval_raters", default=None, help="comma-separated rater indices to use as evaluator folds (default: seeded permutation of all raters)")
+p.add_argument("--train_pos", type=int, default=None, help="fixed-budget design: number of target positions (out of the non-evaluator raters) used per TRAINING item, drawn per item with --budget_seed; calib/test targets unchanged")
+p.add_argument("--train_frac", type=float, default=None, help="fixed-budget design: fraction of the training GROUPS kept (seeded); combined with --train_pos the rating budget is n_train × train_pos")
+p.add_argument("--budget_seed", type=int, default=None)
 p.add_argument("--dry_run", action="store_true"); p.add_argument("--out", required=True)
 args = p.parse_args(); os.makedirs(args.out, exist_ok=True)
 perm_seed = args.perm_seed if args.perm_seed is not None else 1000 + args.split
@@ -64,11 +67,23 @@ z = np.array([z_label(r) for r in Ht]); P_emp = np.stack([np.bincount(r, minleng
 mu = Ht.mean(1)
 # evaluation-mixture raters (subset of targets), fixed per (split, fold) across arms
 R_EVAL = np.random.RandomState(500 + 10 * args.split + args.fold).permutation(T)[: args.n_eval_raters].tolist()
+# ------------------------------------------------------------------ fixed-budget design (SHRINKAGE_PROTOCOL.md, learner-side fixed budget — LoRA): fewer training groups and/or fewer target positions per training item
+budget_cert = {}
+if args.train_frac is not None or args.train_pos is not None:
+    bseed = args.budget_seed if args.budget_seed is not None else 3000 + args.split * 100 + args.fold; brng = np.random.RandomState(bseed); n_tr_full = len(tr_idx)
+    if args.train_frac is not None and args.train_frac < 1:
+        g_keep = set(brng.permutation(sorted(g_tr))[: max(1, int(round(args.train_frac * len(g_tr))))]); tr_idx = np.array([i for i in tr_idx if G[i] in g_keep])
+    if args.train_pos is not None and args.train_pos < len(T):
+        for i in tr_idx:                                                                  # per-item random subset of the non-evaluator positions; targets of calib/test items untouched
+            cols = brng.choice(len(T), size=args.train_pos, replace=False); sub = Ht[i, cols]
+            z[i] = z_label(sub); P_emp[i] = np.bincount(sub, minlength=K) / len(sub); mu[i] = sub.mean()
+    budget_cert = dict(train_frac=args.train_frac, train_pos=args.train_pos, budget_seed=bseed, n_train_full=int(n_tr_full), n_train_used=int(len(tr_idx)), rating_budget=int(len(tr_idx) * (args.train_pos or len(T))))
+    print(f"[budget] train items {n_tr_full} -> {len(tr_idx)}, positions per item {args.train_pos or len(T)}, rating budget {budget_cert['rating_budget']}", flush=True)
 
 # ------------------------------------------------------------------ permutation G on TRAIN items: cells (z_i, floor(mean/tau)); randomised maximum matching on histogram classes within cell
 cert = dict(arm=args.arm, panel=args.panel, fold=args.fold, evaluator=int(E), evaluator_id=str(PAN["rater_ids"][E]), split=args.split, perm_seed=perm_seed, opt_seed=opt_seed,
             alpha=args.alpha, eps=args.eps, tau=args.tau, hist_k=args.hist_k, n_items=int(n_items), n_raters=int(M_RATERS),
-            parts={k: int((part == k).sum()) for k in ("train", "calib", "test")}, model=MODEL)
+            parts={k: int((part == k).sum()) for k in ("train", "calib", "test")}, model=MODEL, **budget_cert)
 target_P = P_emp.copy(); Hvec = Ht.copy(); mapping = {}
 if args.arm in ("perm", "perm_mode", "rc_perm"):
     from collections import defaultdict
