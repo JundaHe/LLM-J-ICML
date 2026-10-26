@@ -15,14 +15,15 @@ Phi = lambda x: 0.5 * (1 + torch.erf(x / np.sqrt(2)))
 def ll(par, model, idx):
     th = par["theta"][I[idx]]; c0 = par["c0"]; cuts = torch.cat([c0[:1], c0[:1] + torch.cumsum(torch.nn.functional.softplus(c0[1:]), 0)])
     if model >= 1: th = th + par["shift"][Rr[idx]]
-    sc = torch.exp(par["lscale"][Rr[idx]]) if model == 2 else torch.ones(len(idx))
+    sc = torch.exp(par["lscale"][Rr[idx]]) if model in (2, 4) else torch.ones(len(idx))
+    if model >= 3: sc = sc * torch.exp(par["ilscale"][I[idx]])     # M3 = M1 + item dispersion; M4 = M2 + item dispersion (Amendment 2 addendum)
     z = (cuts[None, :] - th[:, None]) / sc[:, None]; cdf = torch.cat([torch.zeros(len(idx), 1), Phi(z), torch.ones(len(idx), 1)], 1); pk = (cdf[:, 1:] - cdf[:, :-1]).clamp_min(1e-9)
     return torch.log(pk[torch.arange(len(idx)), Y[idx]])
 def fit(model, tr, lam=(1e-2, 0.5, 2.0)):
-    par = {"theta": torch.zeros(n, requires_grad=True), "shift": torch.zeros(NR, requires_grad=model >= 1), "lscale": torch.zeros(NR, requires_grad=model == 2), "c0": torch.tensor([-1.0] + [0.0] * (K - 2), requires_grad=True)}
+    par = {"theta": torch.zeros(n, requires_grad=True), "shift": torch.zeros(NR, requires_grad=model >= 1), "lscale": torch.zeros(NR, requires_grad=model in (2, 4)), "ilscale": torch.zeros(n, requires_grad=model >= 3), "c0": torch.tensor([-1.0] + [0.0] * (K - 2), requires_grad=True)}
     opt = torch.optim.LBFGS([p for p in par.values() if p.requires_grad], lr=0.5, max_iter=args.iters, line_search_fn="strong_wolfe")
     def cl():
-        opt.zero_grad(); loss = -ll(par, model, tr).sum() + lam[0] * (par["theta"] ** 2).sum() + lam[1] * (par["shift"] ** 2).sum() + lam[2] * (par["lscale"] ** 2).sum(); loss.backward(); return loss
+        opt.zero_grad(); loss = -ll(par, model, tr).sum() + lam[0] * (par["theta"] ** 2).sum() + lam[1] * (par["shift"] ** 2).sum() + lam[2] * (par["lscale"] ** 2).sum() + (lam[3] if len(lam) > 3 else 0.0) * (par["ilscale"] ** 2).sum(); loss.backward(); return loss
     opt.step(cl); return par
 LT, LD, LS = (0.01, 0.1, 0.3, 1.0, 3.0), (0.5, 2.0, 8.0, 32.0, 128.0), (2.0, 8.0, 32.0, 128.0) + ((512.0, 2048.0) if os.environ.get("LS_WIDE") else ())   # LS_WIDE=1: boundary sensitivity (Amendment 2)
 def inner_ll(model, tr, lam):
@@ -32,16 +33,19 @@ def inner_ll(model, tr, lam):
         a, b = tr[torch.tensor(f_in != g)], tr[torch.tensor(f_in == g)]; par = fit(model, a, lam)
         with torch.no_grad(): v.append(float(ll(par, model, b).mean()))
     return float(np.mean(v))
-_B1 = {}
+_B1 = {}; _B2 = {}; LI = (2.0, 8.0, 32.0, 128.0, 512.0)
 def select(model, tr):
     if model == 0: return max(((lt, 0.5, 2.0) for lt in LT), key=lambda lam: inner_ll(0, tr, lam))
     key = int(tr[0]) * 7919 + len(tr)
     if key not in _B1: _B1[key] = max(((lt, ld, 2.0) for lt in LT for ld in LD), key=lambda lam: inner_ll(1, tr, lam))
     best1 = _B1[key]
     if model == 1: return best1
-    return max(((best1[0], best1[1], ls) for ls in LS), key=lambda lam: inner_ll(2, tr, lam))
+    if key not in _B2: _B2[key] = max(((best1[0], best1[1], ls) for ls in LS), key=lambda lam: inner_ll(2, tr, lam))
+    if model == 2: return _B2[key]
+    base = best1 if model == 3 else _B2[key]
+    return max((tuple(base[:3]) + (li,) for li in LI), key=lambda lam: inner_ll(model, tr, lam))
 rng = np.random.RandomState(0); fold = rng.randint(0, 5, len(Y)); out = {"panel": args.panel, "n_items": n, "n_raters": NR, "ratings": int(len(Y)), "tuned": bool(args.tune), "lam": {}}
-for model in (0, 1, 2):
+for model in ((0, 1, 2, 3, 4) if args.tune else (0, 1, 2)):
     vals = []
     for f in range(5):
         tr = torch.tensor(np.where(fold != f)[0]); te = torch.tensor(np.where(fold == f)[0]); lam = select(model, tr) if args.tune else (1e-2, 0.5, 2.0); par = fit(model, tr, lam)
@@ -52,4 +56,5 @@ for model in (0, 1, 2):
 par = fit(1, torch.arange(len(Y)), tuple(np.median(np.array(out["lam"]["M1"]), 0)))
 with torch.no_grad(): out["sd_theta"] = float(par["theta"].std()); out["sd_shift"] = float(par["shift"].std())
 out["dLL_shift"] = out["heldout_ll_M1"] - out["heldout_ll_M0"]; out["dLL_scale"] = out["heldout_ll_M2"] - out["heldout_ll_M1"]
+if args.tune: out["dLL_rater_thresholds"] = out["heldout_ll_M2"] - out["heldout_ll_M0"]; out["dLL_item_dispersion"] = out["heldout_ll_M4"] - out["heldout_ll_M2"]; out["dLL_item_dispersion_given_shift"] = out["heldout_ll_M3"] - out["heldout_ll_M1"]
 os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/rater_long_{args.panel}{'_tuned' if args.tune else ''}{'_lswide' if os.environ.get('LS_WIDE') else ''}.json", "w"), indent=1); print(json.dumps(out))
