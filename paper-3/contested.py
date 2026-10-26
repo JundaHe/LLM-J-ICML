@@ -37,6 +37,8 @@ for isplit in range(args.splits):
     g = Rte.groupby("item").y; disp = g.var(ddof=0); rng_ = g.max() - g.min(); cnt = g.size(); items = disp.index.to_numpy(); items = items[cnt.loc[items].to_numpy() >= 3]
     y_disp = disp.loc[items].to_numpy(); contested = (rng_.loc[items].to_numpy() >= 2) if K >= 4 else (rng_.loc[items].to_numpy() >= 2)
     pred = {"entropy": -(Q[items] * np.log(Q[items] + 1e-12)).sum(1), "map_disp": (Pm[items] * (LV[None, :] - (Pm[items] @ LV)[:, None]) ** 2).sum(1), "loc_mid": -np.abs(s[items] - (K - 1) / 2)}
+    ask_f = f"{HERE}/results/ask/{args.panel}.npz"
+    if os.path.exists(ask_f): pred["ask_llm"] = np.load(ask_f, allow_pickle=True)["disagree"][items]      # G3 predictor (iii): the LLM asked directly how much annotators will disagree
     def stats(idx):
         out = {}
         for k, v in pred.items(): out[f"spearman_{k}"] = float(spearmanr(v[idx], y_disp[idx]).correlation); out[f"auroc_{k}"] = auroc(v[idx], contested[idx])
