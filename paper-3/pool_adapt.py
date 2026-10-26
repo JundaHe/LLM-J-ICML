@@ -25,7 +25,7 @@ ap.add_argument("--device", default="cpu"); ap.add_argument("--tag", default="")
 P = pools.LOADERS[args.panel](); K = P["K"]; LV = np.arange(K, dtype=float); R = P["ratings"]; N = len(P["items"]); PAN2 = data_panels.load(P["panel"])
 F = np.load(f"{P2}/features/{P['panel']}/{PAN2['model'].split('/')[-1]}.npz", allow_pickle=True); E = F["E_last"].astype(np.float32); assert len(E) == N, (len(E), N)
 G = np.asarray(PAN2.get("groups", PAN2["item_ids"])); assert len(G) == N
-N_LIST = [int(x) for x in args.n_list.split(",")]
+N_LIST = [int(x) for x in args.n_list.split(",")]; N0_SHRINK = 50.0
 OUT = f"{HERE}/results/pool_adapt/{args.panel}__{args.var}{args.tag}"; os.makedirs(OUT, exist_ok=True)
 
 def rps_rows(Pm_rows, y): cdf = np.cumsum(Pm_rows, 1); step = (LV[None, :] >= y[:, None]).astype(float); return ((cdf - step) ** 2).sum(1) / (K - 1)
@@ -109,7 +109,8 @@ def run(seed, isplit, poolsets):
             s_sub = sA_ca[[pca_[i] for i in sub.item]]; y_sub = sub.y.to_numpy()
             if nn_ < 50:   # Amendment 1: with fewer than 50 pool-B ratings only the location offset α is re-estimated (slope and cut-points kept from map-A)
                 def nll_a(a_): p_ = parA.copy(); p_[0] = a_[0]; return -np.log(op_probs(s_sub, p_)[np.arange(len(y_sub)), y_sub]).sum()
-                parB = parA.copy(); parB[0] = minimize(nll_a, np.array([parA[0]]), method="L-BFGS-B").x[0]
+                a_mle = minimize(nll_a, np.array([parA[0]]), method="L-BFGS-B").x[0]
+                parB = parA.copy(); parB[0] = parA[0] + (nn_ / (nn_ + N0_SHRINK)) * (a_mle - parA[0])      # Amendment 2: empirical-Bayes shrinkage of the offset toward map-A (n0 = 50)
             else: parB = fit_map(s_sub, y_sub, par0=parA, prior=parA)
             score(f"map-B({n})", op_probs(sA_te, parB)[rows_te], {"n_cal": int(nn_)})
             T, lam = fit_calib(PA_ca[[pca_[i] for i in sub.item]], y_sub, climA); score(f"dir-B({n})", calib_apply(PA_te, T, lam, climA)[rows_te], {"n_cal": int(nn_), "T": T, "lam": lam})
