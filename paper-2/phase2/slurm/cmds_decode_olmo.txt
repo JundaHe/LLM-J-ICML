@@ -1,0 +1,3 @@
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_mnli --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_chaosnli_mnli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel popquorn_off8 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel summeval_coherence8 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_summeval_coherence8.log 2>&1
