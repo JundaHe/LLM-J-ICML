@@ -1,0 +1,2 @@
+/scratch/jundahe/venvs/llmj/bin/python user_heldout_heads.py --panel popquorn_off8 > logs/user_heldout_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python user_heldout_heads.py --panel popquorn_pol5 > logs/user_heldout_popquorn_pol5.log 2>&1
