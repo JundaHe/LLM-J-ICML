@@ -1,14 +1,10 @@
 \begin{table}[t]\centering\footnotesize
 \caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\% crossed bootstrap over optimizer seeds and test groups.}\label{tab:budget}
 \begin{tabular}{llrrl}\toprule panel & design (items $\times$ ratings) & ratings & RPS & $-$ full data \\\midrule
-SummEval (Qwen2.5) & 960 $\times$ 1 & 960 & 0.1640 & $-$0.0061 [$-$0.0087, $-$0.0035] \\
-SummEval (Qwen2.5) & 480 $\times$ 2 & 960 & 0.1648 & $-$0.0052 [$-$0.0091, $-$0.0014] \\
-SummEval (Qwen2.5) & 240 $\times$ 4 & 960 & 0.1862 & $+$0.0162 [$+$0.0116, $+$0.0204] \\
-SummEval (Qwen2.5) & 144 $\times$ 7 & 1008 & 0.1912 & $+$0.0211 [$+$0.0168, $+$0.0253] \\
-SummEval (Qwen2.5) & 272 $\times$ 7 & 1904 & 0.1813 & $+$0.0112 [$+$0.0071, $+$0.0155] \\
-SummEval (Qwen2.5) & 960 $\times$ 2 & 1920 & 0.1637 & $-$0.0064 [$-$0.0106, $-$0.0031] \\
-SummEval (Qwen2.5) & 480 $\times$ 4 & 1920 & 0.1678 & $-$0.0023 [$-$0.0047, $+$0.0003] \\
-SummEval (Qwen2.5) & 960 $\times$ 7 & 6720 & 0.1701 & -- \\
+SummEval (Qwen2.5, same batch, 3 seeds) & 960 $\times$ 1 & 960 & 0.1664 & $-$0.0027 [$-$0.0061, $+$0.0014] \\
+SummEval (Qwen2.5, same batch, 3 seeds) & 480 $\times$ 2 & 960 & 0.1651 & $-$0.0040 [$-$0.0084, $-$0.0000] \\
+SummEval (Qwen2.5, same batch, 3 seeds) & 144 $\times$ 7 & 1008 & 0.1897 & $+$0.0206 [$+$0.0163, $+$0.0247] \\
+SummEval (Qwen2.5, same batch, 3 seeds) & 960 $\times$ 7 & 6720 & 0.1691 & -- \\
 \midrule
 POPQUORN (Qwen2.5) & 819 $\times$ 1 & 819 & 0.1294 & $+$0.0077 [$+$0.0046, $+$0.0110] \\
 POPQUORN (Qwen2.5) & 117 $\times$ 7 & 819 & 0.1322 & $+$0.0105 [$+$0.0065, $+$0.0151] \\

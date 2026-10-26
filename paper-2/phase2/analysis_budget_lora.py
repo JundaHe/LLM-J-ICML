@@ -6,7 +6,7 @@ Usage: python analysis_budget_lora.py [--B 2000]
 import os, sys, glob, re, json, argparse, numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import data_panels
-ap = argparse.ArgumentParser(); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--panel", default="summeval_coherence8"); ap.add_argument("--root", default="lora_budget", help="results/<root>/<panel>/<design>/s<seed>/f<fold>/chen; for non-default roots the full-data reference is the a7_F1.0 design inside the root"); ap.add_argument("--seeds", default="2000,2001", help="comma-separated budget/opt seeds (lora_budget_v2: 2000,2001,2002)"); args = ap.parse_args()
+ap = argparse.ArgumentParser(); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--panel", default="summeval_coherence8"); ap.add_argument("--root", default="lora_budget", help="results/<root>/<panel>/<design>/s<seed>/f<fold>/chen; for non-default roots the full-data reference is the a7_F1.0 design inside the root"); ap.add_argument("--seeds", default="2000,2001", help="comma-separated budget/opt seeds (lora_budget_v2: 2000,2001,2002)"); ap.add_argument("--ref", default="full_a7_F1", help="reference design for the contrast (e.g. a1_F1.0 for the items-first contrast of Amendment 6)"); args = ap.parse_args()
 PAN = data_panels.load(args.panel); H = PAN["H"]; G = np.asarray(PAN.get("groups", PAN["item_ids"])); K = PAN["K"]; LV = np.arange(K)
 def rps(Pm, y): cdf = np.cumsum(Pm, 1); step = (LV[None, :] >= y[:, None]).astype(float); return ((cdf - step) ** 2).sum(1) / (K - 1)
 def load_cell(path, fold):
@@ -34,17 +34,17 @@ def mean_rps(cellset, seeds, doc_weights=None):
         vals.append((r * w).sum() / max(w.sum(), 1e-12))
     return float(np.mean(vals)) if vals else np.nan
 docs = np.unique(G[[i for i in range(len(G)) if i in set(np.concatenate([rows for (rows, _) in cells["full_a7_F1"].values()]))]])
-rng = np.random.RandomState(7); out = {}; lines = [f"# Fixed-budget LoRA block — {args.panel} (analysis_budget_lora.py)", "", "| design | rating budget | train items | cells | RPS | RPS − full chen [95 % crossed bootstrap] |", "|---|---|---|---|---|---|"]
+rng = np.random.RandomState(7); out = {}; lines = [f"# Fixed-budget LoRA block — {args.panel} (analysis_budget_lora.py)", "", "| design | rating budget | train items | cells | RPS | RPS − %s [95 %% crossed bootstrap] |", "|---|---|---|---|---|---|"]; lines[2] = lines[2] % args.ref
 for name, cs in cells.items():
-    pt = mean_rps(cs, SEEDS); ref = mean_rps(cells["full_a7_F1"], SEEDS); diff = pt - ref; bs = []
+    pt = mean_rps(cs, SEEDS); ref = mean_rps(cells[args.ref], SEEDS); diff = pt - ref; bs = []
     folds_present = sorted({f for (_, f) in cs})
     for b in range(args.B):
         seeds_b = tuple(rng.choice(SEEDS, len(SEEDS), replace=True)); dw = {}
         for g in rng.choice(docs, len(docs), replace=True): dw[g] = dw.get(g, 0.0) + 1.0
-        bs.append(mean_rps(cs, seeds_b, dw) - mean_rps(cells["full_a7_F1"], seeds_b, dw))
+        bs.append(mean_rps(cs, seeds_b, dw) - mean_rps(cells[args.ref], seeds_b, dw))
     ci = [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
     md = meta.get(name, {}); n_full = int(json.load(open(f"{HERE}/results/lora/{args.panel}/{FULL[2000]}/f0/chen/meta.json" if args.root == "lora_budget" else f"{HERE}/results/{args.root}/{args.panel}/a7_F1.0/s2000/f0/chen/meta.json"))["parts"]["train"])
     out[name] = dict(rps=pt, diff_vs_full=diff, ci95=ci, n_cells=len(cs), folds=folds_present, rating_budget=md.get("rating_budget", n_full * (H.shape[1] - 1)), n_train=md.get("n_train_used", n_full))
     lines.append(f"| {name} | {out[name]['rating_budget']} | {out[name]['n_train']} | {len(cs)} | {pt:.4f} | {diff:+.4f} [{ci[0]:+.4f}, {ci[1]:+.4f}] |")
 lines += ["", "Raw RPS against the held-out evaluator on the test items/groups; seeds %s × folds 0–2; bootstrap resamples the seed clusters and the test groups (B = %d). Full-data reference = %s." % ("/".join(map(str, SEEDS)), args.B, "the T3b/T3c runs restricted to the same seeds" if args.root == "lora_budget" else "the a7_F1.0 design of the same batch")]
-os.makedirs(f"{HERE}/results/lora_budget", exist_ok=True); sfx = "" if args.panel == "summeval_coherence8" else "_" + args.panel; os.makedirs(f"{HERE}/results/{args.root}", exist_ok=True); json.dump(out, open(f"{HERE}/results/{args.root}/summary{sfx}.json", "w"), indent=1); open(f"{HERE}/results/{args.root}/summary{sfx}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
+os.makedirs(f"{HERE}/results/lora_budget", exist_ok=True); sfx = ("" if args.panel == "summeval_coherence8" else "_" + args.panel) + ("" if args.ref == "full_a7_F1" else "_vs_" + args.ref); os.makedirs(f"{HERE}/results/{args.root}", exist_ok=True); json.dump(out, open(f"{HERE}/results/{args.root}/summary{sfx}.json", "w"), indent=1); open(f"{HERE}/results/{args.root}/summary{sfx}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
