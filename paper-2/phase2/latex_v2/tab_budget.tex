@@ -1,13 +1,13 @@
 \begin{table}[t]\centering\footnotesize
 \caption{End-to-end LoRA judges (Qwen2.5-7B, distributional objective) at fixed rating budgets: test RPS minus the full-data judge, 95\% crossed bootstrap over optimizer seeds and test groups.}\label{tab:budget}
 \begin{tabular}{llrrl}\toprule panel & design (items $\times$ ratings) & ratings & RPS & $-$ full data \\\midrule
-SummEval coh. & 960 $\times$ 1 & 960 & 0.1640 & $-$0.0061 [$-$0.0087, $-$0.0035] \\
-SummEval coh. & 480 $\times$ 2 & 960 & 0.1648 & $-$0.0052 [$-$0.0091, $-$0.0014] \\
-SummEval coh. & 240 $\times$ 4 & 960 & 0.1862 & $+$0.0162 [$+$0.0116, $+$0.0204] \\
-SummEval coh. & 144 $\times$ 7 & 1008 & 0.1912 & $+$0.0211 [$+$0.0168, $+$0.0253] \\
-SummEval coh. & 272 $\times$ 7 & 1904 & 0.1813 & $+$0.0112 [$+$0.0071, $+$0.0155] \\
-SummEval coh. & 960 $\times$ 2 & 1920 & 0.1637 & $-$0.0064 [$-$0.0106, $-$0.0031] \\
-SummEval coh. & 480 $\times$ 4 & 1920 & 0.1678 & $-$0.0023 [$-$0.0047, $+$0.0003] \\
+SummEval coh. & 960 $\times$ 1 & 960 & 0.1640 & $-$0.0061 [$-$0.0089, $-$0.0039] \\
+SummEval coh. & 480 $\times$ 2 & 960 & 0.1648 & $-$0.0052 [$-$0.0082, $-$0.0010] \\
+SummEval coh. & 240 $\times$ 4 & 960 & 0.1862 & $+$0.0162 [$+$0.0130, $+$0.0190] \\
+SummEval coh. & 144 $\times$ 7 & 1008 & 0.1912 & $+$0.0211 [$+$0.0181, $+$0.0244] \\
+SummEval coh. & 272 $\times$ 7 & 1904 & 0.1813 & $+$0.0112 [$+$0.0076, $+$0.0157] \\
+SummEval coh. & 960 $\times$ 2 & 1920 & 0.1637 & $-$0.0064 [$-$0.0110, $-$0.0034] \\
+SummEval coh. & 480 $\times$ 4 & 1920 & 0.1678 & $-$0.0023 [$-$0.0046, $+$0.0001] \\
 SummEval coh. & 960 $\times$ 7 & 6720 & 0.1701 & -- \\
 \midrule
 POPQUORN off. & 819 $\times$ 1 & 819 & 0.1294 & $+$0.0077 [$+$0.0046, $+$0.0110] \\

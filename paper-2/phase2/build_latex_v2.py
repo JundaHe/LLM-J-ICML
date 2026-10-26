@@ -2,7 +2,7 @@
 v1 (build_latex.py / PAPER_DRAFT.md / latex/) is untouched. Usage: python build_latex_v2.py [--no-compile]"""
 import os, re, subprocess, sys
 P = os.path.dirname(os.path.abspath(__file__)); L = f"{P}/latex_v2"; os.makedirs(L, exist_ok=True)
-subprocess.run([sys.executable, f"{P}/make_tables_v2.py"], check=True)
+subprocess.run([sys.executable, f"{P}/make_tables_v2.py"], check=True); subprocess.run([sys.executable, f"{P}/make_figures_v2.py"], check=True)
 subprocess.run(["pandoc", "-f", "markdown", "-t", "latex", "--wrap=none", f"{P}/PAPER_DRAFT_v2.md", "-o", f"{L}/body_raw.tex"], check=True)
 raw = open(f"{L}/body_raw.tex").read()
 title = open(f"{P}/PAPER_DRAFT_v2.md").readline().lstrip("# ").strip()
@@ -13,7 +13,7 @@ raw = re.sub(r"\\section\{Abstract[^}]*\}\s*\n\n(.*?)\n\n", lambda m: "\\begin{a
 raw = re.sub(r"\\section\{\d+\.? ?", "\\\\section{", raw)
 raw = re.sub(r"\\textbf\{(\d+\.\d+) ([^}]*)\}", r"\\subsection*{\1 \2}", raw)
 raw = raw.replace("et al.~", "et al. ")
-for head, tab in (("Two reliabilities of a disagreement histogram", "tab_cards"), ("Where the ordinal shape comes from", "tab_decode"), ("Spending the annotation budget", "tab_budget")):
+for head, tab in (("Two reliabilities of a disagreement histogram", "tab_cards"), ("Two reliabilities of a disagreement histogram", "fig_reliability"), ("Where the ordinal shape comes from", "tab_decode"), ("Spending the annotation budget", "tab_budget")):
     i = raw.find("\\section{" + head)
     if i >= 0: j = raw.index("\n", i); raw = raw[:j + 1] + "\\input{" + tab + "}\n" + raw[j + 1:]
 src = open(f"{P}/build_latex.py").read()
