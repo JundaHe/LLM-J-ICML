@@ -107,7 +107,11 @@ def run(seed, isplit, poolsets):
             if nn_ > len(RB_ca): continue
             sub = RB_ca.sample(n=nn_, random_state=seed * 100 + isplit) if n != "all" else RB_ca
             s_sub = sA_ca[[pca_[i] for i in sub.item]]; y_sub = sub.y.to_numpy()
-            parB = fit_map(s_sub, y_sub, par0=parA, prior=parA); score(f"map-B({n})", op_probs(sA_te, parB)[rows_te], {"n_cal": int(nn_)})
+            if nn_ < 50:   # Amendment 1: with fewer than 50 pool-B ratings only the location offset α is re-estimated (slope and cut-points kept from map-A)
+                def nll_a(a_): p_ = parA.copy(); p_[0] = a_[0]; return -np.log(op_probs(s_sub, p_)[np.arange(len(y_sub)), y_sub]).sum()
+                parB = parA.copy(); parB[0] = minimize(nll_a, np.array([parA[0]]), method="L-BFGS-B").x[0]
+            else: parB = fit_map(s_sub, y_sub, par0=parA, prior=parA)
+            score(f"map-B({n})", op_probs(sA_te, parB)[rows_te], {"n_cal": int(nn_)})
             T, lam = fit_calib(PA_ca[[pca_[i] for i in sub.item]], y_sub, climA); score(f"dir-B({n})", calib_apply(PA_te, T, lam, climA)[rows_te], {"n_cal": int(nn_), "T": T, "lam": lam})
     return rows
 
