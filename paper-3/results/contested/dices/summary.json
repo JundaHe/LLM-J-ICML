@@ -4,12 +4,16 @@
  "mean": {
   "spearman_entropy": 0.014490065185627366,
   "auroc_entropy": NaN,
+  "auroc_topq_entropy": 0.5053322756918738,
   "spearman_map_disp": 0.09941915051675455,
   "auroc_map_disp": NaN,
+  "auroc_topq_map_disp": 0.560006463364475,
   "spearman_loc_mid": 0.06254819035877938,
   "auroc_loc_mid": NaN,
+  "auroc_topq_loc_mid": 0.5401756859980021,
   "spearman_ask_llm": -0.11316421117640292,
-  "auroc_ask_llm": NaN
+  "auroc_ask_llm": NaN,
+  "auroc_topq_ask_llm": 0.42634702391444845
  },
  "rows": [
   {
@@ -18,43 +22,63 @@
    "contested_rate": 1.0,
    "spearman_entropy": 0.050700601028189525,
    "auroc_entropy": NaN,
+   "auroc_topq_entropy": 0.5344614842235148,
    "spearman_map_disp": 0.07442681596348977,
    "auroc_map_disp": NaN,
+   "auroc_topq_map_disp": 0.5560549973558964,
    "spearman_loc_mid": 0.08138001548792988,
    "auroc_loc_mid": NaN,
+   "auroc_topq_loc_mid": 0.5638110347258947,
    "spearman_ask_llm": -0.10426275953559748,
    "auroc_ask_llm": NaN,
+   "auroc_topq_ask_llm": 0.4129208531641107,
    "spearman_entropy_ci95": [
-    -0.08253814791250838,
-    0.15195335652200218
+    -0.07612523045028093,
+    0.16057464429898344
    ],
    "auroc_entropy_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_entropy_ci95": [
+    0.4540721601426889,
+    0.6042239365470656
+   ],
    "spearman_map_disp_ci95": [
-    -0.037621133014847354,
-    0.18508910247653731
+    -0.03543126016020191,
+    0.18309803079034281
    ],
    "auroc_map_disp_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_map_disp_ci95": [
+    0.4780192729279867,
+    0.6317823733556399
+   ],
    "spearman_loc_mid_ci95": [
-    -0.04291400715866615,
-    0.1953935559674942
+    -0.04416481974492144,
+    0.19532587602619883
    ],
    "auroc_loc_mid_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_loc_mid_ci95": [
+    0.4792633923594704,
+    0.6343633597639682
+   ],
    "spearman_ask_llm_ci95": [
-    -0.20312668623901722,
-    0.022540116381040972
+    -0.2089233210023208,
+    0.021483025403384412
    ],
    "auroc_ask_llm_ci95": [
     NaN,
     NaN
+   ],
+   "auroc_topq_ask_llm_ci95": [
+    0.3429360232793683,
+    0.48732741617356995
    ]
   },
   {
@@ -63,43 +87,63 @@
    "contested_rate": 1.0,
    "spearman_entropy": -0.002102640775646447,
    "auroc_entropy": NaN,
+   "auroc_topq_entropy": 0.5196104353957341,
    "spearman_map_disp": 0.10241011783564484,
    "auroc_map_disp": NaN,
+   "auroc_topq_map_disp": 0.533668253128856,
    "spearman_loc_mid": 0.03994150860954033,
    "auroc_loc_mid": NaN,
+   "auroc_topq_loc_mid": 0.5372818614489687,
    "spearman_ask_llm": -0.12207159487648031,
    "auroc_ask_llm": NaN,
+   "auroc_topq_ask_llm": 0.4506433985545566,
    "spearman_entropy_ci95": [
-    -0.12092195856594098,
-    0.1284266093949728
+    -0.12325829313081023,
+    0.12692904949352676
    ],
    "auroc_entropy_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_entropy_ci95": [
+    0.4407162226119765,
+    0.6033583115208813
+   ],
    "spearman_map_disp_ci95": [
-    -0.01774606088043718,
-    0.21319321545757267
+    -0.03331571845732557,
+    0.21464797705286642
    ],
    "auroc_map_disp_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_map_disp_ci95": [
+    0.455232124982125,
+    0.6104794686024517
+   ],
    "spearman_loc_mid_ci95": [
-    -0.07791534334463936,
-    0.15608270642635913
+    -0.08477628631947455,
+    0.1544745888980626
    ],
    "auroc_loc_mid_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_loc_mid_ci95": [
+    0.44706496776417537,
+    0.6209546871962676
+   ],
    "spearman_ask_llm_ci95": [
-    -0.23354790997724548,
-    -0.007863771760968986
+    -0.23119637971672632,
+    -0.00769818462654025
    ],
    "auroc_ask_llm_ci95": [
     NaN,
     NaN
+   ],
+   "auroc_topq_ask_llm_ci95": [
+    0.36393533496959896,
+    0.5254304216191972
    ]
   },
   {
@@ -108,43 +152,63 @@
    "contested_rate": 1.0,
    "spearman_entropy": -0.005127764695660979,
    "auroc_entropy": NaN,
+   "auroc_topq_entropy": 0.46192490745637227,
    "spearman_map_disp": 0.12142051775112904,
    "auroc_map_disp": NaN,
+   "auroc_topq_map_disp": 0.5902961396086728,
    "spearman_loc_mid": 0.06632304697886796,
    "auroc_loc_mid": NaN,
+   "auroc_topq_loc_mid": 0.5194341618191433,
    "spearman_ask_llm": -0.11315827911713101,
    "auroc_ask_llm": NaN,
+   "auroc_topq_ask_llm": 0.4154768200246782,
    "spearman_entropy_ci95": [
-    -0.10596499895513095,
-    0.09212880825776223
+    -0.11640775677989422,
+    0.0984825627257348
    ],
    "auroc_entropy_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_entropy_ci95": [
+    0.37517671517671525,
+    0.5417216140453543
+   ],
    "spearman_map_disp_ci95": [
-    -0.009998890082767964,
-    0.23926443665088432
+    -0.0080335090846058,
+    0.23440711306347664
    ],
    "auroc_map_disp_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_map_disp_ci95": [
+    0.5056253953468144,
+    0.6618909547617903
+   ],
    "spearman_loc_mid_ci95": [
-    -0.06324215424053829,
-    0.17256949252831724
+    -0.05774200936884715,
+    0.18720394450388828
    ],
    "auroc_loc_mid_ci95": [
     NaN,
     NaN
    ],
+   "auroc_topq_loc_mid_ci95": [
+    0.4319147989750838,
+    0.6084309302580575
+   ],
    "spearman_ask_llm_ci95": [
-    -0.22381890667968735,
-    0.02584942662328749
+    -0.22465542767714933,
+    0.026991088294669906
    ],
    "auroc_ask_llm_ci95": [
     NaN,
     NaN
+   ],
+   "auroc_topq_ask_llm_ci95": [
+    0.3393191398468483,
+    0.5013814659679391
    ]
   }
  ]
