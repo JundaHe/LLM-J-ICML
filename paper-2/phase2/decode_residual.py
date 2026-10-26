@@ -126,21 +126,22 @@ reps = []; alphas_rep0 = None
 for r in range(args.R):
     o, used = one_rep(E, H, G0, r, 1); reps.append(o)
     if r == 0: alphas_rep0 = used
-full = mean_over(reps); pt = {k: float(np.mean(v)) if np.ndim(v) else v for k, v in full.items()}
+full = mean_over(reps); pt = {k: float(np.mean(v)) if np.ndim(v) else v for k, v in full.items()}; pt["G_over_X"] = pt["G"] / pt["X"] if pt["X"] > 1e-9 else float("nan")
 print(f"{args.panel} a={args.a} b={args.b} d={args.d} key={args.feat_key}  point: G {pt['G']:+.5f}  V {pt['V']:+.5f}  Gc {pt['Gc']:+.5f}  G_perm {pt['G_perm']:+.5f}  negA1x {pt['negA1x']:+.5f}  X {pt['X']:+.5f}  M {pt['M']:.5f}  pos_ctrl {pt['pos_ctrl']:.3f}  perm_frac {pt['perm_frac']:.2f}  α {alphas_rep0}  [{time.time()-t0:.0f}s]", flush=True)
 
 # ---- bootstrap
-KEYS = ("G", "V", "Gc", "negA1x", "X", "M", "G_perm", "V_perm", "pos_ctrl"); bs = {k: [] for k in KEYS}
+KEYS = ("G", "V", "Gc", "negA1x", "X", "M", "G_perm", "V_perm", "pos_ctrl"); bs = {k: [] for k in KEYS + ("G_over_X",)}
 brng = np.random.RandomState(2026 + args.a)
 for bi in range(args.B):
     idx, ng = boot_items(G0, brng); Hb = H[idx]; Xb = E[idx]
     o = mean_over([one_rep(Xb, Hb, ng, 10_000 + 37 * bi + r, 1000 + bi, None if args.reselect_alpha else alphas_rep0)[0] for r in range(args.R_boot)])
     for k in KEYS: bs[k].append(float(np.mean(o[k])) if np.ndim(o[k]) else o[k])
+    bs["G_over_X"].append(bs["G"][-1] / bs["X"][-1] if bs["X"][-1] > 1e-9 else float("nan"))
     if (bi + 1) % 50 == 0: print(f"  boot {bi+1}/{args.B}  G {np.mean(bs['G']):+.5f} [{ci(bs['G'])[0]:+.5f},{ci(bs['G'])[1]:+.5f}]  [{time.time()-t0:.0f}s]", flush=True)
 res = dict(panel=args.panel, nominal=NOMINAL, K=K, n_items=int(NI), m=int(M), a=args.a, b=args.b, R=args.R, B=args.B, R_boot=args.R_boot, d=args.d, d_pre=args.d_pre, feat_key=args.feat_key,
            protocol="DECODING_PROTOCOL.md", alphas=alphas_rep0, est=pt, ci95={k: ci(v) for k, v in bs.items()}, seconds=round(time.time() - t0, 1))
 e, c = res["est"], res["ci95"]
 print(f"{args.panel} FINAL  G {e['G']:+.5f} [{c['G'][0]:+.5f},{c['G'][1]:+.5f}]  V {e['V']:+.5f} [{c['V'][0]:+.5f},{c['V'][1]:+.5f}]  G_perm {e['G_perm']:+.5f} [{c['G_perm'][0]:+.5f},{c['G_perm'][1]:+.5f}]"
-      f"  negA1x {e['negA1x']:+.5f} [{c['negA1x'][0]:+.5f},{c['negA1x'][1]:+.5f}]  pos_ctrl {e['pos_ctrl']:.3f}  [{res['seconds']}s]", flush=True)
-os.makedirs(f"{HERE}/results/decoding", exist_ok=True)
-json.dump(res, open(f"{HERE}/results/decoding/{args.panel}_d{args.d}_{args.feat_key}{args.tag}.json", "w"), indent=1, default=float)
+      f"  negA1x {e['negA1x']:+.5f} [{c['negA1x'][0]:+.5f},{c['negA1x'][1]:+.5f}]  G/X {e['G_over_X']:+.3f} [{c['G_over_X'][0]:+.3f},{c['G_over_X'][1]:+.3f}]  pos_ctrl {e['pos_ctrl']:.3f}  [{res['seconds']}s]", flush=True)
+os.makedirs(f"{HERE}/results/decoding_v2", exist_ok=True)
+json.dump(res, open(f"{HERE}/results/decoding_v2/{args.panel}_d{args.d}_{args.feat_key}{args.tag}.json", "w"), indent=1, default=float)
