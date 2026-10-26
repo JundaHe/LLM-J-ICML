@@ -1,0 +1,119 @@
+{
+ "panel": "dices",
+ "splits": 3,
+ "mean": {
+  "spearman_entropy": 0.014490065185627366,
+  "auroc_entropy": NaN,
+  "spearman_map_disp": 0.09941915051675455,
+  "auroc_map_disp": NaN,
+  "spearman_loc_mid": 0.06254819035877938,
+  "auroc_loc_mid": NaN
+ },
+ "rows": [
+  {
+   "isplit": 0,
+   "n_items": 245,
+   "contested_rate": 1.0,
+   "spearman_entropy": 0.050700601028189525,
+   "auroc_entropy": NaN,
+   "spearman_map_disp": 0.07442681596348977,
+   "auroc_map_disp": NaN,
+   "spearman_loc_mid": 0.08138001548792988,
+   "auroc_loc_mid": NaN,
+   "spearman_entropy_ci95": [
+    -0.07612523045028093,
+    0.16057464429898344
+   ],
+   "auroc_entropy_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_map_disp_ci95": [
+    -0.03543126016020191,
+    0.18309803079034281
+   ],
+   "auroc_map_disp_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_loc_mid_ci95": [
+    -0.04416481974492144,
+    0.19532587602619883
+   ],
+   "auroc_loc_mid_ci95": [
+    NaN,
+    NaN
+   ]
+  },
+  {
+   "isplit": 1,
+   "n_items": 245,
+   "contested_rate": 1.0,
+   "spearman_entropy": -0.002102640775646447,
+   "auroc_entropy": NaN,
+   "spearman_map_disp": 0.10241011783564484,
+   "auroc_map_disp": NaN,
+   "spearman_loc_mid": 0.03994150860954033,
+   "auroc_loc_mid": NaN,
+   "spearman_entropy_ci95": [
+    -0.12325829313081023,
+    0.12692904949352676
+   ],
+   "auroc_entropy_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_map_disp_ci95": [
+    -0.03331571845732557,
+    0.21464797705286642
+   ],
+   "auroc_map_disp_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_loc_mid_ci95": [
+    -0.08477628631947455,
+    0.1544745888980626
+   ],
+   "auroc_loc_mid_ci95": [
+    NaN,
+    NaN
+   ]
+  },
+  {
+   "isplit": 2,
+   "n_items": 245,
+   "contested_rate": 1.0,
+   "spearman_entropy": -0.005127764695660979,
+   "auroc_entropy": NaN,
+   "spearman_map_disp": 0.12142051775112904,
+   "auroc_map_disp": NaN,
+   "spearman_loc_mid": 0.06632304697886796,
+   "auroc_loc_mid": NaN,
+   "spearman_entropy_ci95": [
+    -0.11640775677989422,
+    0.0984825627257348
+   ],
+   "auroc_entropy_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_map_disp_ci95": [
+    -0.0080335090846058,
+    0.23440711306347664
+   ],
+   "auroc_map_disp_ci95": [
+    NaN,
+    NaN
+   ],
+   "spearman_loc_mid_ci95": [
+    -0.05774200936884715,
+    0.18720394450388828
+   ],
+   "auroc_loc_mid_ci95": [
+    NaN,
+    NaN
+   ]
+  }
+ ]
+}
