@@ -35,10 +35,10 @@ for k in sorted(D, key=lambda k: (k.startswith("chaosnli"), NAME[k])):
     t.append(f"{NAME[k]} & " + " & ".join(cells) + " \\\\")
 t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_decode.tex", "w").write("\n".join(t))
 # Table 3: LoRA fixed budget (SummEval + POPQUORN)
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{End-to-end LoRA judges (Qwen2.5-7B, distributional objective) at fixed rating budgets: test RPS minus the full-data judge, 95\\% crossed bootstrap over optimizer seeds and test groups.}\\label{tab:budget}",
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\\% crossed bootstrap over optimizer seeds and test groups.}\\label{tab:budget}",
      "\\begin{tabular}{llrrl}\\toprule panel & design (items $\\times$ ratings) & ratings & RPS & $-$ full data \\\\\\midrule"]
-for p, fn in (("SummEval coh.", "summary.json"), ("POPQUORN off.", "summary_popquorn_off8.json")):
-    S = json.load(open(f"{HERE}/results/lora_budget/{fn}"))
+for p, fn in (("SummEval (Qwen2.5)", "lora_budget/summary.json"), ("POPQUORN (Qwen2.5)", "lora_budget/summary_popquorn_off8.json"), ("SummEval (OLMo-2)", "lora_budget_olmo/summary.json")):
+    S = json.load(open(f"{HERE}/results/{fn}"))
     for name, v in sorted(S.items(), key=lambda kv: (kv[1]["rating_budget"], -kv[1]["n_train"])):
         a = 7 if name.startswith("full") else int(re.match(r"a(\d+)", name).group(1)); des = f"{v['n_train']} $\\times$ {a}"
         t.append(f"{p} & {des} & {v['rating_budget']} & {v['rps']:.4f} & " + ("--" if name.startswith("full") else f"{f4(v['diff_vs_full'])} [{f4(v['ci95'][0])}, {f4(v['ci95'][1])}]") + " \\\\")

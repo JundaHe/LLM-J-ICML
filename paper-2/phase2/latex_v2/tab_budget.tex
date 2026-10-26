@@ -1,21 +1,26 @@
 \begin{table}[t]\centering\footnotesize
-\caption{End-to-end LoRA judges (Qwen2.5-7B, distributional objective) at fixed rating budgets: test RPS minus the full-data judge, 95\% crossed bootstrap over optimizer seeds and test groups.}\label{tab:budget}
+\caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\% crossed bootstrap over optimizer seeds and test groups.}\label{tab:budget}
 \begin{tabular}{llrrl}\toprule panel & design (items $\times$ ratings) & ratings & RPS & $-$ full data \\\midrule
-SummEval coh. & 960 $\times$ 1 & 960 & 0.1640 & $-$0.0061 [$-$0.0089, $-$0.0039] \\
-SummEval coh. & 480 $\times$ 2 & 960 & 0.1648 & $-$0.0052 [$-$0.0082, $-$0.0010] \\
-SummEval coh. & 240 $\times$ 4 & 960 & 0.1862 & $+$0.0162 [$+$0.0130, $+$0.0190] \\
-SummEval coh. & 144 $\times$ 7 & 1008 & 0.1912 & $+$0.0211 [$+$0.0181, $+$0.0244] \\
-SummEval coh. & 272 $\times$ 7 & 1904 & 0.1813 & $+$0.0112 [$+$0.0076, $+$0.0157] \\
-SummEval coh. & 960 $\times$ 2 & 1920 & 0.1637 & $-$0.0064 [$-$0.0110, $-$0.0034] \\
-SummEval coh. & 480 $\times$ 4 & 1920 & 0.1678 & $-$0.0023 [$-$0.0046, $+$0.0001] \\
-SummEval coh. & 960 $\times$ 7 & 6720 & 0.1701 & -- \\
+SummEval (Qwen2.5) & 960 $\times$ 1 & 960 & 0.1640 & $-$0.0061 [$-$0.0089, $-$0.0039] \\
+SummEval (Qwen2.5) & 480 $\times$ 2 & 960 & 0.1648 & $-$0.0052 [$-$0.0082, $-$0.0010] \\
+SummEval (Qwen2.5) & 240 $\times$ 4 & 960 & 0.1862 & $+$0.0162 [$+$0.0130, $+$0.0190] \\
+SummEval (Qwen2.5) & 144 $\times$ 7 & 1008 & 0.1912 & $+$0.0211 [$+$0.0181, $+$0.0244] \\
+SummEval (Qwen2.5) & 272 $\times$ 7 & 1904 & 0.1813 & $+$0.0112 [$+$0.0076, $+$0.0157] \\
+SummEval (Qwen2.5) & 960 $\times$ 2 & 1920 & 0.1637 & $-$0.0064 [$-$0.0110, $-$0.0034] \\
+SummEval (Qwen2.5) & 480 $\times$ 4 & 1920 & 0.1678 & $-$0.0023 [$-$0.0046, $+$0.0001] \\
+SummEval (Qwen2.5) & 960 $\times$ 7 & 6720 & 0.1701 & -- \\
 \midrule
-POPQUORN off. & 819 $\times$ 1 & 819 & 0.1294 & $+$0.0077 [$+$0.0046, $+$0.0110] \\
-POPQUORN off. & 117 $\times$ 7 & 819 & 0.1322 & $+$0.0105 [$+$0.0065, $+$0.0151] \\
-POPQUORN off. & 410 $\times$ 2 & 820 & 0.1339 & $+$0.0122 [$+$0.0083, $+$0.0167] \\
-POPQUORN off. & 205 $\times$ 4 & 820 & 0.1352 & $+$0.0135 [$+$0.0096, $+$0.0172] \\
-POPQUORN off. & 819 $\times$ 2 & 1638 & 0.1241 & $+$0.0024 [$+$0.0002, $+$0.0046] \\
-POPQUORN off. & 234 $\times$ 7 & 1638 & 0.1277 & $+$0.0061 [$+$0.0030, $+$0.0092] \\
-POPQUORN off. & 410 $\times$ 4 & 1640 & 0.1282 & $+$0.0065 [$+$0.0036, $+$0.0097] \\
-POPQUORN off. & 819 $\times$ 7 & 5733 & 0.1217 & -- \\
+POPQUORN (Qwen2.5) & 819 $\times$ 1 & 819 & 0.1294 & $+$0.0077 [$+$0.0046, $+$0.0110] \\
+POPQUORN (Qwen2.5) & 117 $\times$ 7 & 819 & 0.1322 & $+$0.0105 [$+$0.0065, $+$0.0151] \\
+POPQUORN (Qwen2.5) & 410 $\times$ 2 & 820 & 0.1339 & $+$0.0122 [$+$0.0083, $+$0.0167] \\
+POPQUORN (Qwen2.5) & 205 $\times$ 4 & 820 & 0.1352 & $+$0.0135 [$+$0.0096, $+$0.0172] \\
+POPQUORN (Qwen2.5) & 819 $\times$ 2 & 1638 & 0.1241 & $+$0.0024 [$+$0.0002, $+$0.0046] \\
+POPQUORN (Qwen2.5) & 234 $\times$ 7 & 1638 & 0.1277 & $+$0.0061 [$+$0.0030, $+$0.0092] \\
+POPQUORN (Qwen2.5) & 410 $\times$ 4 & 1640 & 0.1282 & $+$0.0065 [$+$0.0036, $+$0.0097] \\
+POPQUORN (Qwen2.5) & 819 $\times$ 7 & 5733 & 0.1217 & -- \\
+\midrule
+SummEval (OLMo-2) & 960 $\times$ 1 & 960 & 0.1801 & $+$0.0007 [$-$0.0056, $+$0.0069] \\
+SummEval (OLMo-2) & 480 $\times$ 2 & 960 & 0.1778 & $-$0.0016 [$-$0.0062, $+$0.0023] \\
+SummEval (OLMo-2) & 144 $\times$ 7 & 1008 & 0.1896 & $+$0.0102 [$+$0.0049, $+$0.0156] \\
+SummEval (OLMo-2) & 960 $\times$ 7 & 6720 & 0.1794 & -- \\
 \bottomrule\end{tabular}\end{table}
