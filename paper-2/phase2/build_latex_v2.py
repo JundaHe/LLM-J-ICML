@@ -13,7 +13,8 @@ raw = re.sub(r"\\section\{Abstract[^}]*\}\s*\n\n(.*?)\n\n", lambda m: "\\begin{a
 raw = re.sub(r"\\section\{\d+\.? ?", "\\\\section{", raw)
 raw = re.sub(r"\\textbf\{(\d+\.\d+) ([^}]*)\}", r"\\subsection*{\1 \2}", raw)
 raw = raw.replace("et al.~", "et al. ")
-for head, tab in (("Two reliabilities of a disagreement histogram", "tab_cards"), ("Two reliabilities of a disagreement histogram", "fig_reliability"), ("Where the ordinal shape comes from", "tab_decode"), ("Spending the annotation budget", "tab_budget")):
+for k, v in {"Table 1": "tab:cards", "Table 2": "tab:decode", "Table 5": "tab:heads", "Table 6": "tab:budget", "Figure 1": "fig:reliability"}.items(): raw = raw.replace(k, "Table~\\ref{" + v + "}" if k.startswith("Table") else "Figure~\\ref{" + v + "}")
+for head, tab in (("Two reliabilities of a disagreement histogram", "tab_cards"), ("Two reliabilities of a disagreement histogram", "fig_reliability"), ("Where the ordinal shape comes from", "tab_decode"), ("Spending the annotation budget", "tab_budget"), ("Spending the annotation budget", "tab_heads")):
     i = raw.find("\\section{" + head)
     if i >= 0: j = raw.index("\n", i); raw = raw[:j + 1] + "\\input{" + tab + "}\n" + raw[j + 1:]
 src = open(f"{P}/build_latex.py").read()

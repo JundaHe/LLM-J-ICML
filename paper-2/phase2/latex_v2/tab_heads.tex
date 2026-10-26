@@ -1,0 +1,14 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Frozen-feature heads at a fixed rating budget (Qwen2.5-7B features; soft-label head): test RPS (ordinal; ChaosNLI: KL to the 100-rater reference) for items $\times$ ratings per item at the same total, mean over 30 configurations (5 seeds $\times$ 3 item splits $\times$ 2 rater splits). Lower is better; best per row in bold.}\label{tab:heads}
+\begin{tabular}{lrl}\toprule panel & ratings & items $\times$ ratings: score \\\midrule
+Buse--Weimer$^{SE}$ & 60 & 60$\times$1: 0.187, \textbf{30$\times$2: 0.171} \\
+DICES-350 & 210 & 210$\times$1: 0.272, \textbf{105$\times$2: 0.241}, 52$\times$4: 0.242, 26$\times$8: 0.248 \\
+DICES-990 & 594 & \textbf{594$\times$1: 0.203}, 297$\times$2: 0.205, 148$\times$4: 0.207, 74$\times$8: 0.213, 40$\times$15: 0.219 \\
+Dorn Java$^{SE}$ & 72 & 72$\times$1: 0.163, \textbf{36$\times$2: 0.163} \\
+EmoBank & 1800 & \textbf{1800$\times$1: 0.088}, 900$\times$2: 0.089, 450$\times$4: 0.090 \\
+HelpSteer2 & 2870 & \textbf{2870$\times$1: 0.201}, 1436$\times$2: 0.202, 718$\times$4: 0.204 \\
+POPQUORN off. & 819 & \textbf{819$\times$1: 0.133}, 410$\times$2: 0.136, 273$\times$3: 0.137, 136$\times$6: 0.140 \\
+SummEval coh. & 960 & 960$\times$1: 0.172, \textbf{480$\times$2: 0.170}, 320$\times$3: 0.170 \\
+ChaosNLI MNLI & 959 & \textbf{959$\times$1: 0.226}, 480$\times$2: 0.234, 240$\times$4: 0.260, 120$\times$8: 0.274, 60$\times$16: 0.298, 30$\times$32: 0.323 \\
+ChaosNLI SNLI & 908 & \textbf{908$\times$1: 0.244}, 454$\times$2: 0.258, 227$\times$4: 0.298, 114$\times$8: 0.353, 57$\times$16: 0.408, 28$\times$32: 0.445 \\
+\bottomrule\end{tabular}\end{table}

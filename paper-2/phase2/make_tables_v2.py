@@ -45,3 +45,20 @@ for p, fn in (("SummEval (Qwen2.5, same batch, 3 seeds)", "lora_budget_v2/summar
         t.append(f"{p} & {des} & {v['rating_budget']} & {v['rps']:.4f} & " + ("--" if name.startswith("full") else f"{f4(v['diff_vs_full'])} [{f4(v['ci95'][0])}, {f4(v['ci95'][1])}]") + " \\\\")
     t.append("\\midrule")
 t[-1] = "\\bottomrule\\end{tabular}\\end{table}"; open(f"{L}/tab_budget.tex", "w").write("\n".join(t)); print("tables written")
+# Table 5: frozen-feature heads at a fixed rating budget (results/budget_heads, Qwen2.5 features, soft-label arm, budget = n_train_items × 1)
+import pandas as pd
+NAME.update({"dorn_java": "Dorn Java$^{SE}$", "bw": "Buse--Weimer$^{SE}$"})
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Frozen-feature heads at a fixed rating budget (Qwen2.5-7B features; soft-label head): test RPS (ordinal; ChaosNLI: KL to the 100-rater reference) for items $\\times$ ratings per item at the same total, mean over 30 configurations (5 seeds $\\times$ 3 item splits $\\times$ 2 rater splits). Lower is better; best per row in bold.}\\label{tab:heads}",
+     "\\begin{tabular}{lrl}\\toprule panel & ratings & items $\\times$ ratings: score \\\\\\midrule"]
+rows5 = []
+for d in sorted(glob.glob(f"{HERE}/results/budget_heads/*")):
+    k = os.path.basename(d)
+    if k not in NAME or not os.path.exists(f"{d}/runs.jsonl"): continue
+    r = pd.read_json(f"{d}/runs.jsonl", lines=True)
+    if "budget_mult" not in r: continue
+    r = r[(r.budget_mult == 1) & (r.arm == "soft")]
+    if r.empty: continue
+    g = r.groupby("a").agg(n=("n_items", "first"), v=("pop_rps", "mean")).reset_index(); best = g.v.idxmin()
+    cells = ", ".join((f"\\textbf{{{int(x.n)}$\\times${int(x.a)}: {x.v:.3f}}}" if i == best else f"{int(x.n)}$\\times${int(x.a)}: {x.v:.3f}") for i, x in g.iterrows())
+    rows5.append((k.startswith("chaosnli"), NAME[k], f"{NAME[k]} & {int(g.n.iloc[0] * g.a.iloc[0])} & {cells} \\\\"))
+t += [x[2] for x in sorted(rows5)] + ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_heads.tex", "w").write("\n".join(t)); print("tab_heads:", len(rows5), "panels")
