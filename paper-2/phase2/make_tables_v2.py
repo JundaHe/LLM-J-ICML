@@ -26,13 +26,13 @@ t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_cards.tex", "w")
 NAME.update({"dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$"})
 # Table 2: cross-family decoding
 FAM = {"": "Qwen2.5-7B", "_qwen3": "Qwen3-8B", "_olmo": "OLMo-2-7B"}; D = {}
-for f in glob.glob(f"{HERE}/results/decoding/*_d64_E_last*.json"):
+for f in glob.glob(f"{HERE}/results/decoding_v2/*_d64_E_last*.json"):   # v2 = fixed cluster bootstrap (DECODING_PROTOCOL Amendment 3); results/decoding/ is superseded
     m_ = re.match(r"(.+)_d64_E_last(_qwen3|_olmo)?\.json$", os.path.basename(f))
-    if m_ and m_.group(1) in NAME: r = json.load(open(f)); D.setdefault(m_.group(1), {})[m_.group(2) or ""] = (r["est"]["G"], r["ci95"]["G"], r["est"]["pos_ctrl"])
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Decodability of the residual beyond exact mode and mean from frozen representations of three model families: proper-score gain $G$ on an independent rater panel (95\\% item-cluster bootstrap); positive control in parentheses (Spearman of the decoded vs held-out mean).}\\label{tab:decode}",
+    if m_ and m_.group(1) in NAME: r = json.load(open(f)); D.setdefault(m_.group(1), {})[m_.group(2) or ""] = (r["est"]["G_over_X"], r["ci95"]["G_over_X"], r["est"]["pos_ctrl"])
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Decodability of the residual beyond exact mode and mean from frozen representations of three model families: decoded proper-score gain on an independent rater panel as a percentage of the panel's reproducible shape, $100\\,G/X$ (95\\% item-cluster bootstrap); positive control in parentheses (Spearman of the decoded vs held-out mean).}\\label{tab:decode}",
      "\\begin{tabular}{l" + "l" * len(FAM) + "}\\toprule panel & " + " & ".join(FAM.values()) + " \\\\\\midrule"]
 for k in sorted(D, key=lambda k: (k.startswith("chaosnli"), NAME[k])):
-    cells = [(f"{f5(D[k][fm][0])} ({D[k][fm][2]:.2f})" if fm in D[k] else "--") for fm in FAM]
+    cells = [(f"{100*D[k][fm][0]:+.1f} [{100*D[k][fm][1][0]:+.1f}, {100*D[k][fm][1][1]:+.1f}] ({D[k][fm][2]:.2f})" if fm in D[k] else "--") for fm in FAM]
     t.append(f"{NAME[k]} & " + " & ".join(cells) + " \\\\")
 t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_decode.tex", "w").write("\n".join(t))
 # Table 3: LoRA fixed budget (SummEval + POPQUORN)
