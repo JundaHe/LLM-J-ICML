@@ -1,0 +1,13 @@
+{
+ "panel": "multipref_overall",
+ "n_items": 10461,
+ "n_raters": 227,
+ "ratings": 41844,
+ "heldout_ll_M0": -1.897189688682556,
+ "heldout_ll_M1": -1.9118725061416626,
+ "heldout_ll_M2": -2.3389581203460694,
+ "sd_theta": 1.1449804306030273,
+ "sd_shift": 0.23074620962142944,
+ "dLL_shift": -0.01468281745910649,
+ "dLL_scale": -0.4270856142044068
+}
