@@ -12,3 +12,18 @@ step 70/240 loss 1.1310 188s maxlen 923 mem 15.9GB
 step 80/240 loss 1.1065 216s maxlen 923 mem 15.9GB
 step 90/240 loss 1.0481 244s maxlen 923 mem 15.9GB
 step 100/240 loss 1.0519 270s maxlen 923 mem 15.9GB
+step 110/240 loss 1.0737 297s maxlen 923 mem 15.9GB
+step 120/240 loss 1.2640 324s maxlen 923 mem 15.9GB
+step 130/240 loss 1.0364 351s maxlen 923 mem 15.9GB
+step 140/240 loss 1.1669 378s maxlen 923 mem 15.9GB
+step 150/240 loss 1.0731 405s maxlen 923 mem 15.9GB
+step 160/240 loss 1.1156 433s maxlen 923 mem 15.9GB
+step 170/240 loss 1.0323 460s maxlen 923 mem 15.9GB
+step 180/240 loss 1.0573 486s maxlen 923 mem 15.9GB
+step 190/240 loss 1.0305 513s maxlen 923 mem 15.9GB
+step 200/240 loss 1.1745 541s maxlen 923 mem 15.9GB
+step 210/240 loss 1.0878 568s maxlen 923 mem 15.9GB
+step 220/240 loss 0.9856 594s maxlen 923 mem 15.9GB
+step 230/240 loss 1.0487 622s maxlen 923 mem 15.9GB
+step 240/240 loss 0.9525 649s maxlen 923 mem 15.9GB
+done
