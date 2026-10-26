@@ -98,15 +98,16 @@ def one_direction(X, H1, Y2, groups, fold_seed, rng_perm, alphas=None):
     h1 = P.hist(H1); h2 = P.hist(Y2); z, t, key, stat = P.T_of(H1); fold = folds_for(groups, fold_seed)
     qT = P.exactT_q(fold, z, key, stat, h1); r1 = C(h1 - qT); r2 = C(h2 - qT)
     Xi = (r1 * r2).sum(1) / NRM; Mi = (r1 ** 2).sum(1) / NRM
-    rhat, used = crossfit_predict(X, r1, fold, groups, alphas)
+    a_r, a_loc = (None, None) if alphas is None else alphas      # (residual-decoder α, location-probe α), each selected by its own nested CV (fix 2026-10-27: the bootstrap reused the residual α for the location probe)
+    rhat, used = crossfit_predict(X, r1, fold, groups, a_r)
     V = (rhat * r2).sum(1) / NRM; G = (2 * (rhat * r2).sum(1) - (rhat ** 2).sum(1)) / NRM; Gc = clip_gain(qT, rhat, Y2)
     # positive control: predict the P1 location, score against the P2 location
     loc1 = (H1.mean(1) if not NOMINAL else h1.max(1)); loc2 = (Y2.mean(1) if not NOMINAL else h2.max(1))
-    lhat, _ = crossfit_predict(X, loc1[:, None], fold, groups, alphas); pos = float(spearmanr(lhat[:, 0], loc2).correlation)
+    lhat, used_loc = crossfit_predict(X, loc1[:, None], fold, groups, a_loc); pos = float(spearmanr(lhat[:, 0], loc2).correlation)
     # null control: within-T feature permutation
     Xp, frac = within_T_permutation(X, z, key, rng_perm); rp, _ = crossfit_predict(Xp, r1, fold, groups, used)
     Vp = (rp * r2).sum(1) / NRM; Gp = (2 * (rp * r2).sum(1) - (rp ** 2).sum(1)) / NRM
-    return dict(G=G, V=V, Gc=Gc, negA1x=2 * Xi - Mi, X=Xi, M=Mi, G_perm=Gp, V_perm=Vp, pos_ctrl=pos, perm_frac=frac), used
+    return dict(G=G, V=V, Gc=Gc, negA1x=2 * Xi - Mi, X=Xi, M=Mi, G_perm=Gp, V_perm=Vp, pos_ctrl=pos, perm_frac=frac), (used, used_loc)
 
 def one_rep(X, Hm, groups, rep, fold_seed, alphas=None):
     H1, H2 = splits(Hm, args.a, args.b, rep); rng = np.random.RandomState(900_001 + rep)

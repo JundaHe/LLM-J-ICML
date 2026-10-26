@@ -1,5 +1,5 @@
 \begin{table}[t]\centering\footnotesize
-\caption{Frozen-feature heads at a fixed rating budget (Qwen2.5-7B features; soft-label head): test RPS (ordinal; ChaosNLI: KL to the 100-rater reference) for items $\times$ ratings per item at the same total, mean over 30 configurations (5 seeds $\times$ 3 item splits $\times$ 2 rater splits). Lower is better; best per row in bold.}\label{tab:heads}
+\caption{Frozen-feature heads at a fixed rating budget (Qwen2.5-7B features; soft-label head): test RPS (ordinal; ChaosNLI: KL to a held-out 50-rater reference) for items $\times$ ratings per item at the same total, mean over 30 configurations (5 seeds $\times$ 3 item splits $\times$ 2 rater splits). Lower is better; best per row in bold.}\label{tab:heads}
 \begin{tabular}{lrl}\toprule panel & ratings & items $\times$ ratings: score \\\midrule
 Buse--Weimer$^{SE}$ & 60 & 60$\times$1: 0.187, \textbf{30$\times$2: 0.171} \\
 DICES-350 & 210 & 210$\times$1: 0.272, \textbf{105$\times$2: 0.241}, 52$\times$4: 0.242, 26$\times$8: 0.248 \\
