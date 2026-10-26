@@ -36,3 +36,6 @@ latex_v2/*.out
 latex_v2/*.bbl
 latex_v2/*.blg
 latex_v2/body_raw.tex
+results/lora_budget_v2/**/lora/
+!results/lora_budget_v2/**/train.log
+features/multipref_overall/Qwen2.5-7B-Instruct.npz

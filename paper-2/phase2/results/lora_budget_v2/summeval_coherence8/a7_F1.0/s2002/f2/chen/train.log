@@ -1,0 +1,10 @@
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.18it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  2.73it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  2.79it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.04it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.87it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/240 loss 5.2578 26s maxlen 931 mem 16.7GB
+step 20/240 loss 0.9839 52s maxlen 938 mem 16.7GB
+step 30/240 loss 0.7201 77s maxlen 944 mem 16.7GB
+step 40/240 loss 0.7312 103s maxlen 944 mem 16.7GB
+step 50/240 loss 0.7343 130s maxlen 993 mem 16.7GB
+step 60/240 loss 0.6554 156s maxlen 993 mem 16.7GB
