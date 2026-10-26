@@ -1,0 +1,15 @@
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel dices990 --n_eval_raters 15 --a_list 1,2,4,8,15 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/budget_olmo_dices990.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel summeval_coherence8 --n_eval_raters 2 --a_list 1,2,3,6 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/budget_olmo_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel popquorn_off8 --n_eval_raters 2 --a_list 1,2,3,6 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/budget_olmo_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel hs2_help5 --n_eval_raters 1 --a_list 1,2,4 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/budget_olmo_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python budget_heads.py --panel emobank_reader_v5 --n_eval_raters 1 --a_list 1,2,4 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/budget_olmo_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel summeval_coherence8 --n_eval_raters 2 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel popquorn_off8 --n_eval_raters 2 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel hs2_help5 --n_eval_raters 1 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel emobank_reader_v5 --n_eval_raters 1 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel csc6 --n_eval_raters 1 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python probe_shrink.py --panel dices990 --n_eval_raters 15 --device cpu --feat_model OLMo-2-1124-7B-Instruct --tag _olmo > logs/probe_shrink_olmo_dices990.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel hs2_help5 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel emobank_reader_v5 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_emobank_reader_v5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel csc6 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel dices990 --feat_model OLMo-2-1124-7B-Instruct --R 10 --B 300 --R_boot 3 --tag _olmo > logs/decode_olmo_dices990.log 2>&1

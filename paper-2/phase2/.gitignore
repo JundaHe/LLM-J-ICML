@@ -26,3 +26,5 @@ latex/page-*.png
 latex/body_raw.tex
 features/hs2_help5/Qwen3-8B.npz
 features_layers/
+features/emobank_reader_v5/OLMo-2-1124-7B-Instruct.npz
+features/hs2_help5/OLMo-2-1124-7B-Instruct.npz
