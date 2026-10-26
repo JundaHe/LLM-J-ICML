@@ -412,3 +412,25 @@ def load_mlcq3(m=3, seed=0):
     return dict(name="mlcq3", texts=texts, H=H, K=4, item_ids=np.array([f"{s}_{sm.replace(' ', '-')}" for s, sm in keep]), groups=np.array([str(s) for s, sm in keep]), rater_ids=np.array([f"pos{i}" for i in range(m)]),
                 prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(4)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-Coder-7B-Instruct")
 LOADERS.update({"mlcq3": load_mlcq3})
+
+# ----------------------------------------------------------------------------------------------- MultiPref (allenai/multipref; paper 4): 10,461 comparisons × 4 raters (2 crowd + 2 expert), overall_pref on 5 levels
+# A-clearly < A-slightly < Tie < B-slightly < B-clearly → 0..4. Positions 0–1 = crowd, 2–3 = expert (raters persistent across items; identities in paper-3/pools-style loader of paper 4). groups = prompt_id.
+MULTIPREF = LLMJ + "/paper-4/data/multipref/MultiPref-Train.jsonl"
+_MP_LV = {"A-is-clearly-better": 0, "A-is-slightly-better": 1, "Tie": 2, "B-is-slightly-better": 3, "B-is-clearly-better": 4}
+_MP_TPL = ("You are comparing two AI assistant responses to the same user prompt. Rate which response is better overall on a 5-point scale: "
+           "1 = A is clearly better, 2 = A is slightly better, 3 = tie, 4 = B is slightly better, 5 = B is clearly better.\n"
+           "Respond ONLY with JSON:\n{\n\"score\": \"1-5\"\n}\nPlease ensure the complete JSON format is placed between the three quotes ``` ``` for easy extraction.\n\n")
+def load_multipref(crit="overall", max_chars=2500):
+    import json
+    rows = [json.loads(l) for l in open(MULTIPREF)]
+    H = np.array([[_MP_LV[a[f"{crit}_pref"]] for a in (r["normal_worker_annotations"] + r["expert_worker_annotations"])] for r in rows], int)
+    texts = [f"PROMPT:\n{str(r['text'])[:max_chars]}\n\nRESPONSE A:\n{str(r['completion_a'])[:max_chars]}\n\nRESPONSE B:\n{str(r['completion_b'])[:max_chars]}" for r in rows]
+    def prompt(text): return _MP_TPL + text + "\n\nEnd of the responses. Please present your rating in the required JSON format."
+    def prompt_hist(text, hist):
+        blk = _GENERIC_HIST_HEAD.format(k=len(hist))
+        for j, (t, lv) in enumerate(hist, 1): blk += f"### Item {j} (this rater's score: {lv + 1})\n{_trunc(t, 1200)}\n\n"
+        return _MP_TPL + blk + "### Item to evaluate\n" + text + "\n\nEnd of the responses. Please present your rating in the required JSON format."
+    return dict(name=f"multipref_{crit}", texts=texts, H=H, K=5, item_ids=np.array([r["comparison_id"] for r in rows]), groups=np.array([r["prompt_id"] for r in rows]),
+                rater_ids=np.array(["pos_crowd0", "pos_crowd1", "pos_expert0", "pos_expert1"]), prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct",
+                evaluators=[[a["evaluator"] for a in (r["normal_worker_annotations"] + r["expert_worker_annotations"])] for r in rows])
+LOADERS.update({"multipref_overall": lambda: load_multipref("overall"), "multipref_helpful": lambda: load_multipref("helpful"), "multipref_harmless": lambda: load_multipref("harmless")})

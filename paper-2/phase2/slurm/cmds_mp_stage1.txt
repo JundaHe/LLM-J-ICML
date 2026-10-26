@@ -1,0 +1,3 @@
+/scratch/jundahe/venvs/llmj/bin/python rho_exact.py --panel multipref_overall --R 10 --B 200 > logs/rho_exact_multipref_overall.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python finite_rater.py --panel multipref_overall --loo --a2 > logs/finite_rater_multipref_overall_loo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_model.py --panel multipref_overall --folds 5 --sims 20 --R 5 > logs/rater_item_multipref_overall.log 2>&1
