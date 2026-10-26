@@ -8,3 +8,4 @@ step 30/240 loss 0.7201 77s maxlen 944 mem 16.7GB
 step 40/240 loss 0.7312 103s maxlen 944 mem 16.7GB
 step 50/240 loss 0.7343 130s maxlen 993 mem 16.7GB
 step 60/240 loss 0.6554 156s maxlen 993 mem 16.7GB
+step 70/240 loss 0.7250 182s maxlen 993 mem 16.7GB

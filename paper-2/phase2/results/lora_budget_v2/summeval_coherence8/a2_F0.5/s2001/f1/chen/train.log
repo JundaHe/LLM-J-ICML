@@ -1,0 +1,11 @@
+[budget] train items 960 -> 480, positions per item 2, rating budget 960
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:01,  2.72it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  3.22it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00,  3.26it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.40it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  3.29it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/240 loss 3.9152 28s maxlen 949 mem 16.7GB
+step 20/240 loss 1.3830 55s maxlen 987 mem 16.7GB
+step 30/240 loss 1.1547 82s maxlen 993 mem 16.7GB
+step 40/240 loss 1.0263 109s maxlen 993 mem 16.7GB
+step 50/240 loss 1.1044 137s maxlen 993 mem 16.7GB
+step 60/240 loss 1.0497 163s maxlen 993 mem 16.7GB
