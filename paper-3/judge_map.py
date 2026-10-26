@@ -23,7 +23,13 @@ if args.judge == "q0":
     F = np.load(f"{P2}/features/{P['panel']}/{PAN2['model'].split('/')[-1]}.npz", allow_pickle=True); Q = F["Q0"].astype(float); s = Q @ LV
 elif args.judge == "scores":
     sc = pd.read_csv(args.scores); m = dict(zip(sc.item_id.astype(str), sc.score.astype(float))); s = np.array([m.get(str(i), np.nan) for i in P["items"]]); Q = None
-else: raise SystemExit("lora judge path not implemented in v1")
+elif args.judge == "lora":
+    # paper-2 LoRA judge: P_calib / P_test for the cell's own calibration and test items (other items get NaN and are excluded); its own distribution is Q
+    s = np.full(N, np.nan); Q = np.full((N, K), np.nan)
+    for part in ("calib", "test"):
+        Pm = np.load(f"{args.lora}/P_{part}.npy"); rows_ = pd.read_csv(f"{args.lora}/items_{part}.csv")["row"].to_numpy(); Q[rows_] = Pm; s[rows_] = Pm @ LV
+    LORA_META = json.load(open(f"{args.lora}/meta.json")); LORA_CALIB_ROWS = set(pd.read_csv(f"{args.lora}/items_calib.csv")["row"].to_numpy().tolist())
+else: raise SystemExit("unknown judge")
 ok = ~np.isnan(s)
 def rps_rows(Pm_rows, y): cdf = np.cumsum(Pm_rows, 1); step = (LV[None, :] >= y[:, None]).astype(float); return ((cdf - step) ** 2).sum(1) / (K - 1)
 def op_probs(sv, par):
@@ -44,8 +50,11 @@ NCAL = [x for x in args.n_cal_list.split(",")]
 persistent = P["raters"].persistent.astype(bool); pers_ids = set(P["raters"].index[persistent])
 
 def evaluate(isplit):
-    ug = np.unique(G); ug = ug[np.random.RandomState(isplit).permutation(len(ug))]; g_ca = set(ug[: int(.3 * len(ug))])    # 30 % calibration groups, 70 % test (no training here)
-    ca = np.array([i for i in range(N) if G[i] in g_ca and ok[i]]); te = np.array([i for i in range(N) if G[i] not in g_ca and ok[i]])
+    if args.judge == "lora":   # the LoRA cell fixes calibration/test items; the evaluator rater (excluded from training) is the natural held-out target, but all raters' test ratings are scored as in the other judges
+        ca = np.array([i for i in range(N) if i in LORA_CALIB_ROWS]); te = np.array([i for i in range(N) if ok[i] and i not in LORA_CALIB_ROWS])
+    else:
+        ug = np.unique(G); ug = ug[np.random.RandomState(isplit).permutation(len(ug))]; g_ca = set(ug[: int(.3 * len(ug))])    # 30 % calibration groups, 70 % test (no training here)
+        ca = np.array([i for i in range(N) if G[i] in g_ca and ok[i]]); te = np.array([i for i in range(N) if G[i] not in g_ca and ok[i]])
     Rca = R[R.item.isin(set(ca))]; Rte = R[R.item.isin(set(te))]; clim = np.bincount(Rca.y.to_numpy(), minlength=K) / len(Rca)
     rows = []
     def add(name, Pm_full, extra=None):
