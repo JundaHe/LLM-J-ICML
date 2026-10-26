@@ -1,0 +1,6 @@
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel summeval_coherence8 --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_summeval_coherence8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel chaosnli_mnli --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_chaosnli_mnli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel popquorn_off8 --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_popquorn_off8.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel hs2_help5 --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel csc6 --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_csc6.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_layers.py --panel emobank_reader_v5 --R 10 --B 300 --R_boot 3 --k_max 4 > logs/decode_layers_emobank_reader_v5.log 2>&1
