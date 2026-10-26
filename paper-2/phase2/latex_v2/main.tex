@@ -34,6 +34,7 @@ Reliable is not the same as learnable. The two measurements come apart in a way 
 \textbf{What we do not claim.} That disagreement is noise (its reproducible part is not); that the text contains no residual information (we test linear decodability from three model families); a theoretical rater-count threshold (a two-term 1/a model was falsified); or a causal role of label structure in the ordinal--nominal difference (we offer a measured mechanism, rater thresholds, and the decoding contrast).
 
 \section{Two reliabilities of a disagreement histogram}
+\input{tab_cards}
 
 \textbf{Setting and notation.} Item \(i\) has ratings on \(K\) ordered levels from a panel of raters; the empirical histogram is \(h_i\). For ordinal scales we score forecasts with the ranked probability score, \(S(f,y)=\sum_k (F_f(k)-\mathbf 1[y\le k])^2/(K-1)\), and write \(C\) for the cumulative operator; for nominal tasks (ChaosNLI) \(S\) is the Brier score and \(C\) the identity. The \textbf{location} of a histogram is its exact mode and mean (nominal: modal class and modal mass); the \textbf{shape beyond location} is what remains once these are fixed. To isolate it we use the \emph{exact-T comparator} \(q_T\) of our earlier audit: a cross-fitted forecast built from other items in the same exact mode-and-mean cell (KL-projected onto the cell when the cell is sparse), so that \(q_T\) has the same mode and mean as \(h_i\) and differs from it only in shape. The residual of a histogram is \(r = C(h - q_T)\).
 
@@ -50,6 +51,7 @@ If a judge learned the shape beyond location, destroying that shape in its train
 A stronger version of the same test asks whether \emph{any} construction of the per-item target helps. We trained the heads on eleven ordinal panels with the raw histogram, the location-only comparator, reliability-shrunk shapes and locations, Dirichlet smoothing toward the mode prototype, label smoothing toward uniform and toward the marginal, and a cross-item smoothed comparator, thirty configurations each. No construction changes held-out RPS by more than $\pm$0.0005 with a consistent sign across panels; the one-hot target costs +0.003 to +0.010 everywhere. The learner pools location across items on its own and is indifferent to the per-item shape --- exactly what \S{}2.2 predicts for a shape it cannot see. Learned judges on ordinal scales learn location and calibration; on NLI they also learn shape, because there the shape is in the text.
 
 \section{Where the ordinal shape comes from: a rater--item decomposition}
+\input{tab_decode}
 
 The split-half analysis says the few-rater shape is mostly noise but not entirely (X \textgreater{} 0 on every panel); the decoding analysis says the reproducible part is not in the text. What is it, then? We fit three ordered-probit models to the rating matrices of the panels with persistent rater identities (Buse--Weimer, DICES-350, Scalabrino, the SummEval experts) and location-plus-dispersion models to the position panels: \(Y^*_{ir} = \theta_i + \sigma_i\,\varepsilon_{ir}\) with cut-points \(c_{r}\); \textbf{M0} item location with common cut-points, \textbf{M1} adding rater-specific cut-points (harshness), \textbf{M2} adding item-specific dispersion \(\sigma_i\) (the inverse of IRT discrimination). Held-out log-likelihood over random cells, five folds, with the dispersion penalty chosen on held-out data.
 
@@ -58,6 +60,7 @@ Rater thresholds carry the structure: M1 improves held-out likelihood by +0.111 
 The annotation side confirms the same picture from a different angle. For forecasting a new rater from an item's own ratings, shrinking the \emph{location} toward the mode prototype by its split-half reliability improves RPS by $-$0.0048 {[}$-$0.0051, $-$0.0044{]} over the raw histogram (eight panels pooled), a cross-item smoothed comparator by $-$0.0113; shrinking the \emph{shape} by its reliability \(\lambda=X/M\) beats the raw histogram ($-$0.0021) but is indistinguishable from the location-only comparator ($-$0.0000 {[}$-$0.0000, $-$0.0000{]}) on every panel except SummEval, where \(\lambda\approx0.4\). What a few-rater histogram contributes beyond its location is, for practical purposes, nothing.
 
 \section{Spending the annotation budget}
+\input{tab_budget}
 
 If the shape is unlearnable and the location is what the judge learns, then every rating after the first on the same item buys at most a less noisy location, while a rating on a new item buys a new point for the regression the judge is implicitly fitting. We tested this directly by holding the total number of ratings fixed and trading items for raters.
 
