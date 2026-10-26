@@ -27,11 +27,11 @@ ap.add_argument("--panel", required=True); ap.add_argument("--a", type=int, defa
 ap.add_argument("--R", type=int, default=10); ap.add_argument("--B", type=int, default=500); ap.add_argument("--R_boot", type=int, default=3)
 ap.add_argument("--d", type=int, default=64); ap.add_argument("--d_pre", type=int, default=256); ap.add_argument("--feat_key", default="E_last")
 ap.add_argument("--reselect_alpha", action="store_true", help="re-select α inside every bootstrap replicate (sensitivity)")
-ap.add_argument("--tag", default=""); args = ap.parse_args()
+ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default=""); args = ap.parse_args()
 
 PAN = data_panels.load(args.panel); H = PAN["H"].astype(int); K = PAN["K"]; NI, M = H.shape; G0 = np.asarray(PAN.get("groups", np.arange(NI)))
 NOMINAL = args.panel.startswith("chaosnli"); P = Panel(K, NOMINAL); C = P.C; NRM = P.NRM
-F = np.load(f"{HERE}/features/{args.panel}/{PAN['model'].split('/')[-1]}.npz", allow_pickle=True)
+F = np.load(f"{HERE}/features/{args.panel}/{args.feat_model or PAN['model'].split('/')[-1]}.npz", allow_pickle=True)
 assert np.array_equal(np.asarray(PAN["item_ids"]).astype(str), F["item_ids"].astype(str)), "feature rows not aligned with panel rows"
 E = F[args.feat_key].astype(np.float64)
 # label-free pre-reduction (uses features only, never ratings)

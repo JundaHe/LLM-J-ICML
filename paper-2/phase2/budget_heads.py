@@ -18,10 +18,10 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--panel", required=True); ap.add_argument("--feat_key", default="E_last"); ap.add_argument("--d", type=int, default=64); ap.add_argument("--hid", type=int, default=128)
 ap.add_argument("--steps", type=int, default=1500); ap.add_argument("--seeds", type=int, default=5); ap.add_argument("--item_splits", type=int, default=3); ap.add_argument("--rater_splits", type=int, default=2)
 ap.add_argument("--n_eval_raters", type=int, required=True); ap.add_argument("--a_list", default="1,2,4,8"); ap.add_argument("--budgets", default="1,2", help="multiples of n_full × a_min")
-ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--tag", default=""); args = ap.parse_args(); DEV = args.device; torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"]))
+ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu"); ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default=""); args = ap.parse_args(); DEV = args.device; torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"]))
 PAN = data_panels.load(args.panel); H0 = PAN["H"].astype(int); N, M = H0.shape; K = PAN["K"]; LV = np.arange(K, dtype=float); NOMINAL = args.panel.startswith("chaosnli"); P = Panel(K, NOMINAL)
 # nominal panels (ChaosNLI): the score is the KL from the held-out-position reference histogram to the prediction (T5 instrument), reported in the same `pop_rps` column
-F = np.load(f"{HERE}/features/{args.panel}/{PAN['model'].split('/')[-1]}.npz", allow_pickle=True); E = F[args.feat_key].astype(np.float32); assert np.array_equal(np.asarray(PAN["item_ids"]).astype(str), F["item_ids"].astype(str))
+F = np.load(f"{HERE}/features/{args.panel}/{args.feat_model or PAN['model'].split('/')[-1]}.npz", allow_pickle=True); E = F[args.feat_key].astype(np.float32); assert np.array_equal(np.asarray(PAN["item_ids"]).astype(str), F["item_ids"].astype(str))
 OUT = f"{HERE}/results/budget_heads/{args.panel}{args.tag}"; os.makedirs(OUT, exist_ok=True)
 A_LIST = [int(x) for x in args.a_list.split(",")]; BUDGETS = [int(x) for x in args.budgets.split(",")]; A_LIST = [a for a in A_LIST if a <= M - args.n_eval_raters]
 
