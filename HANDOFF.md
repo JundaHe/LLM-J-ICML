@@ -1,5 +1,17 @@
 # Paper 2 交接文档（HANDOFF）
 
+> **2026-10-26 更新（新服务器 `/scratch/jundahe/LLM-J-ICML`，一天的密集实验之后）。** 下面第 0–9 节是 10-25 的原文；本节总结之后发生的事。细节以 `paper-2/phase2/PROGRESS.md`（逐条带时间）、`paper-2/phase2/reports/STORY_2026-10-26.md`、`reports/PRIOR_ART_CHECK_2026-10-26.md`、`reports/RELIABILITY_CARDS.md` 为准。
+>
+> **A. 关卡结果。** Gate D（残差从冻结表征解码）在 13 个有序/SE 面板上失败（|G| ≤ 6e-5；多层探针复检同样 ≈ 0），在 2 个名义面板 ChaosNLI 上通过（G = +0.0032 / +0.0043）。Gate H（heads 上的目标构造）失败：11 个面板上任何收缩/平滑目标相对原始直方图都在 ±0.0005 内、正负不定。Gate A（标注侧）：位置+形状收缩 shr2 相对原始直方图 −0.0048 [−0.0051, −0.0044]、相对纯位置目标 −0.0028；纯形状收缩相对纯位置目标 = 0（除 SummEval 外 λ̂ 只有 0.04–0.13）。机制分解（ordered-probit，13 面板）：位置之外主要是标注者阈值（ΔLL 0.05–0.16 / 评分），密集有序面板在精确众数均值之外没有可复现形状。固定预算：heads 11/11、LoRA 2/2（SummEval、POPQUORN）都是"固定预算下样本优先"；第二个标注者的边际价值因任务而异（SummEval ≈ 0，POPQUORN 约为差距一半）。一个登记的预测被证伪（ChaosNLI 上多标注者并未在固定预算下胜出）。
+>
+> **B. 论文故事（修订）。** judge 只能学到由文本决定的那部分分歧；有序打分任务上那部分只有位置，NLI 上包括形状。两个信度（跨标注者可复现 vs 跨文本可预测）、阈值机制、预算规则。它是 analysis + 决策规则论文，不是新方法论文；用户的决定：**ICML 路线 A 保留但 FSE/ACL 更匹配，由用户定；不做视觉 benchmark；SE 作为重点应用域**。新增 SE 面板：Dorn（360 × 161–267 人）、Crupi 2025（1,163 × 3）、JetBrains 2024（120 × 11–31）、Roy 2021、MLCQ（见 `data/SE_PANELS_SOURCE.md`）。
+>
+> **C. Paper 3（`paper-3/`，用户 10-26 批准）。** 实用方向 "Calibrating LLM judges to the people they stand in for"：G1 换标注者群体只重估阈值映射（DICES-990 种族/地区偏移 0.008–0.045，≥ 50 条评分追回 87–100%，优于通用校准 2–3 倍）；G2 黑盒 judge 分数 → 人类分布（零样本 judge 上映射胜过温度+混合 6/6；在本面板训练的 judge 上三者打平，但每人偏移仍有 0.005–0.015 收益）；G3 争议预测（映射推出的离散度 ≈ 直接问 LLM ≫ judge 自信度）。协议 `paper-3/PROTOCOL_CALIBRATION.md`（两次修订）。**等用户提供 paper 1 的前沿 judge 输出**做真正的黑盒 G2。
+>
+> **D. 基础设施（重要）。** 非 Slurm 进程被 cgroup 限在 4 核；一切重计算走 Slurm（`paper-2/phase2/slurm/run_cpu.sh`；normal QOS 每用户 16 核 / 64 GB；GPU 2 × RTX PRO 5000 72 GB；`--gres=gpu:1`）。BLAS 线程要限。LoRA adapter 权重已 ignore（`results/lora_budget/**/lora/`）。Codex CLI 已装未登录（需用户 `codex login`），本日所有审阅都没有 Codex 参与——这是下一步最该补的。
+>
+> **E. 未完成。** paper 2 的写作（§1–§3 按新故事重写、信度卡和预算图进正文）；Codex 审；G1/G3 第三轮结果；Dorn 经验列未解码（`experience.csv` 无表头，第 1 列疑为编程年限，未核实）；JetBrains 曲线、Roy conc/flu 信度在跑。
+
 写于 2026-10-25，从旧服务器（`/mnt/hdd2/jundahe/LLM-J`）迁到本仓库 `JundaHe/LLM-J-ICML` 时。
 **目标会议：ICML 2027**（截稿预计 2027 年 1 月下旬）。
 本文档覆盖：做了什么、结果是什么、论文现在什么状态、下一步做什么、怎么在新服务器上接着做、有哪些规则和坑。
