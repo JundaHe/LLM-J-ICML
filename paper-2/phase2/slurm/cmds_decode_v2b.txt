@@ -1,0 +1,21 @@
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel hs2_help5 --R 10 --B 300 --R_boot 3 > logs/decode_v2_hs2_help5.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel bw --R 10 --B 300 --R_boot 3 > logs/decode_v2_bw.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel dices990 --R 10 --B 300 --R_boot 3 > logs/decode_v2_dices990.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel dorn_all --R 10 --B 300 --R_boot 3 > logs/decode_v2_dorn_all.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel jb_naming --R 10 --B 300 --R_boot 3 > logs/decode_v2_jb_naming.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_mnli --R 10 --B 300 --R_boot 3 > logs/decode_v2_chaosnli_mnli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_snli --R 10 --B 300 --R_boot 3 > logs/decode_v2_chaosnli_snli.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel summeval_coherence8 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_summeval_coherence8_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel popquorn_off8 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_popquorn_off8_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel hs2_help5 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_hs2_help5_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel emobank_reader_v5 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_emobank_reader_v5_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel csc6 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_csc6_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel dices990 --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_dices990_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_mnli --feat_model Qwen3-8B --tag _qwen3 --R 10 --B 300 --R_boot 3 > logs/decode_v2_chaosnli_mnli_qwen3.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel summeval_coherence8 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_summeval_coherence8_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel popquorn_off8 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_popquorn_off8_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel hs2_help5 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_hs2_help5_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel emobank_reader_v5 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_emobank_reader_v5_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel csc6 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_csc6_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel dices990 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_dices990_olmo.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python decode_residual.py --panel chaosnli_mnli --feat_model OLMo-2-1124-7B-Instruct --tag _olmo --R 10 --B 300 --R_boot 3 > logs/decode_v2_chaosnli_mnli_olmo.log 2>&1
