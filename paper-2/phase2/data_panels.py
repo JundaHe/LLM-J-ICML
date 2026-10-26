@@ -155,7 +155,7 @@ def _load_hs2(attr="helpfulness", n_ann=5, max_chars=4000):
         blk = _GENERIC_HIST_HEAD.format(k=len(hist))
         for j, (t, lv) in enumerate(hist, 1): blk += f"### Item {j} (this rater's score: {lv})\n{_trunc(t, 1500)}\n\n"
         return _HS2_TPL + blk + "### Item to evaluate\n" + text + "\n\nEnd of the response. Please present your rating in the required JSON format."
-    return dict(name=f"hs2_{attr}{n_ann}", texts=texts, H=H, K=5, item_ids=np.arange(len(keep)), groups=pd.factorize(pd.Series([str(r["prompt"]) for r in keep]))[0], rater_ids=np.array([f"pos{i}" for i in range(n_ann)]),   # groups = prompt (responses to the same prompt; Codex round 13 leakage fix) prompt=prompt, prompt_hist=prompt_hist,
+    return dict(name=f"hs2_{attr}{n_ann}", texts=texts, H=H, K=5, item_ids=np.arange(len(keep)), groups=pd.factorize(pd.Series([str(r["prompt"]) for r in keep]))[0], rater_ids=np.array([f"pos{i}" for i in range(n_ann)]), prompt=prompt, prompt_hist=prompt_hist,   # groups = prompt (responses to the same prompt; Codex round 13 leakage fix)
                 LEVEL_STRS=[str(l) for l in range(5)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct")
 def load_hs2_help5(): return _load_hs2("helpfulness", 5)
 
