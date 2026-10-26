@@ -1,0 +1,31 @@
+multipref_overall M0 fold 0 lam (1.0, 0.5, 2.0) LL -1.4970
+multipref_overall M0 fold 1 lam (1.0, 0.5, 2.0) LL -1.5060
+multipref_overall M0 fold 2 lam (1.0, 0.5, 2.0) LL -1.5035
+multipref_overall M0 fold 3 lam (1.0, 0.5, 2.0) LL -1.4984
+multipref_overall M0 fold 4 lam (1.0, 0.5, 2.0) LL -1.5001
+multipref_overall M0 held-out LL/rating -1.5010
+multipref_overall M1 fold 0 lam (1.0, 32.0, 2.0) LL -1.4928
+multipref_overall M1 fold 1 lam (1.0, 32.0, 2.0) LL -1.5021
+multipref_overall M1 fold 2 lam (1.0, 32.0, 2.0) LL -1.4984
+multipref_overall M1 fold 3 lam (1.0, 32.0, 2.0) LL -1.4939
+multipref_overall M1 fold 4 lam (1.0, 32.0, 2.0) LL -1.4927
+multipref_overall M1 held-out LL/rating -1.4960
+multipref_overall M2 fold 0 lam (1.0, 32.0, 128.0) LL -1.4581
+multipref_overall M2 fold 1 lam (1.0, 32.0, 128.0) LL -1.4650
+multipref_overall M2 fold 2 lam (1.0, 32.0, 128.0) LL -1.4713
+multipref_overall M2 fold 3 lam (1.0, 32.0, 128.0) LL -1.4657
+multipref_overall M2 fold 4 lam (1.0, 32.0, 128.0) LL -1.4630
+multipref_overall M2 held-out LL/rating -1.4646
+multipref_overall M3 fold 0 lam (1.0, 32.0, 2.0, 8.0) LL -1.4883
+multipref_overall M3 fold 1 lam (1.0, 32.0, 2.0, 8.0) LL -1.4972
+multipref_overall M3 fold 2 lam (1.0, 32.0, 2.0, 8.0) LL -1.4961
+multipref_overall M3 fold 3 lam (1.0, 32.0, 2.0, 8.0) LL -1.4884
+multipref_overall M3 fold 4 lam (1.0, 32.0, 2.0, 8.0) LL -1.4877
+multipref_overall M3 held-out LL/rating -1.4915
+multipref_overall M4 fold 0 lam (1.0, 32.0, 128.0, 32.0) LL -1.4567
+multipref_overall M4 fold 1 lam (1.0, 32.0, 128.0, 32.0) LL -1.4637
+multipref_overall M4 fold 2 lam (1.0, 32.0, 128.0, 32.0) LL -1.4704
+multipref_overall M4 fold 3 lam (1.0, 32.0, 128.0, 32.0) LL -1.4640
+multipref_overall M4 fold 4 lam (1.0, 32.0, 128.0, 32.0) LL -1.4611
+multipref_overall M4 held-out LL/rating -1.4632
+{"panel": "multipref_overall", "n_items": 10461, "n_raters": 227, "ratings": 41844, "tuned": true, "lam": {"M0": [[1.0, 0.5, 2.0], [1.0, 0.5, 2.0], [1.0, 0.5, 2.0], [1.0, 0.5, 2.0], [1.0, 0.5, 2.0]], "M1": [[1.0, 32.0, 2.0], [1.0, 32.0, 2.0], [1.0, 32.0, 2.0], [1.0, 32.0, 2.0], [1.0, 32.0, 2.0]], "M2": [[1.0, 32.0, 128.0], [1.0, 32.0, 128.0], [1.0, 32.0, 128.0], [1.0, 32.0, 128.0], [1.0, 32.0, 128.0]], "M3": [[1.0, 32.0, 2.0, 8.0], [1.0, 32.0, 2.0, 8.0], [1.0, 32.0, 2.0, 8.0], [1.0, 32.0, 2.0, 8.0], [1.0, 32.0, 2.0, 8.0]], "M4": [[1.0, 32.0, 128.0, 32.0], [1.0, 32.0, 128.0, 32.0], [1.0, 32.0, 128.0, 32.0], [1.0, 32.0, 128.0, 32.0], [1.0, 32.0, 128.0, 32.0]]}, "heldout_ll_M0": -1.5009976148605346, "heldout_ll_M0_folds": [-1.49699068069458, -1.5060474872589111, -1.5034704208374023, -1.4983872175216675, -1.5000922679901123], "heldout_ll_M1": -1.4959958791732788, "heldout_ll_M1_folds": [-1.4928147792816162, -1.502089500427246, -1.4984301328659058, -1.4939000606536865, -1.4927449226379395], "heldout_ll_M2": -1.4646329879760742, "heldout_ll_M2_folds": [-1.4580678939819336, -1.4650369882583618, -1.47134268283844, -1.4657334089279175, -1.4629839658737183], "heldout_ll_M3": -1.4915361404418945, "heldout_ll_M3_folds": [-1.4883053302764893, -1.4971843957901, -1.4961246252059937, -1.4883719682693481, -1.4876943826675415], "heldout_ll_M4": -1.4631848812103272, "heldout_ll_M4_folds": [-1.4566503763198853, -1.4637304544448853, -1.470443606376648, -1.464021921157837, -1.4610780477523804], "sd_theta": 0.544700562953949, "sd_shift": 0.10231292992830276, "dLL_shift": 0.005001735687255815, "dLL_scale": 0.03136289119720459, "dLL_rater_thresholds": 0.036364626884460405, "dLL_item_dispersion": 0.001448106765747026, "dLL_item_dispersion_given_shift": 0.004459738731384277}
