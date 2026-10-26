@@ -6,7 +6,7 @@ Usage: python analysis_budget_lora.py [--B 2000]
 import os, sys, glob, re, json, argparse, numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import data_panels
-ap = argparse.ArgumentParser(); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--panel", default="summeval_coherence8"); args = ap.parse_args()
+ap = argparse.ArgumentParser(); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--panel", default="summeval_coherence8"); ap.add_argument("--root", default="lora_budget", help="results/<root>/<panel>/<design>/s<seed>/f<fold>/chen; for non-default roots the full-data reference is the a7_F1.0 design inside the root"); args = ap.parse_args()
 PAN = data_panels.load(args.panel); H = PAN["H"]; G = np.asarray(PAN.get("groups", PAN["item_ids"])); K = PAN["K"]; LV = np.arange(K)
 def rps(Pm, y): cdf = np.cumsum(Pm, 1); step = (LV[None, :] >= y[:, None]).astype(float); return ((cdf - step) ** 2).sum(1) / (K - 1)
 def load_cell(path, fold):
@@ -14,9 +14,11 @@ def load_cell(path, fold):
 SEEDS = (2000, 2001); FULL = {2000: "s0", 2001: "s0_seed2001"}
 cells = {}                                                     # design -> {(seed, fold): (rows, rps per item)}
 for s in SEEDS:
-    for f in range(3): cells.setdefault("full_a7_F1", {})[(s, f)] = load_cell(f"{HERE}/results/lora/{args.panel}/{FULL[s]}/f{f}/chen", f)
+    for f in range(3):
+        fp = f"{HERE}/results/lora/{args.panel}/{FULL[s]}/f{f}/chen" if args.root == "lora_budget" else f"{HERE}/results/{args.root}/{args.panel}/a7_F1.0/s{s}/f{f}/chen"
+        cells.setdefault("full_a7_F1", {})[(s, f)] = load_cell(fp, f)
 meta = {}
-for d in sorted(glob.glob(f"{HERE}/results/lora_budget/{args.panel}/*")):
+for d in sorted([d for d in glob.glob(f"{HERE}/results/{args.root}/{args.panel}/*") if not d.endswith("a7_F1.0")]):
     name = os.path.basename(d)
     for p in glob.glob(f"{d}/s*/f*/chen"):
         if not os.path.exists(f"{p}/P_test.npy"): continue
@@ -41,8 +43,8 @@ for name, cs in cells.items():
         for g in rng.choice(docs, len(docs), replace=True): dw[g] = dw.get(g, 0.0) + 1.0
         bs.append(mean_rps(cs, seeds_b, dw) - mean_rps(cells["full_a7_F1"], seeds_b, dw))
     ci = [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
-    md = meta.get(name, {}); n_full = int(json.load(open(f"{HERE}/results/lora/{args.panel}/{FULL[2000]}/f0/chen/meta.json"))["parts"]["train"])
+    md = meta.get(name, {}); n_full = int(json.load(open(f"{HERE}/results/lora/{args.panel}/{FULL[2000]}/f0/chen/meta.json" if args.root == "lora_budget" else f"{HERE}/results/{args.root}/{args.panel}/a7_F1.0/s2000/f0/chen/meta.json"))["parts"]["train"])
     out[name] = dict(rps=pt, diff_vs_full=diff, ci95=ci, n_cells=len(cs), folds=folds_present, rating_budget=md.get("rating_budget", n_full * (H.shape[1] - 1)), n_train=md.get("n_train_used", n_full))
     lines.append(f"| {name} | {out[name]['rating_budget']} | {out[name]['n_train']} | {len(cs)} | {pt:.4f} | {diff:+.4f} [{ci[0]:+.4f}, {ci[1]:+.4f}] |")
 lines += ["", "Raw RPS against the held-out evaluator on the test items/groups; seeds 2000/2001 × folds 0–2; bootstrap resamples the two seed clusters and the test groups (B = %d). Full-data chen = the T3b/T3c runs restricted to the same seeds." % args.B]
-os.makedirs(f"{HERE}/results/lora_budget", exist_ok=True); sfx = "" if args.panel == "summeval_coherence8" else "_" + args.panel; json.dump(out, open(f"{HERE}/results/lora_budget/summary{sfx}.json", "w"), indent=1); open(f"{HERE}/results/lora_budget/summary{sfx}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
+os.makedirs(f"{HERE}/results/lora_budget", exist_ok=True); sfx = "" if args.panel == "summeval_coherence8" else "_" + args.panel; os.makedirs(f"{HERE}/results/{args.root}", exist_ok=True); json.dump(out, open(f"{HERE}/results/{args.root}/summary{sfx}.json", "w"), indent=1); open(f"{HERE}/results/{args.root}/summary{sfx}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
