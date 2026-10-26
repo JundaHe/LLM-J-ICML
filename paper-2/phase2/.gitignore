@@ -30,3 +30,9 @@ features/emobank_reader_v5/OLMo-2-1124-7B-Instruct.npz
 features/hs2_help5/OLMo-2-1124-7B-Instruct.npz
 results/lora_budget_olmo/**/lora/
 !results/lora_budget_olmo/**/train.log
+latex_v2/*.aux
+latex_v2/*.log
+latex_v2/*.out
+latex_v2/*.bbl
+latex_v2/*.blg
+latex_v2/body_raw.tex
