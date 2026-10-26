@@ -1,9 +1,9 @@
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"none","rps":0.1244252817,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-A","rps":0.1211185936,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"oracle-B","rps":0.1192511055,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1259089153,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1254960607,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(10)","rps":0.1269006795,"n_train_items_B":null,"n_cal":10.0,"T":0.7,"lam":0.5}
-{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1232870571,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1245778658,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(20)","rps":0.1221858235,"n_train_items_B":null,"n_cal":20.0,"T":0.7,"lam":0.0}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(50)","rps":0.1223111912,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(50)","rps":0.1244252818,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -14,9 +14,9 @@
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"none","rps":0.1464901497,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-A","rps":0.1484542219,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"oracle-B","rps":0.1501535791,"n_train_items_B":710.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1467510696,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1454263338,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(10)","rps":0.1464901509,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1559814199,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1505106617,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(20)","rps":0.1464901509,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(50)","rps":0.1453551467,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(50)","rps":0.1464901509,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -27,9 +27,9 @@
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"none","rps":0.1308906737,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-A","rps":0.1329327723,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"oracle-B","rps":0.1310747394,"n_train_items_B":788.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1347143456,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1358140394,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(10)","rps":0.1507878815,"n_train_items_B":null,"n_cal":10.0,"T":3.0,"lam":0.5}
-{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.140613532,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1334034967,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(20)","rps":0.1308906729,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(50)","rps":0.1370873204,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(50)","rps":0.1308906729,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -40,9 +40,9 @@
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"none","rps":0.1568228465,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-A","rps":0.1629565731,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"oracle-B","rps":0.1559181402,"n_train_items_B":701.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.2287107063,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.225920842,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(10)","rps":0.1758645361,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.3}
-{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1672600996,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1642164522,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(20)","rps":0.1695228787,"n_train_items_B":null,"n_cal":20.0,"T":0.7,"lam":0.0}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(50)","rps":0.1572662564,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(50)","rps":0.1568228461,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -53,9 +53,9 @@
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"none","rps":0.1229189957,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-A","rps":0.1217856535,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"oracle-B","rps":0.121232411,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.126081308,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1311723647,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(10)","rps":0.126218076,"n_train_items_B":null,"n_cal":10.0,"T":0.7,"lam":0.0}
-{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.131122199,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1328750065,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(20)","rps":0.126218076,"n_train_items_B":null,"n_cal":20.0,"T":0.7,"lam":0.0}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(50)","rps":0.12394019,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(50)","rps":0.1259706479,"n_train_items_B":null,"n_cal":50.0,"T":0.7,"lam":0.2}
@@ -66,9 +66,9 @@
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"none","rps":0.1435430459,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-A","rps":0.1425493175,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"oracle-B","rps":0.1479902298,"n_train_items_B":709.0,"n_cal":null,"T":null,"lam":null}
-{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.142416127,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1424307032,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(10)","rps":0.1445113137,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.2}
-{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1447661787,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1438011036,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(20)","rps":0.1460261745,"n_train_items_B":null,"n_cal":20.0,"T":1.5,"lam":0.0}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(50)","rps":0.1438836912,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":0,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(50)","rps":0.1460261745,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.0}
@@ -79,9 +79,9 @@
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"none","rps":0.1205444918,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-A","rps":0.1196589491,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"oracle-B","rps":0.1206337996,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1223214898,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1206099198,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(10)","rps":0.1205444918,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1243358667,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1245690483,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(20)","rps":0.1205444918,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(50)","rps":0.1195714709,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(50)","rps":0.1207174517,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.1}
@@ -92,9 +92,9 @@
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"none","rps":0.1485114429,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-A","rps":0.150065886,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"oracle-B","rps":0.149948851,"n_train_items_B":710.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1474254359,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1477673787,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(10)","rps":0.1540309264,"n_train_items_B":null,"n_cal":10.0,"T":2.0,"lam":0.3}
-{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1478555505,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1466535095,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(20)","rps":0.1538101925,"n_train_items_B":null,"n_cal":20.0,"T":2.0,"lam":0.2}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(50)","rps":0.1465481802,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(50)","rps":0.147826564,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.0}
@@ -105,9 +105,9 @@
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"none","rps":0.1324314626,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-A","rps":0.1342628818,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"oracle-B","rps":0.1320788629,"n_train_items_B":788.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1357404821,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1372024009,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(10)","rps":0.1473702773,"n_train_items_B":null,"n_cal":10.0,"T":2.0,"lam":0.2}
-{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1332413752,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.134195591,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(20)","rps":0.1324314618,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(50)","rps":0.1342906839,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(50)","rps":0.1324314618,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -118,9 +118,9 @@
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"none","rps":0.1551117095,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-A","rps":0.1602861807,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"oracle-B","rps":0.1546527923,"n_train_items_B":701.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1598802162,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1538228393,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(10)","rps":0.1551117105,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.15830618,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1567646156,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(20)","rps":0.1551117105,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(50)","rps":0.15351795,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(50)","rps":0.1572525834,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.3}
@@ -131,9 +131,9 @@
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"none","rps":0.1226498279,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-A","rps":0.1221680308,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"oracle-B","rps":0.1231140137,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1393299009,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1326507394,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(10)","rps":0.1332287462,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.5}
-{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1414607446,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1314858417,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(20)","rps":0.1332287462,"n_train_items_B":null,"n_cal":20.0,"T":0.5,"lam":0.5}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(50)","rps":0.123115123,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(50)","rps":0.1272253623,"n_train_items_B":null,"n_cal":50.0,"T":0.7,"lam":0.3}
@@ -144,9 +144,9 @@
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"none","rps":0.1441675514,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-A","rps":0.143099455,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"oracle-B","rps":0.1476478658,"n_train_items_B":709.0,"n_cal":null,"T":null,"lam":null}
-{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1414634754,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1419590645,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(10)","rps":0.1441675512,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1460517677,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1411651672,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(20)","rps":0.1441675512,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(50)","rps":0.1426935582,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":1,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(50)","rps":0.1448966916,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.2}
@@ -157,9 +157,9 @@
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"none","rps":0.124354874,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-A","rps":0.1217046048,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"oracle-B","rps":0.1197722989,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1255963654,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1218181399,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(10)","rps":0.1299181016,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.5}
-{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1268459074,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1245720841,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(20)","rps":0.1293773752,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.5}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(50)","rps":0.1353848637,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(50)","rps":0.1404102525,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.0}
@@ -170,9 +170,9 @@
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"none","rps":0.1481176121,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-A","rps":0.1501925441,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"oracle-B","rps":0.1507793389,"n_train_items_B":710.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.178750677,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1621972632,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(10)","rps":0.1660431203,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.5}
-{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1648657325,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1500544855,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(20)","rps":0.1554555499,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.5}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(50)","rps":0.1545309267,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(50)","rps":0.1554555499,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.5}
@@ -183,9 +183,9 @@
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"none","rps":0.1321721027,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-A","rps":0.1344427233,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"oracle-B","rps":0.1317067031,"n_train_items_B":788.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1390186908,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1392881238,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(10)","rps":0.14747252,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.0}
-{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1359612066,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1353387765,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(20)","rps":0.1322109159,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.2}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(50)","rps":0.1371348862,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(50)","rps":0.1347078373,"n_train_items_B":null,"n_cal":50.0,"T":0.7,"lam":0.3}
@@ -196,9 +196,9 @@
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"none","rps":0.1560107815,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-A","rps":0.1622400914,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"oracle-B","rps":0.1557619278,"n_train_items_B":701.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1758794018,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1655874389,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(10)","rps":0.1613416716,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.5}
-{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1738315428,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1638756686,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(20)","rps":0.1613416716,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.5}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(50)","rps":0.1541530292,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(50)","rps":0.1561494014,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.1}
@@ -209,9 +209,9 @@
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"none","rps":0.1232495551,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-A","rps":0.1220431,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"oracle-B","rps":0.1219352743,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1628651046,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1616220784,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(10)","rps":0.1377741586,"n_train_items_B":null,"n_cal":10.0,"T":0.5,"lam":0.0}
-{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1243538235,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1277417488,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(20)","rps":0.1270046604,"n_train_items_B":null,"n_cal":20.0,"T":0.7,"lam":0.0}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(50)","rps":0.1261251083,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(50)","rps":0.1270046604,"n_train_items_B":null,"n_cal":50.0,"T":0.7,"lam":0.0}
@@ -222,9 +222,9 @@
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"none","rps":0.1448346452,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-A","rps":0.1433918271,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"oracle-B","rps":0.1513378148,"n_train_items_B":709.0,"n_cal":null,"T":null,"lam":null}
-{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1496970133,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1562321798,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(10)","rps":0.1550795549,"n_train_items_B":null,"n_cal":10.0,"T":0.7,"lam":0.0}
-{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1524022851,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1599818394,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(20)","rps":0.1550795549,"n_train_items_B":null,"n_cal":20.0,"T":0.7,"lam":0.0}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(50)","rps":0.1433047402,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":2,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(50)","rps":0.1464075291,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.3}
@@ -235,9 +235,9 @@
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"none","rps":0.1193092333,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-A","rps":0.1189230066,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"oracle-B","rps":0.1197731907,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1227693202,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1235828173,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(10)","rps":0.1193092331,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1193058278,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1191023122,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(20)","rps":0.1193092331,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(50)","rps":0.1198545802,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(50)","rps":0.1205040054,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.2}
@@ -248,9 +248,9 @@
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"none","rps":0.15002571,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-A","rps":0.1510958191,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"oracle-B","rps":0.1496706485,"n_train_items_B":710.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1554765176,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1604124398,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(10)","rps":0.1551996782,"n_train_items_B":null,"n_cal":10.0,"T":2.0,"lam":0.0}
-{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1515612211,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1489165492,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(20)","rps":0.1551996782,"n_train_items_B":null,"n_cal":20.0,"T":2.0,"lam":0.0}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(50)","rps":0.147421347,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(50)","rps":0.1484170357,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.0}
@@ -261,9 +261,9 @@
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"none","rps":0.1309090722,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-A","rps":0.1333943721,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"oracle-B","rps":0.1323804399,"n_train_items_B":788.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1867577421,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1993895269,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(10)","rps":0.1519325174,"n_train_items_B":null,"n_cal":10.0,"T":2.0,"lam":0.0}
-{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1642425854,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1592750828,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(20)","rps":0.1389751225,"n_train_items_B":null,"n_cal":20.0,"T":1.5,"lam":0.0}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(50)","rps":0.132957231,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(50)","rps":0.1309090722,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -274,9 +274,9 @@
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"none","rps":0.1561045,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-A","rps":0.1633866576,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"oracle-B","rps":0.1570288056,"n_train_items_B":701.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1563688434,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1547422872,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(10)","rps":0.1549351209,"n_train_items_B":null,"n_cal":10.0,"T":1.5,"lam":0.0}
-{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1559582178,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1543031934,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(20)","rps":0.1561044999,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(50)","rps":0.1597444531,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(50)","rps":0.1561044999,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -287,9 +287,9 @@
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"none","rps":0.1222340525,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-A","rps":0.1209624113,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"oracle-B","rps":0.1213436442,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1306372624,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1254037887,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(10)","rps":0.122234053,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1254547464,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1232523049,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(20)","rps":0.1255054747,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.3}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(50)","rps":0.1215934217,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(50)","rps":0.1229237598,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.1}
@@ -300,9 +300,9 @@
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"none","rps":0.1432357788,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-A","rps":0.1420342183,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"oracle-B","rps":0.1502253292,"n_train_items_B":709.0,"n_cal":null,"T":null,"lam":null}
-{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1418271794,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1412943774,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(10)","rps":0.1453164508,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.3}
-{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1463358427,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1474531339,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(20)","rps":0.1605848472,"n_train_items_B":null,"n_cal":20.0,"T":3.0,"lam":0.3}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(50)","rps":0.1459840374,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":3,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(50)","rps":0.1573860273,"n_train_items_B":null,"n_cal":50.0,"T":3.0,"lam":0.5}
@@ -313,9 +313,9 @@
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"none","rps":0.1201356778,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-A","rps":0.1195199509,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"oracle-B","rps":0.1190437622,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1287876587,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(10)","rps":0.1285868945,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(10)","rps":0.1201356778,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1217885188,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(20)","rps":0.1216320412,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(20)","rps":0.1201356778,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.0}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"map-B(50)","rps":0.1218193449,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1123,"arm":"dir-B(50)","rps":0.1201356778,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -326,9 +326,9 @@
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"none","rps":0.1496351037,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-A","rps":0.1506980246,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"oracle-B","rps":0.1493825716,"n_train_items_B":710.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1520805283,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(10)","rps":0.1498996379,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(10)","rps":0.155293097,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.5}
-{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1496080225,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(20)","rps":0.1495079419,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(20)","rps":0.1518206992,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.3}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"map-B(50)","rps":0.1476654519,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":0,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":683,"arm":"dir-B(50)","rps":0.1511067412,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.3}
@@ -339,9 +339,9 @@
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"none","rps":0.1300698468,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-A","rps":0.1327035323,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"oracle-B","rps":0.1329618637,"n_train_items_B":788.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1557115773,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(10)","rps":0.1586655459,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(10)","rps":0.1362598477,"n_train_items_B":null,"n_cal":10.0,"T":1.5,"lam":0.0}
-{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1375823722,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(20)","rps":0.1389435683,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(20)","rps":0.1362598477,"n_train_items_B":null,"n_cal":20.0,"T":1.5,"lam":0.0}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"map-B(50)","rps":0.132414919,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1118,"arm":"dir-B(50)","rps":0.1300698469,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -352,9 +352,9 @@
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"none","rps":0.1577520481,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-A","rps":0.1634925759,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"oracle-B","rps":0.1550379458,"n_train_items_B":701.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1549002159,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(10)","rps":0.1547670437,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(10)","rps":0.1607888162,"n_train_items_B":null,"n_cal":10.0,"T":1.5,"lam":0.5}
-{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1550786918,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(20)","rps":0.1548798776,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(20)","rps":0.1589861489,"n_train_items_B":null,"n_cal":20.0,"T":1.0,"lam":0.3}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"map-B(50)","rps":0.1580677873,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":1,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":737,"arm":"dir-B(50)","rps":0.1577520483,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -365,9 +365,9 @@
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"none","rps":0.1239198555,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-A","rps":0.1224708422,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"oracle-B","rps":0.1218038,"n_train_items_B":789.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1476598465,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(10)","rps":0.1463693,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(10)","rps":0.1340434928,"n_train_items_B":null,"n_cal":10.0,"T":1.5,"lam":0.0}
-{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.1308006207,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(20)","rps":0.130618626,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(20)","rps":0.1340434928,"n_train_items_B":null,"n_cal":20.0,"T":1.5,"lam":0.0}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"map-B(50)","rps":0.1254161093,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_High school diploma or equivalent","poolB_size":80,"n_ratings_te":1111,"arm":"dir-B(50)","rps":0.1239198572,"n_train_items_B":null,"n_cal":50.0,"T":1.0,"lam":0.0}
@@ -378,9 +378,9 @@
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"none","rps":0.1416778398,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-A","rps":0.1409085809,"n_train_items_B":null,"n_cal":null,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"oracle-B","rps":0.1494100914,"n_train_items_B":709.0,"n_cal":null,"T":null,"lam":null}
-{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1414908767,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
+{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(10)","rps":0.1399233446,"n_train_items_B":null,"n_cal":10.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(10)","rps":0.1416778397,"n_train_items_B":null,"n_cal":10.0,"T":1.0,"lam":0.0}
-{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1424286578,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
+{"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(20)","rps":0.1420841822,"n_train_items_B":null,"n_cal":20.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(20)","rps":0.1445315058,"n_train_items_B":null,"n_cal":20.0,"T":1.5,"lam":0.1}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"map-B(50)","rps":0.1482358084,"n_train_items_B":null,"n_cal":50.0,"T":null,"lam":null}
 {"seed":4,"isplit":2,"poolA_size":121,"poolB":"B_Graduate degree","poolB_size":50,"n_ratings_te":724,"arm":"dir-B(50)","rps":0.1445010176,"n_train_items_B":null,"n_cal":50.0,"T":1.5,"lam":0.0}
