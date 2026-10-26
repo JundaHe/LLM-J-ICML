@@ -10,3 +10,18 @@ step 40/205 loss 0.4009 33s maxlen 235 mem 16.1GB
 step 50/205 loss 0.3622 43s maxlen 235 mem 16.1GB
 step 60/205 loss 0.3746 53s maxlen 235 mem 16.1GB
 step 70/205 loss 0.3520 61s maxlen 235 mem 16.1GB
+step 80/205 loss 0.3386 69s maxlen 235 mem 16.1GB
+step 90/205 loss 0.2748 78s maxlen 235 mem 16.1GB
+step 100/205 loss 0.2755 86s maxlen 235 mem 16.1GB
+step 110/205 loss 0.2566 94s maxlen 235 mem 16.1GB
+step 120/205 loss 0.2074 103s maxlen 235 mem 16.1GB
+step 130/205 loss 0.2241 111s maxlen 235 mem 16.1GB
+step 140/205 loss 0.2156 119s maxlen 235 mem 16.1GB
+step 150/205 loss 0.1749 128s maxlen 235 mem 16.1GB
+step 160/205 loss 0.1803 136s maxlen 235 mem 16.1GB
+step 170/205 loss 0.1395 144s maxlen 235 mem 16.1GB
+step 180/205 loss 0.1489 152s maxlen 235 mem 16.1GB
+step 190/205 loss 0.1227 161s maxlen 235 mem 16.1GB
+step 200/205 loss 0.1092 169s maxlen 235 mem 16.1GB
+step 205/205 loss 0.1152 173s maxlen 235 mem 16.1GB
+done
