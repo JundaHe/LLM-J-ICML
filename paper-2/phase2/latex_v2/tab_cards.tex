@@ -1,24 +1,25 @@
 \begin{table}[t]\centering\footnotesize
-\caption{Disagreement reliability cards. $A1^x>0$: the raw $a$-rater histogram forecasts a new rater worse than the exact mode-and-mean comparator. $\rho=X/M$: split-half reliability of the shape (smoothed comparator). Support: share of items whose histogram can be changed at all with mode and mean fixed. SE = software-engineering panel.}\label{tab:cards}
-\begin{tabular}{lrrrrr}\toprule panel & raters & $a$ & $A1^x$ & $\rho$ & support \\\midrule
-CSC sarcasm & 6 & 5 & $+$0.0052 & 0.15 & 0.72 \\
-Crupi CA$^{SE}$ & 3 & 2 & $+$0.0000 & 0.12 & 0.00 \\
-Crupi conc.$^{SE}$ & 3 & 2 & $-$0.0000 & 0.11 & 0.00 \\
-Crupi flu.$^{SE}$ & 3 & 2 & $+$0.0000 & 0.08 & 0.00 \\
-EmoBank & 5 & 4 & $+$0.0004 & 0.18 & 0.14 \\
-HelpSteer2 & 5 & 4 & $+$0.0038 & 0.06 & 0.45 \\
-JetBrains naming$^{SE}$ & 11 & 10 & $+$0.0032 & 0.51 & 0.77 \\
-MLCQ$^{SE}$ & 3 & 2 & $+$0.0000 & 0.05 & 0.00 \\
-POPQUORN off. & 8 & 7 & $+$0.0030 & 0.29 & 0.69 \\
-POPQUORN pol. & 5 & 4 & $+$0.0045 & 0.08 & 0.42 \\
-Roy CA$^{SE}$ & 3 & 2 & $+$0.0001 & 0.07 & 0.00 \\
-Scalabrino$^{SE}$ & 9 & 8 & $+$0.0029 & 0.58 & 0.69 \\
-SummEval coh. & 8 & 7 & $+$0.0015 & 0.23 & 0.87 \\
-SummEval rel. & 8 & 7 & $+$0.0008 & 0.30 & 0.79 \\
-Buse--Weimer$^{SE}$ & 121 & 120 & $+$0.0007 & 1.01 & 0.89 \\
-DICES-350 & 104 & 103 & $+$0.0001 & 0.99 & 1.00 \\
-DICES-990 & 60 & 59 & $+$0.0001 & 0.79 & 1.00 \\
-Dorn Java$^{SE}$ & 160 & 40 & $+$0.0006 & 0.60 & -- \\
-ChaosNLI MNLI & 100 & 99 & $-$0.0210 & 0.97 & 1.00 \\
-ChaosNLI SNLI & 100 & 99 & $-$0.0193 & 1.02 & 0.99 \\
+\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\rho=X/M$: split-half reliability of the shape beyond mode and mean at $a$ raters, 95\% item-cluster interval; the raw histogram forecasts a new rater better than its own mode and mean only if $\rho>\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SE = software engineering.}\label{tab:cards}
+\begin{tabular}{lrrlrr}\toprule panel & raters & $a$ & $\rho$ [95\% CI] & $A1^x$ & support \\\midrule
+CSC sarcasm & 6 & 5 & 0.04 [-0.06, 0.13] & $+$0.0050 & 0.72 \\
+EmoBank & 5 & 4 & 0.41 [0.27, 0.55] & $+$0.0003 & 0.14 \\
+HelpSteer2 & 5 & 4 & 0.13 [0.04, 0.17] & $+$0.0036 & 0.45 \\
+POPQUORN off. & 8 & 7 & 0.07 [-0.04, 0.25] & $+$0.0031 & 0.69 \\
+POPQUORN pol. & 5 & 4 & 0.04 [-0.03, 0.12] & $+$0.0044 & 0.42 \\
+Scalabrino$^{SE}$ & 9 & 8 & 0.19 [-0.24, 0.55] & $+$0.0027 & 0.69 \\
+SummEval coh. & 8 & 7 & 0.35 [0.24, 0.48] & $+$0.0016 & 0.87 \\
+SummEval rel. & 8 & 7 & 0.40 [0.30, 0.54] & $+$0.0008 & 0.79 \\
+Buse--Weimer$^{SE}$ & 121 & 40 & 0.22 [0.06, 0.35] & $+$0.0007 & 0.89 \\
+DICES-350 & 104 & 40 & 0.25 [0.19, 0.35] & $+$0.0002 & 1.00 \\
+DICES-990 & 60 & 40 & 0.15 [0.10, 0.24] & $+$0.0002 & 1.00 \\
+Dorn CUDA$^{SE}$ & 160 & 40 & 0.29 [0.20, 0.43] & $+$0.0006 & -- \\
+Dorn Java$^{SE}$ & 160 & 40 & 0.29 [0.16, 0.40] & $+$0.0006 & -- \\
+Dorn Python$^{SE}$ & 160 & 40 & 0.21 [0.18, 0.40] & $+$0.0008 & -- \\
+ChaosNLI MNLI & 100 & 40 & 0.96 [0.95, 0.99] & $-$0.0186 & 1.00 \\
+ChaosNLI SNLI & 100 & 40 & 0.98 [0.95, 1.00] & $-$0.0173 & 0.99 \\
+Crupi CA$^{SE}$ & 3 & 2 & -- (no shape) & -- & 0.00 \\
+Crupi conc.$^{SE}$ & 3 & 2 & -- (no shape) & -- & 0.00 \\
+Crupi flu.$^{SE}$ & 3 & 2 & -- (no shape) & -- & 0.00 \\
+MLCQ$^{SE}$ & 3 & 2 & -- (no shape) & -- & 0.00 \\
+Roy CA$^{SE}$ & 3 & 2 & -- (no shape) & -- & 0.00 \\
 \bottomrule\end{tabular}\end{table}

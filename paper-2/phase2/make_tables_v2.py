@@ -6,23 +6,24 @@ def f5(x): return ("$-$" if x < 0 else "$+$") + f"{abs(x):.5f}"
 NAME = {"summeval_coherence8": "SummEval coh.", "summeval_relevance8": "SummEval rel.", "popquorn_off8": "POPQUORN off.", "popquorn_pol5": "POPQUORN pol.", "hs2_help5": "HelpSteer2", "emobank_reader_v5": "EmoBank",
         "csc6": "CSC sarcasm", "scalabrino": "Scalabrino$^{SE}$", "bw": "Buse--Weimer$^{SE}$", "dices": "DICES-350", "dices990": "DICES-990", "dorn_java": "Dorn Java$^{SE}$", "dorn_all": "Dorn (all)$^{SE}$",
         "crupi_ca": "Crupi CA$^{SE}$", "crupi_conc": "Crupi conc.$^{SE}$", "crupi_flu": "Crupi flu.$^{SE}$", "mlcq3": "MLCQ$^{SE}$", "roy_ca": "Roy CA$^{SE}$", "jb_naming": "JetBrains naming$^{SE}$",
-        "chaosnli_mnli": "ChaosNLI MNLI", "chaosnli_snli": "ChaosNLI SNLI"}
-# Table 1: reliability cards at a = m-1 (loo) or largest a
-rows = {}
-for f in glob.glob(f"{HERE}/results/finite_rater/*.json"):
-    b = os.path.basename(f)[:-5]
-    if b in ("summary", "moderator", "dices_raw", "dices_raw_loo", "chaosnli_alphanli"): continue
-    r = json.load(open(f)); loo = b.endswith("_loo")
-    for row in r["rows"]:
-        k = r["panel"]
-        if k not in NAME: continue
-        if k not in rows or (loo and not rows[k][0]) or (loo == rows[k][0] and row["a"] > rows[k][1]["a"]): rows[k] = (loo, row, r["m"])
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards. $A1^x>0$: the raw $a$-rater histogram forecasts a new rater worse than the exact mode-and-mean comparator. $\\rho=X/M$: split-half reliability of the shape (smoothed comparator). Support: share of items whose histogram can be changed at all with mode and mean fixed. SE = software-engineering panel.}\\label{tab:cards}",
-     "\\begin{tabular}{lrrrrr}\\toprule panel & raters & $a$ & $A1^x$ & $\\rho$ & support \\\\\\midrule"]
-for k in sorted(rows, key=lambda k: (k.startswith("chaosnli"), rows[k][2] > 20, NAME[k])):
-    loo, row, m = rows[k]; sup = row.get("A2", {}).get("changed_fraction")
-    t.append(f"{NAME[k]} & {m} & {row['a']} & {f4(row['est']['A1x'])} & {row['est']['rho']:.2f} & {('%.2f' % sup) if sup is not None else '--'} \\\\")
+        "chaosnli_mnli": "ChaosNLI MNLI", "chaosnli_snli": "ChaosNLI SNLI", "dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$"}
+# Table 1: reliability cards on the EXACT mode+mean comparator (results/rho_exact): small panels at a = m−1 (one held-out rating), dense panels at a = 40 (20 held-out ratings); support from the T9 donor-replacement runs
+sup = {}
+for f in glob.glob(f"{HERE}/results/finite_rater/*_loo.json"):
+    r = json.load(open(f)); row = r["rows"][-1]; sup[r["panel"]] = row.get("A2", {}).get("changed_fraction")
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\\rho=X/M$: split-half reliability of the shape beyond mode and mean at $a$ raters, 95\\% item-cluster interval; the raw histogram forecasts a new rater better than its own mode and mean only if $\\rho>\\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SE = software engineering.}\\label{tab:cards}",
+     "\\begin{tabular}{lrrlrr}\\toprule panel & raters & $a$ & $\\rho$ [95\\% CI] & $A1^x$ & support \\\\\\midrule"]
+order = []
+for f in glob.glob(f"{HERE}/results/rho_exact/*.json"):
+    r = json.load(open(f)); k = r["panel"]
+    if k not in NAME: continue
+    row = [x for x in r["rows"] if x["a"] == (40 if r["m"] > 12 else r["m"] - 1)][0]; order.append((k.startswith("chaosnli"), r["m"] > 12, NAME[k], k, r["m"], row))
+for _, _, nm, k, m_, row in sorted(order):
+    t.append(f"{nm} & {m_} & {row['a']} & {row['rho']:.2f} [{row['rho_ci'][0]:.2f}, {row['rho_ci'][1]:.2f}] & {f4(row['A1x'])} & {('%.2f' % sup[k]) if sup.get(k) is not None else '--'} \\\\")
+for k in ("crupi_ca", "crupi_conc", "crupi_flu", "mlcq3", "roy_ca"):
+    if k in sup: t.append(f"{NAME[k]} & 3 & 2 & -- (no shape) & -- & {sup[k]:.2f} \\\\")
 t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_cards.tex", "w").write("\n".join(t))
+NAME.update({"dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$"})
 # Table 2: cross-family decoding
 FAM = {"": "Qwen2.5-7B", "_qwen3": "Qwen3-8B", "_olmo": "OLMo-2-7B"}; D = {}
 for f in glob.glob(f"{HERE}/results/decoding/*_d64_E_last*.json"):
