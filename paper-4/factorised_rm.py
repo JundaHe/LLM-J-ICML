@@ -76,21 +76,29 @@ class Model:
             ey = (pk.numpy() * np.arange(K)).sum(1); dirc = np.where(yy == 2, np.nan, (np.sign(ey - 2) == np.sign(yy - 2)).astype(float))
         return ll, rps, dirc
 
-GRID = {"DG": [(lb, 0, 0) for lb in (1, 10, 100)], "DF": [(lb, lr, 0) for lb in (1, 10, 100) for lr in (8, 32, 128)], "DL": [(lb, lr, lw) for lb in (1, 10, 100) for lr in (8, 32, 128) for lw in (1, 10, 100)], "T0": [(lb, 0, 0) for lb in (1, 10, 100)], "T1": [(lb, 0, 0) for lb in (1, 10, 100)], "D": [(lb, 0, 0) for lb in (1, 10, 100)], "G": [(lb, 0, 0) for lb in (1, 10, 100)]}
-for kd in ("F", "F1", "F_shift", "F_scale"): GRID[kd] = [(lb, lr, 0) for lb in (1, 10, 100) for lr in (8, 32, 128)]
-for kd in ("L", "LS"): GRID[kd] = [(lb, lr, lw) for lb in (1, 10, 100) for lr in (8, 32, 128) for lw in (1, 10, 100)]
-
 def set_center(mdl, idx):
     """population mean of the rater-side parameters over the raters seen in training (prior mean for new raters)"""
     tr = torch.tensor(np.unique(R[idx]))
     for k in mdl.rater_keys(): mdl.center[k] = mdl.p[k][tr].mean(0).expand_as(mdl.p[k]).clone()
     return mdl
+# Amendment 3: coordinate-wise selection on extended grids. The text penalty λβ is chosen on the rater-agnostic base model of each family (D for DG/DF/DL; T0 for G/F/F_shift/F_scale/L/LS; T1 for F1)
+# and then held fixed while the rater-side penalties are chosen.
+LB, LR, LW = (10, 100, 300, 1000, 3000, 10000), (0.5, 2, 8, 32, 128, 512), (1, 10, 100, 1000, 10000)
+BASE = {"DG": "D", "DF": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1"}
+SEL = {}
+def grid(kind):
+    if kind in ("D", "T0", "T1"): return [(lb, 0, 0) for lb in LB]
+    lb = SEL[BASE[kind]][0]
+    if kind in ("DG", "G"): return [(lb, 0, 0)]
+    if kind in ("DL", "L", "LS"): return [(lb, lr, lw) for lr in LR for lw in LW]
+    return [(lb, lr, 0) for lr in LR]
 def train(kind, idx_tr, idx_va):
     best = None
-    for lam in GRID[kind]:
+    for lam in grid(kind):
         mdl = Model(kind, lam).fit(idx_tr, mdl_keys(kind))
         va = mdl.per_rating(idx_va)[0].mean()
         if best is None or va > best[0]: best = (va, lam)
+    SEL[kind] = best[1]
     full = np.concatenate([idx_tr, idx_va]); return set_center(Model(kind, best[1]).fit(full, mdl_keys(kind)), full), best[1]
 def mdl_keys(kind): m_ = Model(kind, (1, 1, 1)); return m_.text_keys() + m_.rater_keys()
 
