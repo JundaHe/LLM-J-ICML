@@ -866,3 +866,4 @@ No NeurIPS/ICLR/ICML/ACL style file exists in the local TeX tree or the project 
 - 2026-10-27 05:21 Gate A _bfix: SummEval coh + POPQUORN-pol done. Point estimates identical (same seeds); intervals essentially unchanged for qT/shr/shr2/lsm_in; only the cross-fitted smoothed comparator qs moves (coh [−0.0096,−0.0065] → [−0.0088,−0.0052]; pol [−0.0170,−0.0150] → [−0.0164,−0.0144]; the old interval barely contained its point), as expected from the fold-leak bug. 6 panels left (hs2 boot 50/500, emobank started).
 - 2026-10-27 06:21 Gate A _bfix: HelpSteer2 done (3/8); EmoBank boot 250/500, Scalabrino 50/500.
 - 2026-10-27 07:51 Gate A _bfix: EmoBank done (4/8); Scalabrino boot 350/500, SummEval relevance 50/500.
+- 2026-10-27 08:51 Gate A _bfix: Scalabrino done (5/8); SummEval relevance boot 250/500, POPQUORN-off 50/500, CSC queued.
