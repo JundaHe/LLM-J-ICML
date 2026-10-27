@@ -182,7 +182,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                 sel = R[te] == r
                 out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "group": int(GRP[r]), "n": int(sel.sum()),
                                          **{f"{kind}_{mt}": float(np.nansum(res[kind][j][sel])) for kind in MODELS for j, mt in enumerate(("ll", "rps", "dir"))},
-                                         "n_dir": int(np.isfinite(res["T0"][2][sel]).sum())})
+                                         "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum())})
         print(f"fold {f} k={k} done [{time.time()-t0:.0f}s]", flush=True)
     seen = {kind: fits[kind].per_rating(idx_seen)[0].mean() for kind in MODELS}; out["folds"][-1]["seen_ll"] = seen; print("seen-rater LL", {k_: round(v, 4) for k_, v in seen.items()}, flush=True)
     os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.json", "w"))
