@@ -8,7 +8,7 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -131,14 +131,14 @@ def train_vpl():
     for j in idx_tr: pool_tr.setdefault(int(R[j]), []).append(int(j))
     tr = np.array([j for j in idx_tr if len(pool_tr[int(R[j])]) > 8]); va = idx_va[np.isin(R[idx_va], list(pool_tr))]
     best = None
-    for lr in (3e-4, 1e-3):
+    for lr, klw in [(lr_, kw_) for lr_ in (3e-4, 1e-3) for kw_ in (0.01, 0.001, 0.0)]:          # Amendment 2: KL weight 0.01 (official) / 0.001 / 0 against posterior collapse
         torch.manual_seed(0); mdl = VPL().to(DEV); opt = torch.optim.Adam(mdl.parameters(), lr=lr); rng = np.random.RandomState(0); hist = []; best_state = None; bad = 0
         for ep in range(args.max_epochs):
             mdl.train()
             for b0 in range(0, len(tr), 64):
                 t = tr[rng.permutation(len(tr))[:64]]
                 mean, logv = mdl.encode(vpl_contexts(t, pool_tr, rng)); z = mean + torch.exp(0.5 * logv) * torch.randn_like(mean); z = Fn.normalize(z, dim=-1) * z.shape[-1] ** 0.5
-                kl = -0.5 * (1 + logv - mean ** 2 - logv.exp()).sum(1).mean(); loss = vpl_nll(mdl, torch.tensor(t, device=DEV), z) / len(t) + 0.01 * kl
+                kl = -0.5 * (1 + logv - mean ** 2 - logv.exp()).sum(1).mean(); loss = vpl_nll(mdl, torch.tensor(t, device=DEV), z) / len(t) + klw * kl
                 opt.zero_grad(); loss.backward(); opt.step()
                 if b0 >= 64 * 200: break                                  # 200 minibatches per epoch
             mdl.eval()
@@ -148,8 +148,9 @@ def train_vpl():
             if best_state is None or v > max(hist[:-1] + [-1e9]): best_state = {k: x.clone() for k, x in mdl.state_dict().items()}; bad = 0
             else: bad += 1
             if bad >= 3: break
-        if best is None or max(hist) > best[0]: best = (max(hist), lr, best_state, len(hist))
-    mdl = VPL().to(DEV); mdl.load_state_dict(best[2]); mdl.eval(); return mdl, {"lr": best[1], "epochs_run": best[3], "val_ll": best[0]}
+        out_hp.setdefault("VPL_grid", []).append({"lr": lr, "kl": klw, "val_ll": max(hist), "epochs": len(hist)})
+        if best is None or max(hist) > best[0]: best = (max(hist), (lr, klw), best_state, len(hist))
+    mdl = VPL().to(DEV); mdl.load_state_dict(best[2]); mdl.eval(); return mdl, {"lr": best[1][0], "kl": best[1][1], "epochs_run": best[3], "val_ll": best[0]}
 
 # ---------------------------------------------------------------- PAL-B (K prototype projectors of the prompt; user = softmax mixture; angle learner)
 def mlp2(d_in, d): return nn.Sequential(nn.Linear(d_in, 512), nn.GELU(), nn.Linear(512, d))
@@ -185,26 +186,45 @@ def train_pal(k):
     mdl = PAL(k).to(DEV); mdl.load_state_dict(best[2]); mdl.eval()
     seen = torch.tensor(np.unique(R[np.concatenate([idx_tr, idx_va])]), device=DEV); w0 = mdl.W.detach()[seen].mean(0)
     return mdl, {"lr": best[1], "epochs_run": best[3], "val_ll": best[0]}, w0
-def adapt_pal(mdl, w0, ad, te):
+def adapt_pal(mdl, w0, ad, te, lam=1e-3):
     Wn = mdl.W.detach().clone(); test = torch.tensor(np.unique(R[te]), device=DEV); Wn[test] = w0
     if len(ad):
         Wp = Wn.clone().requires_grad_(True); ii = torch.tensor(ad, device=DEV); opt = torch.optim.LBFGS([Wp], lr=0.5, max_iter=100, line_search_fn="strong_wolfe")
         def cl():
-            opt.zero_grad(); loss = pal_nll(mdl, ii, Wp) + 1e-3 * ((Wp[test] - w0) ** 2).sum(); loss.backward(); return loss
+            opt.zero_grad(); loss = pal_nll(mdl, ii, Wp) + lam * ((Wp[test] - w0) ** 2).sum(); loss.backward(); return loss
         opt.step(cl); Wn = Wp.detach()
     with torch.no_grad(): return mdl.logp(torch.tensor(te, device=DEV), Wn), Wn
 
 # ---------------------------------------------------------------- run
+out_hp = {}
+def tune_pal_lambda(k_, hp):
+    """Amendment 2: adaptation ridge for PAL chosen per k by k-shot validation on 20 % held-out training raters (PAL refit without them)"""
+    global idx_tr, idx_va
+    tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); vr = set(np.random.RandomState(3 + f).choice(tr_r, len(tr_r) // 5, replace=False)); inv = np.isin(R, list(vr))
+    keep_tr, keep_va = idx_tr, idx_va; idx_tr, idx_va = keep_tr[~inv[keep_tr]], keep_va[~inv[keep_va]]
+    m5, _, w05 = train_pal(k_); idx_tr, idx_va = keep_tr, keep_va
+    pool5, sc5 = keep_tr[inv[keep_tr]], keep_va[inv[keep_va]]; lam_k = {}
+    for k in [k for k in KS if k > 0]:
+        best = None
+        for lam in (1e-3, 0.1, 1.0, 10.0):
+            rng5 = np.random.RandomState(60_000 + k); ad = []; kr = []
+            for r in vr:
+                pl = pool5[R[pool5] == r]
+                if len(pl) >= k: kr.append(r); ad.extend(rng5.choice(pl, k, replace=False))
+            sc = sc5[np.isin(R[sc5], kr)]; lp, _ = adapt_pal(m5, w05, np.array(ad, int), sc, lam); v = metrics(lp, sc)[0].mean()
+            if best is None or v > best[0]: best = (v, lam)
+        lam_k[k] = best[1]
+    return lam_k
 t0 = time.time(); out = {"fold": f, "eval": args.eval, "protocol": "PROTOCOL_STAGE2C.md", "models": MODELS, "hp": {}, "per_rater": [], "latents": []}
 fits = {}
 for mname in MODELS:
     if mname in ("Dp", "DFp", "DFsp"): fits[mname] = train_D(mname); out["hp"][mname] = fits[mname][1]
     elif mname == "VPL": fits[mname] = train_vpl(); out["hp"][mname] = fits[mname][1]
-    else: mdl_, hp_, w0_ = train_pal(int(mname[3:])); fits[mname] = (mdl_, w0_); out["hp"][mname] = hp_
+    else: mdl_, hp_, w0_ = train_pal(int(mname[3:])); hp_["lam_adapt"] = tune_pal_lambda(int(mname[3:]), hp_); fits[mname] = (mdl_, w0_, hp_["lam_adapt"]); out["hp"][mname] = hp_
     print(f"fold {f} {args.eval} trained {mname} {out['hp'][mname]} [{time.time()-t0:.0f}s]", flush=True)
 test_raters = np.unique(R[idx_te])
 for k in KS:
-    for dr in range(args.draws):
+    for dr in range(args.draws if k > 0 else 1):
         rng = np.random.RandomState(10_000 * f + 100 * k + dr); ad = []; keep_r = []
         for r in test_raters:                                             # same draw sequence as stage 2a (pool restricted to non-ties in E2)
             pool = idx_ad_pool[R[idx_ad_pool] == r]
@@ -219,10 +239,12 @@ for k in KS:
             elif mname == "VPL":
                 mdl = fits[mname][0]
                 with torch.no_grad():
-                    ctx = [torch.tensor(ad[R[ad] == r], device=DEV) for r in keep_r]; mean, _ = mdl.encode(ctx); zmap = dict(zip(keep_r, mean))
+                    if k > 0: ctx = [torch.tensor(ad[R[ad] == r], device=DEV) for r in keep_r]; mean, _ = mdl.encode(ctx)
+                    else: mean = torch.zeros(len(keep_r), 512, device=DEV)            # k = 0: prior mean of z
+                    zmap = dict(zip(keep_r, mean))
                     z = torch.stack([zmap[int(r)] for r in R[te]]); res[mname] = metrics(mdl.logp(torch.tensor(te, device=DEV), z), te); lat["VPL"] = zmap
             else:
-                lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
+                lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3)); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
         for r in keep_r:
             sel = R[te] == r
             out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n": int(sel.sum()), "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
@@ -232,4 +254,4 @@ for k in KS:
                 for key, v in lat.items(): row[key] = (v[int(r)] if isinstance(v, dict) else v[int(r)]).detach().cpu().numpy().tolist()
                 out["latents"].append(row)
     print(f"fold {f} {args.eval} k={k} done [{time.time()-t0:.0f}s]", flush=True)
-os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/stage2c_{args.eval}_f{f}.json", "w")); print("done", flush=True)
+os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; json.dump(out, open(f"{HERE}/results/stage2c_{args.eval}_f{f}{args.tag}.json", "w")); print("done", flush=True)
