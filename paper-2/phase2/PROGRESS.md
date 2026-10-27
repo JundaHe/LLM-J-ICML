@@ -867,3 +867,4 @@ No NeurIPS/ICLR/ICML/ACL style file exists in the local TeX tree or the project 
 - 2026-10-27 06:21 Gate A _bfix: HelpSteer2 done (3/8); EmoBank boot 250/500, Scalabrino 50/500.
 - 2026-10-27 07:51 Gate A _bfix: EmoBank done (4/8); Scalabrino boot 350/500, SummEval relevance 50/500.
 - 2026-10-27 08:51 Gate A _bfix: Scalabrino done (5/8); SummEval relevance boot 250/500, POPQUORN-off 50/500, CSC queued.
+- 2026-10-27 09:22 Node resumed (MIXED). Submitted POPQUORN same-batch 3-seed LoRA budget block (SHRINKAGE Amendment 7; slurm/lora_budget_pq_v2.sh; jobs 9842–9844, both GPUs currently held by other users → pending). CSC Gate-A _bfix moved to Slurm (9845); xargs runner stopped after the two running panels (SummEval relevance boot 350/500, POPQUORN-off 100/500).
