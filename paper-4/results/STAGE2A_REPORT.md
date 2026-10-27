@@ -36,3 +36,19 @@ Selected adaptation priors: DF/DFs λ_ad ∈ {0.5, 2} (close to the training cho
 - Post hoc (not registered; flagged as such): the 3-parameter symmetric style model DFs is **at least as good as the tuned 8-dimensional text-interacting latent DL at every k** — better at k = 5, 10 and 50, tied at k = 20 (+0.0045 [−0.0004, +0.0092]) — with equal direction accuracy at k ≤ 20. DF's deficit relative to DL is its A-vs-B position term.
 
 **Revised one-line claim:** for new raters, three text-independent numbers describing how a rater uses a two-sided preference scale (extreme / slight / tie) capture essentially all the few-shot personalisation gain that an 8-dimensional text-interacting rater latent achieves, and more of it at very few shots; position (A/B) propensities and demographic/crowd-vs-expert groups add nothing or hurt.
+
+## Replication 1: DICES-350 (Amendment 6; conversational safety, 3 levels; 104 raters × 350 conversations; DG/G = rater race, 5 groups)
+results/stage2a_dices.{json,md} (training-rater prior) and stage2a_dices_A5.* (k-shot-tuned prior). Held-out LL per rating of new raters, k = 20:
+| | primary | Amendment-5 prior |
+|---|---|---|
+| H1r DF − D | **+0.089 [+0.064, +0.117]** | +0.089 [+0.064, +0.117] |
+| H2r DF − DG (race) | **+0.095 [+0.069, +0.122]** | +0.095 |
+| H3r DF − DL | **+0.028 [+0.017, +0.040]** | **+0.037 [+0.022, +0.053]** |
+| DL − D | +0.061 [+0.031, +0.093] | +0.052 [+0.015, +0.086] |
+| F_scale − F_shift (H4) | **−0.053 [−0.070, −0.036]** | same |
+| direction accuracy (safe vs unsafe), DF − D | +0.048 [+0.025, +0.076] (0.649 → 0.697) | same |
+
+- H1r, H2r, H3r hold, and H3r is robust to the tuned prior here (unlike MultiPref, where tuned DL caught up with DF). The race-group model DG is slightly *worse* than the text-only D for new raters (−0.006).
+- **H4 reverses on DICES**: rater *shift* (how strict a rater is about "unsafe") matters more than rater *scale*, the opposite of MultiPref (where expressiveness — clearly vs slightly — dominated). "Response style" is task-specific: strictness for safety ratings, intensity for two-sided preferences; the text-independent offset model DF captures both.
+- Personalising also improves *which side* a new rater falls on by 4.8 points (unlike MultiPref, where only the symmetric model helped direction), consistent with strictness being a threshold shift.
+- The secondary probit group model G was mis-specified (common-scale escape, Amendment 7); its DICES numbers are superseded by the rerun (stage2a_dices_A7_*). No primary-family number is affected.

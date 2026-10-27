@@ -53,7 +53,7 @@ class Model:
             if s.kind == "DL": lg = lg + ((x @ p["W5"] + p["w0"]).view(len(ii), args.d, K) * p["z"][rr][:, :, None]).sum(1)
             return torch.log_softmax(lg, 1)
         mu = x @ p["beta"]; ls = torch.zeros(len(ii))
-        if s.kind == "G": g = torch.tensor(GRP[rr]); mu = mu + p["gd"][g]; ls = ls + p["gs"][g]
+        if s.kind == "G": g = torch.tensor(GRP[rr]); mu = mu + p["gd"][g]; ls = ls + (p["gs"] - p["gs"].mean())[g]   # group log-scales centred (Amendment 7): a common scale shift would let the model escape the β penalty
         if s.kind in ("T1", "F1"): ls = ls + x @ p["gam"]
         if s.kind in ("F", "F1", "F_shift"): mu = mu + p["delta"][rr]
         if s.kind in ("F", "F1", "F_scale", "LS"): ls = ls + p["s"][rr]
