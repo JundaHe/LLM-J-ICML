@@ -52,3 +52,26 @@ results/stage2a_dices.{json,md} (training-rater prior) and stage2a_dices_A5.* (k
 - **H4 reverses on DICES**: rater *shift* (how strict a rater is about "unsafe") matters more than rater *scale*, the opposite of MultiPref (where expressiveness — clearly vs slightly — dominated). "Response style" is task-specific: strictness for safety ratings, intensity for two-sided preferences; the text-independent offset model DF captures both.
 - Personalising also improves *which side* a new rater falls on by 4.8 points (unlike MultiPref, where only the symmetric model helped direction), consistent with strictness being a threshold shift.
 - The secondary probit group model G was mis-specified (common-scale escape, Amendment 7); its DICES numbers are superseded by the rerun (stage2a_dices_A7_*). No primary-family number is affected.
+
+## Replication 2: PRISM (Amendment 6; 1–100 response ratings binned to 5 levels; 1,013 new users evaluated; DG/G = user's special_region, 9 groups)
+results/stage2a_prism.{json,md} (primary) and stage2a_prism_A5.* (k-shot-tuned prior). k = 20:
+| | primary | Amendment-5 prior |
+|---|---|---|
+| H1r DF − D | **+0.080 [+0.071, +0.090]** | +0.079 [+0.068, +0.089] |
+| H2r DF − DG (region) | **+0.078 [+0.068, +0.087]** | +0.076 |
+| H3r DF − DL | +0.049 [+0.038, +0.060] | **−0.001 [−0.006, +0.003]** (tie; misses the −0.005 non-inferiority bound by 0.001) |
+| F_scale − F_shift (H4) | −0.031 [−0.042, −0.020] | same |
+| direction accuracy DF − D | +0.005 [+0.001, +0.009] | +0.003 [−0.001, +0.008] |
+- H1r, H2r hold; region groups add +0.003 over text-only. H3r holds under the training-rater prior; under the tuned prior DF and DL are tied (formally not robust: lower bound −0.006 vs −0.005).
+- H4 reverses as on DICES: on single-response rating scales the rater *shift* (lenient vs harsh) dominates; scale > shift is specific to the two-sided preference scale of MultiPref.
+- Note: at k = 50 the tuned prior is unreliable (only 139 users have ≥ 50 adaptation ratings, so the inner k-shot validation set is tiny; DF under the tuned prior is worse than under the training prior there).
+
+DICES G after the Amendment-7 fix (stage2a_dices_A7.*): −0.854 nats at every k (≈ T0 −0.842); no other DICES number changed.
+
+## Cross-dataset summary (k = 20, LL per rating vs the text-only distributional RM D)
+| dataset | rater-offset model DF | group model DG | tuned low-rank DL | DF − DL (tuned) |
+|---|---|---|---|---|
+| MultiPref (pairwise preference) | +0.080 (DFs +0.100) | ≈ 0 (crowd/expert) | +0.095 | −0.015 (DFs − DL +0.005, tie) |
+| DICES-350 (safety) | +0.089 | −0.006 (race) | +0.052 | +0.037 |
+| PRISM (response ratings) | +0.079 | +0.003 (region) | +0.080 | −0.001 (tie) |
+Text-independent rater offsets learned from 20 ratings give +0.08–0.10 nats per rating on all three datasets; demographic or crowd/expert groups give ≈ 0; a tuned 8-dimensional text-interacting latent is at best equal. What the offsets encode is task-specific (strictness on ratings, intensity on two-sided preferences).
