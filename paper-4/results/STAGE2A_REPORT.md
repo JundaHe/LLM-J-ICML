@@ -96,3 +96,17 @@ RC-LoRA = Qwen2.5-7B-Instruct + LoRA trained on prompts that contain 10 of the s
 | 5 | **+0.041 [+0.016, +0.065]** | +0.027 [+0.009, +0.046] | 90 |
 | 20 | **+0.042 [+0.020, +0.065]** | +0.029 [+0.012, +0.047] | 86 |
 **B3 holds, and "better" (lower bound > 0).** RC-LoRA does learn from the history (+0.048 over D-LoRA at k = 20 in LL; fold 0 +0.075, fold 1 +0.021 — one LoRA seed per fold, so fold-to-fold variation is large) but lowers direction accuracy by 3.0 points relative to the non-personalised D-LoRA, whereas the three style offsets learned from the same ratings gain more likelihood without that cost. Cost: RC-LoRA needs 4.4 GPU-hours of training per fold and several thousand prompt tokens of history at every inference; DFs needs three numbers per rater.
+
+## Stage 2c: published personalised RMs (VPL, PAL-B) under the new-rater protocol (PROTOCOL_STAGE2C.md, Amendments 1–2; results/stage2c_summary_A2.md; first run with the collapsed VPL kept in stage2c_summary_A1.md)
+Reimplemented from the official repositories as heads on frozen per-response Qwen2.5-7B embeddings; D/DF/DFs refitted on the same features (Dp/DFp/DFsp). New raters, LL per rating, k = 20:
+| | E1 graded | E2 binary |
+|---|---|---|
+| **C1** DFsp − VPL | **+0.092 [+0.068, +0.119]** | −0.010 [−0.016, −0.003] |
+| **C1** DFsp − PAL-B (K=2 / 4) | **+0.158 / +0.167** | +0.002 / +0.002 |
+| own personalisation gain, model(k=20) − model(k=0): DFsp / VPL / PAL2 / PAL4 | +0.097 / +0.087 / −0.000 / +0.002 | ≈ 0 for all (≤ +0.002) |
+| absolute LL: Dp / DFsp / VPL / PAL2 | −1.494 / −1.400 / −1.492 / −1.558 | −0.607 / −0.612 / −0.602 / −0.614 |
+| direction (E1) / accuracy (E2): Dp / DFsp / VPL | 0.670 / 0.668 / 0.677 | 0.667 / 0.667 / 0.676 |
+- **C1 holds ("better") on graded labels.** With the anti-collapse KL grid (selected KL = 0 or 0.001 in every fold), VPL's latent does carry rater information (+0.087 over its own k = 0), but its k = 0 is poor (−1.578) and its personalised likelihood only reaches the text-only Dp level; PAL-B's user weights give no gain for new raters under a validated adaptation ridge.
+- **C2 holds.** On binary labels (ties dropped) no method personalises (own gains ≤ 0.002 nats; DFsp − Dp accuracy −0.0002): the response-style signal lives in the graded levels and ties, which binary preference data discard.
+- **C3 fails (prediction R² > 0.5).** Cross-validated R² of VPL's z and PAL's weights on the style offsets is ≈ 0 (−0.09 … +0.04): their user representations do *not* encode response style — they miss the signal that carries most of the new-rater gain.
+- Caveat: VPL's per-response reward head predicts *which* response is preferred slightly better than the multinomial head, already at k = 0 (0.677–0.678 vs 0.670), i.e. a text-head architecture effect, not personalisation; a hybrid (VPL text head + style offsets) is untested.
