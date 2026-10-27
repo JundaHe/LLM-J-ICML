@@ -88,3 +88,11 @@ D-LoRA = Qwen2.5-7B-Instruct + LoRA trained per fold on the training raters' rat
 | DFs direction accuracy − D-LoRA | +0.002 [−0.002, +0.006] (requirement: lower bound ≥ −0.005: met) |
 | DL(D-LoRA) − D-LoRA | −0.301 at k = 5, +0.057 at k = 20 (training-rater prior; under-regularised as in stage 2a) |
 B1 and B2 hold. The style gain is not absorbed by a stronger text model; it is additive to it. B3 (in-context personalisation, RC-LoRA, folds 0–1) is running.
+
+## Stage 2b-2: in-context personalisation baseline RC-LoRA (folds 0–1; results/stage2b_B3.{json,md})
+RC-LoRA = Qwen2.5-7B-Instruct + LoRA trained on prompts that contain 10 of the same rater's other ratings; at test, the prompt holds the new rater's k adaptation ratings (same draws as the rater models, draw 0). Paired with the rater models on top of D-LoRA (same base model), same raters:
+| k | DFs(D-LoRA) − RC-LoRA, LL/rating | direction accuracy | raters |
+|---|---|---|---|
+| 5 | **+0.041 [+0.016, +0.065]** | +0.027 [+0.009, +0.046] | 90 |
+| 20 | **+0.042 [+0.020, +0.065]** | +0.029 [+0.012, +0.047] | 86 |
+**B3 holds, and "better" (lower bound > 0).** RC-LoRA does learn from the history (+0.048 over D-LoRA at k = 20 in LL; fold 0 +0.075, fold 1 +0.021 — one LoRA seed per fold, so fold-to-fold variation is large) but lowers direction accuracy by 3.0 points relative to the non-personalised D-LoRA, whereas the three style offsets learned from the same ratings gain more likelihood without that cost. Cost: RC-LoRA needs 4.4 GPU-hours of training per fold and several thousand prompt tokens of history at every inference; DFs needs three numbers per rater.
