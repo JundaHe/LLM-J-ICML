@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -103,11 +103,11 @@ def train(kind, idx_tr, idx_va):
     full = np.concatenate([idx_tr, idx_va]); return set_center(Model(kind, best[1]).fit(full, mdl_keys(kind)), full), best[1]
 def mdl_keys(kind): m_ = Model(kind, (1, 1, 1)); return m_.text_keys() + m_.rater_keys()
 
-def adapt(mdl, idx_ad):
-    """MAP of the rater-side parameters of the test raters in idx_ad, text side frozen; returns a copy"""
+def adapt(mdl, idx_ad, lam_r=None):
+    """MAP of the rater-side parameters of the test raters in idx_ad, text side frozen; returns a copy (lam_r: adaptation prior strength, default = training λr)"""
     keys = mdl.rater_keys()
     if not keys or len(idx_ad) == 0: return mdl
-    c = Model(mdl.kind, mdl.lam); c.p = {k: v.clone() for k, v in mdl.p.items()}; c.center = dict(mdl.center)
+    c = Model(mdl.kind, mdl.lam if lam_r is None else (mdl.lam[0], lam_r, mdl.lam[2])); c.p = {k: v.clone() for k, v in mdl.p.items()}; c.center = dict(mdl.center)
     te = torch.tensor(np.unique(R[idx_ad]))
     for k in keys: c.p[k][te] = c.center[k][te]                       # start new raters at the prior mean
     return c.fit(idx_ad, keys)
@@ -130,7 +130,27 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
     idx_ad_pool = np.where(~is_tr_r & tr_item)[0]; idx_te = np.where(~is_tr_r & ~tr_item)[0]; idx_seen = np.where(is_tr_r & ~tr_item)[0]
     fits = {}; lam_sel = {}
     for kind in MODELS: fits[kind], lam_sel[kind] = train(kind, idx_tr, idx_va); print(f"fold {f} trained {kind} λ={lam_sel[kind]} [{time.time()-t0:.0f}s]", flush=True)
-    out["folds"].append({"fold": f, "lam": lam_sel, "n_train": int(len(idx_tr) + len(idx_va)), "n_test": int(len(idx_te)), "n_test_raters": int(test_r.sum())})
+    LAD = {}
+    if args.adapt_tune:                                                      # Amendment 5: inner split of the training raters; text side + rater params refit without them
+        tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); rs5 = np.random.RandomState(3 + f); vr = set(rs5.choice(tr_r, len(tr_r) // 5, replace=False))
+        in_v = np.isin(R, list(vr)); full_tr = np.concatenate([idx_tr, idx_va]); idx_in = full_tr[~in_v[full_tr]]
+        ad_pool5 = idx_tr[in_v[idx_tr]]; sc5 = idx_va[in_v[idx_va]]           # inner-val raters: adapt on non-validation training items, score on validation items
+        for kind in ("DF", "DFs", "DL", "F", "F1"):
+            m5 = set_center(Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in)
+            for k in [k_ for k_ in KS if k_ > 0]:
+                best = None
+                for la in (0.5, 2, 8, 32, 128, 512, 2048, 8192):
+                    v = []
+                    for dr in range(2):
+                        rng5 = np.random.RandomState(50_000 + 100 * k + dr); ad = []; keep = []
+                        for r in vr:
+                            pool = ad_pool5[R[ad_pool5] == r]
+                            if len(pool) >= k: keep.append(r); ad.extend(rng5.choice(pool, k, replace=False))
+                        sc = sc5[np.isin(R[sc5], keep)]; v.append(adapt(m5, np.array(ad, int), la).per_rating(sc)[0].mean())
+                    if best is None or np.mean(v) > best[0]: best = (float(np.mean(v)), la)
+                LAD[(kind, k)] = best[1]
+            print(f"fold {f} adapt-tuned {kind}: " + ", ".join(f"k={k}:{LAD[(kind, k)]}" for k in KS if k > 0) + f" [{time.time()-t0:.0f}s]", flush=True)
+    out["folds"].append({"fold": f, "lam": lam_sel, "lam_adapt": {f"{a}_{b}": v for (a, b), v in LAD.items()}, "n_train": int(len(idx_tr) + len(idx_va)), "n_test": int(len(idx_te)), "n_test_raters": int(test_r.sum())})
     test_raters = np.unique(R[idx_te])
     for k in KS:
         for dr in range(args.draws if k > 0 else 1):
@@ -142,7 +162,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
             ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep)]
             res = {}
             for kind in MODELS:
-                mdl = adapt(fits[kind], ad) if k > 0 else fits[kind]
+                mdl = adapt(fits[kind], ad, LAD.get((kind, k))) if k > 0 else fits[kind]
                 if k == 0 and mdl.rater_keys():                                    # unseen raters: prior (training-rater) mean
                     mdl = Model(kind, mdl.lam); mdl.p = {kk: v.clone() for kk, v in fits[kind].p.items()}; mdl.center = dict(fits[kind].center)
                     for kk in mdl.rater_keys(): mdl.p[kk] = mdl.center[kk].clone()
