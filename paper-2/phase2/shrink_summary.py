@@ -2,8 +2,8 @@
 panels (SHRINKAGE_PROTOCOL Gate A (i); panels are not independent — stated). Writes results/shrinkage/SUMMARY.md."""
 import glob, os, json, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); ARMS = ("qT", "shr", "shr2", "loc", "dir_in", "ls_in", "lsm_in", "jsp", "qs", "shr_s")
-rows = []; lines = ["# Annotation-side shrinkage (Gate A) — contrasts vs raw histogram, RPS, 95 % item-cluster bootstrap", "", "| panel | a | λ̂ | ρ_loc | " + " | ".join(ARMS) + " |", "|---|---|---|---|" + "---|" * len(ARMS)]
-for f in sorted(glob.glob(f"{HERE}/results/shrinkage/*_a*.json")):
+rows = []; lines = ["# Annotation-side shrinkage (Gate A) — contrasts vs raw histogram, RPS, 95 % item-cluster bootstrap (corrected: copies of a resampled item share one fold)", "", "| panel | a | λ̂ | ρ_loc | " + " | ".join(ARMS) + " |", "|---|---|---|---|" + "---|" * len(ARMS)]
+for f in sorted(glob.glob(f"{HERE}/results/shrinkage/*_a*_bfix.json")):   # _bfix = corrected cluster bootstrap (DECODING Amendment 3 fix); the untagged pre-fix files are superseded
     r = json.load(open(f)); e = r["est"]["vs_raw"]; c = r["ci95"]["vs_raw"]; rows.append(r)
     lines.append(f"| {r['panel']} | {r['a']} | {r['est']['lam_hat']:.2f} | {r['est'].get('rho_loc', float('nan')):.2f} | " + " | ".join(f"{e[k]:+.4f} [{c[k][0]:+.4f}, {c[k][1]:+.4f}]" if k in e else "—" for k in ARMS) + " |")
 def pooled(key, ref="vs_raw"):
