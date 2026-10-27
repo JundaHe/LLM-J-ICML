@@ -19,3 +19,20 @@ Preference-direction accuracy (D 0.674): DF −0.014 [−0.020, −0.007] at k =
 
 ## What this says (descriptive)
 For a new rater, three numbers describing **how they use the scale** — how often they say "clearly", how often "slightly", how often "tie" — learned from 5–20 of their ratings and independent of the text, improve held-out likelihood over a distributional reward model by 0.05–0.10 nats per rating and slightly improve predicting which response they prefer; modelling *which side* they lean to, groups (crowd vs expert), or a text-interacting 8-dimensional latent does not help more at few shots. Not yet tested: end-to-end reward model (stage 2b), a second dataset, robustness to the adaptation prior (Amendment 5).
+
+## Amendment 5 sensitivity (adaptation prior tuned per model and k by k-shot validation on held-out training raters; results/stage2a_multipref_overall_A5.*)
+| k | DF − D | DFs − D | DL − D | DF − DL (H3) | DFs − DL (post hoc) | dir: DFs − D | dir: DFs − DL |
+|---|---|---|---|---|---|---|---|
+| 5 | +0.035 [+0.026, +0.043] | +0.049 [+0.032, +0.067] | +0.023 [−0.002, +0.047] | +0.012 [−0.007, +0.031] | +0.026 [+0.016, +0.037] | +0.003 [+0.000, +0.006] | −0.001 [−0.005, +0.002] |
+| 10 | +0.058 | +0.077 | +0.068 | −0.009 [−0.024, +0.004] | +0.010 [+0.003, +0.017] | +0.003 | −0.000 |
+| 20 | +0.080 | **+0.100 [+0.074, +0.128]** | +0.095 [+0.069, +0.122] | **−0.015 [−0.021, −0.009]** | +0.0045 [−0.0004, +0.0092] | +0.005 [+0.001, +0.008] | −0.000 [−0.004, +0.003] |
+| 50 | +0.114 | +0.128 | +0.120 | −0.006 [−0.012, −0.000] | +0.007 [+0.002, +0.013] | +0.004 | +0.010 [+0.004, +0.015] |
+
+Selected adaptation priors: DF/DFs λ_ad ∈ {0.5, 2} (close to the training choice); DL λ_ad = 8192 (grid top) at k ≤ 20 in most folds — with the unpenalised constant column w₀ the scale of z is not identified, so a large λ on z does not pin the effective rater offsets to zero.
+
+**Reading against the prespecified robustness criterion (k = 20):**
+- **H3 is NOT robust.** With a few-shot-tuned prior the low-rank latent model DL catches up and beats the 5-parameter DF (−0.015 [−0.021, −0.009]); the primary-run advantage of DF over DL came from DL's under-regularised few-shot adaptation.
+- **H6 is robust.** DFs − D is unchanged (+0.100 nats/rating; direction accuracy +0.005 [+0.001, +0.008]).
+- Post hoc (not registered; flagged as such): the 3-parameter symmetric style model DFs is **at least as good as the tuned 8-dimensional text-interacting latent DL at every k** — better at k = 5, 10 and 50, tied at k = 20 (+0.0045 [−0.0004, +0.0092]) — with equal direction accuracy at k ≤ 20. DF's deficit relative to DL is its A-vs-B position term.
+
+**Revised one-line claim:** for new raters, three text-independent numbers describing how a rater uses a two-sided preference scale (extreme / slight / tie) capture essentially all the few-shot personalisation gain that an 8-dimensional text-interacting rater latent achieves, and more of it at very few shots; position (A/B) propensities and demographic/crowd-vs-expert groups add nothing or hurt.
