@@ -75,3 +75,16 @@ DICES G after the Amendment-7 fix (stage2a_dices_A7.*): −0.854 nats at every k
 | DICES-350 (safety) | +0.089 | −0.006 (race) | +0.052 | +0.037 |
 | PRISM (response ratings) | +0.079 | +0.003 (region) | +0.080 | −0.001 (tie) |
 Text-independent rater offsets learned from 20 ratings give +0.08–0.10 nats per rating on all three datasets; demographic or crowd/expert groups give ≈ 0; a tuned 8-dimensional text-interacting latent is at best equal. What the offsets encode is task-specific (strictness on ratings, intensity on two-sided preferences).
+
+## Stage 2b-1: rater models on a fine-tuned LoRA reward model (PROTOCOL_STAGE2B.md; 5 folds; results/stage2a_multipref_overall_lora.*)
+D-LoRA = Qwen2.5-7B-Instruct + LoRA trained per fold on the training raters' rating distributions of the training items; its 5 score-token log-probs are the frozen text head (lg = a·ℓ + b + rater terms). New raters, k = 20, LL per rating (paired rater-cluster bootstrap against the frozen-feature run on the same raters and draws):
+| | value |
+|---|---|
+| **B1** DFs(D-LoRA) − D-LoRA | **+0.100 [+0.071, +0.130]** (frozen head: +0.100) |
+| DF(D-LoRA) − D-LoRA | +0.081 [+0.056, +0.109] |
+| **B2** D-LoRA − D(frozen) | **+0.027 [+0.016, +0.039]**; direction accuracy +0.014 [+0.003, +0.024] (0.674 → 0.688) |
+| DFs(D-LoRA) − DFs(frozen) | +0.027 [+0.017, +0.038] — the text and rater gains add |
+| DFs(frozen, 20 ratings) − D-LoRA | +0.072 [+0.041, +0.106] — three numbers per rater gain more than fine-tuning the text model |
+| DFs direction accuracy − D-LoRA | +0.002 [−0.002, +0.006] (requirement: lower bound ≥ −0.005: met) |
+| DL(D-LoRA) − D-LoRA | −0.301 at k = 5, +0.057 at k = 20 (training-rater prior; under-regularised as in stage 2a) |
+B1 and B2 hold. The style gain is not absorbed by a stronger text model; it is additive to it. B3 (in-context personalisation, RC-LoRA, folds 0–1) is running.
