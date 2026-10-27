@@ -1,0 +1,22 @@
+{
+ "panel": "multipref_overall",
+ "fold": 1,
+ "mode": "d",
+ "n_examples": 7119,
+ "n_steps": 890,
+ "train_s": 2809,
+ "protocol": "PROTOCOL_STAGE2B.md",
+ "args": {
+  "panel": "multipref_overall",
+  "fold": 1,
+  "mode": "d",
+  "lr": 0.0001,
+  "accum": 8,
+  "lora_r": 16,
+  "seed": 2000,
+  "rc_pairs": 8000,
+  "rc_hist": 10,
+  "ks": "5,20",
+  "max_steps": -1
+ }
+}
