@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -23,6 +23,8 @@ else:                                                                    # Amend
 NG = int(GRP.max()) + 1
 if not (args.panel.startswith("multipref") and K == 5): MODELS = tuple(m_ for m_ in MODELS if m_ != "DFs")   # symmetric A/B style model only for 5-level two-sided preference scales
 MID = (K - 1) / 2
+TEXTL = bool(args.text_logits); LT = None
+if TEXTL: MODELS = tuple(m_ for m_ in MODELS if m_ in ("D", "DG", "DF", "DFs", "DL"))   # stage 2b: lg = a·ℓ_LoRA + b + rater terms
 F_ = np.load(f"{P2}/features/{args.panel}/Qwen2.5-7B-Instruct.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, Vt = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0)   # label-free PCA-256, unit-variance scores
 X = torch.tensor(X); Gp = np.asarray(PAN["groups"])
@@ -37,16 +39,17 @@ class Model:
     def __init__(s, kind, lam):
         s.kind, s.lam = kind, lam; d = args.d
         s.p = {"beta": torch.zeros(256), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
-               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(256), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
+               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(256), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3), "a": torch.ones(1)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
         s.center = {}
     def text_keys(s):
+        if TEXTL and s.kind in ("D", "DG", "DF", "DFs", "DL"): return {"D": ["a", "b"], "DG": ["a", "b", "gb"], "DF": ["a", "b"], "DFs": ["a", "b"], "DL": ["a", "b", "W5", "w0"]}[s.kind]
         return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
     def rater_keys(s):
         return {"DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
     def logp(s, ii, rr):
         p = s.p; x = X[ii]
         if s.kind in ("D", "DG", "DF", "DFs", "DL"):
-            lg = x @ p["V"] + p["b"]
+            lg = (p["a"] * LT[ii] if TEXTL else x @ p["V"]) + p["b"]
             if s.kind == "DG": lg = lg + p["gb"][torch.tensor(GRP[rr])]
             if s.kind == "DF": lg = lg + p["Br"][rr]
             if s.kind == "DFs": lg = lg + p["Bs"][rr][:, [0, 1, 2, 1, 0]]   # symmetric style offsets: extreme / slight / tie (no A-vs-B position term; Amendment 4)
@@ -130,6 +133,8 @@ if args.merge:
     for tg in args.merge.split(","):
         o_ = json.load(open(f"{HERE}/results/stage2a_{args.panel}{tg}.json")); out["folds"] += o_["folds"]; out["per_rater"] += o_["per_rater"]
 for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
+    if TEXTL:
+        LT = torch.tensor(np.load(args.text_logits.format(f=f)).astype(np.float64)); assert np.array_equal(np.load(os.path.join(os.path.dirname(args.text_logits.format(f=f)), "item_ids.npy")), np.asarray(PAN["item_ids"]).astype(str))
     test_r = rfold == f; tr_item = ifold[I] != f; is_tr_r = ~test_r[R]
     va_item = np.array([vf[g_] for g_ in Gp])[I]
     idx_tr = np.where(is_tr_r & tr_item & ~va_item)[0]; idx_va = np.where(is_tr_r & tr_item & va_item)[0]
