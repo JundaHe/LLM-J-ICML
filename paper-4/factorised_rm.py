@@ -12,11 +12,17 @@ torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dty
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
 # ---------------------------------------------------------------- data (long format)
-PAN = data_panels.load(args.panel); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"]
+PAN = data_panels.load(args.panel); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"] if "evaluators" in PAN else [list(PAN["rater_ids"])] * n   # crossed panels: column = rater
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
 I = np.repeat(np.arange(n), m); R = np.array([rid[e] for row in ev for e in row]); Y = H.reshape(-1); POS = np.tile(np.arange(m), n)
 GRP = np.zeros(NR, int)
-for i in range(len(R)): GRP[R[i]] = int(POS[i] >= 2)                     # 0 = crowd (positions 0,1), 1 = expert (2,3); disjoint sets (checked)
+if args.panel.startswith("multipref"):
+    for i in range(len(R)): GRP[R[i]] = int(POS[i] >= 2)                 # 0 = crowd (positions 0,1), 1 = expert (2,3); disjoint sets (checked)
+else:                                                                    # Amendment 6: demographic group (PRISM special_region; DICES rater_race)
+    gmap = PAN["rater_group"] if "rater_group" in PAN else data_panels.dices_rater_race(); glev = sorted({gmap.get(r, "NA") for r in raters}); GRP = np.array([glev.index(gmap.get(r, "NA")) for r in raters])
+NG = int(GRP.max()) + 1
+if not (args.panel.startswith("multipref") and K == 5): MODELS = tuple(m_ for m_ in MODELS if m_ != "DFs")   # symmetric A/B style model only for 5-level two-sided preference scales
+MID = (K - 1) / 2
 F_ = np.load(f"{P2}/features/{args.panel}/Qwen2.5-7B-Instruct.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, Vt = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0)   # label-free PCA-256, unit-variance scores
 X = torch.tensor(X); Gp = np.asarray(PAN["groups"])
@@ -31,7 +37,7 @@ class Model:
     def __init__(s, kind, lam):
         s.kind, s.lam = kind, lam; d = args.d
         s.p = {"beta": torch.zeros(256), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
-               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(2), "gs": torch.zeros(2), "gam": torch.zeros(256), "gb": torch.zeros(2, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
+               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(256), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
         s.center = {}
     def text_keys(s):
         return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
@@ -74,7 +80,7 @@ class Model:
             lp = s.logp(torch.tensor(I[idx]), torch.tensor(R[idx])); pk = lp.exp(); yy = Y[idx]
             ll = lp[torch.arange(len(idx)), torch.tensor(yy)].numpy()
             cdf = torch.cumsum(pk, 1).numpy(); step = (np.arange(K)[None, :] >= yy[:, None]).astype(float); rps = ((cdf - step) ** 2).sum(1) / (K - 1)
-            ey = (pk.numpy() * np.arange(K)).sum(1); dirc = np.where(yy == 2, np.nan, (np.sign(ey - 2) == np.sign(yy - 2)).astype(float))
+            ey = (pk.numpy() * np.arange(K)).sum(1); dirc = np.where(yy == MID, np.nan, (np.sign(ey - MID) == np.sign(yy - MID)).astype(float))
         return ll, rps, dirc
 
 def set_center(mdl, idx):
@@ -114,7 +120,7 @@ def adapt(mdl, idx_ad, lam_r=None):
 
 # ---------------------------------------------------------------- folds
 rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
-for g in (0, 1):
+for g in np.unique(GRP):
     ids = np.where(GRP == g)[0]; ids = ids[rs.permutation(len(ids))]; rfold[ids] = np.arange(len(ids)) % 5
 ug = np.unique(Gp); perm = np.random.RandomState(0).permutation(len(ug)); gf = {g_: perm[j] % 5 for j, g_ in enumerate(ug)}; ifold = np.array([gf[g_] for g_ in Gp])
 _rv = np.random.RandomState(1).rand(len(ug)); vf = {g_: bool(_rv[j] < 0.15) for j, g_ in enumerate(ug)}                              # validation prompt groups (15 %) inside training items
@@ -135,7 +141,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
         tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); rs5 = np.random.RandomState(3 + f); vr = set(rs5.choice(tr_r, len(tr_r) // 5, replace=False))
         in_v = np.isin(R, list(vr)); full_tr = np.concatenate([idx_tr, idx_va]); idx_in = full_tr[~in_v[full_tr]]
         ad_pool5 = idx_tr[in_v[idx_tr]]; sc5 = idx_va[in_v[idx_va]]           # inner-val raters: adapt on non-validation training items, score on validation items
-        for kind in ("DF", "DFs", "DL", "F", "F1"):
+        for kind in [k_ for k_ in ("DF", "DFs", "DL", "F", "F1") if k_ in MODELS]:
             m5 = set_center(Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in)
             for k in [k_ for k_ in KS if k_ > 0]:
                 best = None
@@ -189,6 +195,7 @@ for k in KS:
     for mt in ("ll", "rps", "dir"): s_k[mt] = {kind: float(agg[mt][kind].sum() / den[mt].sum()) for kind in MODELS}
     bidx = [rng.randint(0, len(keys_), len(keys_)) for _ in range(args.B)]
     for a, b in (("DFs", "D"), ("DF", "DFs"), ("DF", "D"), ("DF", "DG"), ("DF", "DL"), ("DL", "D"), ("DG", "D"), ("F1", "DF"), ("F", "T0"), ("F", "G"), ("F", "L"), ("F", "D"), ("F_scale", "F_shift"), ("F", "LS"), ("G", "T0"), ("L", "T0"), ("F1", "T1"), ("F1", "G"), ("F1", "L"), ("F1", "LS"), ("F1", "D"), ("T1", "D")):
+        if a not in MODELS or b not in MODELS: continue
         for mt in ("ll", "rps", "dir"):
             d = agg[mt][a] - agg[mt][b]; pt = d.sum() / den[mt].sum(); bs = [d[ix].sum() / den[mt][ix].sum() for ix in bidx]
             s_k[f"{a}-{b}_{mt}"] = [float(pt), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
@@ -198,7 +205,7 @@ lines = [f"# Stage 2a — {args.panel}: new raters, k adaptation ratings (PROTOC
 for k in KS: lines.append(f"| {k} | {summ[k]['n_raters']} | " + " | ".join(f"{summ[k]['ll'][m_]:.4f}" for m_ in MODELS) + " |")
 lines += ["", "| k | DF−D (H1) | DF−DG (H2) | DF−DL (H3) | F_scale−F_shift (H4) | DFs−D | DF−DFs | F1−T1 | DL−D |", "|---|---|---|---|---|---|---|---|---|"]
 fmt = lambda v: f"{v[0]:+.4f} [{v[1]:+.4f}, {v[2]:+.4f}]"
-for k in KS: lines.append(f"| {k} | " + " | ".join(fmt(summ[k][f"{p}_ll"]) for p in ("DF-D", "DF-DG", "DF-DL", "F_scale-F_shift", "DFs-D", "DF-DFs", "F1-T1", "DL-D")) + " |")
-lines += ["", "| k | dir D | dir DF | dir DFs | dir DL | DF−D dir | DFs−D dir |", "|---|---|---|---|---|---|---|"] + [f"| {k} | " + " | ".join(f"{summ[k]['dir'][m_]:.3f}" for m_ in ("D", "DF", "DFs", "DL")) + " | " + " | ".join(fmt(summ[k][f"{p}_dir"]) for p in ("DF-D", "DFs-D")) + " |" for k in KS]
+for k in KS: lines.append(f"| {k} | " + " | ".join((fmt(summ[k][f"{p}_ll"]) if f"{p}_ll" in summ[k] else "--") for p in ("DF-D", "DF-DG", "DF-DL", "F_scale-F_shift", "DFs-D", "DF-DFs", "F1-T1", "DL-D")) + " |")
+lines += ["", "| k | dir D | dir DF | dir DFs | dir DL | DF−D dir | DFs−D dir |", "|---|---|---|---|---|---|---|"] + [f"| {k} | " + " | ".join((f"{summ[k]['dir'][m_]:.3f}" if m_ in MODELS else "--") for m_ in ("D", "DF", "DFs", "DL")) + " | " + " | ".join((fmt(summ[k][f"{p}_dir"]) if f"{p}_dir" in summ[k] else "--") for p in ("DF-D", "DFs-D")) + " |" for k in KS]
 lines += ["", "Held-out log-likelihood per rating of new raters' ratings of held-out items; differences with 95 %% rater-cluster bootstrap (B = %d). RPS and direction accuracy in the JSON." % args.B]
 open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))

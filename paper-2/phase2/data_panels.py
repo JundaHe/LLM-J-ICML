@@ -434,3 +434,24 @@ def load_multipref(crit="overall", max_chars=2500):
                 rater_ids=np.array(["pos_crowd0", "pos_crowd1", "pos_expert0", "pos_expert1"]), prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct",
                 evaluators=[[a["evaluator"] for a in (r["normal_worker_annotations"] + r["expert_worker_annotations"])] for r in rows])
 LOADERS.update({"multipref_overall": lambda: load_multipref("overall"), "multipref_helpful": lambda: load_multipref("helpful"), "multipref_harmless": lambda: load_multipref("harmless")})
+
+# ----------------------------------------------------------------------------------------------- PRISM (HannahRoseKirk/prism-alignment; paper 4 stage 2, Amendment 6): every model response rated 1–100 by ONE user
+# (68,371 ratings, 1,396 users). Long format: one item per rated utterance, H is n × 1, evaluators = the rating user; score binned to 5 fixed levels (1–20, 21–40, 41–60, 61–80, 81–100);
+# groups = conversation_id; rater_group = the user's PRISM special_region (the dataset's sampling stratum).
+PRISM_DIR = LLMJ + "/paper-4/data/prism"
+_PR_TPL = ("You are rating an AI assistant's response to a user's message. Rate how good the response is on a 5-point scale (1 = very poor, 5 = excellent).\n"
+           "Respond ONLY with JSON:\n{\n\"score\": \"1-5\"\n}\nPlease ensure the complete JSON format is placed between the three quotes ``` ``` for easy extraction.\n\n")
+def load_prism(max_chars=2500):
+    u = pd.read_json(f"{PRISM_DIR}/utterances.jsonl", lines=True).dropna(subset=["score"]).sort_values("utterance_id").reset_index(drop=True)
+    s = pd.read_json(f"{PRISM_DIR}/survey.jsonl", lines=True); reg = {r.user_id: (r.location or {}).get("special_region", "NA") if isinstance(r.location, dict) else "NA" for r in s.itertuples()}
+    y = np.clip(((u.score.to_numpy().astype(float) - 1) // 20).astype(int), 0, 4)
+    texts = [f"USER:\n{str(p)[:max_chars]}\n\nASSISTANT RESPONSE:\n{str(r)[:max_chars]}" for p, r in zip(u.user_prompt, u.model_response)]
+    def prompt(text): return _PR_TPL + text + "\n\nEnd of the response. Please present your rating in the required JSON format."
+    return dict(name="prism", texts=texts, H=y[:, None], K=5, item_ids=u.utterance_id.astype(str).to_numpy(), groups=u.conversation_id.astype(str).to_numpy(),
+                rater_ids=np.array(["user"]), evaluators=[[str(x)] for x in u.user_id], rater_group={str(k): str(v) for k, v in reg.items()},
+                prompt=prompt, LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct")
+LOADERS.update({"prism": load_prism})
+
+def dices_rater_race():
+    """DICES-350 rater → rater_race (paper 4 stage 2, Amendment 6: demographic group for the group-conditioned baseline)"""
+    d = pd.read_csv(DICES); return {str(r): str(g) for r, g in d.groupby("rater_id").rater_race.first().items()}
