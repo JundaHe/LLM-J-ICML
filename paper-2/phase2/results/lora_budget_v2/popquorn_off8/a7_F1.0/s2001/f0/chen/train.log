@@ -19,3 +19,8 @@ step 140/205 loss 0.3862 137s maxlen 240 mem 16.1GB
 step 150/205 loss 0.3970 145s maxlen 240 mem 16.1GB
 step 160/205 loss 0.4225 153s maxlen 240 mem 16.1GB
 step 170/205 loss 0.3927 162s maxlen 240 mem 16.1GB
+step 180/205 loss 0.4059 170s maxlen 240 mem 16.1GB
+step 190/205 loss 0.3496 178s maxlen 240 mem 16.1GB
+step 200/205 loss 0.3538 187s maxlen 240 mem 16.1GB
+step 205/205 loss 0.3257 191s maxlen 240 mem 16.1GB
+done
