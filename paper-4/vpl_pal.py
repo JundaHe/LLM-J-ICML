@@ -219,6 +219,7 @@ t0 = time.time(); out = {"fold": f, "eval": args.eval, "protocol": "PROTOCOL_STA
 fits = {}
 for mname in MODELS:
     if mname in ("Dp", "DFp", "DFsp"): fits[mname] = train_D(mname); out["hp"][mname] = fits[mname][1]
+    elif mname == "VPLs": continue                                       # uses the trained VPL
     elif mname == "VPL": fits[mname] = train_vpl(); out["hp"][mname] = fits[mname][1]
     else: mdl_, hp_, w0_ = train_pal(int(mname[3:])); hp_["lam_adapt"] = tune_pal_lambda(int(mname[3:]), hp_); fits[mname] = (mdl_, w0_, hp_["lam_adapt"]); out["hp"][mname] = hp_
     print(f"fold {f} {args.eval} trained {mname} {out['hp'][mname]} [{time.time()-t0:.0f}s]", flush=True)
@@ -232,6 +233,7 @@ for k in KS:
             keep_r.append(r); ad.extend(rng.choice(pool, k, replace=False))
         ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep_r)]; res = {}; lat = {}
         for mname in MODELS:
+            if mname == "VPLs": continue
             if mname in ("Dp", "DFp", "DFsp"):
                 lp, c = adapt_D(fits[mname][0], ad, te); res[mname] = metrics(lp, te)
                 if mname == "DFsp": lat["DFs"] = c.Bs
@@ -242,13 +244,23 @@ for k in KS:
                     if k > 0: ctx = [torch.tensor(ad[R[ad] == r], device=DEV) for r in keep_r]; mean, _ = mdl.encode(ctx)
                     else: mean = torch.zeros(len(keep_r), 512, device=DEV)            # k = 0: prior mean of z
                     zmap = dict(zip(keep_r, mean))
-                    z = torch.stack([zmap[int(r)] for r in R[te]]); res[mname] = metrics(mdl.logp(torch.tensor(te, device=DEV), z), te); lat["VPL"] = zmap
+                    z = torch.stack([zmap[int(r)] for r in R[te]]); lpv = mdl.logp(torch.tensor(te, device=DEV), z); res[mname] = metrics(lpv, te); lat["VPL"] = zmap
+                if "VPLs" in MODELS and not BIN:                          # Amendment 3: VPL + symmetric style offsets fitted on the same k ratings (VPL frozen)
+                    if k > 0:
+                        with torch.no_grad(): za = torch.stack([zmap[int(r)] for r in R[ad]]); lpa = mdl.logp(torch.tensor(ad, device=DEV), za)
+                        rix = {int(r): j for j, r in enumerate(keep_r)}; ra = torch.tensor([rix[int(r)] for r in R[ad]], device=DEV); ya = Yt[torch.tensor(ad, device=DEV)]
+                        Bs = torch.zeros(len(keep_r), 3, device=DEV, requires_grad=True); opt_s = torch.optim.LBFGS([Bs], lr=0.5, max_iter=200, line_search_fn="strong_wolfe")
+                        def cl_s():
+                            opt_s.zero_grad(); l2 = torch.log_softmax(lpa + Bs[ra][:, [0, 1, 2, 1, 0]], 1); loss = -l2[torch.arange(len(ad)), ya].sum() + 2.0 * (Bs ** 2).sum(); loss.backward(); return loss
+                        opt_s.step(cl_s); rt = torch.tensor([rix[int(r)] for r in R[te]], device=DEV)
+                        with torch.no_grad(): res["VPLs"] = metrics(torch.log_softmax(lpv + Bs.detach()[rt][:, [0, 1, 2, 1, 0]], 1), te)
+                    else: res["VPLs"] = res[mname]
             else:
                 lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3)); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
         for r in keep_r:
             sel = R[te] == r
             out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n": int(sel.sum()), "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
-                                     **{f"{mn}_{mt}": float(np.nansum(res[mn][j][sel])) for mn in MODELS for j, mt in enumerate(("ll", "rps", "dir"))}})
+                                     **{f"{mn}_{mt}": float(np.nansum(res[mn][j][sel])) for mn in res for j, mt in enumerate(("ll", "rps", "dir"))}})
             if k == max(KS) and dr == 0:                                  # C3: per-rater latents at the largest k, draw 0
                 row = {"fold": f, "rater": int(r)}
                 for key, v in lat.items(): row[key] = (v[int(r)] if isinstance(v, dict) else v[int(r)]).detach().cpu().numpy().tolist()
