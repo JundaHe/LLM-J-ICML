@@ -9,7 +9,7 @@ import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
 ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
-KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
+KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
 # ---------------------------------------------------------------- data (long format)
 PAN = data_panels.load(args.panel); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"]
@@ -31,31 +31,32 @@ class Model:
     def __init__(s, kind, lam):
         s.kind, s.lam = kind, lam; d = args.d
         s.p = {"beta": torch.zeros(256), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
-               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(2), "gs": torch.zeros(2), "gam": torch.zeros(256), "gb": torch.zeros(2, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01}
+               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(2), "gs": torch.zeros(2), "gam": torch.zeros(256), "gb": torch.zeros(2, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
         s.center = {}
     def text_keys(s):
-        return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DL": ["V", "b", "W5"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W"], "LS": ["beta", "c0", "W"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
+        return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
     def rater_keys(s):
-        return {"DF": ["Br"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
+        return {"DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
     def logp(s, ii, rr):
         p = s.p; x = X[ii]
-        if s.kind in ("D", "DG", "DF", "DL"):
+        if s.kind in ("D", "DG", "DF", "DFs", "DL"):
             lg = x @ p["V"] + p["b"]
             if s.kind == "DG": lg = lg + p["gb"][torch.tensor(GRP[rr])]
             if s.kind == "DF": lg = lg + p["Br"][rr]
-            if s.kind == "DL": lg = lg + ((x @ p["W5"]).view(len(ii), args.d, K) * p["z"][rr][:, :, None]).sum(1)
+            if s.kind == "DFs": lg = lg + p["Bs"][rr][:, [0, 1, 2, 1, 0]]   # symmetric style offsets: extreme / slight / tie (no A-vs-B position term; Amendment 4)
+            if s.kind == "DL": lg = lg + ((x @ p["W5"] + p["w0"]).view(len(ii), args.d, K) * p["z"][rr][:, :, None]).sum(1)
             return torch.log_softmax(lg, 1)
         mu = x @ p["beta"]; ls = torch.zeros(len(ii))
         if s.kind == "G": g = torch.tensor(GRP[rr]); mu = mu + p["gd"][g]; ls = ls + p["gs"][g]
         if s.kind in ("T1", "F1"): ls = ls + x @ p["gam"]
         if s.kind in ("F", "F1", "F_shift"): mu = mu + p["delta"][rr]
         if s.kind in ("F", "F1", "F_scale", "LS"): ls = ls + p["s"][rr]
-        if s.kind in ("L", "LS"): mu = mu + ((x @ p["W"]) * p["z"][rr]).sum(1)
+        if s.kind in ("L", "LS"): mu = mu + ((x @ p["W"] + p["wl0"]) * p["z"][rr]).sum(1)
         return torch.log(probit_pk(mu, torch.exp(ls), p["c0"]))
     def penalty(s, keys):
         lb, lr, lw = s.lam; p = s.p; out = 0.0
         for k in keys:
-            w = {"beta": lb, "V": lb, "gam": lb, "W": lw, "W5": lw, "delta": lr, "s": lr, "z": lr, "Br": lr, "gd": 1.0, "gs": 1.0, "gb": 1.0}.get(k, 0.0)
+            w = {"beta": lb, "V": lb, "gam": lb, "W": lw, "W5": lw, "delta": lr, "s": lr, "z": lr, "Br": lr, "Bs": lr, "gd": 1.0, "gs": 1.0, "gb": 1.0}.get(k, 0.0)
             out = out + w * ((p[k] - s.center[k]) ** 2).sum() if k in s.center else out + w * (p[k] ** 2).sum()   # adaptation shrinks toward the training-rater mean (Amendment 2)
         return out
     def fit(s, idx, keys):
@@ -84,7 +85,7 @@ def set_center(mdl, idx):
 # Amendment 3: coordinate-wise selection on extended grids. The text penalty λβ is chosen on the rater-agnostic base model of each family (D for DG/DF/DL; T0 for G/F/F_shift/F_scale/L/LS; T1 for F1)
 # and then held fixed while the rater-side penalties are chosen.
 LB, LR, LW = (10, 100, 300, 1000, 3000, 10000), (0.5, 2, 8, 32, 128, 512), (1, 10, 100, 1000, 10000)
-BASE = {"DG": "D", "DF": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1"}
+BASE = {"DG": "D", "DF": "D", "DFs": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1"}
 SEL = {}
 def grid(kind):
     if kind in ("D", "T0", "T1"): return [(lb, 0, 0) for lb in LB]
@@ -167,7 +168,7 @@ for k in KS:
     den = {"ll": nn_, "rps": nn_, "dir": nd}; s_k = {"n_raters": len(keys_), "n_ratings": float(nn_.sum())}
     for mt in ("ll", "rps", "dir"): s_k[mt] = {kind: float(agg[mt][kind].sum() / den[mt].sum()) for kind in MODELS}
     bidx = [rng.randint(0, len(keys_), len(keys_)) for _ in range(args.B)]
-    for a, b in (("DF", "D"), ("DF", "DG"), ("DF", "DL"), ("DL", "D"), ("DG", "D"), ("F1", "DF"), ("F", "T0"), ("F", "G"), ("F", "L"), ("F", "D"), ("F_scale", "F_shift"), ("F", "LS"), ("G", "T0"), ("L", "T0"), ("F1", "T1"), ("F1", "G"), ("F1", "L"), ("F1", "LS"), ("F1", "D"), ("T1", "D")):
+    for a, b in (("DFs", "D"), ("DF", "DFs"), ("DF", "D"), ("DF", "DG"), ("DF", "DL"), ("DL", "D"), ("DG", "D"), ("F1", "DF"), ("F", "T0"), ("F", "G"), ("F", "L"), ("F", "D"), ("F_scale", "F_shift"), ("F", "LS"), ("G", "T0"), ("L", "T0"), ("F1", "T1"), ("F1", "G"), ("F1", "L"), ("F1", "LS"), ("F1", "D"), ("T1", "D")):
         for mt in ("ll", "rps", "dir"):
             d = agg[mt][a] - agg[mt][b]; pt = d.sum() / den[mt].sum(); bs = [d[ix].sum() / den[mt][ix].sum() for ix in bidx]
             s_k[f"{a}-{b}_{mt}"] = [float(pt), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
@@ -175,8 +176,9 @@ for k in KS:
 out["summary"] = summ; json.dump(out, open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.json", "w"))
 lines = [f"# Stage 2a — {args.panel}: new raters, k adaptation ratings (PROTOCOL_STAGE2.md)", "", "| k | raters | " + " | ".join(f"LL {m_}" for m_ in MODELS) + " |", "|---" * (2 + len(MODELS)) + "|"]
 for k in KS: lines.append(f"| {k} | {summ[k]['n_raters']} | " + " | ".join(f"{summ[k]['ll'][m_]:.4f}" for m_ in MODELS) + " |")
-lines += ["", "| k | DF−D (H1) | DF−DG (H2) | DF−DL (H3) | F_scale−F_shift (H4) | F1−T1 | F1−L | F1−D | DL−D |", "|---|---|---|---|---|---|---|---|---|"]
+lines += ["", "| k | DF−D (H1) | DF−DG (H2) | DF−DL (H3) | F_scale−F_shift (H4) | DFs−D | DF−DFs | F1−T1 | DL−D |", "|---|---|---|---|---|---|---|---|---|"]
 fmt = lambda v: f"{v[0]:+.4f} [{v[1]:+.4f}, {v[2]:+.4f}]"
-for k in KS: lines.append(f"| {k} | " + " | ".join(fmt(summ[k][f"{p}_ll"]) for p in ("DF-D", "DF-DG", "DF-DL", "F_scale-F_shift", "F1-T1", "F1-L", "F1-D", "DL-D")) + " |")
+for k in KS: lines.append(f"| {k} | " + " | ".join(fmt(summ[k][f"{p}_ll"]) for p in ("DF-D", "DF-DG", "DF-DL", "F_scale-F_shift", "DFs-D", "DF-DFs", "F1-T1", "DL-D")) + " |")
+lines += ["", "| k | dir D | dir DF | dir DFs | dir DL | DF−D dir | DFs−D dir |", "|---|---|---|---|---|---|---|"] + [f"| {k} | " + " | ".join(f"{summ[k]['dir'][m_]:.3f}" for m_ in ("D", "DF", "DFs", "DL")) + " | " + " | ".join(fmt(summ[k][f"{p}_dir"]) for p in ("DF-D", "DFs-D")) + " |" for k in KS]
 lines += ["", "Held-out log-likelihood per rating of new raters' ratings of held-out items; differences with 95 %% rater-cluster bootstrap (B = %d). RPS and direction accuracy in the JSON." % args.B]
 open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
