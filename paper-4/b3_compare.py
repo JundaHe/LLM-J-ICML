@@ -12,6 +12,12 @@ if VAR:
     for f in sorted({r["fold"] for r in alt}):
         g0, g1 = gain(rc, f), gain(alt, f); print(f"fold {f}: RC − D-LoRA seed 2000 {g0:+.4f}, seed 3000 {g1:+.4f}")
         if VAR == "s3000f3" or (VAR == "best" and g1 > g0): rc = [r for r in rc if r["fold"] != f] + [r for r in alt if r["fold"] == f]
+    if VAR in ("s3000", "seedavg"):                                       # Amendment 3: (b) seed 3000 on every fold; (c) per-rater mean of the two seeds' metrics
+        assert sorted({r["fold"] for r in alt}) == [0, 1, 2, 3, 4], "second seed not complete on all folds"
+        if VAR == "s3000": rc = alt
+        else:
+            a2 = {(r["fold"], r["k"], r["rater"]): r for r in alt}
+            rc = [{**r, **{f"RC_{m}": 0.5 * (r[f"RC_{m}"] + a2[(r["fold"], r["k"], r["rater"])][f"RC_{m}"]) for m in ("ll", "dir", "rps")}} for r in rc if (r["fold"], r["k"], r["rater"]) in a2]
 rng = np.random.RandomState(7); out = {}; lines = ["| k | head | model | RC − model, LL/rating [95 %] | RC − model, direction acc. | raters |", "|---|---|---|---|---|---|"]
 for k in sorted({r["k"] for r in rc}):
     rck = {(r["fold"], r["rater"]): r for r in rc if r["k"] == k}
