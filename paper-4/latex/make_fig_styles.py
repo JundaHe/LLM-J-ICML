@@ -6,7 +6,9 @@ lat = [r for f in sorted(glob.glob(f"{R}/stage2c_E1_f?_A2.json")) for r in json.
 B = np.array([r["DFs"] for r in lat]); Bc = B - B.mean(0); inten = Bc[:, 0] - Bc[:, 1]
 H = data_panels.load("multipref_overall")["H"]; base = np.bincount(H.reshape(-1), minlength=5) / H.size
 pick = lambda v, q: int(np.abs(v - np.percentile(v, q)).argmin())
-panels = [("all raters (marginal)", None), ("intense rater (90th pct.)", pick(inten, 90)), ("mild rater (10th pct.)", pick(inten, 10)), ("tie-prone rater (90th pct.)", pick(Bc[:, 2], 90))]
+low_tie = Bc[:, 2] <= np.median(Bc[:, 2])                                   # intensity panels restricted to raters with a tie offset at or below the median (review fix)
+def pick_in(v, q, mask): idx = np.where(mask)[0]; return int(idx[np.abs(v[idx] - np.percentile(v, q)).argmin()])
+panels = [("all raters (marginal)", None), ("high intensity (90th pct.)", pick_in(inten, 90, low_tie)), ("low intensity (10th pct.)", pick_in(inten, 10, low_tie)), ("high tie offset (90th pct.)", pick(Bc[:, 2], 90))]
 labels = ["A≫B", "A>B", "tie", "B>A", "B≫A"]
 plt.rcParams.update({"font.size": 8, "axes.spines.top": False, "axes.spines.right": False})
 fig, axes = plt.subplots(1, 4, figsize=(6.8, 1.7), sharey=True)

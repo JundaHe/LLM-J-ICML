@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -23,6 +23,8 @@ else:                                                                    # Amend
 NG = int(GRP.max()) + 1
 if not (args.panel.startswith("multipref") and K == 5): MODELS = tuple(m_ for m_ in MODELS if m_ != "DFs")   # symmetric A/B style model only for 5-level two-sided preference scales
 MID = (K - 1) / 2
+MODELS = MODELS + ("NT",)                                                 # Amendment 8: no-text rater marginal (b + B_r), shrunk to the population
+if args.models: MODELS = tuple(m_ for m_ in MODELS if m_ in args.models.split(","))
 TEXTL = bool(args.text_logits); LT = None
 if TEXTL: MODELS = tuple(m_ for m_ in MODELS if m_ in ("D", "DG", "DF", "DFs", "DL"))   # stage 2b: lg = a·ℓ_LoRA + b + rater terms
 F_ = np.load(f"{P2}/features/{args.panel}/Qwen2.5-7B-Instruct.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
@@ -43,11 +45,13 @@ class Model:
         s.center = {}
     def text_keys(s):
         if TEXTL and s.kind in ("D", "DG", "DF", "DFs", "DL"): return {"D": ["a", "b"], "DG": ["a", "b", "gb"], "DF": ["a", "b"], "DFs": ["a", "b"], "DL": ["a", "b", "W5", "w0"]}[s.kind]
+        if s.kind == "NT": return ["b"]
         return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
     def rater_keys(s):
-        return {"DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
+        return {"NT": ["Br"], "DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
     def logp(s, ii, rr):
         p = s.p; x = X[ii]
+        if s.kind == "NT": return torch.log_softmax(p["b"][None, :] + p["Br"][rr], 1)
         if s.kind in ("D", "DG", "DF", "DFs", "DL"):
             lg = (p["a"] * LT[ii] if TEXTL else x @ p["V"]) + p["b"]
             if s.kind == "DG": lg = lg + p["gb"][torch.tensor(GRP[rr])]
@@ -97,6 +101,7 @@ LB, LR, LW = (10, 100, 300, 1000, 3000, 10000), (0.5, 2, 8, 32, 128, 512), (1, 1
 BASE = {"DG": "D", "DF": "D", "DFs": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1"}
 SEL = {}
 def grid(kind):
+    if kind == "NT": return [(1, lr, 0) for lr in LR]
     if kind in ("D", "T0", "T1"): return [(lb, 0, 0) for lb in LB]
     lb = SEL[BASE[kind]][0]
     if kind in ("DG", "G"): return [(lb, 0, 0)]
@@ -163,6 +168,9 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
             print(f"fold {f} adapt-tuned {kind}: " + ", ".join(f"k={k}:{LAD[(kind, k)]}" for k in KS if k > 0) + f" [{time.time()-t0:.0f}s]", flush=True)
     out["folds"].append({"fold": f, "lam": lam_sel, "lam_adapt": {f"{a}_{b}": v for (a, b), v in LAD.items()}, "n_train": int(len(idx_tr) + len(idx_va)), "n_test": int(len(idx_te)), "n_test_raters": int(test_r.sum())})
     test_raters = np.unique(R[idx_te])
+    ORC = {}
+    for kind in [k_ for k_ in ("DF", "DFs") if k_ in MODELS]:                 # Amendment 8: oracle offsets fitted on all of the rater's held-out ratings
+        ORC[kind] = adapt(fits[kind], idx_te).per_rating(idx_te)
     for k in KS:
         for dr in range(args.draws if k > 0 else 1):
             rng = np.random.RandomState(10_000 * f + 100 * k + dr); ad = []; keep = []
@@ -182,7 +190,8 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                 sel = R[te] == r
                 out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "group": int(GRP[r]), "n": int(sel.sum()),
                                          **{f"{kind}_{mt}": float(np.nansum(res[kind][j][sel])) for kind in MODELS for j, mt in enumerate(("ll", "rps", "dir"))},
-                                         "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum())})
+                                         "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
+                                         **{f"{kind}_oracle_{mt}": float(np.nansum(ORC[kind][j][np.isin(idx_te, te[sel])])) for kind in ORC for j, mt in enumerate(("ll", "rps", "dir"))}})
         print(f"fold {f} k={k} done [{time.time()-t0:.0f}s]", flush=True)
     seen = {kind: fits[kind].per_rating(idx_seen)[0].mean() for kind in MODELS}; out["folds"][-1]["seen_ll"] = seen; print("seen-rater LL", {k_: round(v, 4) for k_, v in seen.items()}, flush=True)
     os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.json", "w"))

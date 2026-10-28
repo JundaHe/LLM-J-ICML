@@ -8,7 +8,7 @@ body = "\n".join(l for l in md.splitlines()[1:] if not l.startswith("*Draft"))
 CIT = {"Siththaranjan et al., 2024": "siththaranjan2024dpl", "Kirk et al., 2024": "kirk2024prism", "Gordon et al., 2022": "gordon2022jury", "Poddar et al., 2024": "poddar2024vpl",
        "Chen et al., 2025": "chen2025pal", "Sorensen et al., 2024": "sorensen2024roadmap", "Zhang et al., 2025": "zhang2025diverging", "Miranda et al., 2025": "miranda2025hybrid",
        "Davani et al., 2022": "davani2022dealing", "Li et al., 2024": "li2024prlhf", "Orlikowski et al., 2023": "orlikowski2023ecological", "Baumgartner & Steenkamp, 2001": "baumgartner2001response",
-       "Linacre, 1989": "linacre1989mfrm", "Eckes, 2011": "eckes2011mfrm", "Aroyo et al., 2023": "aroyo2023dices", "Kim & Kim (ICLR 2026)": None}
+       "Linacre, 1989": "linacre1989mfrm", "Eckes, 2011": "eckes2011mfrm", "Aroyo et al., 2023": "aroyo2023dices", "Bose et al., 2025": "bose2025lore", "Ryan et al., 2025": "ryan2025synthesizeme", "Dong et al., 2025": "dong2025personalization", "Mishra et al., 2026": "mishra2026decoding", "Kim & Kim, 2026": "kim2026swap", "Deng et al., 2023": "deng2023annotate", "Kim & Kim (ICLR 2026)": None}
 for k, v in sorted(CIT.items(), key=lambda kv: -len(kv[0])):
     if v: body = body.replace(k, f"@@CITE{{{v}}}@@")
 body = body.replace("[companion paper, anonymised]", "a companion study (anonymised)")
@@ -39,7 +39,7 @@ FIG = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_mai
 """
 i = tex.find("\\section{Experiments}"); j = tex.index("\n", i); tex = tex[:j + 1] + FIG + tex[j + 1:]
 FIG2 = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_styles.pdf}
-\caption{What three numbers per rater change. Left: the marginal distribution of MultiPref ratings. Right: the same distribution passed through the fitted scale-use offsets (extreme, slight, tie) of three real new raters (k = 50) chosen at the 90th / 10th percentile of intensity (extreme minus slight) and the 90th percentile of the tie offset. The offsets are text-independent: they reshape how strongly a rater is predicted to prefer, not which side.}\label{fig:styles}\end{figure*}
+\caption{What three numbers per rater change. Left: the marginal distribution of MultiPref ratings. Right: the same distribution passed through the fitted scale-use offsets (extreme, slight, tie) of three real new raters (k = 50) closest to the 90th / 10th percentile of intensity (extreme minus slight) among raters whose tie offset is at or below the median, and closest to the 90th percentile of the tie offset. The offsets are text-independent: they reshape how strongly a rater is predicted to prefer, not which side.}\label{fig:styles}\end{figure*}
 """
 i2 = tex.find("\\section{A three-parameter scale-use baseline}"); j2 = tex.index("\n", i2); tex = tex[:j2 + 1] + FIG2 + tex[j2 + 1:]
 left = sorted(set(c for c in tex + abstract if ord(c) > 127)); assert not left, f"unmapped: {left}"
