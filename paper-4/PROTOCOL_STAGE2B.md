@@ -23,4 +23,4 @@ RC-LoRA: the same LoRA recipe, but each training example is a (training rater, t
 "LLMs cannot personalise from examples" (one recipe, one model); anything about stage 2b on DICES/PRISM.
 
 ## Amendments
-(none)
+**Amendment 1 (2026-10-28, after the folds 0–1 result; GPUs idle).** The B3 result rests on two folds with one training seed each and large fold-to-fold variation of the in-context gain (+0.075 vs +0.021). RC-LoRA is extended to folds 2, 3, 4 with the identical recipe and evaluation (k ∈ {5, 20}, draw 0); B3 is re-evaluated on all five folds with the same criterion, and the two-fold result is kept and reported.
