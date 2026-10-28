@@ -33,6 +33,7 @@ Let ℓ(x) ∈ R^K be the class logits of a text-only distributional reward mode
 **Protocol.** 5 folds; in each, 20 % of raters (stratified by group) and 20 % of prompt groups are held out; models are trained on training raters × training items with penalties chosen on a validation split; each test rater is adapted on k ∈ {0, 5, 10, 20, 50} of their ratings of *training* items (5 random draws) and evaluated on their ratings of *held-out* items. Primary metric: held-out log-likelihood per rating; also RPS and preference-direction accuracy; rater-cluster bootstrap (B = 2,000). Text model in §5.1–5.3: frozen Qwen2.5-7B features with a ridge head; §5.4: a LoRA-fine-tuned reward model.
 
 ### 5.1 Main result (MultiPref)
+Figure 1 shows the gain over the text-only reward model as a function of k on all three datasets.
 | k | DF − D | DFs − D | DG − D | DL − D (tuned prior) | DFs − DL (tuned) |
 |---|---|---|---|---|---|
 | 5 | +0.028 [+0.012, +0.044] | +0.048 [+0.029, +0.070] | ≈ 0 | +0.023 [−0.002, +0.047] | +0.026 [+0.016, +0.037] |

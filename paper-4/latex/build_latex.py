@@ -31,6 +31,10 @@ tex = re.sub(r"\\begin\{minipage\}\[b\]\{\\linewidth\}\\raggedright\s*(.*?)\s*\\
 U = {"−": "$-$", "≈": "$\\approx$", "≤": "$\\leq$", "≥": "$\\geq$", "×": "$\\times$", "…": "\\ldots{}", "²": "$^2$", "₀": "$_0$", "ℓ": "$\\ell$", "ρ": "$\\rho$", "∈": "$\\in$",
      "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---"}
 for k, v in U.items(): tex = tex.replace(k, v); abstract = abstract.replace(k, v); title = title.replace(k, v)
+FIG = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_main.pdf}
+\caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior is at best equal.}\label{fig:main}\end{figure*}
+"""
+i = tex.find("\\section{Experiments}"); j = tex.index("\n", i); tex = tex[:j + 1] + FIG + tex[j + 1:]
 left = sorted(set(c for c in tex + abstract if ord(c) > 127)); assert not left, f"unmapped: {left}"
 pre = r"""\documentclass{article}
 \usepackage{microtype}\usepackage{graphicx}\usepackage{booktabs}\usepackage{hyperref}\usepackage{amsmath}\usepackage{amssymb}\usepackage{longtable}\usepackage{array}\usepackage{calc}

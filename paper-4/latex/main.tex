@@ -42,32 +42,14 @@ The reproducible part of preference disagreement is therefore mostly rater-side,
 Let $\ell$(x) $\in$ R\^{}K be the class logits of a text-only distributional reward model for item x (K ordered rating levels). For rater r we add a text-independent offset vector: p(y \textbar{} x, r) = softmax($\ell$(x) + b\_r). Variants: \textbf{DF} (b\_r $\in$ R\^{}K, free), \textbf{DFs} (two-sided preference scales only: b\_r tied symmetrically, (e, s, t, s, e) --- extreme, slight, tie --- 3 parameters, no A-vs-B position term). Rater offsets have a Gaussian prior centred on the training-rater mean; a new rater's offsets are the MAP estimate from k of their ratings with the text model frozen. Baselines under the same protocol: \textbf{D} (text-only distributional RM), \textbf{DG} (group offsets: crowd/expert, race, region), \textbf{DL} (low-rank text-interacting latent: $\ell$(x) + (Wx + w$_0$)$\cdot$z\_r, d = 8, the personalised-RM family). An interpretable probit family (rater shift / log-scale on an ordered-probit text head) is reported as a secondary analysis.
 
 \section{Experiments}
+\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_main.pdf}
+\caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior is at best equal.}\label{fig:main}\end{figure*}
 
 \textbf{Protocol.} 5 folds; in each, 20 \% of raters (stratified by group) and 20 \% of prompt groups are held out; models are trained on training raters $\times$ training items with penalties chosen on a validation split; each test rater is adapted on k $\in$ \{0, 5, 10, 20, 50\} of their ratings of \emph{training} items (5 random draws) and evaluated on their ratings of \emph{held-out} items. Primary metric: held-out log-likelihood per rating; also RPS and preference-direction accuracy; rater-cluster bootstrap (B = 2,000). Text model in \S{}5.1--5.3: frozen Qwen2.5-7B features with a ridge head; \S{}5.4: a LoRA-fine-tuned reward model.
 
 \subsection{Main result (MultiPref)}
 
-{\def\LTcaptype{none} % do not increment counter
-\begin{table*}[t]\centering\footnotesize\begin{tabular}{@{}
-  l
-  l
-  l
-  l
-  l
-  l@{}}
-\toprule\noalign{}
-k & DF $-$ D & DFs $-$ D & DG $-$ D & DL $-$ D (tuned prior) & DFs $-$ DL (tuned) \\
-\midrule\noalign{}
-
-\bottomrule\noalign{}
-
-5 & +0.028 {[}+0.012, +0.044{]} & +0.048 {[}+0.029, +0.070{]} & $\approx$ 0 & +0.023 {[}$-$0.002, +0.047{]} & +0.026 {[}+0.016, +0.037{]} \\
-20 & +0.080 {[}+0.055, +0.106{]} & \textbf{+0.100 {[}+0.074, +0.128{]}} & $\approx$ 0 & +0.095 {[}+0.069, +0.122{]} & +0.0045 {[}$-$0.0004, +0.0092{]} \\
-50 & +0.114 {[}+0.087, +0.142{]} & +0.128 {[}+0.101, +0.156{]} & $\approx$ 0 & +0.120 & +0.007 {[}+0.002, +0.013{]} \\
-\end{tabular}\end{table*}
-}
-
-Preference-direction accuracy (D: 0.674): DFs +0.005 {[}+0.001, +0.008{]} at k = 20; DF $-$0.014 {[}$-$0.020, $-$0.007{]}. A three-number style model gains as much as a tuned 8-dimensional text-interacting latent and more at k $\leq$ 10; fitting a rater's A-vs-B position from few ratings costs direction accuracy.
+Figure 1 shows the gain over the text-only reward model as a function of k on all three datasets. \textbar{} k \textbar{} DF $-$ D \textbar{} DFs $-$ D \textbar{} DG $-$ D \textbar{} DL $-$ D (tuned prior) \textbar{} DFs $-$ DL (tuned) \textbar{} \textbar---\textbar---\textbar---\textbar---\textbar---\textbar---\textbar{} \textbar{} 5 \textbar{} +0.028 {[}+0.012, +0.044{]} \textbar{} +0.048 {[}+0.029, +0.070{]} \textbar{} $\approx$ 0 \textbar{} +0.023 {[}$-$0.002, +0.047{]} \textbar{} +0.026 {[}+0.016, +0.037{]} \textbar{} \textbar{} 20 \textbar{} +0.080 {[}+0.055, +0.106{]} \textbar{} \textbf{+0.100 {[}+0.074, +0.128{]}} \textbar{} $\approx$ 0 \textbar{} +0.095 {[}+0.069, +0.122{]} \textbar{} +0.0045 {[}$-$0.0004, +0.0092{]} \textbar{} \textbar{} 50 \textbar{} +0.114 {[}+0.087, +0.142{]} \textbar{} +0.128 {[}+0.101, +0.156{]} \textbar{} $\approx$ 0 \textbar{} +0.120 \textbar{} +0.007 {[}+0.002, +0.013{]} \textbar{} Preference-direction accuracy (D: 0.674): DFs +0.005 {[}+0.001, +0.008{]} at k = 20; DF $-$0.014 {[}$-$0.020, $-$0.007{]}. A three-number style model gains as much as a tuned 8-dimensional text-interacting latent and more at k $\leq$ 10; fitting a rater's A-vs-B position from few ratings costs direction accuracy.
 
 \subsection{Replications (k = 20)}
 
