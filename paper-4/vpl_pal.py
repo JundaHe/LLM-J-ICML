@@ -275,4 +275,4 @@ for k in KS:
     print(f"fold {f} {args.eval} k={k} done [{time.time()-t0:.0f}s]", flush=True)
 os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; pfx = "" if args.panel == "multipref_overall" else f"{args.panel}_"; json.dump(out, open(f"{HERE}/results/stage2c_{pfx}{args.eval}_f{f}{args.tag}.json", "w")); 
 if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2c_{pfx}{args.eval}_f{f}{args.tag}.npz", **{key: np.concatenate([d[key] for d in DUMP]) for key in DUMP[0]})
- print("done", flush=True)
+print("done", flush=True)
