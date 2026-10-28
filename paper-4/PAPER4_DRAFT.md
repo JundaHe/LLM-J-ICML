@@ -49,6 +49,8 @@ Figure 1 shows the gain over the text-only reward model as a function of k on al
 
 Preference-direction accuracy (D: 0.674): DFs +0.005 [+0.001, +0.008] at k = 20; DF −0.014 [−0.020, −0.007]. A three-number style model gains as much as a tuned 8-dimensional text-interacting latent (tie at k = 20) and more at k = 5, 10 and 50; fitting a rater's A-vs-B position from few ratings costs direction accuracy.
 
+**Reference points.** To size these gains: on MultiPref at k = 20 a uniform forecast scores −1.609 nats per rating, a forecast that ignores the text and uses only the new rater's 20 ratings −1.487, the text-only model −1.441, the text model with the three offsets −1.342, and offsets fitted in-sample on all of the rater's held-out ratings (an optimistic ceiling for text-independent offsets) −1.262. Twenty ratings of a person, without the text, recover 73 % of the text model's gain over uniform; the offsets close 55 % of the gap between the text-only model and the in-sample ceiling. On DICES the rater's ratings alone predict better than the text alone (−0.766 vs −0.840 at k = 20). Even the in-sample ceiling raises MultiPref direction accuracy by only 1.3 points (0.674 → 0.687), confirming that text-independent offsets cannot carry ranking.
+
 ### 5.2 Replications (k = 20)
 DF − D and DG − D use the training-rater prior, DF − DL the few-shot-tuned prior. Direction accuracy on PRISM means good-vs-bad around the scale midpoint.
 

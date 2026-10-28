@@ -113,3 +113,6 @@ Reimplemented from the official repositories as heads on frozen per-response Qwe
 
 ## Stage 2c C4 (Amendment 3): VPL + style offsets (results/stage2c_C4_A3.md)
 At k = 20: (VPL+s) − VPL = **+0.088 [+0.066, +0.111]** nats per rating; (VPL+s) − DFsp = −0.004 [−0.014, +0.005] (C4's second part, lower bound ≥ −0.005, formally not met: a tie); direction accuracy (VPL+s) − DFsp = **+0.011 [+0.002, +0.020]** (VPL+s keeps VPL's 0.679). The three offsets are a plug-in for a published personalised RM: added to VPL they recover the whole style gain, and the hybrid combines DFs-level likelihood with VPL-level direction accuracy.
+
+## Reference rows (Amendment 8; results/stage2a_reference_rows.md)
+k = 20, LL per rating — MultiPref: uniform −1.609, no-text NT −1.487, text-only D −1.441, DFs −1.342, in-sample oracle DF −1.262 (DFs oracle −1.281). DICES: uniform −1.099, NT −0.766, D −0.840, DF −0.752, oracle −0.702. PRISM: uniform −1.609, NT −1.391, D −1.345, DF −1.264, oracle −1.158. A person's 20 ratings without text recover 73 % of the text model's gain over uniform on MultiPref and beat the text on DICES; DFs closes 55 % of the D-to-oracle gap on MultiPref; the in-sample oracle raises MultiPref direction accuracy only from 0.674 to 0.687.
