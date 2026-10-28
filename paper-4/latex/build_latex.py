@@ -23,7 +23,7 @@ tex = re.sub(r"\\label\{[^}]*\}", "", tex); tex = re.sub(r"\\section\{\d+\.?\s*"
 def tab(mm):
     t = mm.group(0); spec = re.search(r"\\begin\{longtable\}\[\]\{(.*?)\}\n", t).group(1)
     t = re.sub(r"\\begin\{longtable\}\[\]\{.*?\}\n", "\\\\begin{table*}[t]\\\\centering\\\\footnotesize\\\\begin{tabular}{" + re.sub(r"@\{\}", "", spec).replace("\\real", "") + "}\n", t, count=1)
-    t = re.sub(r"\\endhead|\\endfirsthead|\\endlastfoot|\\endfoot", "", t); t = t.replace("\\end{longtable}", "\\end{tabular}\\end{table*}")
+    t = re.sub(r"\\endhead|\\endfirsthead|\\endlastfoot|\\endfoot", "", t); t = t.replace("\\bottomrule\\noalign{}", "").replace("\\bottomrule", ""); t = t.replace("\\end{longtable}", "\\bottomrule\n\\end{tabular}\\end{table*}")
     t = re.sub(r">\{\\raggedright\\arraybackslash\}p\{\(\\linewidth - \d+\\tabcolsep\) \* \\real\{[0-9.]+\}\}", "l", t)
     return t
 tex = re.sub(r"\\begin\{longtable\}.*?\\end\{longtable\}", tab, tex, flags=re.S)
@@ -35,7 +35,7 @@ i_app = tex.find("\\section{Appendix A.")
 if i_app >= 0: tex = tex[:i_app] + "\\appendix\n" + tex[i_app:]
 tex = re.sub(r"\\section\{Appendix [A-Z]\.\s*", r"\\section{", tex)
 FIG = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_main.pdf}
-\caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior is at best equal.}\label{fig:main}\end{figure*}
+\caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior matches but does not exceed them (it beats the 5-offset DF on MultiPref and ties DFs). DF, DFs and DG use the training-rater prior; DL the few-shot-tuned prior.}\label{fig:main}\end{figure*}
 """
 i = tex.find("\\section{Experiments}"); j = tex.index("\n", i); tex = tex[:j + 1] + FIG + tex[j + 1:]
 left = sorted(set(c for c in tex + abstract if ord(c) > 127)); assert not left, f"unmapped: {left}"
