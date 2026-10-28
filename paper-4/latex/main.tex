@@ -123,15 +123,16 @@ All analyses followed written protocols; changes after results are logged as ame
 
 Frozen-feature text heads for the main tables (a fine-tuned head in \S{}5.4); three datasets, one language; PRISM scores binned to 5 levels; rater offsets are text-independent by design --- interactions with content exist in principle and are what the low-rank latent can capture; we test linear decoders for the text-side measurement only; adaptation uses the rater's ratings of other items, not of the same item.
 
-\section{Appendix A. Protocols and amendments}
+\appendix
+\section{Protocols and amendments}
 
 All analyses were specified in written protocols before results (PROTOCOL\_STAGE1, PROTOCOL\_STAGE2, PROTOCOL\_STAGE2B, PROTOCOL\_STAGE2C). Changes after a result were logged as numbered amendments with the reason; the main ones: the first decoding split (a = b = 2) was structurally empty (two ratings determine their distribution) and was replaced by a = 3; hand-set penalties in the rater--item model over-fitted and were replaced by inner cross-validation (which reversed an earlier, wrong conclusion that rater shifts do not help); penalty grids were extended when selections fell on grid edges, before any hypothesis was read; the low-rank baseline lacked a constant column and was fixed in its favour; the probit group model had a scale non-identifiability and was fixed; VPL suffered posterior collapse and its KL weight was re-selected including 0; PAL-B's adaptation ridge was re-selected by k-shot validation. Every superseded run is kept and reported in the supplementary results.
 
-\section{Appendix B. Hypotheses and outcomes}
+\section{Hypotheses and outcomes}
 
 Stage 2a (MultiPref, k = 20): H1 DF \textgreater{} D --- holds (+0.080); H2 DF \textgreater{} group --- holds; H3 DF $\geq$ low-rank $-$ 0.005 --- holds under the training-rater prior, not robust under a few-shot-tuned prior ($-$0.015); H4 rater scale \textgreater{} rater shift --- holds on MultiPref only; H6 symmetric style model gains likelihood without losing direction accuracy --- holds and robust. Replications: H1r, H2r hold on DICES and PRISM; H3r holds on DICES (robust) and is a tie on PRISM under the tuned prior. Stage 2b: B1, B2, B3 hold. Stage 2c: C1 holds (graded), C2 holds (binary: nothing personalises), C3 fails (published latents do not encode style, R$^2$ $\approx$ 0), C4 half-holds (+0.088 over VPL; tie with DFs).
 
-\section{Appendix C. Implementation}
+\section{Implementation}
 
 Text features: last-token final-layer states of Qwen2.5-7B-Instruct under a 5-point judge prompt (MultiPref, PRISM) or a 3-level safety prompt (DICES), label-free PCA to 256 dimensions. Folds: 5 rater folds (stratified by group) $\times$ 5 prompt-group folds; validation: 15 \% of training prompt groups. k-shot draws: 5 per k, identical across all models. Bootstrap: rater clusters, B = 2,000. LoRA: r = 16 on all attention and MLP projections, lr \(10^{-4}\), one epoch, accumulation 8. VPL / PAL-B: official architectures and defaults (latent 512, hidden 512; d\_pref 512, mlp2-gelu projectors, angle learner), ordered-logistic link for graded labels.
 
