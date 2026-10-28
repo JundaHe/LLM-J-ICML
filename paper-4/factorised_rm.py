@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -133,7 +133,7 @@ for g in np.unique(GRP):
 ug = np.unique(Gp); perm = np.random.RandomState(0).permutation(len(ug)); gf = {g_: perm[j] % 5 for j, g_ in enumerate(ug)}; ifold = np.array([gf[g_] for g_ in Gp])
 _rv = np.random.RandomState(1).rand(len(ug)); vf = {g_: bool(_rv[j] < 0.15) for j, g_ in enumerate(ug)}                              # validation prompt groups (15 %) inside training items
 out = {"panel": args.panel, "protocol": "PROTOCOL_STAGE2.md", "n_raters": NR, "ks": KS, "folds": [], "per_rater": []}
-t0 = time.time()
+t0 = time.time(); DUMP = []
 if args.merge:
     for tg in args.merge.split(","):
         o_ = json.load(open(f"{HERE}/results/stage2a_{args.panel}{tg}.json")); out["folds"] += o_["folds"]; out["per_rater"] += o_["per_rater"]
@@ -186,6 +186,8 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                     mdl = Model(kind, mdl.lam); mdl.p = {kk: v.clone() for kk, v in fits[kind].p.items()}; mdl.center = dict(fits[kind].center)
                     for kk in mdl.rater_keys(): mdl.p[kk] = mdl.center[kk].clone()
                 res[kind] = mdl.per_rating(te)
+            if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
+                                               **{f"{kind}_{mt}": res[kind][j] for kind in MODELS for j, mt in ((0, "ll"), (2, "dir"))}})
             for r in keep:
                 sel = R[te] == r
                 out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "group": int(GRP[r]), "n": int(sel.sum()),
@@ -195,6 +197,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
         print(f"fold {f} k={k} done [{time.time()-t0:.0f}s]", flush=True)
     seen = {kind: fits[kind].per_rating(idx_seen)[0].mean() for kind in MODELS}; out["folds"][-1]["seen_ll"] = seen; print("seen-rater LL", {k_: round(v, 4) for k_, v in seen.items()}, flush=True)
     os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.json", "w"))
+    if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2a_{args.panel}{args.tag}.npz", **{key: np.concatenate([d[key] for d in DUMP]) for key in DUMP[0]})
 
 # ---------------------------------------------------------------- summary: per k, mean metric per rating; rater-cluster bootstrap of differences (raters pooled over folds; draws averaged within rater)
 import collections
