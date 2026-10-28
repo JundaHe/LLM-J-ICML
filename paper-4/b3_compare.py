@@ -1,8 +1,17 @@
 """B3 (PROTOCOL_STAGE2B.md): RC-LoRA (in-context personalisation) vs DFs / DF / D on the same new raters, folds, k and draw 0 (paired rater-cluster bootstrap)."""
-import json, glob, os, numpy as np
+import json, glob, os, sys, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); R = os.path.join(HERE, "results")
+VAR = sys.argv[1] if len(sys.argv) > 1 else ""                           # Amendment 2: "" (primary), "s3000f3" (fold 3 = second seed), "best" (per fold, the better seed vs D-LoRA; favourable to RC)
 rc = [r for f in sorted(glob.glob(f"{R}/lora_rm/multipref_overall/rc_f*/meta.json")) for r in json.load(open(f)).get("per_rater", [])]
 refs = {"frozen": json.load(open(f"{R}/stage2a_multipref_overall.json"))["per_rater"], "lora": json.load(open(f"{R}/stage2a_multipref_overall_lora.json"))["per_rater"]}
+if VAR:
+    alt = [r for f in sorted(glob.glob(f"{R}/lora_rm/multipref_overall/rc_s3000_f*/meta.json")) for r in json.load(open(f)).get("per_rater", [])]
+    def gain(rows, f):                                                    # fold-level RC − D-LoRA, LL per rating, k = 20
+        lo = {(r["fold"], r["rater"]): r for r in refs["lora"] if r["k"] == 20 and r["draw"] == 0}; q = [r for r in rows if r["fold"] == f and r["k"] == 20 and (f, r["rater"]) in lo]
+        return sum(r["RC_ll"] - lo[(f, r["rater"])]["D_ll"] for r in q) / sum(r["n"] for r in q)
+    for f in sorted({r["fold"] for r in alt}):
+        g0, g1 = gain(rc, f), gain(alt, f); print(f"fold {f}: RC − D-LoRA seed 2000 {g0:+.4f}, seed 3000 {g1:+.4f}")
+        if VAR == "s3000f3" or (VAR == "best" and g1 > g0): rc = [r for r in rc if r["fold"] != f] + [r for r in alt if r["fold"] == f]
 rng = np.random.RandomState(7); out = {}; lines = ["| k | head | model | RC − model, LL/rating [95 %] | RC − model, direction acc. | raters |", "|---|---|---|---|---|---|"]
 for k in sorted({r["k"] for r in rc}):
     rck = {(r["fold"], r["rater"]): r for r in rc if r["k"] == k}
@@ -16,4 +25,4 @@ for k in sorted({r["k"] for r in rc}):
                 bs = [d[ix].sum() / w[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; res.append((d.sum() / w.sum(), np.percentile(bs, 2.5), np.percentile(bs, 97.5)))
             out[f"k{k}_{head}_{mdl}"] = {"ll": res[0], "dir": res[1], "n_raters": len(q)}
             lines.append(f"| {k} | {head} | {mdl} | {res[0][0]:+.4f} [{res[0][1]:+.4f}, {res[0][2]:+.4f}] | {res[1][0]:+.4f} [{res[1][1]:+.4f}, {res[1][2]:+.4f}] | {len(q)} |")
-json.dump(out, open(f"{R}/stage2b_B3.json", "w"), indent=1); open(f"{R}/stage2b_B3.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
+json.dump(out, open(f"{R}/stage2b_B3{VAR and "_" + VAR}.json", "w"), indent=1); open(f"{R}/stage2b_B3{VAR and "_" + VAR}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))
