@@ -9,8 +9,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--mode", default="d", choices=("d", "rc"))
 ap.add_argument("--lr", type=float, default=1e-4); ap.add_argument("--accum", type=int, default=8); ap.add_argument("--lora_r", type=int, default=16); ap.add_argument("--seed", type=int, default=2000)
-ap.add_argument("--rc_pairs", type=int, default=8000); ap.add_argument("--rc_hist", type=int, default=10); ap.add_argument("--ks", default="5,20"); ap.add_argument("--max_steps", type=int, default=-1)
-args = ap.parse_args(); f = args.fold; OUT = f"{HERE}/results/lora_rm/{args.panel}/{args.mode}_f{f}"; os.makedirs(OUT, exist_ok=True)
+ap.add_argument("--rc_pairs", type=int, default=8000); ap.add_argument("--rc_hist", type=int, default=10); ap.add_argument("--ks", default="5,20"); ap.add_argument("--max_steps", type=int, default=-1); ap.add_argument("--tag", default="")
+args = ap.parse_args(); f = args.fold; OUT = f"{HERE}/results/lora_rm/{args.panel}/{args.mode}{args.tag}_f{f}"; os.makedirs(OUT, exist_ok=True)
 
 # ---------------------------------------------------------------- data and folds (identical to factorised_rm.py)
 PAN = data_panels.load(args.panel); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"]
