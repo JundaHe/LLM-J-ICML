@@ -8,7 +8,7 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -220,7 +220,7 @@ def tune_pal_lambda(k_, hp):
             if best is None or v > best[0]: best = (v, lam)
         lam_k[k] = best[1]
     return lam_k
-t0 = time.time(); out = {"fold": f, "eval": args.eval, "protocol": "PROTOCOL_STAGE2C.md", "models": MODELS, "hp": {}, "per_rater": [], "latents": []}
+t0 = time.time(); DUMP = []; out = {"fold": f, "eval": args.eval, "protocol": "PROTOCOL_STAGE2C.md", "models": MODELS, "hp": {}, "per_rater": [], "latents": []}
 fits = {}
 for mname in MODELS:
     if mname in ("Dp", "DFp", "DFsp"): fits[mname] = train_D(mname); out["hp"][mname] = fits[mname][1]
@@ -262,6 +262,8 @@ for k in KS:
                     else: res["VPLs"] = res[mname]
             else:
                 lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3)); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
+        if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
+                                           **{f"{mn}_{mt}": np.asarray(res[mn][j]) for mn in res for j, mt in ((0, "ll"), (2, "dir"))}})
         for r in keep_r:
             sel = R[te] == r
             out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n": int(sel.sum()), "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
@@ -271,4 +273,6 @@ for k in KS:
                 for key, v in lat.items(): row[key] = (v[int(r)] if isinstance(v, dict) else v[int(r)]).detach().cpu().numpy().tolist()
                 out["latents"].append(row)
     print(f"fold {f} {args.eval} k={k} done [{time.time()-t0:.0f}s]", flush=True)
-os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; pfx = "" if args.panel == "multipref_overall" else f"{args.panel}_"; json.dump(out, open(f"{HERE}/results/stage2c_{pfx}{args.eval}_f{f}{args.tag}.json", "w")); print("done", flush=True)
+os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; pfx = "" if args.panel == "multipref_overall" else f"{args.panel}_"; json.dump(out, open(f"{HERE}/results/stage2c_{pfx}{args.eval}_f{f}{args.tag}.json", "w")); 
+if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2c_{pfx}{args.eval}_f{f}{args.tag}.npz", **{key: np.concatenate([d[key] for d in DUMP]) for key in DUMP[0]})
+ print("done", flush=True)
