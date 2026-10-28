@@ -1,8 +1,8 @@
 """Stage 2 Amendment 9: two-way (rater × item-cluster) pigeonhole bootstrap of the k = 20 headline contrasts, from the per-rating dumps of factorised_rm.py --dump_ratings.
 Also checks that the rerun reproduces the primary per-rater-run point estimates. Usage: twoway_boot.py <panel> <primary-tag>"""
 import json, glob, os, sys, collections, numpy as np, scipy.sparse as sp
-HERE = os.path.dirname(os.path.abspath(__file__)); R_ = os.path.join(HERE, "results"); panel, ptag = sys.argv[1], sys.argv[2]; B = 2000; rng = np.random.RandomState(9)
-D = [np.load(f) for f in sorted(glob.glob(f"{R_}/ratings/stage2a_{panel}_tw_f?.npz"))]; Z = {k: np.concatenate([d[k] for d in D]) for k in D[0].files}
+HERE = os.path.dirname(os.path.abspath(__file__)); R_ = os.path.join(HERE, "results"); panel, ptag = sys.argv[1], sys.argv[2]; dtag = sys.argv[3] if len(sys.argv) > 3 else "_tw"; B = 2000; rng = np.random.RandomState(9)
+D = [np.load(f) for f in sorted(glob.glob(f"{R_}/ratings/stage2a_{panel}{dtag}_f?.npz"))]; Z = {k: np.concatenate([d[k] for d in D]) for k in D[0].files}
 MODELS = sorted({k[:-3] for k in Z if k.endswith("_ll")}); folds = sorted(set(Z["fold"].tolist()))
 prim = json.load(open(f"{R_}/stage2a_{panel}{ptag}.json"))["per_rater"]
 def rate_from_rows(rows, k, a, b, mt, den):                              # primary-style estimate: per-rater mean over draws, pooled
@@ -13,7 +13,7 @@ def rate_from_rows(rows, k, a, b, mt, den):                              # prima
 L = [f"# Two-way bootstrap (Stage 2 Amendment 9) — {panel}, k = 20, folds {folds}", "", "Raters and item clusters (prompt groups) resampled independently (pigeonhole bootstrap), B = 2,000. Per-rating differences are averaged over the 5 adaptation draws within each rating.", "",
      "| contrast | metric | rerun point | primary point | rater-only 95 % | two-way 95 % |", "|---|---|---|---|---|---|"]; out = {}
 sel = Z["k"] == 20
-for a, b in [(a, b) for a, b in (("DF", "D"), ("DFs", "D"), ("DG", "D"), ("DF", "DG"), ("DFs", "DG")) if a in MODELS and b in MODELS]:
+for a, b in [(a, b) for a, b in (("DF", "D"), ("DFs", "D"), ("DG", "D"), ("DF", "DG"), ("DFs", "DG"), ("DL", "D"), ("DF", "DL"), ("DFs", "DL")) if a in MODELS and b in MODELS]:
     for mt in ("ll", "dir"):
         d = Z[f"{a}_{mt}"][sel] - Z[f"{b}_{mt}"][sel]; ok = np.isfinite(d); d = np.where(ok, d, 0.0)
         rt = Z["fold"][sel] * 100000 + Z["rater"][sel]; key = np.stack([rt, Z["item"][sel]], 1)             # average draws within (rater, item)
@@ -30,4 +30,4 @@ for a, b in [(a, b) for a, b in (("DF", "D"), ("DFs", "D"), ("DG", "D"), ("DF", 
         out[f"{a}-{b}_{mt}"] = {"point": float(pt), "primary": float(prim_pt), "rater": ci_r.tolist(), "twoway": ci_2.tolist()}
         L.append(f"| {a} − {b} | {'LL per rating' if mt == 'll' else 'direction acc.'} | {pt:+.4f} | {prim_pt:+.4f} | [{ci_r[0]:+.4f}, {ci_r[1]:+.4f}] | [{ci_2[0]:+.4f}, {ci_2[1]:+.4f}] |")
 L += ["", f"n raters (fold-specific) = {NRr}, item clusters = {NGg}. Reproduction check (Am. 9): |rerun − primary| ≤ 1e-3 for every row: {all(abs(v['point'] - v['primary']) <= 1e-3 for v in out.values())}."]
-json.dump(out, open(f"{R_}/stage2a_twoway_{panel}.json", "w"), indent=1); open(f"{R_}/stage2a_twoway_{panel}.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
+json.dump(out, open(f"{R_}/stage2a_twoway_{panel}{dtag if dtag != '_tw' else ''}.json", "w"), indent=1); open(f"{R_}/stage2a_twoway_{panel}{dtag if dtag != '_tw' else ''}.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
