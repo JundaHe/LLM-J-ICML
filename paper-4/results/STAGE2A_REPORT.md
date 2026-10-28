@@ -119,3 +119,6 @@ k = 20, LL per rating — MultiPref: uniform −1.609, no-text NT −1.487, text
 
 ## Stage 2b Amendment 1: RC-LoRA folds 2–3 added (4 of 5 folds; fold 4 running)
 k = 20, 166 raters: DFs(D-LoRA) − RC-LoRA = +0.071 [+0.048, +0.093] LL/rating, direction +0.032; DFs(frozen) − RC-LoRA = +0.046 [+0.024, +0.069]. RC-LoRA − D-LoRA by fold: +0.075, +0.021, +0.061, −0.055 (fold 3 trained badly; one seed per fold); excluding fold 3: DFs(D-LoRA) − RC-LoRA = +0.027 [+0.006, +0.048], direction +0.027 [+0.013, +0.042]. RC-LoRA's direction accuracy is below D-LoRA's in every fold (−1.1 to −4.9 points). B3 holds ("better") with and without fold 3.
+
+## Stage 2b: RC-LoRA on all five folds (fold 4 added; results/stage2b_B3.{json,md})
+k = 20, 209 raters: DFs(D-LoRA) − RC-LoRA = **+0.062 [+0.043, +0.081]** LL/rating, direction **+0.032 [+0.019, +0.044]**; DFs(frozen) − RC-LoRA = +0.035 [+0.015, +0.054]. RC-LoRA − D-LoRA = +0.030 [−0.001, +0.061]; by fold +0.075, +0.021, +0.061, −0.055, +0.059 (one seed per fold). Excluding fold 3: DFs(D-LoRA) − RC-LoRA = +0.026 [+0.010, +0.043], direction +0.029 [+0.017, +0.041]; RC-LoRA − D-LoRA = +0.054 [+0.026, +0.083]. RC-LoRA's direction accuracy is below D-LoRA's in every fold (−1.1 to −4.9 points). **B3 holds ("better") on five folds, with and without fold 3.** The fold-3 second seed (Stage 2b Amendment 2) is running.
