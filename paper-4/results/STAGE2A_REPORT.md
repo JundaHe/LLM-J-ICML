@@ -116,3 +116,6 @@ At k = 20: (VPL+s) − VPL = **+0.088 [+0.066, +0.111]** nats per rating; (VPL+s
 
 ## Reference rows (Amendment 8; results/stage2a_reference_rows.md)
 k = 20, LL per rating — MultiPref: uniform −1.609, no-text NT −1.487, text-only D −1.441, DFs −1.342, in-sample oracle DF −1.262 (DFs oracle −1.281). DICES: uniform −1.099, NT −0.766, D −0.840, DF −0.752, oracle −0.702. PRISM: uniform −1.609, NT −1.391, D −1.345, DF −1.264, oracle −1.158. A person's 20 ratings without text recover 73 % of the text model's gain over uniform on MultiPref and beat the text on DICES; DFs closes 55 % of the D-to-oracle gap on MultiPref; the in-sample oracle raises MultiPref direction accuracy only from 0.674 to 0.687.
+
+## Stage 2b Amendment 1: RC-LoRA folds 2–3 added (4 of 5 folds; fold 4 running)
+k = 20, 166 raters: DFs(D-LoRA) − RC-LoRA = +0.071 [+0.048, +0.093] LL/rating, direction +0.032; DFs(frozen) − RC-LoRA = +0.046 [+0.024, +0.069]. RC-LoRA − D-LoRA by fold: +0.075, +0.021, +0.061, −0.055 (fold 3 trained badly; one seed per fold); excluding fold 3: DFs(D-LoRA) − RC-LoRA = +0.027 [+0.006, +0.048], direction +0.027 [+0.013, +0.042]. RC-LoRA's direction accuracy is below D-LoRA's in every fold (−1.1 to −4.9 points). B3 holds ("better") with and without fold 3.
