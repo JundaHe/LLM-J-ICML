@@ -38,6 +38,10 @@ FIG = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_mai
 \caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior matches but does not exceed them (it beats the 5-offset DF on MultiPref and ties DFs). DF, DFs and DG use the training-rater prior; DL the few-shot-tuned prior.}\label{fig:main}\end{figure*}
 """
 i = tex.find("\\section{Experiments}"); j = tex.index("\n", i); tex = tex[:j + 1] + FIG + tex[j + 1:]
+FIG2 = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_styles.pdf}
+\caption{What three numbers per rater change. Left: the marginal distribution of MultiPref ratings. Right: the same distribution passed through the fitted scale-use offsets (extreme, slight, tie) of three real new raters (k = 50) chosen at the 90th / 10th percentile of intensity (extreme minus slight) and the 90th percentile of the tie offset. The offsets are text-independent: they reshape how strongly a rater is predicted to prefer, not which side.}\label{fig:styles}\end{figure*}
+"""
+i2 = tex.find("\\section{A three-parameter scale-use baseline}"); j2 = tex.index("\n", i2); tex = tex[:j2 + 1] + FIG2 + tex[j2 + 1:]
 left = sorted(set(c for c in tex + abstract if ord(c) > 127)); assert not left, f"unmapped: {left}"
 pre = r"""\documentclass{article}
 \usepackage{microtype}\usepackage{graphicx}\usepackage{booktabs}\usepackage{hyperref}\usepackage{amsmath}\usepackage{amssymb}\usepackage{longtable}\usepackage{array}\usepackage{calc}
