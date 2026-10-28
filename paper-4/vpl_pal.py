@@ -8,16 +8,19 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
 # ---------------------------------------------------------------- data, folds (identical to factorised_rm.py / lora_rm.py)
-PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"]
+PAN = data_panels.load(args.panel); H = PAN["H"]; K = PAN["K"]; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
 I = np.repeat(np.arange(n), m); R = np.array([rid[e] for row in ev for e in row]); Y = H.reshape(-1); POS = np.tile(np.arange(m), n)
 GRP = np.zeros(NR, int)
-for i in range(len(R)): GRP[R[i]] = int(POS[i] >= 2)
+if args.panel.startswith("multipref"):
+    for i in range(len(R)): GRP[R[i]] = int(POS[i] >= 2)
+else:                                                                     # Amendment 4 (PRISM pairs): user region
+    gm = PAN["rater_group"]; glev = sorted({gm.get(r, "NA") for r in raters}); GRP = np.array([glev.index(gm.get(r, "NA")) for r in raters])
 Gp = np.asarray(PAN["groups"])
 rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
 for g in np.unique(GRP):
@@ -27,15 +30,17 @@ _rv = np.random.RandomState(1).rand(len(ug)); vf = {g_: bool(_rv[j] < 0.15) for 
 test_r = rfold == f; tr_item = ifold[I] != f; is_tr_r = ~test_r[R]; va_item = np.array([vf[g_] for g_ in Gp])[I]
 idx_tr = np.where(is_tr_r & tr_item & ~va_item)[0]; idx_va = np.where(is_tr_r & tr_item & va_item)[0]
 idx_ad_pool = np.where(~is_tr_r & tr_item)[0]; idx_te = np.where(~is_tr_r & ~tr_item)[0]
-ref = json.load(open(f"{HERE}/results/stage2a_multipref_overall_f{f}.json"))["folds"][0]
-assert ref["n_train"] == len(idx_tr) + len(idx_va) and ref["n_test"] == len(idx_te), "fold mismatch with stage 2a"
+if args.panel == "multipref_overall":
+    ref = json.load(open(f"{HERE}/results/stage2a_multipref_overall_f{f}.json"))["folds"][0]
+    assert ref["n_train"] == len(idx_tr) + len(idx_va) and ref["n_test"] == len(idx_te), "fold mismatch with stage 2a"
 BIN = args.eval == "E2"
-if BIN:                                                                   # E2: drop ties everywhere (training, adaptation contexts, evaluation)
+NATIVE = "yb" in PAN                                                       # PRISM pairs: native binary choice for every pair (no ties to drop)
+if BIN and not NATIVE:                                                    # E2: drop ties everywhere (training, adaptation contexts, evaluation)
     keep = Y != 2; idx_tr, idx_va, idx_ad_pool, idx_te = (a[keep[a]] for a in (idx_tr, idx_va, idx_ad_pool, idx_te))
-YB = (Y >= 3).astype(np.float32)                                          # 1 = B preferred
+YB = (np.repeat(PAN["yb"], m) if NATIVE else (Y >= 3)).astype(np.float32)  # 1 = B preferred / chosen
 
 # ---------------------------------------------------------------- features: label-free PCA-256 over all per-response embeddings
-Fz = np.load(args.feat or f"{P2}/features/multipref_overall/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
+Fz = np.load(args.feat or f"{P2}/features/{args.panel}/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
 EA, EB, EP = (Fz[k].astype(np.float32) for k in ("E_A", "E_B", "E_P")); allE = np.concatenate([EA, EB, EP]); mu = allE.mean(0)
 U, S, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:256].T                      # PCA basis fitted on a 1/3 subsample of all rows (label-free)
 def proj(E): Z = (E - mu) @ W; return Z
@@ -266,4 +271,4 @@ for k in KS:
                 for key, v in lat.items(): row[key] = (v[int(r)] if isinstance(v, dict) else v[int(r)]).detach().cpu().numpy().tolist()
                 out["latents"].append(row)
     print(f"fold {f} {args.eval} k={k} done [{time.time()-t0:.0f}s]", flush=True)
-os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; json.dump(out, open(f"{HERE}/results/stage2c_{args.eval}_f{f}{args.tag}.json", "w")); print("done", flush=True)
+os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; pfx = "" if args.panel == "multipref_overall" else f"{args.panel}_"; json.dump(out, open(f"{HERE}/results/stage2c_{pfx}{args.eval}_f{f}{args.tag}.json", "w")); print("done", flush=True)

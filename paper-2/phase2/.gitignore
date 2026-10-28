@@ -42,3 +42,4 @@ features/multipref_overall/Qwen2.5-7B-Instruct.npz
 # PRISM features (~2 GB) are not tracked; regenerate with sbatch slurm/embed_prism.sh
 features/prism/
 features/multipref_overall/pairs_*.npz
+features/prism_pairs/

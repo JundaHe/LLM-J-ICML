@@ -455,3 +455,22 @@ LOADERS.update({"prism": load_prism})
 def dices_rater_race():
     """DICES-350 rater → rater_race (paper 4 stage 2, Amendment 6: demographic group for the group-conditioned baseline)"""
     d = pd.read_csv(DICES); return {str(r): str(g) for r, g in d.groupby("rater_id").rater_race.first().items()}
+
+def load_prism_pairs(seed=0):
+    """paper 4 stage 2c Amendment 4: PRISM chosen-vs-other pairs within an interaction (one user, same prompt). H = graded level from the score difference
+    (A≫B d ≥ 30, A>B 5<d<30, tie |d| ≤ 5, B>A, B≫A), yb = native binary choice (1 = B chosen); utt_A / utt_B index the stage-2a PRISM utterance features."""
+    u = pd.read_json(f"{PRISM_DIR}/utterances.jsonl", lines=True).dropna(subset=["score"]).sort_values("utterance_id").reset_index(drop=True)
+    s = pd.read_json(f"{PRISM_DIR}/survey.jsonl", lines=True); reg = {r.user_id: (r.location or {}).get("special_region", "NA") if isinstance(r.location, dict) else "NA" for r in s.itertuples()}
+    rng = np.random.RandomState(seed); rows = []
+    for iid, g in u.groupby("interaction_id", sort=True):
+        if len(g) < 2 or g.if_chosen.sum() != 1: continue
+        ch = g[g.if_chosen.astype(bool)].iloc[0]
+        for _, o in g[~g.if_chosen.astype(bool)].iterrows():
+            a, b = (ch, o) if rng.rand() < 0.5 else (o, ch); d = float(a.score) - float(b.score)
+            lv = 0 if d >= 30 else 1 if d > 5 else 2 if d >= -5 else 3 if d > -30 else 4
+            rows.append((f"{iid}|{o.utterance_id}", a.utterance_id, b.utterance_id, lv, int(b.utterance_id == ch.utterance_id), str(ch.user_id), str(ch.conversation_id), str(ch.user_prompt)))
+    df = pd.DataFrame(rows, columns=["pid", "uA", "uB", "lv", "yb", "user", "conv", "prompt"])
+    return dict(name="prism_pairs", texts=df.prompt.tolist(), H=df.lv.to_numpy()[:, None], K=5, item_ids=df.pid.to_numpy(), groups=df.conv.to_numpy(), rater_ids=np.array(["user"]),
+                evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in reg.items()}, yb=df.yb.to_numpy(), utt_A=df.uA.astype(str).to_numpy(), utt_B=df.uB.astype(str).to_numpy(),
+                model="Qwen/Qwen2.5-7B-Instruct")
+LOADERS.update({"prism_pairs": load_prism_pairs})
