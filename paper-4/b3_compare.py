@@ -12,6 +12,14 @@ if VAR:
     for f in sorted({r["fold"] for r in alt}):
         g0, g1 = gain(rc, f), gain(alt, f); print(f"fold {f}: RC − D-LoRA seed 2000 {g0:+.4f}, seed 3000 {g1:+.4f}")
         if VAR == "s3000f3" or (VAR == "best" and g1 > g0): rc = [r for r in rc if r["fold"] != f] + [r for r in alt if r["fold"] == f]
+    if VAR in ("s4000", "seedavg3"):                                      # Amendment 4: (b') seed 4000 on every fold; three-seed per-rater mean
+        alt4 = [r for f in sorted(glob.glob(f"{R}/lora_rm/multipref_overall/rc_s4000_f*/meta.json")) for r in json.load(open(f)).get("per_rater", [])]
+        assert sorted({r["fold"] for r in alt4}) == [0, 1, 2, 3, 4] and sorted({r["fold"] for r in alt}) == [0, 1, 2, 3, 4], "seeds not complete on all folds"
+        for f in range(5): print(f"fold {f}: RC − D-LoRA seeds 2000/3000/4000 {gain(rc, f):+.4f} / {gain(alt, f):+.4f} / {gain(alt4, f):+.4f}")
+        if VAR == "s4000": rc = alt4
+        else:
+            a3, a4 = ({(r["fold"], r["k"], r["rater"]): r for r in x} for x in (alt, alt4))
+            rc = [{**r, **{f"RC_{m}": (r[f"RC_{m}"] + a3[z][f"RC_{m}"] + a4[z][f"RC_{m}"]) / 3 for m in ("ll", "dir", "rps")}} for r in rc for z in [(r["fold"], r["k"], r["rater"])] if z in a3 and z in a4]
     if VAR in ("s3000", "seedavg"):                                       # Amendment 3: (b) seed 3000 on every fold; (c) per-rater mean of the two seeds' metrics
         assert sorted({r["fold"] for r in alt}) == [0, 1, 2, 3, 4], "second seed not complete on all folds"
         if VAR == "s3000": rc = alt
