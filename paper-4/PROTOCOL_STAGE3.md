@@ -1,0 +1,23 @@
+# Paper 4 — Stage 3: power of the ranking null (positive control and a transferable-content ceiling) (frozen before any result)
+Committed 2026-10-30, after the second ICML-style review of draft v0.5 (overall 4/10). Its main objection (W1): the ranking null is uninformative unless the protocol is shown able to detect content-dependent personalisation where it exists, and unless the real data's transferable rater-specific direction signal is bounded. Any change after the first result is logged under "Amendments".
+
+## S3-P: semi-synthetic positive control (MultiPref)
+**Generator.** The real MultiPref panel (same items, raters, which rater rated which item, folds, validation groups and k-shot draws as stage 2a/2c). A generator model — the stage-2a D head plus DFs offsets, fitted once on *all* ratings (generator only; never used by a learner) — gives each observed (rater, item) a 5-level distribution P_ri. Synthetic labels: y_ri ~ softmax(log P_ri + c_ri · [−2, −1, 0, 1, 2]) with a content term c_ri = θ_r · g_i, where
+- g_i = two standardised item features of the response pair, fixed now: (a) log length ratio of response B to response A (characters); (b) the projection of (E_B − E_A) (the per-response embeddings of stage 2c, PCA-256 space) on a unit direction drawn at random (seed 0) and orthogonalised to the ridge direction (λ = 1,000) that predicts the item's mean rating from (E_B − E_A), so that (b) is not the consensus quality axis;
+- θ_r ~ N(0, τ² I₂) per rater (seed 1), independent of everything else.
+
+**Strength.** τ is set by simulation of the generator only (no learner is fitted for this) so that the *generator-oracle* direction accuracy — knowing θ_r and the generator — exceeds the generator without the content term by +2 and +5 points on the test ratings of all folds; plus τ = 0 (null control). Three synthetic panels: τ₀ = 0, τ₂, τ₅.
+
+**Learners and protocol.** Unchanged from the paper: D, DFs, DL (few-shot-tuned prior, Stage 2 Amendment 5) via factorised_rm.py; Dp, DFsp, VPL, PAL-B (K = 2) via vpl_pal.py on graded labels (Stage 2c Amendment-2 settings); k ∈ {0, 20, 50}; 5 folds; 5 draws (factorised_rm) / as in stage 2c (vpl_pal).
+
+**Outcomes.** For every learner, its own direction-accuracy gain m(k) − m(0) at k = 20 and 50 (rater bootstrap), and the fraction of the generator-oracle gain it recovers.
+
+**Decision rule (fixed now).** The protocol "has power" for content personalisation of a given strength if at least one content-interacting learner (DL, VPL or PAL-B) shows an own direction gain at k = 20 whose lower 95 % bound exceeds +0.01 — i.e. it would have failed the paper's ranking-null criterion. Sanity: at τ₀ every learner's own direction gain must have a 95 % interval containing a value within ±0.005 of 0; otherwise the control is reported as broken and S3-P is not used. Reporting: if power holds at τ₅ but not τ₂, the paper states the null as "content personalisation that would add ≥ 5 points of direction accuracy for an oracle is excluded; ≈ 2 points is below the detection limit"; if no learner has power at τ₅, the paper states that the ranking null is uninformative about content personalisation of that size with these learners, and the title and abstract are revised accordingly.
+
+## S3-C: transferable rater-specific direction signal on the real data (MultiPref)
+For each test rater of each fold (stage-2a splits), the rater's test-item ratings are split in half at random (10 splits, seed 2). Per-rater content weights (ridge on the top-32 principal components of E_B − E_A, penalty chosen once by the same procedure on the training raters' training items) are fitted to the rater's residual direction relative to the frozen D head on one half (offset logit c · [−2, −1, 0, 1, 2], as in the generator) and evaluated on the other half: direction-accuracy gain over D, averaged over halves and splits, rater bootstrap. The same statistic is computed on the τ₀, τ₂, τ₅ synthetic panels as calibration. Reported as the transferable-content ceiling of the real data relative to the synthetic strengths (e.g. "the real data look like τ < τ₂"). No hypothesis; descriptive.
+
+## Forbidden statements
+"Users have no content preferences"; anything about datasets other than MultiPref from S3; any claim from S3-P if its τ₀ sanity check fails.
+
+## Amendments
