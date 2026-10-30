@@ -92,7 +92,7 @@ class DFam:
         opt.step(cl); [setattr(s, k, getattr(s, k).detach()) for k in keys]; return s
 def train_D(kind):
     best = None
-    for lb in ((100, 300, 1000) if args.pca > 0 else (100, 300, 1000, 3000, 10000)):
+    for lb in ((100, 300, 1000) if args.pca > 0 else (100, 300, 1000, 3000, 10000, 30000, 100000)):
         for lr in ((0.5, 2, 8) if kind != "Dp" else (0,)):
             mdl = DFam(kind, lb, lr).fit(idx_tr, ["V", "b"] + DFam(kind, 1, 1).rk()); v = metrics(mdl.logp(torch.tensor(idx_va, device=DEV)), idx_va)[0].mean()
             if best is None or v > best[0]: best = (v, lb, lr)
