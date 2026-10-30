@@ -25,7 +25,7 @@ def permc(rows, m, k):                                                    # Stag
     return [float(d.sum() / w.sum()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
 fmt = lambda v: f"{v[0]:+.4f} [{v[1]:+.4f}, {v[2]:+.4f}]"
 L += ["| τ panel | τ | generator-oracle gain | learner | **own − other rater, dir., k = 20 (primary)** | own − other, k = 50 | own gain k = 20 | own gain k = 50 | raters |", "|---|---|---|---|---|---|---|---|---|"]
-for t in ("t0", "t2", "t5"):
+for t in [t for t in ("t0", "t2", "t5", "t10", "t20") if t in meta]:   # t10, t20: Stage 3 Am. 3, exploratory dose-response
     fr = rows_of(f"{R}/stage2a_multipref_synth_{t}_f?.json"); vr = rows_of(f"{R}/stage2c_multipref_synth_{t}_E1_f?.json")
     for src, rows, models in (("factorised", fr, ("DFs", "DL")), ("per-response", vr, ("DFsp", "VPL", "PAL2"))):
         if not rows: continue

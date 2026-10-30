@@ -46,10 +46,11 @@ def oracle_gain(tau, seeds=range(100, 105)):
     c = tau * (TH0[R] * G[I]).sum(1); lpc = LP + c[:, None] * STEP[None, :]; lpc -= np.logaddexp.reduce(lpc, 1, keepdims=True)
     return float(np.mean([dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST) for y in (sample(lpc, s) for s in seeds)]))
 out = {}
-for target, tag in ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")):
+TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
+for target, tag in TARGETS:
     if target == 0: tau = 0.0
     else:
-        lo, hi = 0.0, 2.0
+        lo, hi = 0.0, 5.0
         for _ in range(25):
             mid = 0.5 * (lo + hi); (lo, hi) = (mid, hi) if oracle_gain(mid) < target else (lo, mid)
         tau = 0.5 * (lo + hi)
@@ -58,4 +59,4 @@ for target, tag in ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")):
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-json.dump(out, open(f"{HERE}/results/synth/synth_meta.json", "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
