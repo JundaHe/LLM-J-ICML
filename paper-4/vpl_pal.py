@@ -8,7 +8,7 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); ap.add_argument("--perm_control", action="store_true"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); ap.add_argument("--perm_control", action="store_true"); ap.add_argument("--pca", type=int, default=256, help="0 = full standardised features (Stage 3 Am. 5)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -42,10 +42,11 @@ YB = (np.repeat(PAN["yb"], m) if NATIVE else (Y >= 3)).astype(np.float32)  # 1 =
 # ---------------------------------------------------------------- features: label-free PCA-256 over all per-response embeddings
 Fz = np.load(args.feat or f"{P2}/features/{args.panel}/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
 EA, EB, EP = (Fz[k].astype(np.float32) for k in ("E_A", "E_B", "E_P")); allE = np.concatenate([EA, EB, EP]); mu = allE.mean(0)
-U, S, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:256].T                      # PCA basis fitted on a 1/3 subsample of all rows (label-free)
+if args.pca > 0: U, S, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:args.pca].T   # PCA basis fitted on a 1/3 subsample of all rows (label-free)
+else: W = np.eye(allE.shape[1], dtype=np.float32)                          # Stage 3 Am. 5: full features, standardised below
 def proj(E): Z = (E - mu) @ W; return Z
-XA, XB, XP = proj(EA), proj(EB), proj(EP); sd = np.concatenate([XA, XB, XP]).std(0); XA, XB, XP = (torch.tensor(x / sd, dtype=torch.float32, device=DEV) for x in (XA, XB, XP))
-XC = torch.cat([XA, XB, XP], 1)                                           # 768 inputs for the D-family
+XA, XB, XP = proj(EA), proj(EB), proj(EP); sd = np.concatenate([XA, XB, XP]).std(0) + 1e-6; XA, XB, XP = (torch.tensor(x / sd, dtype=torch.float32, device=DEV) for x in (XA, XB, XP))
+XC = torch.cat([XA, XB, XP], 1); FD = XA.shape[1]                         # 3·FD inputs for the D-family (768 with PCA-256)
 It = torch.tensor(I, device=DEV); Rt = torch.tensor(R, device=DEV); Yt = torch.tensor(Y, device=DEV); YBt = torch.tensor(YB, device=DEV)
 
 def ordinal_logp(s, cuts):
@@ -68,7 +69,7 @@ def to_binary(lp5):
 # ---------------------------------------------------------------- D-family on the pair features (multinomial head + text-independent rater offsets)
 class DFam:
     def __init__(s, kind, lb, lr):
-        s.kind, s.lb, s.lr = kind, lb, lr; s.V = torch.zeros(768, K, device=DEV); s.b = torch.zeros(K, device=DEV); s.B = torch.zeros(NR, K, device=DEV); s.Bs = torch.zeros(NR, 3, device=DEV); s.cB = None
+        s.kind, s.lb, s.lr = kind, lb, lr; s.V = torch.zeros(3 * FD, K, device=DEV); s.b = torch.zeros(K, device=DEV); s.B = torch.zeros(NR, K, device=DEV); s.Bs = torch.zeros(NR, 3, device=DEV); s.cB = None
     def rk(s): return {"Dp": [], "DFp": ["B"], "DFsp": ["Bs"]}[s.kind]
     def logits(s, idx):
         lg = XC[It[idx]] @ s.V + s.b
@@ -91,7 +92,7 @@ class DFam:
         opt.step(cl); [setattr(s, k, getattr(s, k).detach()) for k in keys]; return s
 def train_D(kind):
     best = None
-    for lb in (100, 300, 1000):
+    for lb in ((100, 300, 1000) if args.pca > 0 else (100, 300, 1000, 3000, 10000)):
         for lr in ((0.5, 2, 8) if kind != "Dp" else (0,)):
             mdl = DFam(kind, lb, lr).fit(idx_tr, ["V", "b"] + DFam(kind, 1, 1).rk()); v = metrics(mdl.logp(torch.tensor(idx_va, device=DEV)), idx_va)[0].mean()
             if best is None or v > best[0]: best = (v, lb, lr)
@@ -106,7 +107,8 @@ def adapt_D(mdl, ad, te):
 
 # ---------------------------------------------------------------- VPL (pair encoder → attention pooling → z; decoder MLP([x; z]) → reward)
 class VPL(nn.Module):
-    def __init__(s, d=256, hid=512, lat=512):
+    def __init__(s, d=None, hid=512, lat=512):
+        d = d or FD
         super().__init__(); cin = 2 * d + (0 if BIN else K)
         s.pair = nn.Sequential(nn.Linear(cin, hid), nn.LeakyReLU(0.2), nn.Linear(hid, hid), nn.LeakyReLU(0.2), nn.Linear(hid, lat))
         s.wq, s.wk, s.wv = nn.Linear(lat, lat), nn.Linear(lat, lat), nn.Linear(lat, lat); s.mean, s.logv = nn.Linear(lat, lat), nn.Linear(lat, lat)
@@ -160,7 +162,8 @@ def train_vpl():
 # ---------------------------------------------------------------- PAL-B (K prototype projectors of the prompt; user = softmax mixture; angle learner)
 def mlp2(d_in, d): return nn.Sequential(nn.Linear(d_in, 512), nn.GELU(), nn.Linear(512, d))
 class PAL(nn.Module):
-    def __init__(s, k, d=256, dp=512):
+    def __init__(s, k, d=None, dp=512):
+        d = d or FD
         super().__init__(); s.k = k; s.g = nn.ModuleList([mlp2(d, dp) for _ in range(k)]); s.fi = mlp2(d, dp); s.W = nn.Parameter(torch.randn(NR, k) * 1.0)
         s.logit_scale = nn.Parameter(torch.tensor(np.log(10.0), dtype=torch.float32)); s.cuts = nn.Parameter(torch.tensor([-1.5, -0.5, 0.5, 1.5]))
     def score(s, tidx, W=None):
