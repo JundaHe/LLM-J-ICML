@@ -48,7 +48,7 @@ pre = r"""\documentclass{article}
 \newcommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \providecommand{\real}[1]{#1}
 \usepackage{icml2025}
-\icmltitlerunning{Three Numbers per Rater}
+\icmltitlerunning{What Personalised Reward Models Learn About a New Rater}
 \begin{document}
 \twocolumn[
 \icmltitle{""" + title + r"""}
