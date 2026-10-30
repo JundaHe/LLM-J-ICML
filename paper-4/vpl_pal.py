@@ -8,7 +8,7 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); ap.add_argument("--perm_control", action="store_true"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -236,11 +236,20 @@ for k in KS:
             pool = idx_ad_pool[R[idx_ad_pool] == r]
             if len(pool) < k: continue
             keep_r.append(r); ad.extend(rng.choice(pool, k, replace=False))
-        ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep_r)]; res = {}; lat = {}
+        ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep_r)]; res = {}; lat = {}; resP = {}
+        PERM = args.perm_control and k > 0
+        if PERM:                                                          # Stage 3 Amendment 1: derangement of the test raters' adapted parameters
+            o_ = np.random.RandomState(777 + 10_000 * f + 100 * k + dr).permutation(len(keep_r)); SRC = {int(keep_r[o_[i]]): int(keep_r[o_[(i + 1) % len(o_)]]) for i in range(len(o_))}
+            tgt_ = torch.tensor(list(SRC.keys()), device=DEV); src_ = torch.tensor(list(SRC.values()), device=DEV)
         for mname in MODELS:
             if mname == "VPLs": continue
             if mname in ("Dp", "DFp", "DFsp"):
                 lp, c = adapt_D(fits[mname][0], ad, te); res[mname] = metrics(lp, te)
+                if PERM:
+                    sv = {kk: getattr(c, kk) for kk in c.rk()}
+                    for kk, v in sv.items(): vp = v.clone(); vp[tgt_] = v[src_]; setattr(c, kk, vp)
+                    with torch.no_grad(): resP[mname] = metrics(c.logp(torch.tensor(te, device=DEV)), te)
+                    for kk, v in sv.items(): setattr(c, kk, v)
                 if mname == "DFsp": lat["DFs"] = c.Bs
                 if mname == "DFp": lat["DF"] = c.B
             elif mname == "VPL":
@@ -250,6 +259,7 @@ for k in KS:
                     else: mean = torch.zeros(len(keep_r), 512, device=DEV)            # k = 0: prior mean of z
                     zmap = dict(zip(keep_r, mean))
                     z = torch.stack([zmap[int(r)] for r in R[te]]); lpv = mdl.logp(torch.tensor(te, device=DEV), z); res[mname] = metrics(lpv, te); lat["VPL"] = zmap
+                    if PERM: resP[mname] = metrics(mdl.logp(torch.tensor(te, device=DEV), torch.stack([zmap[SRC[int(r)]] for r in R[te]])), te)
                 if "VPLs" in MODELS and not BIN:                          # Amendment 3: VPL + symmetric style offsets fitted on the same k ratings (VPL frozen)
                     if k > 0:
                         with torch.no_grad(): za = torch.stack([zmap[int(r)] for r in R[ad]]); lpa = mdl.logp(torch.tensor(ad, device=DEV), za)
@@ -262,12 +272,16 @@ for k in KS:
                     else: res["VPLs"] = res[mname]
             else:
                 lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3)); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
+                if PERM:
+                    WnP = Wn.clone(); WnP[tgt_] = Wn[src_]
+                    with torch.no_grad(): resP[mname] = metrics(fits[mname][0].logp(torch.tensor(te, device=DEV), WnP), te)
         if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
                                            **{f"{mn}_{mt}": np.asarray(res[mn][j]) for mn in res for j, mt in ((0, "ll"), (2, "dir"))}})
         for r in keep_r:
             sel = R[te] == r
             out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n": int(sel.sum()), "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
-                                     **{f"{mn}_{mt}": float(np.nansum(res[mn][j][sel])) for mn in res for j, mt in enumerate(("ll", "rps", "dir"))}})
+                                     **{f"{mn}_{mt}": float(np.nansum(res[mn][j][sel])) for mn in res for j, mt in enumerate(("ll", "rps", "dir"))},
+                                     **{f"{mn}_perm_{mt}": float(np.nansum(resP[mn][j][sel])) for mn in resP for j, mt in enumerate(("ll", "rps", "dir"))}})
             if k == max(KS) and dr == 0:                                  # C3: per-rater latents at the largest k, draw 0
                 row = {"fold": f, "rater": int(r)}
                 for key, v in lat.items(): row[key] = (v[int(r)] if isinstance(v, dict) else v[int(r)]).detach().cpu().numpy().tolist()
