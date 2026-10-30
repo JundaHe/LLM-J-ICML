@@ -931,3 +931,4 @@ No NeurIPS/ICLR/ICML/ACL style file exists in the local TeX tree or the project 
 - 2026-10-29 22:51 Am. 4: fold 1 seed 4000 done — RC − D-LoRA +0.085 (mean train loss 1.41; seeds 2000/3000: +0.021/+0.078). Fold 1 now 3 seeds; f2 seed 4000 running, f3, f4 queued.
 - 2026-10-30 03:51 Am. 4: fold 2 seed 4000 done — RC − D-LoRA +0.048 (mean train loss 1.44; seeds 2000/3000: +0.061/+0.053). f3 seed 4000 running, f4 queued (ETA ≈ 14:00).
 - 2026-10-30 08:51 Am. 4: fold 3 seed 4000 done — RC − D-LoRA +0.125 (mean train loss 1.41; seeds 2000/3000: −0.055/+0.108); the largest RC gain so far. f4 seed 4000 running (ETA ≈ 14:00), then final B3.
+- 2026-10-30 09:51 b3_final.py: runs the four Am.-4 versions and applies the wording rule automatically (ready for fold 4 seed 4000, ETA ≈ 14:00).
