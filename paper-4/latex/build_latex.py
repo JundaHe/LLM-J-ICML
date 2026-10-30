@@ -8,7 +8,7 @@ body = "\n".join(l for l in md.splitlines()[1:] if not l.startswith("*Draft"))
 CIT = {"Siththaranjan et al., 2024": "siththaranjan2024dpl", "Kirk et al., 2024": "kirk2024prism", "Gordon et al., 2022": "gordon2022jury", "Poddar et al., 2024": "poddar2024vpl",
        "Chen et al., 2025": "chen2025pal", "Sorensen et al., 2024": "sorensen2024roadmap", "Zhang et al., 2025": "zhang2025diverging", "Miranda et al., 2025": "miranda2025hybrid",
        "Davani et al., 2022": "davani2022dealing", "Li et al., 2024": "li2024prlhf", "Orlikowski et al., 2023": "orlikowski2023ecological", "Baumgartner & Steenkamp, 2001": "baumgartner2001response",
-       "Linacre, 1989": "linacre1989mfrm", "Eckes, 2011": "eckes2011mfrm", "Aroyo et al., 2023": "aroyo2023dices", "Bose et al., 2025": "bose2025lore", "Ryan et al., 2025": "ryan2025synthesizeme", "Dong et al., 2025": "dong2025personalization", "Mishra et al., 2026": "mishra2026decoding", "Kim & Kim, 2026": "kim2026swap", "Deng et al., 2023": "deng2023annotate", "Kim & Kim (ICLR 2026)": None}
+       "Linacre, 1989": "linacre1989mfrm", "Eckes, 2011": "eckes2011mfrm", "Aroyo et al., 2023": "aroyo2023dices", "Bose et al., 2025": "bose2025lore", "Ryan et al., 2025": "ryan2025synthesizeme", "Dong et al., 2025": "dong2025personalization", "Mishra et al., 2026": "mishra2026decoding", "Kim & Kim, 2026": "kim2026swap", "Deng et al., 2023": "deng2023annotate", "Koren et al., 2009": "koren2009mf", "Koren & Sill, 2011": "koren2011ordrec", "Dawid & Skene, 1979": "dawid1979em", "Raykar et al., 2010": "raykar2010crowds", "Hovy et al., 2013": "hovy2013mace", "Plank, 2022": "plank2022problem", "Uma et al., 2021": "uma2021learning", "Kim & Kim (ICLR 2026)": None}
 for k, v in sorted(CIT.items(), key=lambda kv: -len(kv[0])):
     if v: body = body.replace(k, f"@@CITE{{{v}}}@@")
 body = body.replace("[companion paper, anonymised]", "a companion study (anonymised)")
@@ -29,7 +29,7 @@ def tab(mm):
 tex = re.sub(r"\\begin\{longtable\}.*?\\end\{longtable\}", tab, tex, flags=re.S)
 tex = re.sub(r"\\begin\{minipage\}\[b\]\{\\linewidth\}\\raggedright\s*(.*?)\s*\\end\{minipage\}", r"\1", tex, flags=re.S)
 U = {"−": "$-$", "≈": "$\\approx$", "≤": "$\\leq$", "≥": "$\\geq$", "×": "$\\times$", "…": "\\ldots{}", "²": "$^2$", "₀": "$_0$", "ℓ": "$\\ell$", "ρ": "$\\rho$", "∈": "$\\in$",
-     "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---", "→": "$\\to$"}
+     "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---", "→": "$\\to$", "θ": "$\\theta$", "τ": "$\\tau$"}
 for k, v in U.items(): tex = tex.replace(k, v); abstract = abstract.replace(k, v); title = title.replace(k, v)
 i_app = tex.find("\\section{Appendix A.")
 if i_app >= 0: tex = tex[:i_app] + "\\appendix\n" + tex[i_app:]
