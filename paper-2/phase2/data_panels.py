@@ -434,6 +434,12 @@ def load_multipref(crit="overall", max_chars=2500):
                 rater_ids=np.array(["pos_crowd0", "pos_crowd1", "pos_expert0", "pos_expert1"]), prompt=prompt, prompt_hist=prompt_hist, LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct",
                 evaluators=[[a["evaluator"] for a in (r["normal_worker_annotations"] + r["expert_worker_annotations"])] for r in rows])
 LOADERS.update({"multipref_overall": lambda: load_multipref("overall"), "multipref_helpful": lambda: load_multipref("helpful"), "multipref_harmless": lambda: load_multipref("harmless")})
+def load_multipref_synth(tag):
+    """paper 4 Stage 3 (PROTOCOL_STAGE3.md): MultiPref structure with semi-synthetic labels (injected content-dependent rater preferences), from paper-4/make_synth.py"""
+    P = load_multipref("overall"); z = np.load(f"{LLMJ}/paper-4/results/synth/multipref_synth_{tag}.npz")
+    assert np.array_equal(z["item_ids"], np.asarray(P["item_ids"]).astype(str)) and z["H"].shape == P["H"].shape
+    P["H"] = z["H"].astype(int); P["name"] = f"multipref_synth_{tag}"; return P
+LOADERS.update({f"multipref_synth_{t}": (lambda t=t: load_multipref_synth(t)) for t in ("t0", "t2", "t5")})
 
 # ----------------------------------------------------------------------------------------------- PRISM (HannahRoseKirk/prism-alignment; paper 4 stage 2, Amendment 6): every model response rated 1–100 by ONE user
 # (68,371 ratings, 1,396 users). Long format: one item per rated utterance, H is n × 1, evaluators = the rating user; score binned to 5 fixed levels (1–20, 21–40, 41–60, 61–80, 81–100);
