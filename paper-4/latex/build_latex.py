@@ -29,7 +29,7 @@ def tab(mm):
 tex = re.sub(r"\\begin\{longtable\}.*?\\end\{longtable\}", tab, tex, flags=re.S)
 tex = re.sub(r"\\begin\{minipage\}\[b\]\{\\linewidth\}\\raggedright\s*(.*?)\s*\\end\{minipage\}", r"\1", tex, flags=re.S)
 U = {"−": "$-$", "≈": "$\\approx$", "≤": "$\\leq$", "≥": "$\\geq$", "×": "$\\times$", "…": "\\ldots{}", "²": "$^2$", "₀": "$_0$", "ℓ": "$\\ell$", "ρ": "$\\rho$", "∈": "$\\in$",
-     "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---", "→": "$\\to$", "θ": "$\\theta$", "τ": "$\\tau$", "±": "$\\pm$"}
+     "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---", "→": "$\\to$", "θ": "$\\theta$", "τ": "$\\tau$", "±": "$\\pm$", "α": "$\\alpha$"}
 for k, v in U.items(): tex = tex.replace(k, v); abstract = abstract.replace(k, v); title = title.replace(k, v)
 i_app = tex.find("\\section{Appendix A.")
 if i_app >= 0: tex = tex[:i_app] + "\\appendix\n" + tex[i_app:]
