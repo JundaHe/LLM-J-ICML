@@ -21,3 +21,5 @@ Committed 2026-10-31, after the third ICML-style review (4/10; W1: no estimate o
 "Raters do not differ in their values"; anything about datasets other than MultiPref from Stage 4.
 
 ## Amendments
+
+**Amendment 1 (2026-10-31 05:00, AFTER the first S4-A result, which is kept as results/stage4_s4a_grid0.*).** The cut-point penalty λ_c was selected at the lower edge of its grid (0.3) in every fold. Following the grid-edge rule used throughout, the grid is extended downward to {0.01, 0.03, 0.1, 0.3, 1, 3, 10} and S4-A is re-run; nothing else changes. The decision rule is applied to the re-run; both runs are reported.

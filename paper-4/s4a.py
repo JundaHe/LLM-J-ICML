@@ -48,7 +48,7 @@ recs = []; sel = {}
 for f in range(5):
     test_r = rfold == f; tr_item = ifold[I] != f; idx_tr = np.where(~test_r[R] & tr_item)[0]; pool = np.where(test_r[R] & tr_item)[0]; idx_te = np.where(test_r[R] & ~tr_item)[0]
     base = fit({"beta": torch.zeros(6), "u": torch.tensor([-1.0, 0.0, 0.0, 0.0]), "dU": torch.zeros(NR, 4)}, idx_tr, {"dU": 1.0}); base = (base["beta"], base["u"])
-    lc = max(((split_ll(base, idx_tr, "P", lc_, 0, 70 + f), lc_) for lc_ in (0.3, 1.0, 3.0, 10.0)))[1]
+    lc = max(((split_ll(base, idx_tr, "P", lc_, 0, 70 + f), lc_) for lc_ in (0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0)))[1]
     ld = max(((split_ll(base, idx_tr, "R", lc, ld_, 80 + f), ld_) for ld_ in (0.3, 1.0, 3.0, 10.0, 30.0, 100.0)))[1]; sel[f] = (lc, ld)
     print(f"fold {f}: β = {np.round(base[0].numpy(), 2)}, λ_c {lc}, λ_δ {ld}", flush=True)
     test_raters = np.unique(R[idx_te])
