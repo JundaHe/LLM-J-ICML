@@ -1,0 +1,21 @@
+# Paper 4 — Stage 8: the ranking null on a dataset built for preference heterogeneity (frozen before any result)
+Committed 2026-11-01, after the seventh ICML-style review (W3: MultiPref follows guidelines, DICES rates single responses, PRISM has few shared items; "add at least one dataset built for heterogeneous preferences"). Dataset: **Community Alignment** v1.1 (Zhang et al., 2026; Hugging Face `facebook/community-alignment-dataset`, CC-BY-4.0; 90,256 conversations, 3,603 annotators in five countries and languages; candidate responses sampled to be diverse). The data are not committed. Any change after the first result is logged under "Amendments".
+
+## Panel
+**First turn only** (later turns depend on the conversation so far). A conversation enters if its first turn has four responses and a preferred response. **Pairs:** the chosen response against each of the three others (A/B side randomised, seed 0); label = native choice (binary; the dataset has no graded strength, so scale use cannot help and only ranking is tested). Items are grouped by **first-turn prompt text**, so a pre-generated prompt shown to many annotators is in a single item fold. User-initiated and pre-generated prompts are both used.
+**Features:** Qwen2.5-7B-Instruct, last-layer state at the final token of the chat-formatted (prompt, response) for each response (E_A, E_B; truncated at 4,000 characters each) and of the prompt alone (E_P). Texts are used in their original language. (PRISM used a judge-prompt embedding of each response; the difference is stated.)
+
+## Protocol and methods
+As PRISM pairs (Stage 2c Amendment 4): 5 annotator folds × 5 prompt-group folds, k ∈ {0, 5, 20, 50} adaptation pairs from training items, 5 draws, permutation control (own vs another test annotator's adapted parameters), rater bootstrap. Methods (`vpl_pal.py`, PCA-256 features as in the main tables): Dp (text-only), DFp, VPL, PAL-B (K = 2, 4), LoRe and LoRe-reg (Stage 6, unchanged hyper-parameter grids).
+
+## Outcomes and decision rule (fixed now)
+Primary, k = 20, choice accuracy in points: each method's own gain (method(k) − method(0)) and own − other.
+- **Ranking null replicates on Community Alignment** if, for every method, both upper 95 % bounds are below +1 point.
+- **Content personalisation detected** if any method's own gain or own − other has a lower 95 % bound above +1 point; the paper's ranking-null claims are then restricted to the three original datasets and the abstract is rewritten.
+- Otherwise **inconclusive**, reported as such.
+Secondary: the same at k = 50; log-likelihood; per assigned language. Learner-free: on response pairs rated by at least two annotators (pre-generated prompts, identical response texts), the rate at which two annotators make the same choice, against the text-only model's accuracy on the same pairs (is a population model already as good as another person?).
+
+## Forbidden statements
+Any statement about later turns, or about countries/languages beyond the per-language secondary analysis.
+
+## Amendments

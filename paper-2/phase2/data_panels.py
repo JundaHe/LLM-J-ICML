@@ -480,3 +480,23 @@ def load_prism_pairs(seed=0):
                 evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in reg.items()}, yb=df.yb.to_numpy(), utt_A=df.uA.astype(str).to_numpy(), utt_B=df.uB.astype(str).to_numpy(),
                 model="Qwen/Qwen2.5-7B-Instruct")
 LOADERS.update({"prism_pairs": load_prism_pairs})
+
+CA_CSV = "/scratch/jundahe/data/community_alignment/community_alignment.csv"     # Community Alignment v1.1 (HF facebook/community-alignment-dataset, CC-BY-4.0), not tracked
+def load_ca_pairs(seed=0):
+    """paper 4 Stage 8 (PROTOCOL_STAGE8.md): Community Alignment first turn, chosen response vs each of the three others; yb = native choice (1 = B chosen);
+    H is a placeholder (binary evaluation only, E2); groups = first-turn prompt text; rater_group = annotator country; resp_A / resp_B / texts = response and prompt texts."""
+    c = ["conversation_id", "annotator_id", "assigned_lang", "is_pregenerated_first_prompt", "annotator_country", "first_turn_prompt", "first_turn_preferred_response"] + [f"first_turn_response_{x}" for x in "abcd"]
+    d = pd.read_csv(CA_CSV, usecols=c).sort_values("conversation_id").reset_index(drop=True)
+    ok = d.first_turn_preferred_response.isin([f"response_{x}" for x in "abcd"]) & d[[f"first_turn_response_{x}" for x in "abcd"]].notna().all(1) & d.first_turn_prompt.notna()
+    d = d[ok].reset_index(drop=True); rng = np.random.RandomState(seed); rows = []
+    for r in d.itertuples(index=False):
+        rr = r._asdict(); ch = rr["first_turn_preferred_response"][-1]; tc = str(rr[f"first_turn_response_{ch}"])
+        for o in [x for x in "abcd" if x != ch]:
+            to = str(rr[f"first_turn_response_{o}"]); flip = rng.rand() < 0.5; a, b = (tc, to) if flip else (to, tc)
+            rows.append((f"{rr['conversation_id']}|{o}", a, b, int(not flip), str(rr["annotator_id"]), str(rr["first_turn_prompt"]), str(rr["assigned_lang"]), str(rr["annotator_country"]), bool(rr["is_pregenerated_first_prompt"])))
+    df = pd.DataFrame(rows, columns=["pid", "A", "B", "yb", "user", "prompt", "lang", "country", "pregen"])
+    country = df.groupby("user").country.first().to_dict()
+    return dict(name="ca_pairs", texts=df.prompt.tolist(), H=np.where(df.yb.to_numpy() == 1, 4, 0)[:, None], K=5, item_ids=df.pid.to_numpy(), groups=df.prompt.to_numpy(), rater_ids=np.array(["user"]),
+                evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in country.items()}, yb=df.yb.to_numpy(), resp_A=df.A.to_numpy(), resp_B=df.B.to_numpy(),
+                lang=df.lang.to_numpy(), pregen=df.pregen.to_numpy(), model="Qwen/Qwen2.5-7B-Instruct")
+LOADERS.update({"ca_pairs": load_ca_pairs})
