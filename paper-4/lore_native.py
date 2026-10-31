@@ -9,7 +9,7 @@ u = pd.read_json(f"{data_panels.PRISM_DIR}/utterances.jsonl", lines=True).dropna
 U_ALL = u
 if FIRST: u = u[u.turn == 0].reset_index(drop=True)
 if FEAT == "skywork":
-    z = np.load(f"{P2}/features/prism_skywork/utterances_Skywork.npz"); pos = {s: j for j, s in enumerate(z["utterance_id"])}; E = z["E"]
+    z = np.load(f"{P2}/features/prism_skywork/utterances_Skywork.npz", allow_pickle=True); pos = {str(s): j for j, s in enumerate(z["utterance_id"])}; E = z["E"]
 else:
     z = np.load(f"{P2}/features/prism/Qwen2.5-7B-Instruct.npz", allow_pickle=True); pos = {str(s): j for j, s in enumerate(z["item_ids"])}; E = z["E_last"]
 rng0 = np.random.RandomState(0); pairs = []                               # one pair per interaction: chosen vs one random other
