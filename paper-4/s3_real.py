@@ -11,6 +11,7 @@ def permc(rows, m, k):
     q = [z for z in by if np.mean([x["n_dir"] for x in by[z]]) > 0]
     if not q: return None
     d = np.array([np.mean([x[f"{m}_dir"] - x[f"{m}_perm_dir"] for x in by[z]]) for z in q]); w = np.array([np.mean([x["n_dir"] for x in by[z]]) for z in q])
+    rng = np.random.RandomState(17)                                       # fixed per contrast: intervals reproducible across re-runs
     bs = [d[ix].sum() / w[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]
     return [float(d.sum() / w.sum()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5)), len(q), sorted({z[0] for z in q})]
 SRC = [("real MultiPref", None, f"{R}/stage2a_multipref_overall_A5perm_f?.json", f"{R}/stage2c_E1_f?{VT or '_perm'}.json")] + \

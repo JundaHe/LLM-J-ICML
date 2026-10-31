@@ -13,6 +13,7 @@ def own(rows, m, k):
         if r["k"] == k and (r["fold"], r["rater"]) in by0: byk[(r["fold"], r["rater"])].append(r)
     q = [z for z in byk if np.mean([x["n_dir"] for x in byk[z]]) > 0]
     d = np.array([np.mean([x[f"{m}_dir"] for x in byk[z]]) - by0[z][f"{m}_dir"] * np.mean([x["n_dir"] for x in byk[z]]) / max(1, by0[z]["n_dir"]) for z in q]); w = np.array([np.mean([x["n_dir"] for x in byk[z]]) for z in q])
+    rng = np.random.RandomState(17)                                       # fixed per contrast: intervals reproducible across re-runs
     bs = [d[ix].sum() / w[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]
     return [float(d.sum() / w.sum()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))], len(q)
 def permc(rows, m, k):                                                    # Stage 3 Am. 1 primary: own k ratings − another test rater's k ratings (same fold, k, draw)
@@ -21,6 +22,7 @@ def permc(rows, m, k):                                                    # Stag
         if r["k"] == k and f"{m}_perm_dir" in r: by[(r["fold"], r["rater"])].append(r)
     q = [z for z in by if np.mean([x["n_dir"] for x in by[z]]) > 0]
     d = np.array([np.mean([x[f"{m}_dir"] - x[f"{m}_perm_dir"] for x in by[z]]) for z in q]); w = np.array([np.mean([x["n_dir"] for x in by[z]]) for z in q])
+    rng = np.random.RandomState(17)                                       # fixed per contrast: intervals reproducible across re-runs
     bs = [d[ix].sum() / w[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]
     return [float(d.sum() / w.sum()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
 fmt = lambda v: f"{v[0]:+.4f} [{v[1]:+.4f}, {v[2]:+.4f}]"
