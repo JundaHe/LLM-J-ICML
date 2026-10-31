@@ -6,7 +6,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dir
 import data_panels
 SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None
 V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"
-ASP = len(sys.argv) > 1 and sys.argv[1] == "asp"                               # Stage 5 Am. 3: aspect-based injection                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
+ASP = len(sys.argv) > 1 and sys.argv[1] == "asp"
+SPAN = len(sys.argv) > 1 and sys.argv[1] == "span"                             # Stage 7 Am. 1: g2 in DL's own input space (joint PCA-256 X)                               # Stage 5 Am. 3: aspect-based injection                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
 PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = 5; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
@@ -53,6 +54,7 @@ raw = [json.loads(l) for l in open(data_panels.MULTIPREF)]; assert [r["compariso
 g1 = np.log(np.array([max(1, len(str(r["completion_b"]))) for r in raw]) / np.array([max(1, len(str(r["completion_a"]))) for r in raw]))
 Fp = np.load(f"{P2}/features/multipref_overall/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fp["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
 Dd = (Fp["E_B"] - Fp["E_A"]).astype(np.float64); Dd -= Dd.mean(0); U2, S2, _ = np.linalg.svd(Dd, full_matrices=False); Z = U2[:, :256] * S2[:256]; Z /= Z.std(0)
+if SPAN: Z = X.numpy().copy()
 ymean = H.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ymean - ymean.mean())); w /= np.linalg.norm(w)
 u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
 G = np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)                     # (n, 2)
@@ -72,8 +74,9 @@ def oracle_gain(tau, seeds=range(100, 105)):
     return float(np.mean([dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST) for y in (sample(lpc, s) for s in seeds)]))
 out = {}
 if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
-if V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
-if ASP: TARGETS = ((0.02, "asp2"), (0.05, "asp5"))
+elif V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
+elif ASP: TARGETS = ((0.02, "asp2"), (0.05, "asp5"))
+elif SPAN: TARGETS = ((0.05, "x5"), (0.10, "x10"))
 else: TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
 for target, tag in TARGETS:
     if target == 0: tau = 0.0
@@ -87,4 +90,4 @@ for target, tag in TARGETS:
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else 's' + str(SEED))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP and not SPAN) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else ('span' if SPAN else 's' + str(SEED)))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
