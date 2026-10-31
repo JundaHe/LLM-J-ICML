@@ -81,7 +81,7 @@ for f in range(5):
         opt.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V + b + Bt[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(idx_tr)), Yt[ii]].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bt ** 2).sum(); loss.backward(); return loss
     opt.step(cl)
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)                                    # rater offsets re-fitted per rater below
-    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag == "real_aspect" or tag.startswith("v2")) else {"estimated": (LPE, ("Bs",))}   # v2 panels: the v1 generator is not their oracle; sig = {}
+    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag == "real_aspect" or tag.startswith("v2")) else {"estimated": (LPE, ("Bs",))}; sig = {}   # v2 panels: the v1 generator is not their oracle
     for bn, (lpb, keys) in bases.items():                                   # empirical-Bayes σ² on the training raters (rater-wise half split of their training items)
         best = None; rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
         for r in np.unique(R[idx_tr]):

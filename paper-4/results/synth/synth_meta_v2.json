@@ -1,0 +1,41 @@
+{
+ "v2t0": {
+  "tau": 0.0,
+  "target_gain": 0.0,
+  "oracle_gain_calibration": 0.0,
+  "oracle_gain_realised": 0.0,
+  "label_dist": [
+   4169,
+   7019,
+   10940,
+   10620,
+   9096
+  ]
+ },
+ "v2t5": {
+  "tau": 0.24979524314403534,
+  "target_gain": 0.05,
+  "oracle_gain_calibration": 0.05006985127217942,
+  "oracle_gain_realised": 0.04446959896507108,
+  "label_dist": [
+   4756,
+   6927,
+   10551,
+   10219,
+   9391
+  ]
+ },
+ "v2t10": {
+  "tau": 0.41665054857730865,
+  "target_gain": 0.1,
+  "oracle_gain_calibration": 0.10000299619648838,
+  "oracle_gain_realised": 0.09586195877935777,
+  "label_dist": [
+   5408,
+   6867,
+   10076,
+   9761,
+   9732
+  ]
+ }
+}
