@@ -13,7 +13,7 @@ rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
 for g in np.unique(GRP):
     ids = np.where(GRP == g)[0]; ids = ids[rs.permutation(len(ids))]; rfold[ids] = np.arange(len(ids)) % 5
 Gp = np.asarray(base["groups"]); ug = np.unique(Gp); perm = np.random.RandomState(0).permutation(len(ug)); gf = {g_: perm[j] % 5 for j, g_ in enumerate(ug)}; ifold = np.array([gf[g_] for g_ in Gp])
-def panel_H(tag): return Hreal if tag == "real" else np.load(f"{HERE}/results/synth/multipref_synth_{tag}.npz")["H"]
+def panel_H(tag): return Hreal if tag in ("real", "real_aspect") else np.load(f"{HERE}/results/synth/multipref_synth_{tag}.npz")["H"]
 
 if sys.argv[1] == "stats":                                                # ---------------- S5-3
     import krippendorff
@@ -54,17 +54,21 @@ raw = [json.loads(l) for l in open(data_panels.MULTIPREF)]
 g1 = np.log(np.array([max(1, len(str(r["completion_b"]))) for r in raw]) / np.array([max(1, len(str(r["completion_a"]))) for r in raw]))
 Fp = np.load(f"{P2}/features/multipref_overall/pairs_Qwen2.5-7B-Instruct.npz"); Dd = (Fp["E_B"] - Fp["E_A"]).astype(np.float64); Dd -= Dd.mean(0); U2, S2, _ = np.linalg.svd(Dd, full_matrices=False); Z = U2[:, :256] * S2[:256]; Z /= Z.std(0)
 ym = Hreal.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ym - ym.mean())); w /= np.linalg.norm(w); u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
-G = torch.tensor(np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1))
+G = torch.tensor(np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)); GR = G[It]          # per-rating content features
+if tag == "real_aspect":                                                  # Stage 5 Am. 1 (A): leave-rater-out consensus aspect differences, real labels
+    LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}
+    A = np.array([[LVa[a[f"{c}_pref"]] for c in ("helpful", "truthful", "harmless")] for r_ in raw for a in r_["normal_worker_annotations"] + r_["expert_worker_annotations"]], float).reshape(n, m, 3)
+    loo = (A.sum(1, keepdims=True) - A) / (m - 1); g = loo.reshape(-1, 3); g = (g - g.mean(0)) / g.std(0); GR = torch.tensor(g)
 def fit_rater(lpb, idx, keys, sig2, lam_s=2.0):
     """MAP of rater params on rows idx: th (NR,2) with prior N(0, sig2 I); Bs (NR,3) ridge lam_s if 'Bs' in keys"""
-    th = torch.zeros(NR, 2, requires_grad=True); Bs = torch.zeros(NR, 3, requires_grad="Bs" in keys); ii = torch.tensor(idx); prm = [th] + ([Bs] if "Bs" in keys else [])
+    th = torch.zeros(NR, GR.shape[1], requires_grad=True); Bs = torch.zeros(NR, 3, requires_grad="Bs" in keys); ii = torch.tensor(idx); prm = [th] + ([Bs] if "Bs" in keys else [])
     opt = torch.optim.LBFGS(prm, lr=0.5, max_iter=200, line_search_fn="strong_wolfe")
     def cl():
-        opt.zero_grad(); c = (th[Rt[ii]] * G[It[ii]]).sum(1); lp = torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
+        opt.zero_grad(); c = (th[Rt[ii]] * GR[ii]).sum(1); lp = torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
         loss = -lp[torch.arange(len(idx)), Yt[ii]].sum() + 0.5 / sig2 * (th ** 2).sum() + lam_s * (Bs ** 2).sum(); loss.backward(); return loss
     opt.step(cl); return th.detach(), Bs.detach()
 def predict(lpb, idx, th, Bs):
-    ii = torch.tensor(idx); c = (th[Rt[ii]] * G[It[ii]]).sum(1); return torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
+    ii = torch.tensor(idx); c = (th[Rt[ii]] * GR[ii]).sum(1); return torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
 def dirc(lp, idx):
     ey = (lp.exp() * torch.arange(K)).sum(1).numpy(); y = Y[idx]; return np.where(y == 2, np.nan, (np.sign(ey - 2) == np.sign(y - 2)).astype(float))
 recs = []
@@ -76,7 +80,7 @@ for f in range(5):
         opt.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V + b + Bt[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(idx_tr)), Yt[ii]].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bt ** 2).sum(); loss.backward(); return loss
     opt.step(cl)
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)                                    # rater offsets re-fitted per rater below
-    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))}; sig = {}
+    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if tag != "real_aspect" else {"estimated": (LPE, ("Bs",))}; sig = {}
     for bn, (lpb, keys) in bases.items():                                   # empirical-Bayes σ² on the training raters (rater-wise half split of their training items)
         best = None; rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
         for r in np.unique(R[idx_tr]):
@@ -102,10 +106,10 @@ for f in range(5):
                 res[bn] = (dirc(predict(lpb, te, th, Bs), te), dirc(predict(lpb, te, thp, Bsp), te))
             for r in keep:
                 sel = R[te] == r
-                recs.append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n_dir": int(np.isfinite(res["oracle"][0][sel]).sum()), **{f"{bn}_{w_}": float(np.nansum(res[bn][j][sel])) for bn in bases for j, w_ in ((0, "own"), (1, "other"))}})
+                recs.append({"fold": f, "k": k, "draw": dr, "rater": int(r), **{f"{bn}_{w_}": float(np.nansum(res[bn][j][sel])) for bn in bases for j, w_ in ((0, "own"), (1, "other"))}, "n_dir": int(np.isfinite(res["estimated"][0][sel]).sum())})
 rng = np.random.RandomState(17); out = {}
 for k in (20, 50):
-    for bn in ("oracle", "estimated"):
+    for bn in [b_ for b_ in ("oracle", "estimated") if f"{b_}_own" in recs[0]]:
         by = collections.defaultdict(list)
         for x in recs:
             if x["k"] == k: by[(x["fold"], x["rater"])].append(x)
