@@ -4,8 +4,10 @@ Usage: lore_native.py qwen|skywork"""
 import os, sys, json, numpy as np, pandas as pd, torch, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
-torch.manual_seed(0); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4"))); FEAT = sys.argv[1]
+torch.manual_seed(0); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4"))); FEAT = sys.argv[1]; FIRST = len(sys.argv) > 2 and sys.argv[2] == "first"   # Am. 3: one pair per conversation (turn 0)
 u = pd.read_json(f"{data_panels.PRISM_DIR}/utterances.jsonl", lines=True).dropna(subset=["score"]).sort_values("utterance_id").reset_index(drop=True)
+U_ALL = u
+if FIRST: u = u[u.turn == 0].reset_index(drop=True)
 if FEAT == "skywork":
     z = np.load(f"{P2}/features/prism_skywork/utterances_Skywork.npz"); pos = {s: j for j, s in enumerate(z["utterance_id"])}; E = z["E"]
 else:
@@ -59,4 +61,4 @@ for split in range(5):
     out["n_unseen_users"] = len(unseen); out["fewshot_per_user"] = len(fs) / len(unseen); out["test_pairs"] = len(te); res.append(out); print(json.dumps(out), flush=True)
 summ = [r for r in res if "lore_acc_fs" in r]; agg = {k: [float(np.mean([r[k] for r in summ])), float(np.std([r[k] for r in summ]))] for k in ("bt_acc_k0", "lore_acc_k0", "lore_acc_fs")}
 print("SUMMARY", FEAT, json.dumps(agg), flush=True)
-json.dump({"feat": FEAT, "splits": summ, "summary": agg}, open(f"{HERE}/results/stage6_native_{FEAT}.json", "w"), indent=1)
+json.dump({"feat": FEAT, "first_turn": FIRST, "splits": summ, "summary": agg}, open(f"{HERE}/results/stage6_native_{FEAT}{'_first' if FIRST else ''}.json", "w"), indent=1)
