@@ -8,5 +8,8 @@
 | synthetic t5 | 0.5738 | 0.6906 | 0.0889 | outside real 95 % (i or iii)
 | synthetic t10 | 0.5581 | 0.7048 | 0.0685 | outside real 95 % (i or iii)
 | synthetic t20 | 0.5317 | 0.7273 | 0.0346 | outside real 95 % (i or iii)
+| synthetic v2t0 | 0.6038 | 0.6577 | 0.1327 | outside real 95 % (i or iii)
+| synthetic v2t5 | 0.5851 | 0.6765 | 0.1080 | outside real 95 % (i or iii)
+| synthetic v2t10 | 0.5673 | 0.6946 | 0.0822 | outside real 95 % (i or iii)
 
 α has no item-bootstrap interval here (one value per panel); (i) and (iii) carry the inconsistency rule of the protocol, α is reported for comparison.
