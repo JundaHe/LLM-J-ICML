@@ -203,6 +203,43 @@ def adapt_pal(mdl, w0, ad, te, lam=1e-3):
         opt.step(cl); Wn = Wp.detach()
     with torch.no_grad(): return mdl.logp(torch.tensor(te, device=DEV), Wn), Wn
 
+# ---------------------------------------------------------------- LoRe (Bose et al., 2025; PROTOCOL_STAGE6.md): linear reward basis on frozen embeddings, simplex user weights
+class LORE(nn.Module):
+    def __init__(s, B):
+        super().__init__(); s.A = nn.Linear(FD, B, bias=False); s.W = nn.Parameter(torch.zeros(NR, B)); s.cuts = nn.Parameter(torch.tensor([-1.5, -0.5, 0.5, 1.5]))
+    def score(s, tidx, W=None):
+        w = torch.softmax((s.W if W is None else W)[Rt[tidx]], 1); d = s.A(XB[It[tidx]]) - s.A(XA[It[tidx]]); return (w * d).sum(1)
+    def logp(s, tidx, W=None):
+        sc = s.score(tidx, W); return Fn.logsigmoid(sc) if BIN else ordinal_logp(sc, s.cuts)
+def train_lore():
+    best = None
+    for B in (2, 5, 10, 20, 50):
+        for lr in (0.5, 0.05, 0.005):
+            torch.manual_seed(0); mdl = LORE(B).to(DEV); opt = torch.optim.Adam(mdl.parameters(), lr=lr); rng = np.random.RandomState(0); hist = []; best_state = None; bad = 0
+            for ep in range(args.max_epochs):
+                mdl.train(); order = rng.permutation(idx_tr)
+                for b0 in range(0, len(order), 256):
+                    t = torch.tensor(order[b0:b0 + 256], device=DEV); loss = pal_nll(mdl, t) / len(t); opt.zero_grad(); loss.backward(); opt.step()
+                mdl.eval()
+                with torch.no_grad(): v = float(np.nanmean(metrics(mdl.logp(torch.tensor(idx_va, device=DEV)), idx_va)[0]))
+                hist.append(v if np.isfinite(v) else -1e9)
+                if best_state is None or hist[-1] > max(hist[:-1] + [-1e9]): best_state = {k_: x.clone() for k_, x in mdl.state_dict().items()}; bad = 0
+                else: bad += 1
+                if bad >= 3: break
+            if best is None or max(hist) > best[0]: best = (max(hist), (B, lr), best_state, len(hist))
+    mdl = LORE(best[1][0]).to(DEV); mdl.load_state_dict(best[2]); mdl.eval()
+    seen = torch.tensor(np.unique(R[np.concatenate([idx_tr, idx_va])]), device=DEV); w0 = mdl.W.detach()[seen].mean(0)
+    return mdl, {"B": best[1][0], "lr": best[1][1], "epochs_run": best[3], "val_ll": best[0]}, w0
+def adapt_lore(mdl, w0, ad, te):
+    """LoRe few-shot: A frozen, user weight logits from the training-user mean, Adam lr 0.1, 100 steps, no regularisation"""
+    Wn = mdl.W.detach().clone(); test = torch.tensor(np.unique(R[te]), device=DEV); Wn[test] = w0
+    if len(ad):
+        Wp = Wn.clone().requires_grad_(True); ii = torch.tensor(ad, device=DEV); opt = torch.optim.Adam([Wp], lr=0.1)
+        for _ in range(100):
+            opt.zero_grad(); loss = pal_nll(mdl, ii, Wp); loss.backward(); opt.step()
+        Wn = Wp.detach()
+    with torch.no_grad(): return mdl.logp(torch.tensor(te, device=DEV), Wn), Wn
+
 # ---------------------------------------------------------------- run
 out_hp = {}
 def tune_pal_lambda(k_, hp):
@@ -229,6 +266,7 @@ for mname in MODELS:
     if mname in ("Dp", "DFp", "DFsp"): fits[mname] = train_D(mname); out["hp"][mname] = fits[mname][1]
     elif mname == "VPLs": continue                                       # uses the trained VPL
     elif mname == "VPL": fits[mname] = train_vpl(); out["hp"][mname] = fits[mname][1]
+    elif mname == "LORE": mdl_, hp_, w0_ = train_lore(); fits[mname] = (mdl_, w0_, None); out["hp"][mname] = hp_
     else: mdl_, hp_, w0_ = train_pal(int(mname[3:])); hp_["lam_adapt"] = tune_pal_lambda(int(mname[3:]), hp_); fits[mname] = (mdl_, w0_, hp_["lam_adapt"]); out["hp"][mname] = hp_
     print(f"fold {f} {args.eval} trained {mname} {out['hp'][mname]} [{time.time()-t0:.0f}s]", flush=True)
 test_raters = np.unique(R[idx_te])
@@ -274,7 +312,9 @@ for k in KS:
                         with torch.no_grad(): res["VPLs"] = metrics(torch.log_softmax(lpv + Bs.detach()[rt][:, [0, 1, 2, 1, 0]], 1), te)
                     else: res["VPLs"] = res[mname]
             else:
-                lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3)); res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
+                if mname == "LORE": lp, Wn = adapt_lore(fits[mname][0], fits[mname][1], ad, te)
+                else: lp, Wn = adapt_pal(fits[mname][0], fits[mname][1], ad, te, fits[mname][2].get(k, 1e-3))
+                res[mname] = metrics(lp, te); lat[mname] = torch.softmax(Wn, 1)
                 if PERM:
                     WnP = Wn.clone(); WnP[tgt_] = Wn[src_]
                     with torch.no_grad(): resP[mname] = metrics(fits[mname][0].logp(torch.tensor(te, device=DEV), WnP), te)

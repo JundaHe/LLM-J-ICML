@@ -1,0 +1,13 @@
+# Paper 4 — Stage 6: LoRe under the new-rater protocol (frozen before any result)
+Committed 2026-10-31, after five ICML-style reviews asked for LoRe (Bose et al., 2025) and for a reconciliation with its reported PRISM result: unseen-user binary accuracy 71.0 for LoRe vs 61.0 for a monolithic Bradley–Terry model (VPL 58.2, PAL 59.0), with about four few-shot examples per user and a by-interaction split. That gain contradicts our PRISM ranking null; this stage tests it under our protocol. Any change after the first result is logged under "Amendments".
+
+## Method (as in the LoRe paper, details it leaves open fixed here)
+Reward basis R(x, y) = A·e(x, y), a linear map of frozen per-response embeddings to B rewards (we use the full 3,584-d Qwen2.5-7B-Instruct last-token states, standardised; LoRe used Skywork-Reward embeddings — a difference we state); user weights w_u on the simplex (softmax of free logits); score for a pair = w_uᵀ(R(x, y_B) − R(x, y_A)); binary labels: logistic loss (LoRe's); graded labels: ordered-logistic link on the same score (as for VPL / PAL here). Joint training of A and the training users' weights with Adam (learning rate chosen from {0.5 (LoRe's), 0.05, 0.005} by validation log-likelihood), early stopping on validation, B chosen from {2, 5, 10, 20, 50} by validation log-likelihood (LoRe: cross-validated over the same grid). **New users:** A frozen; w_u initialised at the mean of the training users' weight logits and optimised on the user's k adaptation pairs with Adam, learning rate 0.1 (LoRe's), 100 steps, no regularisation (LoRe's). k = 0: the training users' mean weights.
+
+## Panels and protocol
+PRISM pairs (native binary choice, E2; and the graded score-difference label, E1) and MultiPref (E1, E2), the paper's folds, k-shot draws and permutation control; k ∈ {0, 5, 20} on PRISM pairs (LoRe used ≈ 4), {0, 20, 50} on MultiPref. Reported alongside the text-only model (Dp) on the same features.
+
+## Outcomes and decision rule (fixed now)
+Primary (PRISM pairs, E2): LoRe's own gain in choice accuracy, LoRe(k) − LoRe(0), and own − other, at k = 5 and k = 20, rater bootstrap; and LoRe(k) − Dp. **If the lower 95 % bound of LoRe's own gain or own − other at k = 20 exceeds +1 point, the paper's PRISM ranking null is withdrawn** and the abstract, §6 and conclusions are rewritten around it. Otherwise the paper reports LoRe as a further method with no ranking gain under the new-rater protocol, and discusses the difference from the published +10 points (embeddings, split, number of examples, baseline strength). Secondary: the same on MultiPref, graded labels, and log-likelihood.
+
+## Amendments
