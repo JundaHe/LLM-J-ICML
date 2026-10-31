@@ -211,6 +211,10 @@ class LORE(nn.Module):
         w = torch.softmax((s.W if W is None else W)[Rt[tidx]], 1); d = s.A(XB[It[tidx]]) - s.A(XA[It[tidx]]); return (w * d).sum(1)
     def logp(s, tidx, W=None):
         sc = s.score(tidx, W); return Fn.logsigmoid(sc) if BIN else ordinal_logp(sc, s.cuts)
+def lore_nll(mdl, tidx, W=None):
+    """numerically stable logistic loss on the LoRe score (binary), ordered-logistic NLL (graded)"""
+    if BIN: sc = mdl.score(tidx, W); return -torch.where(YBt[tidx] == 1, Fn.logsigmoid(sc), Fn.logsigmoid(-sc)).sum()
+    return -mdl.logp(tidx, W)[torch.arange(len(tidx)), Yt[tidx]].sum()
 def train_lore():
     best = None
     for B in (2, 5, 10, 20, 50):
@@ -219,7 +223,7 @@ def train_lore():
             for ep in range(args.max_epochs):
                 mdl.train(); order = rng.permutation(idx_tr)
                 for b0 in range(0, len(order), 256):
-                    t = torch.tensor(order[b0:b0 + 256], device=DEV); loss = pal_nll(mdl, t) / len(t); opt.zero_grad(); loss.backward(); opt.step()
+                    t = torch.tensor(order[b0:b0 + 256], device=DEV); loss = lore_nll(mdl, t) / len(t); opt.zero_grad(); loss.backward(); opt.step()
                 mdl.eval()
                 with torch.no_grad(): v = float(np.nanmean(metrics(mdl.logp(torch.tensor(idx_va, device=DEV)), idx_va)[0]))
                 hist.append(v if np.isfinite(v) else -1e9)
@@ -236,7 +240,7 @@ def adapt_lore(mdl, w0, ad, te):
     if len(ad):
         Wp = Wn.clone().requires_grad_(True); ii = torch.tensor(ad, device=DEV); opt = torch.optim.Adam([Wp], lr=0.1)
         for _ in range(100):
-            opt.zero_grad(); loss = pal_nll(mdl, ii, Wp); loss.backward(); opt.step()
+            opt.zero_grad(); loss = lore_nll(mdl, ii, Wp); loss.backward(); opt.step()
         Wn = Wp.detach()
     with torch.no_grad(): return mdl.logp(torch.tensor(te, device=DEV), Wn), Wn
 
