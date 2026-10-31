@@ -40,7 +40,7 @@ if sys.argv[1] == "stats":                                                # ----
     json.dump(out, open(f"{HERE}/results/stage5_s53.json", "w"), indent=1); open(f"{HERE}/results/stage5_s53.md", "w").write("\n".join(L) + "\n"); print("\n".join(L)); sys.exit()
 
 # ---------------- S5-1 reference learner
-tag = sys.argv[1]; H = panel_H(tag); Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
+tag = sys.argv[2]; H = panel_H(tag); Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
 F_ = np.load(f"{P2}/features/multipref_overall/Qwen2.5-7B-Instruct.npz", allow_pickle=True)
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, _ = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0); X = torch.tensor(X)
 # generator (identical to make_synth.py, fitted on the REAL labels) and features g
