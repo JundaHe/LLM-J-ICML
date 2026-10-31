@@ -155,7 +155,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
             m5 = set_center(Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in)
             for k in [k_ for k_ in KS if k_ > 0]:
                 best = None
-                for la in (0.5, 2, 8, 32, 128, 512, 2048, 8192):
+                for la in (0.5, 2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288):   # Stage 2 Am. 11: grid extended upward
                     v = []
                     for dr in range(2):
                         rng5 = np.random.RandomState(50_000 + 100 * k + dr); ad = []; keep = []
