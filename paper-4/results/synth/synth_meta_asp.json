@@ -1,0 +1,28 @@
+{
+ "asp2": {
+  "tau": 0.09766779839992523,
+  "target_gain": 0.02,
+  "oracle_gain_calibration": 0.01993719126266067,
+  "oracle_gain_realised": 0.01388888888888895,
+  "label_dist": [
+   4305,
+   6965,
+   10924,
+   10516,
+   9134
+  ]
+ },
+ "asp5": {
+  "tau": 0.19754208624362946,
+  "target_gain": 0.05,
+  "oracle_gain_calibration": 0.04997494819089574,
+  "oracle_gain_realised": 0.04989436047456519,
+  "label_dist": [
+   4603,
+   6987,
+   10666,
+   10313,
+   9275
+  ]
+ }
+}
