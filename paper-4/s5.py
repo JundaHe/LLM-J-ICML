@@ -63,13 +63,14 @@ if (tag == "real_aspect" or tag.startswith("asp")) and not tag.endswith("_none")
     LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}
     A = np.array([[LVa[a[f"{c}_pref"]] for c in ("helpful", "truthful", "harmless")] for r_ in raw for a in r_["normal_worker_annotations"] + r_["expert_worker_annotations"]], float).reshape(n, m, 3)
     loo = (A.sum(1, keepdims=True) - A) / (m - 1); g = loo.reshape(-1, 3); g = (g - g.mean(0)) / g.std(0); GR = torch.tensor(g)
+MU = None                                                                 # Am. 6: prior centre for θ (population mean), set per fold for real/aspect runs
 def fit_rater(lpb, idx, keys, sig2, lam_s=2.0):
     """MAP of rater params on rows idx: th (NR,2) with prior N(0, sig2 I); Bs (NR,3) ridge lam_s if 'Bs' in keys"""
     th = torch.zeros(NR, GR.shape[1], requires_grad=True); Bs = torch.zeros(NR, 3, requires_grad="Bs" in keys); ii = torch.tensor(idx); prm = [th] + ([Bs] if "Bs" in keys else [])
     opt = torch.optim.LBFGS(prm, lr=0.5, max_iter=200, line_search_fn="strong_wolfe")
     def cl():
         opt.zero_grad(); c = (th[Rt[ii]] * GR[ii]).sum(1); lp = torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
-        loss = -lp[torch.arange(len(idx)), Yt[ii]].sum() + 0.5 / sig2 * (th ** 2).sum() + lam_s * (Bs ** 2).sum(); loss.backward(); return loss
+        loss = -lp[torch.arange(len(idx)), Yt[ii]].sum() + 0.5 / sig2 * ((th - (MU if MU is not None else 0.0)) ** 2).sum() + lam_s * (Bs ** 2).sum(); loss.backward(); return loss
     opt.step(cl); return th.detach(), Bs.detach()
 def predict(lpb, idx, th, Bs):
     ii = torch.tensor(idx); c = (th[Rt[ii]] * GR[ii]).sum(1); return torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
@@ -84,6 +85,12 @@ for f in range(5):
         opt.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V + b + Bt[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(idx_tr)), Yt[ii]].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bt ** 2).sum(); loss.backward(); return loss
     opt.step(cl)
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)                                    # rater offsets re-fitted per rater below
+    MU = None
+    if tag in ("real_aspect",) or tag.startswith("asp"):                   # Am. 6: population mean θ from one shared θ on the training raters × training items
+        thS = torch.zeros(1, GR.shape[1], requires_grad=True); BsS = torch.zeros(NR, 3, requires_grad=True); iiS = torch.tensor(idx_tr); oS = torch.optim.LBFGS([thS, BsS], lr=0.5, max_iter=300, line_search_fn="strong_wolfe")
+        def clS():
+            oS.zero_grad(); c = (thS * GR[iiS]).sum(1); lp = torch.log_softmax(LPE[iiS] + BsS[Rt[iiS]][:, SYM] + c[:, None] * STEP, 1); loss = -lp[torch.arange(len(idx_tr)), Yt[iiS]].sum() + 2.0 * (BsS ** 2).sum(); loss.backward(); return loss
+        oS.step(clS); MU = thS.detach().expand(NR, -1).clone(); print(f"{tag} fold {f}: μ = {np.round(thS.detach().numpy()[0], 3)}", flush=True)
     bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag in ("real_aspect", "real_none") or tag.startswith(("v2", "asp"))) else {"estimated": (LPE, ("Bs",))}; sig = {}   # v2 panels: the v1 generator is not their oracle
     for bn, (lpb, keys) in bases.items():                                   # empirical-Bayes σ² on the training raters (rater-wise half split of their training items)
         best = None; rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
@@ -108,7 +115,8 @@ for f in range(5):
             for bn, (lpb, keys) in bases.items():
                 th, Bs = fit_rater(lpb, ad, keys, sig[bn]); thp, Bsp = th.clone(), Bs.clone(); thp[tgt] = th[src]; Bsp[tgt] = Bs[src]
                 kt = torch.tensor([int(r_) for r_ in keep]); thL = torch.zeros_like(th); thL[kt] = (th[kt].sum(0, keepdim=True) - th[kt]) / max(1, len(keep) - 1)   # Am. 5: leave-one-out mean θ of the other test raters
-                res[bn] = (dirc(predict(lpb, te, th, Bs), te), dirc(predict(lpb, te, thp, Bsp), te), dirc(predict(lpb, te, torch.zeros_like(th), Bs), te), dirc(predict(lpb, te, thL, Bs), te))   # own, other, θ = 0, population mean
+                th0 = torch.zeros_like(th) if MU is None else MU.clone()                 # Am. 6: population state = μ where estimated
+                res[bn] = (dirc(predict(lpb, te, th, Bs), te), dirc(predict(lpb, te, thp, Bsp), te), dirc(predict(lpb, te, th0, Bs), te), dirc(predict(lpb, te, thL, Bs), te))   # own, other, θ = 0, population mean
             for r in keep:
                 sel = R[te] == r
                 recs.append({"fold": f, "k": k, "draw": dr, "rater": int(r), **{f"{bn}_{w_}": float(np.nansum(res[bn][j][sel])) for bn in bases for j, w_ in ((0, "own"), (1, "other"), (2, "pop"), (3, "popmean"))}, "n_dir": int(np.isfinite(res["estimated"][0][sel]).sum())})
