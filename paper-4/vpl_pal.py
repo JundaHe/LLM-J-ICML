@@ -279,7 +279,7 @@ for k in KS:
                     WnP = Wn.clone(); WnP[tgt_] = Wn[src_]
                     with torch.no_grad(): resP[mname] = metrics(fits[mname][0].logp(torch.tensor(te, device=DEV), WnP), te)
         if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
-                                           **{f"{mn}_{mt}": np.asarray(res[mn][j]) for mn in res for j, mt in ((0, "ll"), (2, "dir"))}})
+                                           **{f"{mn}_{mt}": np.asarray(res[mn][j]) for mn in res for j, mt in ((0, "ll"), (2, "dir"))}, **{f"{mn}_perm_{mt}": np.asarray(resP[mn][j]) for mn in resP for j, mt in ((0, "ll"), (2, "dir"))}})
         for r in keep_r:
             sel = R[te] == r
             out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "n": int(sel.sum()), "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
@@ -291,5 +291,5 @@ for k in KS:
                 out["latents"].append(row)
     print(f"fold {f} {args.eval} k={k} done [{time.time()-t0:.0f}s]", flush=True)
 os.makedirs(f"{HERE}/results", exist_ok=True); out["hp"]["grids"] = out_hp; pfx = "" if args.panel == "multipref_overall" else f"{args.panel}_"; json.dump(out, open(f"{HERE}/results/stage2c_{pfx}{args.eval}_f{f}{args.tag}.json", "w")); 
-if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2c_{pfx}{args.eval}_f{f}{args.tag}.npz", **{key: np.concatenate([d[key] for d in DUMP]) for key in DUMP[0]})
+if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2c_{pfx}{args.eval}_f{f}{args.tag}.npz", **{key: np.concatenate([d[key] if key in d else np.full(len(d["fold"]), np.nan) for d in DUMP]) for key in sorted(set().union(*DUMP))})
 print("done", flush=True)

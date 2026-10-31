@@ -195,7 +195,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                         resP[kind] = mp.per_rating(te)
                     else: resP[kind] = res[kind]
             if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
-                                               **{f"{kind}_{mt}": res[kind][j] for kind in MODELS for j, mt in ((0, "ll"), (2, "dir"))}})
+                                               **{f"{kind}_{mt}": res[kind][j] for kind in MODELS for j, mt in ((0, "ll"), (2, "dir"))}, **{f"{kind}_perm_{mt}": resP[kind][j] for kind in resP for j, mt in ((0, "ll"), (2, "dir"))}})
             for r in keep:
                 sel = R[te] == r
                 out["per_rater"].append({"fold": f, "k": k, "draw": dr, "rater": int(r), "group": int(GRP[r]), "n": int(sel.sum()),
@@ -206,7 +206,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
         print(f"fold {f} k={k} done [{time.time()-t0:.0f}s]", flush=True)
     seen = {kind: fits[kind].per_rating(idx_seen)[0].mean() for kind in MODELS}; out["folds"][-1]["seen_ll"] = seen; print("seen-rater LL", {k_: round(v, 4) for k_, v in seen.items()}, flush=True)
     os.makedirs(f"{HERE}/results", exist_ok=True); json.dump(out, open(f"{HERE}/results/stage2a_{args.panel}{args.tag}.json", "w"))
-    if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2a_{args.panel}{args.tag}.npz", **{key: np.concatenate([d[key] for d in DUMP]) for key in DUMP[0]})
+    if args.dump_ratings: os.makedirs(f"{HERE}/results/ratings", exist_ok=True); np.savez_compressed(f"{HERE}/results/ratings/stage2a_{args.panel}{args.tag}.npz", **{key: np.concatenate([d[key] if key in d else np.full(len(d["fold"]), np.nan) for d in DUMP]) for key in sorted(set().union(*DUMP))})
 
 # ---------------------------------------------------------------- summary: per k, mean metric per rating; rater-cluster bootstrap of differences (raters pooled over folds; draws averaged within rater)
 import collections
