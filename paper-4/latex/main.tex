@@ -217,7 +217,7 @@ Even with the rater's own aspect judgements and all of their training ratings, a
 
 \section{Limitations and analysis log}
 
-Protocols, amendments and failed hypotheses: Appendices A, B, E. Frozen-feature heads; low-dimensional MultiPref-only injections; English.
+Protocols, amendments and failed hypotheses: Appendices A, B, E. The main tables use frozen-feature text heads (a LoRA reward model only in \S{}5.3), and compressed features make the published methods weaker detectors than full features. Our VPL, PAL and LoRe are reimplementations as heads on frozen embeddings; we did not reproduce their published numbers in their native settings, and LoRe's reported PRISM gain does not appear under our protocol for reasons we could not isolate. The positive control injects low-dimensional preferences on MultiPref only, and its panels are noisier than the real data, so detection limits transfer only approximately. The aspect analyses rest on MultiPref's concurrent aspect labels. All datasets are English, and the per-rater calibration is not shown to change a downstream decision.
 
 \bibliography{../references_p4}
 \bibliographystyle{icml2025}
@@ -238,6 +238,8 @@ Stage 2a (MultiPref, k = 20): H1 DF \textgreater{} D --- holds (+0.080); H5 (pro
 \textbf{What this does and does not say about pluralism (moved from \S{}8).} Our results do not show that people agree about content: the item-level disagreement that replicates across rater panels is real (split-half reliability 0.25 on MultiPref) and about a tenth of it is decodable from text. They show that, for predicting an individual new rater from few ratings, that content-level disagreement is a small part of what is predictable, and that demographic or crowd/expert groups add nothing beyond the text.
 
 \textbf{LoRe on all panels (Stage 6).} Across PRISM pairs and MultiPref, binary and graded labels and k $\in$ \{5, 20, 50\}, LoRe never improves direction or choice accuracy over its own k = 0 version or over the text-only model (own gain $-$6.2 to +0.1 points; the regularised version $-$1.1 to $-$0.0), and its log-likelihood is below the text-only model's everywhere. Its own $-$ other is positive in some cells (MultiPref binary, k = 20: +1.3 {[}+0.5, +2.0{]}) while its own gain is negative there ($-$1.2 {[}$-$1.9, $-$0.5{]}): another rater's over-fitted weights are anti-informative, the scale problem discussed for the reference learner, so own $-$ other alone is not evidence of personalisation for methods whose few-shot fit over-fits.
+
+\textbf{Confirmatory and exploratory results.} Confirmatory (rule fixed before the result): the stage-2a hypotheses H1--H6 and their replications; B1--B3; C1--C4; R1 (PRISM native choices); the Stage-3 positive control at +1.7 and +5.2 oracle points (no power); the Stage-4 ceiling rule (not met); the Stage-6 LoRe rule (PRISM null not withdrawn). Exploratory (added or changed after a result, labelled in the text): the symmetric offsets DFs and their hypothesis; the few-shot-tuned prior; the +10 and +21 panels and the full-feature runs; the reference learner and its oracle-scale contrast; the calibrated real-data aspect test; the regularised LoRe; the two-way bootstrap re-estimates.
 
 \section{Implementation}
 
