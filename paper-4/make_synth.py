@@ -4,7 +4,8 @@ so that the generator-oracle direction accuracy gain on the test ratings is 0, +
 import os, sys, json, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
-SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
+SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None
+V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
 PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = 5; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
@@ -26,7 +27,25 @@ opt = torch.optim.LBFGS([V, b, Bs], lr=0.5, max_iter=500, line_search_fn="strong
 def cl():
     opt.zero_grad(); lp = torch.log_softmax(X[It] @ V + b + Bs[Rt][:, SYM], 1); loss = -lp[torch.arange(len(Y)), Yt].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bs ** 2).sum(); loss.backward(); return loss
 opt.step(cl)
-with torch.no_grad(): LP = torch.log_softmax(X[It] @ V + b + Bs[Rt][:, SYM], 1).numpy()
+if V2:                                                                     # item effects U_i (K logits per item), ridge λ_u chosen by 4-fold CV over rating positions (each item has 4 ratings)
+    def fit_v2(mask, lam):
+        V_ = V.detach().clone().requires_grad_(True); b_ = b.detach().clone().requires_grad_(True); B_ = Bs.detach().clone().requires_grad_(True); U_ = torch.zeros(n, K, requires_grad=True)
+        ii = torch.tensor(np.where(mask)[0]); o2 = torch.optim.LBFGS([V_, b_, B_, U_], lr=0.5, max_iter=300, line_search_fn="strong_wolfe")
+        def c2():
+            o2.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V_ + b_ + U_[It[ii]] + B_[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(ii)), Yt[ii]].sum() + 300.0 * (V_ ** 2).sum() + 2.0 * (B_ ** 2).sum() + lam * (U_ ** 2).sum(); loss.backward(); return loss
+        o2.step(c2); return V_.detach(), b_.detach(), B_.detach(), U_.detach()
+    cv = {}
+    for lam in (0.3, 1.0, 3.0, 10.0):
+        tot = 0.0
+        for pos in range(m):
+            Vq, bq, Bq, Uq = fit_v2(POS != pos, lam); jj = torch.tensor(np.where(POS == pos)[0])
+            with torch.no_grad(): tot += float(torch.log_softmax(X[It[jj]] @ Vq + bq + Uq[It[jj]] + Bq[Rt[jj]][:, SYM], 1)[torch.arange(len(jj)), Yt[jj]].sum())
+        cv[lam] = tot / len(Y); print("v2 λ_u", lam, "CV LL %.4f" % cv[lam], flush=True)
+    lam_u = max(cv, key=cv.get); Vq, bq, Bq, Uq = fit_v2(np.ones(len(Y), bool), lam_u)
+    with torch.no_grad(): LP = torch.log_softmax(X[It] @ Vq + bq + Uq[It] + Bq[Rt][:, SYM], 1).numpy()
+    print("v2 generator: λ_u", lam_u, flush=True)
+else:
+    with torch.no_grad(): LP = torch.log_softmax(X[It] @ V + b + Bs[Rt][:, SYM], 1).numpy()
 print("generator fitted; mean LL on real labels %.4f" % LP[np.arange(len(Y)), Y].mean(), flush=True)
 # ---- content features of the response pair
 raw = [json.loads(l) for l in open(data_panels.MULTIPREF)]; assert [r["comparison_id"] for r in raw] == list(PAN["item_ids"])
@@ -48,6 +67,7 @@ def oracle_gain(tau, seeds=range(100, 105)):
     return float(np.mean([dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST) for y in (sample(lpc, s) for s in seeds)]))
 out = {}
 if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
+if V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
 else: TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
 for target, tag in TARGETS:
     if target == 0: tau = 0.0
@@ -61,4 +81,4 @@ for target, tag in TARGETS:
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json" if SEED is None else f"{HERE}/results/synth/synth_meta_s{SEED}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else 's' + str(SEED)}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)

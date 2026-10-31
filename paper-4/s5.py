@@ -32,7 +32,8 @@ if sys.argv[1] == "stats":                                                # ----
     real = stats(Hreal, np.arange(n)); bs = np.array([stats(Hreal, rng.randint(0, n, n)) for _ in range(400)]); lo, hi = np.percentile(bs, 2.5, 0), np.percentile(bs, 97.5, 0)
     a_real = alpha(Hreal); out["real"] = {"agree": real[0], "within": real[1], "alpha": a_real, "agree_ci": [lo[0], hi[0]], "within_ci": [lo[1], hi[1]]}
     L.append(f"| real | {real[0]:.4f} [{lo[0]:.4f}, {hi[0]:.4f}] | {real[1]:.4f} [{lo[1]:.4f}, {hi[1]:.4f}] | {a_real:.4f} |")
-    for tag in ("t0", "t2", "t5", "t10", "t20"):
+    import glob as _g
+    for tag in [t for t in ("t0", "t2", "t5", "t10", "t20", "v2t0", "v2t5", "v2t10") if os.path.exists(f"{HERE}/results/synth/multipref_synth_{t}.npz")]:
         H = panel_H(tag); st = stats(H, np.arange(n)); al = alpha(H); inc = not (lo[0] <= st[0] <= hi[0]) or not (lo[1] <= st[1] <= hi[1])
         out[tag] = {"agree": st[0], "within": st[1], "alpha": al, "inconsistent_ci": bool(inc)}
         L.append(f"| synthetic {tag} | {st[0]:.4f} | {st[1]:.4f} | {al:.4f} |" + (" outside real 95 % (i or iii)" if inc else ""))
@@ -80,7 +81,7 @@ for f in range(5):
         opt.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V + b + Bt[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(idx_tr)), Yt[ii]].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bt ** 2).sum(); loss.backward(); return loss
     opt.step(cl)
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)                                    # rater offsets re-fitted per rater below
-    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if tag != "real_aspect" else {"estimated": (LPE, ("Bs",))}; sig = {}
+    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag == "real_aspect" or tag.startswith("v2")) else {"estimated": (LPE, ("Bs",))}   # v2 panels: the v1 generator is not their oracle; sig = {}
     for bn, (lpb, keys) in bases.items():                                   # empirical-Bayes σ² on the training raters (rater-wise half split of their training items)
         best = None; rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
         for r in np.unique(R[idx_tr]):
