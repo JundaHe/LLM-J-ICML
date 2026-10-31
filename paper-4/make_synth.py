@@ -5,7 +5,8 @@ import os, sys, json, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
 SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None
-V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
+V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"
+ASP = len(sys.argv) > 1 and sys.argv[1] == "asp"                               # Stage 5 Am. 3: aspect-based injection                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
 PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = 5; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
@@ -56,7 +57,11 @@ ymean = H.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ym
 u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
 G = np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)                     # (n, 2)
 print("corr(g1, g2) %.3f; corr(g2, item mean rating) %.3f" % (np.corrcoef(G[:, 0], G[:, 1])[0, 1], np.corrcoef(G[:, 1], ymean)[0, 1]), flush=True)
-TH0 = np.random.RandomState(1 if SEED is None else SEED).randn(NR, 2)                                                       # θ_r = τ · TH0_r
+if ASP:                                                                    # g = item consensus aspect differences (all annotators), standardised, 3-d
+    LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}
+    Ga = np.array([[np.mean([LVa[a[f"{c}_pref"]] for a in r["normal_worker_annotations"] + r["expert_worker_annotations"]]) for c in ("helpful", "truthful", "harmless")] for r in raw])
+    G = (Ga - Ga.mean(0)) / Ga.std(0)
+TH0 = np.random.RandomState(1 if SEED is None else SEED).randn(NR, G.shape[1])                                                       # θ_r = τ · TH0_r
 STEP = np.array([-2, -1, 0, 1, 2], float)
 def sample(lp, seed):                                                                             # Gumbel-max with fixed noise per seed (panels coupled across τ)
     gmb = -np.log(-np.log(np.random.RandomState(seed).rand(*lp.shape))); return np.argmax(lp + gmb, 1)
@@ -68,6 +73,7 @@ def oracle_gain(tau, seeds=range(100, 105)):
 out = {}
 if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
 if V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
+if ASP: TARGETS = ((0.02, "asp2"), (0.05, "asp5"))
 else: TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
 for target, tag in TARGETS:
     if target == 0: tau = 0.0
@@ -81,4 +87,4 @@ for target, tag in TARGETS:
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else 's' + str(SEED)}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else 's' + str(SEED))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)

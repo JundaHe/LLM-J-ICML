@@ -13,7 +13,9 @@ rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
 for g in np.unique(GRP):
     ids = np.where(GRP == g)[0]; ids = ids[rs.permutation(len(ids))]; rfold[ids] = np.arange(len(ids)) % 5
 Gp = np.asarray(base["groups"]); ug = np.unique(Gp); perm = np.random.RandomState(0).permutation(len(ug)); gf = {g_: perm[j] % 5 for j, g_ in enumerate(ug)}; ifold = np.array([gf[g_] for g_ in Gp])
-def panel_H(tag): return Hreal if tag in ("real", "real_aspect", "real_none") else np.load(f"{HERE}/results/synth/multipref_synth_{tag}.npz")["H"]
+def panel_H(tag):
+    if tag in ("real", "real_aspect", "real_none"): return Hreal
+    base_tag = tag[:-5] if tag.endswith("_none") else tag; return np.load(f"{HERE}/results/synth/multipref_synth_{base_tag}.npz")["H"]
 
 if sys.argv[1] == "stats":                                                # ---------------- S5-3
     import krippendorff
@@ -56,8 +58,8 @@ g1 = np.log(np.array([max(1, len(str(r["completion_b"]))) for r in raw]) / np.ar
 Fp = np.load(f"{P2}/features/multipref_overall/pairs_Qwen2.5-7B-Instruct.npz"); Dd = (Fp["E_B"] - Fp["E_A"]).astype(np.float64); Dd -= Dd.mean(0); U2, S2, _ = np.linalg.svd(Dd, full_matrices=False); Z = U2[:, :256] * S2[:256]; Z /= Z.std(0)
 ym = Hreal.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ym - ym.mean())); w /= np.linalg.norm(w); u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
 G = torch.tensor(np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)); GR = G[It]          # per-rating content features
-if tag == "real_none": GR = torch.zeros(len(Y), 1, dtype=torch.float64)    # Stage 5 Am. 2: style offsets only
-if tag == "real_aspect":                                                  # Stage 5 Am. 1 (A): leave-rater-out consensus aspect differences, real labels
+if tag.endswith("_none"): GR = torch.zeros(len(Y), 1, dtype=torch.float64)    # Stage 5 Am. 2: style offsets only
+if (tag == "real_aspect" or tag.startswith("asp")) and not tag.endswith("_none"):                                                  # Stage 5 Am. 1 (A): leave-rater-out consensus aspect differences, real labels
     LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}
     A = np.array([[LVa[a[f"{c}_pref"]] for c in ("helpful", "truthful", "harmless")] for r_ in raw for a in r_["normal_worker_annotations"] + r_["expert_worker_annotations"]], float).reshape(n, m, 3)
     loo = (A.sum(1, keepdims=True) - A) / (m - 1); g = loo.reshape(-1, 3); g = (g - g.mean(0)) / g.std(0); GR = torch.tensor(g)
@@ -82,7 +84,7 @@ for f in range(5):
         opt.zero_grad(); lp = torch.log_softmax(X[It[ii]] @ V + b + Bt[Rt[ii]][:, SYM], 1); loss = -lp[torch.arange(len(idx_tr)), Yt[ii]].sum() + 300.0 * (V ** 2).sum() + 2.0 * (Bt ** 2).sum(); loss.backward(); return loss
     opt.step(cl)
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)                                    # rater offsets re-fitted per rater below
-    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag in ("real_aspect", "real_none") or tag.startswith("v2")) else {"estimated": (LPE, ("Bs",))}; sig = {}   # v2 panels: the v1 generator is not their oracle
+    bases = {"oracle": (LPG, ()), "estimated": (LPE, ("Bs",))} if not (tag in ("real_aspect", "real_none") or tag.startswith(("v2", "asp"))) else {"estimated": (LPE, ("Bs",))}; sig = {}   # v2 panels: the v1 generator is not their oracle
     for bn, (lpb, keys) in bases.items():                                   # empirical-Bayes σ² on the training raters (rater-wise half split of their training items)
         best = None; rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
         for r in np.unique(R[idx_tr]):
