@@ -24,17 +24,22 @@ for panel, pfx, ks in (("prism_pairs", "stage2c_prism_pairs_", (5, 20)), ("multi
     for ev in ("E2", "E1"):
         rows = rows_of(f"{R}/{pfx}{ev}_f?_lore.json")
         if not rows: continue
+        dp = {(r["fold"], r["k"], r["draw"], r["rater"]): r for r in rows}
+        rows_r = [dict(x, **{kk: dp[(x["fold"], x["k"], x["draw"], x["rater"])][kk] for kk in ("Dp_dir", "Dp_ll")}) for x in rows_of(f"{R}/{pfx}{ev}_f?_lorer.json") if (x["fold"], x["k"], x["draw"], x["rater"]) in dp]
         den = "n" if ev == "E2" else "n_dir"
-        for k in ks:
-            c = {"own_acc": own(rows, k, "LORE", "dir", den), "perm_acc": pair(rows, k, "LORE_dir", "LORE_perm_dir", den), "vsDp_acc": pair(rows, k, "LORE_dir", "Dp_dir", den),
-                 "own_ll": own(rows, k, "LORE", "ll", "n"), "vsDp_ll": pair(rows, k, "LORE_ll", "Dp_ll", "n")}
-            out[f"{panel}_{ev}_k{k}"] = c; nr = len({(r["fold"], r["rater"]) for r in rows if r["k"] == k})
-            L.append(f"| {panel} | {ev} | {k} | {fmt(c['own_acc'])} | {fmt(c['perm_acc'])} | {fmt(c['vsDp_acc'])} | {fmt(c['own_ll'])} | {fmt(c['vsDp_ll'])} | {nr} |")
-key = "prism_pairs_E2_k20"
-if key in out:
-    lb = max(out[key]["own_acc"][1], out[key]["perm_acc"][1]); out["rule_withdraw_prism_null"] = bool(lb > 1.0)
-    L += ["", f"**Decision rule (PRISM pairs, binary, k = 20): max lower bound of own gain / own − other = {lb:+.2f} points → {'WITHDRAW the PRISM ranking null' if lb > 1.0 else 'PRISM ranking null stands'}.**"]
+        for m, rr in (("LORE", rows), ("LORER", rows_r)):
+            if not rr: continue
+            for k in ks:
+                c = {"own_acc": own(rr, k, m, "dir", den), "perm_acc": pair(rr, k, f"{m}_dir", f"{m}_perm_dir", den), "vsDp_acc": pair(rr, k, f"{m}_dir", "Dp_dir", den),
+                     "own_ll": own(rr, k, m, "ll", "n"), "vsDp_ll": pair(rr, k, f"{m}_ll", "Dp_ll", "n")}
+                out[f"{m}_{panel}_{ev}_k{k}"] = c; nr = len({(r["fold"], r["rater"]) for r in rr if r["k"] == k}); nf = sorted({r["fold"] for r in rr})
+                L.append(f"| {m} {panel} (folds {nf}) | {ev} | {k} | {fmt(c['own_acc'])} | {fmt(c['perm_acc'])} | {fmt(c['vsDp_acc'])} | {fmt(c['own_ll'])} | {fmt(c['vsDp_ll'])} | {nr} |")
+for m in ("LORE", "LORER"):
+    key = f"{m}_prism_pairs_E2_k20"
+    if key in out:
+        lb = max(out[key]["own_acc"][1], out[key]["perm_acc"][1]); out[f"rule_{m}"] = bool(lb > 1.0)
+        L += ["", f"**Decision rule, {m} (PRISM pairs, binary, k = 20): max lower bound of own gain / own − other = {lb:+.2f} points → {'WITHDRAW the PRISM ranking null' if lb > 1.0 else 'does not withdraw'}.**"]
 hp = {}
-for f in sorted(glob.glob(f"{R}/stage2c_*_f?_lore.json")): hp[os.path.basename(f)] = json.load(open(f))["hp"].get("LORE")
-L += ["", "Selected LoRe hyper-parameters per run: " + "; ".join(f"{k.replace('stage2c_', '').replace('_lore.json', '')}: B={v['B']}, lr={v['lr']}" for k, v in hp.items() if v)]
+for f in sorted(glob.glob(f"{R}/stage2c_*_f?_lore*.json")): hp[os.path.basename(f)] = json.load(open(f))["hp"].get("LORE") or json.load(open(f))["hp"].get("LORER")
+L += ["", "Selected LoRe hyper-parameters per run: " + "; ".join(f"{k.replace('stage2c_', '').replace('.json', '')}: B={v['B']}, lr={v['lr']}" + (f", λ={v['lam_adapt']}" if 'lam_adapt' in v else '') for k, v in hp.items() if v)]
 json.dump(out, open(f"{R}/stage6_lore.json", "w"), indent=1); open(f"{R}/stage6_lore.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
