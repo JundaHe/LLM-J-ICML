@@ -4,6 +4,7 @@ so that the generator-oracle direction accuracy gain on the test ratings is 0, +
 import os, sys, json, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
+SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
 PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = 5; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
@@ -36,7 +37,7 @@ ymean = H.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ym
 u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
 G = np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)                     # (n, 2)
 print("corr(g1, g2) %.3f; corr(g2, item mean rating) %.3f" % (np.corrcoef(G[:, 0], G[:, 1])[0, 1], np.corrcoef(G[:, 1], ymean)[0, 1]), flush=True)
-TH0 = np.random.RandomState(1).randn(NR, 2)                                                       # θ_r = τ · TH0_r
+TH0 = np.random.RandomState(1 if SEED is None else SEED).randn(NR, 2)                                                       # θ_r = τ · TH0_r
 STEP = np.array([-2, -1, 0, 1, 2], float)
 def sample(lp, seed):                                                                             # Gumbel-max with fixed noise per seed (panels coupled across τ)
     gmb = -np.log(-np.log(np.random.RandomState(seed).rand(*lp.shape))); return np.argmax(lp + gmb, 1)
@@ -46,7 +47,8 @@ def oracle_gain(tau, seeds=range(100, 105)):
     c = tau * (TH0[R] * G[I]).sum(1); lpc = LP + c[:, None] * STEP[None, :]; lpc -= np.logaddexp.reduce(lpc, 1, keepdims=True)
     return float(np.mean([dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST) for y in (sample(lpc, s) for s in seeds)]))
 out = {}
-TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
+if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
+else: TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
 for target, tag in TARGETS:
     if target == 0: tau = 0.0
     else:
@@ -55,8 +57,8 @@ for target, tag in TARGETS:
             mid = 0.5 * (lo + hi); (lo, hi) = (mid, hi) if oracle_gain(mid) < target else (lo, mid)
         tau = 0.5 * (lo + hi)
     c = tau * (TH0[R] * G[I]).sum(1); lpc = LP + c[:, None] * STEP[None, :]; lpc -= np.logaddexp.reduce(lpc, 1, keepdims=True)
-    y = sample(lpc, 2); Hs = y.reshape(n, m); og = dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST)
+    y = sample(lpc, 2 if SEED is None else SEED); Hs = y.reshape(n, m); og = dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST)
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if SEED is None else f"{HERE}/results/synth/synth_meta_s{SEED}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)

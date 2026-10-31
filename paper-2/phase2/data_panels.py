@@ -439,7 +439,7 @@ def load_multipref_synth(tag):
     P = load_multipref("overall"); z = np.load(f"{LLMJ}/paper-4/results/synth/multipref_synth_{tag}.npz")
     assert np.array_equal(z["item_ids"], np.asarray(P["item_ids"]).astype(str)) and z["H"].shape == P["H"].shape
     P["H"] = z["H"].astype(int); P["name"] = f"multipref_synth_{tag}"; return P
-LOADERS.update({f"multipref_synth_{t}": (lambda t=t: load_multipref_synth(t)) for t in ("t0", "t2", "t5", "t10", "t20")})
+LOADERS.update({f"multipref_synth_{t}": (lambda t=t: load_multipref_synth(t)) for t in ("t0", "t2", "t5", "t10", "t20") + tuple(f"t{g}s{sd}" for g in (5, 10) for sd in (11, 12, 13))})
 
 # ----------------------------------------------------------------------------------------------- PRISM (HannahRoseKirk/prism-alignment; paper 4 stage 2, Amendment 6): every model response rated 1–100 by ONE user
 # (68,371 ratings, 1,396 users). Long format: one item per rated utterance, H is n × 1, evaluators = the rating user; score binned to 5 fixed levels (1–20, 21–40, 41–60, 61–80, 81–100);

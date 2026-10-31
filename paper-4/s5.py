@@ -111,5 +111,7 @@ for k in (20, 50):
             if x["k"] == k: by[(x["fold"], x["rater"])].append(x)
         q = list(by); d = np.array([np.mean([x[f"{bn}_own"] - x[f"{bn}_other"] for x in by[z]]) for z in q]); wt = np.array([np.mean([x["n_dir"] for x in by[z]]) for z in q])
         bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; out[f"{bn}_k{k}"] = [100 * d.sum() / wt.sum(), 100 * np.percentile(bs, 2.5), 100 * np.percentile(bs, 97.5), len(q)]
-meta = json.load(open(f"{HERE}/results/synth/synth_meta.json")).get(tag, {}); out["oracle_gain"] = 100 * meta.get("oracle_gain_realised", float("nan"))
+import glob as _g; meta = {}
+for mf in [f"{HERE}/results/synth/synth_meta.json"] + sorted(_g.glob(f"{HERE}/results/synth/synth_meta_s*.json")): meta.update(json.load(open(mf)))
+meta = meta.get(tag, {}); out["oracle_gain"] = 100 * meta.get("oracle_gain_realised", float("nan"))
 json.dump(out, open(f"{HERE}/results/stage5_ref_{tag}.json", "w"), indent=1); print(tag, json.dumps(out))
