@@ -252,3 +252,238 @@
   pages={1385--1470},
   year={2021}
 }
+
+% ---- added 2026-11-01 after the seventh review (each entry verified against its primary source)
+% new_refs.bib -- candidate additions to references_p4.bib (reviewer's missing-related-work list).
+% Verified 2026-11-01 against arXiv API metadata, ACL Anthology .bib exports, PMLR, proceedings.iclr.cc,
+% Crossref (DOIs) and usenix.org (sources listed in the comment above each entry).
+% None of these were present in references_p4.bib at time of check.
+
+% ---------------------------------------------------------------- personalised / pluralistic RMs
+
+% https://arxiv.org/abs/2310.11564 (v1, "Preprint"). mlanthology lists a NeurIPS 2024 AFM workshop version
+% (secondary source only; no main-conference version found) -> cite as arXiv preprint.
+@misc{jang2023soups,
+  author        = {Jang, Joel and Kim, Seungone and Lin, Bill Yuchen and Wang, Yizhong and Hessel, Jack and Zettlemoyer, Luke and Hajishirzi, Hannaneh and Choi, Yejin and Ammanabrolu, Prithviraj},
+  title         = {Personalized Soups: Personalized Large Language Model Alignment via Post-hoc Parameter Merging},
+  year          = {2023},
+  eprint        = {2310.11564},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL}
+}
+
+% https://proceedings.iclr.cc/paper_files/paper/2024/hash/ffd4f5a2ea6b93e9bf5af9264d568cf2-Abstract-Conference.html ; arXiv 2310.11523
+@inproceedings{zhao2024gpo,
+  author    = {Zhao, Siyan and Dang, John and Grover, Aditya},
+  title     = {Group Preference Optimization: Few-Shot Alignment of Large Language Models},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024},
+  url       = {https://arxiv.org/abs/2310.11523}
+}
+
+% https://proceedings.mlr.press/v235/chakraborty24b.html (author order as on PMLR; arXiv 2402.08925 v1 had a longer title)
+@inproceedings{chakraborty2024maxmin,
+  author    = {Chakraborty, Souradip and Qiu, Jiahao and Yuan, Hui and Koppel, Alec and Manocha, Dinesh and Huang, Furong and Bedi, Amrit Singh and Wang, Mengdi},
+  title     = {{MaxMin-RLHF}: Alignment with Diverse Human Preferences},
+  booktitle = {Proceedings of the 41st International Conference on Machine Learning (ICML)},
+  series    = {Proceedings of Machine Learning Research},
+  volume    = {235},
+  pages     = {6116--6135},
+  year      = {2024}
+}
+
+% https://arxiv.org/abs/2405.00254 (v2; v1 titled "Principled RLHF from ..."). No journal-ref, no venue found -> arXiv.
+@misc{park2024heterogeneous,
+  author        = {Park, Chanwoo and Liu, Mingyang and Kong, Dingwen and Zhang, Kaiqing and Ozdaglar, Asuman},
+  title         = {{RLHF} from Heterogeneous Feedback via Personalization and Preference Aggregation},
+  year          = {2024},
+  eprint        = {2405.00254},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI}
+}
+
+% https://aclanthology.org/2024.emnlp-main.240/
+@inproceedings{feng2024modular,
+  author    = {Feng, Shangbin and Sorensen, Taylor and Liu, Yuhan and Fisher, Jillian and Park, Chan Young and Choi, Yejin and Tsvetkov, Yulia},
+  title     = {Modular Pluralism: Pluralistic Alignment via Multi-{LLM} Collaboration},
+  booktitle = {Proceedings of the 2024 Conference on Empirical Methods in Natural Language Processing},
+  address   = {Miami, Florida, USA},
+  publisher = {Association for Computational Linguistics},
+  pages     = {4151--4171},
+  year      = {2024},
+  doi       = {10.18653/v1/2024.emnlp-main.240}
+}
+
+% https://aclanthology.org/2025.coling-main.752/ ; arXiv 2407.17387 (Jul 2024). Archival version is COLING 2025.
+@inproceedings{castricato2025persona,
+  author    = {Castricato, Louis and Lile, Nathan and Rafailov, Rafael and Fr{\"a}nken, Jan-Philipp and Finn, Chelsea},
+  title     = {{PERSONA}: A Reproducible Testbed for Pluralistic Alignment},
+  booktitle = {Proceedings of the 31st International Conference on Computational Linguistics (COLING)},
+  address   = {Abu Dhabi, UAE},
+  publisher = {Association for Computational Linguistics},
+  pages     = {11348--11368},
+  year      = {2025},
+  url       = {https://aclanthology.org/2025.coling-main.752/}
+}
+
+% https://proceedings.iclr.cc/paper_files/paper/2025/hash/a730abbcd6cf4a371ca9545db5922442-Abstract-Conference.html ; arXiv 2409.20296
+@inproceedings{zollo2025personalllm,
+  author    = {Zollo, Thomas P. and Siah, Andrew Wei Tung and Ye, Naimeng and Li, Ang and Namkoong, Hongseok},
+  title     = {{PersonalLLM}: Tailoring {LLMs} to Individual Preferences},
+  booktitle = {The Thirteenth International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2409.20296}
+}
+
+% https://arxiv.org/abs/2503.06358 (v1). Only other listing found: poster at ICML 2025 workshop MoFA
+% (https://icml.cc/virtual/2025/50236); not in PMLR v267 -> cite as arXiv preprint.
+@misc{shenfeld2025pref,
+  author        = {Shenfeld, Idan and Faltings, Felix and Agrawal, Pulkit and Pacchiano, Aldo},
+  title         = {Language Model Personalization via Reward Factorization},
+  year          = {2025},
+  eprint        = {2503.06358},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% https://aclanthology.org/2025.emnlp-main.106/ ; arXiv 2503.15484
+@inproceedings{sorensen2025valueprofiles,
+  author    = {Sorensen, Taylor and Mishra, Pushkar and Patel, Roma and Tessler, Michael Henry and Bakker, Michiel A. and Evans, Georgina and Gabriel, Iason and Goodman, Noah and Rieser, Verena},
+  title     = {Value Profiles for Encoding Human Variation},
+  booktitle = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing},
+  address   = {Suzhou, China},
+  publisher = {Association for Computational Linguistics},
+  pages     = {2047--2095},
+  year      = {2025},
+  doi       = {10.18653/v1/2025.emnlp-main.106}
+}
+
+% https://arxiv.org/abs/2412.13998 (v1, 18 Dec 2024, "Preprint"). Not in PMLR v267; author page lists an
+% ICML 2025 MoFA workshop oral (secondary). NOTE: reviewer wrote 2025; arXiv date is 2024.
+@misc{kobalczyk2024fewshot,
+  author        = {Kobalczyk, Katarzyna and Fanconi, Claudio and Sun, Hao and van der Schaar, Mihaela},
+  title         = {Few-shot Steerable Alignment: Adapting Rewards and {LLM} Policies with Neural Processes},
+  year          = {2024},
+  eprint        = {2412.13998},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+% https://aclanthology.org/2025.findings-acl.1019/ ; arXiv 2502.13131
+@inproceedings{luo2025pca,
+  author    = {Luo, Feng and Yang, Rui and Sun, Hao and Deng, Chunyuan and Yao, Jiarui and Shen, Jingyan and Zhang, Huan and Chen, Hanjie},
+  title     = {Rethinking Diverse Human Preference Learning through Principal Component Analysis},
+  booktitle = {Findings of the Association for Computational Linguistics: ACL 2025},
+  address   = {Vienna, Austria},
+  publisher = {Association for Computational Linguistics},
+  pages     = {19857--19870},
+  year      = {2025},
+  doi       = {10.18653/v1/2025.findings-acl.1019}
+}
+
+% https://proceedings.iclr.cc/paper_files/paper/2026/hash/ee208bfc04b1bf6125a6a34baa1c28d3-Abstract-Conference.html ;
+% arXiv 2507.09650 (Jul 2025). Archival version is ICLR 2026 (reviewer wrote "Meta, 2025").
+% Author names as on arXiv; ICLR proceedings page lists "Lily Zhang", "Jane Dwivedi-Yu", "Kristopher Rose".
+@inproceedings{zhang2026community,
+  author    = {Zhang, Lily Hong and Milli, Smitha and Jusko, Karen and Smith, Jonathan and Amos, Brandon and Bouaziz, Wassim and Revel, Manon and Kussman, Jack and Sheynin, Yasha and Titus, Lisa and Radharapu, Bhaktipriya and Yu, Jane and Sarma, Vidya and Rose, Kris and Nickel, Maximilian},
+  title     = {Cultivating Pluralism In Algorithmic Monoculture: The Community Alignment Dataset},
+  booktitle = {The Fourteenth International Conference on Learning Representations (ICLR)},
+  year      = {2026},
+  url       = {https://arxiv.org/abs/2507.09650}
+}
+
+% ---------------------------------------------------------------- rater disagreement
+
+% Crossref DOI 10.1145/3411764.3445423
+@inproceedings{gordon2021deconvolution,
+  author    = {Gordon, Mitchell L. and Zhou, Kaitlyn and Patel, Kayur and Hashimoto, Tatsunori and Bernstein, Michael S.},
+  title     = {The Disagreement Deconvolution: Bringing Machine Learning Performance Metrics In Line With Reality},
+  booktitle = {Proceedings of the 2021 CHI Conference on Human Factors in Computing Systems (CHI '21)},
+  publisher = {ACM},
+  pages     = {1--14},
+  year      = {2021},
+  doi       = {10.1145/3411764.3445423}
+}
+
+% https://www.usenix.org/conference/soups2021/presentation/kumar (USENIX BibTeX) ; arXiv 2106.04511
+@inproceedings{kumar2021toxic,
+  author    = {Kumar, Deepak and Kelley, Patrick Gage and Consolvo, Sunny and Mason, Joshua and Bursztein, Elie and Durumeric, Zakir and Thomas, Kurt and Bailey, Michael},
+  title     = {Designing Toxic Content Classification for a Diversity of Perspectives},
+  booktitle = {Seventeenth Symposium on Usable Privacy and Security (SOUPS 2021)},
+  publisher = {USENIX Association},
+  pages     = {299--318},
+  year      = {2021},
+  isbn      = {978-1-939133-25-0},
+  url       = {https://www.usenix.org/conference/soups2021/presentation/kumar}
+}
+
+% https://aclanthology.org/2023.emnlp-main.415/
+@inproceedings{fleisig2023majority,
+  author    = {Fleisig, Eve and Abebe, Rediet and Klein, Dan},
+  title     = {When the Majority is Wrong: Modeling Annotator Disagreement for Subjective Tasks},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  pages     = {6715--6726},
+  year      = {2023},
+  doi       = {10.18653/v1/2023.emnlp-main.415}
+}
+
+% https://aclanthology.org/2024.nlperspectives-1.15/ . Earlier arXiv preprint 2306.11530 has a different title
+% ("Intersectionality in Conversational AI Safety: How Bayesian Multilevel Models Help Understand Diverse
+% Perceptions of Safety", 2023); this entry cites the archival 2024 workshop version.
+@inproceedings{homan2024intersectionality,
+  author    = {Homan, Christopher M. and Serapio-Garcia, Gregory and Aroyo, Lora and Diaz, Mark and Parrish, Alicia and Prabhakaran, Vinodkumar and Taylor, Alex and Wang, Ding},
+  title     = {Intersectionality in {AI} Safety: Using Multilevel Models to Understand Diverse Perceptions of Safety in Conversational {AI}},
+  booktitle = {Proceedings of the 3rd Workshop on Perspectivist Approaches to {NLP} ({NLPerspectives}) @ {LREC-COLING} 2024},
+  address   = {Torino, Italia},
+  publisher = {ELRA and ICCL},
+  pages     = {131--141},
+  year      = {2024},
+  url       = {https://aclanthology.org/2024.nlperspectives-1.15/}
+}
+
+% ---------------------------------------------------------------- graded / tie-aware preference labels
+
+% https://arxiv.org/abs/2307.09288 (no journal-ref). Margin loss: Sec. 3.2.2, Eq. 2; rating scale Sec. 3.2.1.
+@misc{touvron2023llama2,
+  author        = {Touvron, Hugo and Martin, Louis and Stone, Kevin and Albert, Peter and Almahairi, Amjad and Babaei, Yasmine and Bashlykov, Nikolay and Batra, Soumya and Bhargava, Prajjwal and Bhosale, Shruti and Bikel, Dan and Blecher, Lukas and Canton Ferrer, Cristian and Chen, Moya and Cucurull, Guillem and Esiobu, David and Fernandes, Jude and Fu, Jeremy and Fu, Wenyin and Fuller, Brian and Gao, Cynthia and Goswami, Vedanuj and Goyal, Naman and Hartshorn, Anthony and Hosseini, Saghar and Hou, Rui and Inan, Hakan and Kardas, Marcin and Kerkez, Viktor and Khabsa, Madian and Kloumann, Isabel and Korenev, Artem and Koura, Punit Singh and Lachaux, Marie-Anne and Lavril, Thibaut and Lee, Jenya and Liskovich, Diana and Lu, Yinghai and Mao, Yuning and Martinet, Xavier and Mihaylov, Todor and Mishra, Pushkar and Molybog, Igor and Nie, Yixin and Poulton, Andrew and Reizenstein, Jeremy and Rungta, Rashi and Saladi, Kalyan and Schelten, Alan and Silva, Ruan and Smith, Eric Michael and Subramanian, Ranjan and Tan, Xiaoqing Ellen and Tang, Binh and Taylor, Ross and Williams, Adina and Kuan, Jian Xiang and Xu, Puxin and Yan, Zheng and Zarov, Iliyan and Zhang, Yuchen and Fan, Angela and Kambadur, Melanie and Narang, Sharan and Rodriguez, Aurelien and Stojnic, Robert and Edunov, Sergey and Scialom, Thomas},
+  title         = {Llama 2: Open Foundation and Fine-Tuned Chat Models},
+  year          = {2023},
+  eprint        = {2307.09288},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CL}
+}
+
+% https://proceedings.iclr.cc/paper_files/paper/2025/hash/8e237ec6d3bc86f6d4967e9c7eef37ff-Abstract-Conference.html ; arXiv 2410.01257
+@inproceedings{wang2025helpsteer2pref,
+  author    = {Wang, Zhilin and Bukharin, Alexander and Delalleau, Olivier and Egert, Daniel and Shen, Gerald and Zeng, Jiaqi and Kuchaiev, Oleksii and Dong, Yi},
+  title     = {{HelpSteer2-Preference}: Complementing Ratings with Preferences},
+  booktitle = {The Thirteenth International Conference on Learning Representations (ICLR)},
+  year      = {2025},
+  url       = {https://arxiv.org/abs/2410.01257}
+}
+
+% Crossref DOI 10.1080/01621459.1967.10482901
+@article{rao1967ties,
+  author    = {Rao, P. V. and Kupper, L. L.},
+  title     = {Ties in Paired-Comparison Experiments: A Generalization of the {B}radley-{T}erry Model},
+  journal   = {Journal of the American Statistical Association},
+  volume    = {62},
+  number    = {317},
+  pages     = {194--204},
+  year      = {1967},
+  doi       = {10.1080/01621459.1967.10482901}
+}
+
+% Crossref DOI 10.1080/01621459.1970.10481082
+@article{davidson1970ties,
+  author    = {Davidson, Roger R.},
+  title     = {On Extending the {B}radley-{T}erry Model to Accommodate Ties in Paired Comparison Experiments},
+  journal   = {Journal of the American Statistical Association},
+  volume    = {65},
+  number    = {329},
+  pages     = {317--328},
+  year      = {1970},
+  doi       = {10.1080/01621459.1970.10481082}
+}
