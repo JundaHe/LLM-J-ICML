@@ -1,0 +1,28 @@
+{
+ "t5s13": {
+  "tau": 0.23325122892856598,
+  "target_gain": 0.05,
+  "oracle_gain_calibration": 0.05000015357595957,
+  "oracle_gain_realised": 0.05015320109659738,
+  "label_dist": [
+   4654,
+   6824,
+   10626,
+   10322,
+   9418
+  ]
+ },
+ "t10s13": {
+  "tau": 0.3858570009469986,
+  "target_gain": 0.1,
+  "oracle_gain_calibration": 0.09998327714428379,
+  "oracle_gain_realised": 0.10551558752997603,
+  "label_dist": [
+   5289,
+   6773,
+   10253,
+   9973,
+   9556
+  ]
+ }
+}
