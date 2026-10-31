@@ -107,10 +107,11 @@ for f in range(5):
             res = {}
             for bn, (lpb, keys) in bases.items():
                 th, Bs = fit_rater(lpb, ad, keys, sig[bn]); thp, Bsp = th.clone(), Bs.clone(); thp[tgt] = th[src]; Bsp[tgt] = Bs[src]
-                res[bn] = (dirc(predict(lpb, te, th, Bs), te), dirc(predict(lpb, te, thp, Bsp), te), dirc(predict(lpb, te, torch.zeros_like(th), Bs), te))   # Am. 4: own, other, population content (θ = 0)
+                kt = torch.tensor([int(r_) for r_ in keep]); thL = torch.zeros_like(th); thL[kt] = (th[kt].sum(0, keepdim=True) - th[kt]) / max(1, len(keep) - 1)   # Am. 5: leave-one-out mean θ of the other test raters
+                res[bn] = (dirc(predict(lpb, te, th, Bs), te), dirc(predict(lpb, te, thp, Bsp), te), dirc(predict(lpb, te, torch.zeros_like(th), Bs), te), dirc(predict(lpb, te, thL, Bs), te))   # own, other, θ = 0, population mean
             for r in keep:
                 sel = R[te] == r
-                recs.append({"fold": f, "k": k, "draw": dr, "rater": int(r), **{f"{bn}_{w_}": float(np.nansum(res[bn][j][sel])) for bn in bases for j, w_ in ((0, "own"), (1, "other"), (2, "pop"))}, "n_dir": int(np.isfinite(res["estimated"][0][sel]).sum())})
+                recs.append({"fold": f, "k": k, "draw": dr, "rater": int(r), **{f"{bn}_{w_}": float(np.nansum(res[bn][j][sel])) for bn in bases for j, w_ in ((0, "own"), (1, "other"), (2, "pop"), (3, "popmean"))}, "n_dir": int(np.isfinite(res["estimated"][0][sel]).sum())})
 rng = np.random.RandomState(17); out = {}
 for k in (20, 50):
     for bn in [b_ for b_ in ("oracle", "estimated") if f"{b_}_own" in recs[0]]:
@@ -118,7 +119,7 @@ for k in (20, 50):
         for x in recs:
             if x["k"] == k: by[(x["fold"], x["rater"])].append(x)
         q = list(by); wt = np.array([np.mean([x["n_dir"] for x in by[z]]) for z in q])
-        for ref_, sfx in (("other", ""), ("pop", "_pop")):
+        for ref_, sfx in (("other", ""), ("pop", "_pop"), ("popmean", "_popmean")):
             rng = np.random.RandomState(17); d = np.array([np.mean([x[f"{bn}_own"] - x[f"{bn}_{ref_}"] for x in by[z]]) for z in q])
             bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; out[f"{bn}_k{k}{sfx}"] = [100 * d.sum() / wt.sum(), 100 * np.percentile(bs, 2.5), 100 * np.percentile(bs, 97.5), len(q)]
 import glob as _g; meta = {}
