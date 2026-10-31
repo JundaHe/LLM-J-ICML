@@ -34,6 +34,7 @@ for k, v in U.items(): tex = tex.replace(k, v); abstract = abstract.replace(k, v
 i_app = tex.find("\\section{Appendix A.")
 if i_app >= 0: tex = tex[:i_app] + "\\bibliography{../references_p4}\n\\bibliographystyle{icml2025}\n\\newpage\n\\appendix\n" + tex[i_app:]   # ICML: references before the appendix
 tex = re.sub(r"\\section\{Appendix [A-Z]\.\s*", r"\\section{", tex)
+tex = re.sub(r"\\section\{Impact Statement\}(\\label\{[^}]*\})?", r"\\section*{Impact Statement}", tex)   # ICML: unnumbered, after the main text, outside the page limit
 FIG = r"""\begin{figure*}[t]\centering\includegraphics[width=\textwidth]{fig_main.pdf}
 \caption{New raters: gain in held-out log-likelihood per rating over the text-only distributional reward model (D), as a function of the number k of the new rater's ratings used for adaptation; 95\% rater-cluster bootstrap bands, 5 folds. Text-independent rater offsets (DF; symmetric three-parameter DFs on two-sided preferences) gain 0.08--0.10 nats per rating at k = 20 on all three datasets; group offsets (crowd/expert, race, region) gain nothing; a low-rank text-interacting rater latent with a few-shot-tuned prior ties the three-parameter DFs and beats the five-offset DF on MultiPref (DF $-$ DL = $-$0.015). DF, DFs and DG use the training-rater prior; DL the few-shot-tuned prior.}\label{fig:main}\end{figure*}
 """
