@@ -89,7 +89,7 @@ for f in range(5):
             th, Bs = fit_rater(lpb, idx_tr[half], keys, s2); lp = predict(lpb, idx_tr[~half], th, Bs); v = float(lp[torch.arange((~half).sum()), Yt[torch.tensor(idx_tr[~half])]].mean())
             if best is None or v > best[0]: best = (v, s2)
         sig[bn] = best[1]
-    print(f"{tag} fold {f}: σ² oracle {sig['oracle']}, estimated {sig['estimated']}", flush=True)
+    print(f"{tag} fold {f}: σ² {sig}", flush=True)
     test_raters = np.unique(R[idx_te])
     for k in (20, 50):
         for dr in range(5):
