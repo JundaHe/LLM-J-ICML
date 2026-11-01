@@ -1,0 +1,15 @@
+{
+ "t0s12": {
+  "tau": 0.0,
+  "target_gain": 0.0,
+  "oracle_gain_calibration": 0.0,
+  "oracle_gain_realised": 0.0,
+  "label_dist": [
+   4007,
+   7023,
+   11058,
+   10419,
+   9337
+  ]
+ }
+}
