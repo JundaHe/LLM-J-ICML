@@ -58,7 +58,9 @@ g1 = np.log(np.array([max(1, len(str(r["completion_b"]))) for r in raw]) / np.ar
 Fp = np.load(f"{P2}/features/multipref_overall/pairs_Qwen2.5-7B-Instruct.npz"); Dd = (Fp["E_B"] - Fp["E_A"]).astype(np.float64); Dd -= Dd.mean(0); U2, S2, _ = np.linalg.svd(Dd, full_matrices=False); Z = U2[:, :256] * S2[:256]; Z /= Z.std(0)
 if tag.startswith("x"): Z = X.numpy().copy()                                # Stage 7 Am. 1: in-span panels (g2 in DL's joint PCA-256 X)
 ym = Hreal.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ym - ym.mean())); w /= np.linalg.norm(w); u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
-G = torch.tensor(np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)); GR = G[It]          # per-rating content features
+G = torch.tensor(np.stack([(g1 - g1.mean()) / g1.std(), (g2 - g2.mean()) / g2.std()], 1)); GR = G[It]
+if tag.startswith("sem"):                                                  # Stage 7 Am. 3: semantic axes
+    from sem_feats import sem_G; G = torch.tensor(sem_G(raw)); GR = G[It]          # per-rating content features
 if tag.endswith("_none"): GR = torch.zeros(len(Y), 1, dtype=torch.float64)    # Stage 5 Am. 2: style offsets only
 if (tag == "real_aspect" or tag.startswith("asp")) and not tag.endswith("_none"):                                                  # Stage 5 Am. 1 (A): leave-rater-out consensus aspect differences, real labels
     LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}

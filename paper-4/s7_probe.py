@@ -13,6 +13,9 @@ Dd = (Fp["E_B"] - Fp["E_A"]).astype(np.float64); Dd -= Dd.mean(0); U2, S2, _ = n
 ymean = H.mean(1); w = np.linalg.solve(Z.T @ Z + 1000.0 * np.eye(256), Z.T @ (ymean - ymean.mean())); w /= np.linalg.norm(w)
 u = np.random.RandomState(0).randn(256); u -= (u @ w) * w; u /= np.linalg.norm(u); g2 = Z @ u
 T = {"g1": (g1 - g1.mean()) / g1.std(), "g2": (g2 - g2.mean()) / g2.std()}
+SEMP = len(sys.argv) > 1 and sys.argv[1] == "sem"                              # Stage 7 Am. 3: probe the semantic axes instead
+if SEMP:
+    from sem_feats import sem_G; Gs = sem_G(raw); T = {"g1": Gs[:, 0], "g2": Gs[:, 1]}
 # ---- input spaces
 EA, EB, EP = (Fp[k].astype(np.float32) for k in ("E_A", "E_B", "E_P")); allE = np.concatenate([EA, EB, EP]); mu = allE.mean(0)
 _, _, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:256].T                    # vpl_pal.py --pca 256
@@ -43,4 +46,5 @@ for name, Xs in SP.items():
 read = lambda r: "available" if r >= 0.5 else ("largely unavailable" if r < 0.2 else "partly available")
 L = ["# Stage 7 S7-1 — out-of-fold linear-probe R² of the injected features from each learner's inputs", "", "| input space | R²(g1, log length ratio) | R²(g2, random direction) |", "|---|---|---|"]
 L += [f"| {s} | {res[f'{s} | g1']['R2']:.3f} ({read(res[f'{s} | g1']['R2'])}) | {res[f'{s} | g2']['R2']:.3f} ({read(res[f'{s} | g2']['R2'])}) |" for s in SP]
-json.dump(res, open(f"{HERE}/results/stage7_probe.json", "w"), indent=1); open(f"{HERE}/results/stage7_probe.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
+sfx = "_sem" if SEMP else ""; L[0] = L[0] + (" (semantic axes: g1 = formatting, g2 = hedging / refusal)" if SEMP else "")
+json.dump(res, open(f"{HERE}/results/stage7_probe{sfx}.json", "w"), indent=1); open(f"{HERE}/results/stage7_probe{sfx}.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))

@@ -7,7 +7,8 @@ import data_panels
 SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None
 V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"
 ASP = len(sys.argv) > 1 and sys.argv[1] == "asp"
-SPAN = len(sys.argv) > 1 and sys.argv[1] == "span"                             # Stage 7 Am. 1: g2 in DL's own input space (joint PCA-256 X)                               # Stage 5 Am. 3: aspect-based injection                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
+SPAN = len(sys.argv) > 1 and sys.argv[1] == "span"
+SEM = len(sys.argv) > 1 and sys.argv[1] == "sem"                               # Stage 7 Am. 3: semantic axes (formatting, hedging / refusal)                             # Stage 7 Am. 1: g2 in DL's own input space (joint PCA-256 X)                               # Stage 5 Am. 3: aspect-based injection                                 # Stage 5 Am. 1 (B): generator with item fixed effects   # Stage 5 S5-2: `make_synth.py seed <s>` → τ5, τ10 with θ seed and label seed s
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
 PAN = data_panels.load("multipref_overall"); H = PAN["H"]; K = 5; n, m = H.shape; ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters)
@@ -63,6 +64,8 @@ if ASP:                                                                    # g =
     LVa = {"A-is-clearly-better": -2, "A-is-slightly-better": -1, "Tie": 0, "B-is-slightly-better": 1, "B-is-clearly-better": 2}
     Ga = np.array([[np.mean([LVa[a[f"{c}_pref"]] for a in r["normal_worker_annotations"] + r["expert_worker_annotations"]]) for c in ("helpful", "truthful", "harmless")] for r in raw])
     G = (Ga - Ga.mean(0)) / Ga.std(0)
+if SEM:
+    from sem_feats import sem_G; G = sem_G(raw)
 TH0 = np.random.RandomState(1 if SEED is None else SEED).randn(NR, G.shape[1])                                                       # θ_r = τ · TH0_r
 STEP = np.array([-2, -1, 0, 1, 2], float)
 def sample(lp, seed):                                                                             # Gumbel-max with fixed noise per seed (panels coupled across τ)
@@ -77,6 +80,7 @@ if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
 elif V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
 elif ASP: TARGETS = ((0.02, "asp2"), (0.05, "asp5"))
 elif SPAN: TARGETS = ((0.05, "x5"), (0.10, "x10"))
+elif SEM: TARGETS = ((0.05, "sem5"), (0.10, "sem10"))
 else: TARGETS = ((0.0, "t0"), (0.02, "t2"), (0.05, "t5")) if len(sys.argv) < 2 else ((0.10, "t10"), (0.20, "t20"))   # Stage 3 Am. 3: `make_synth.py dose` adds τ10, τ20
 for target, tag in TARGETS:
     if target == 0: tau = 0.0
@@ -90,4 +94,4 @@ for target, tag in TARGETS:
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP and not SPAN) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else ('span' if SPAN else 's' + str(SEED)))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP and not SPAN and not SEM) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else ('span' if SPAN else ('sem' if SEM else 's' + str(SEED))))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
