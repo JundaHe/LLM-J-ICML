@@ -1035,3 +1035,6 @@ Seventh-review W3 (a dataset built for heterogeneous preferences). PROTOCOL_STAG
 
 ### 2026-11-01 08:32 — paper 4 Stage 8: CA pipeline smoke test passed
 vpl_pal.py on ca_pairs (fold 0, fake 300-d features, 1 epoch, k = 0/20, Dp, DFp, VPL, PAL-B, LoRe, permutation control) runs end to end: 40 min wall on 8 CPUs, 5.7 GB peak RSS (DFp training dominates, 37 min). Smoke output deleted (not evidence). Full runs planned on CPU (PCA-256 for every method as PROTOCOL_STAGE8 states; Stage 6 used full features for LoRe — difference to be stated), 8 CPUs per fold, after the GPU embedding job 10966 (memory request lowered to 28 GB to fit the per-user cap; waiting for a GPU held by another user).
+
+### 2026-11-01 09:21 — paper 4 S7-4 (semantic axes) partial; GPU wait
+GPUs: both held by another user's jobs (6 h limits, these have run to timeout before); Slurm estimates the CA embedding job starts 13:04. S7-4: panels sem5 / sem10 (oracle +4.6 / +9.7). Probes: formatting partly available to the learners (R² 0.37 joint PCA-256 … 0.66 full x_B − x_A), hedging/refusal largely not (0.09–0.24) — a semantic axis that frozen embeddings carry only weakly. Reference learner (features known), own − population at k = 20: +2.57 [+1.61, +3.57] at +4.6, +7.44 [+5.96, +8.91] at +9.7 (same as the original injection). DL and VPL/PAL-B runs in progress (CPU).
