@@ -41,9 +41,20 @@ YB = (np.repeat(PAN["yb"], m) if NATIVE else (Y >= 3)).astype(np.float32)  # 1 =
 
 # ---------------------------------------------------------------- features: label-free PCA-256 over all per-response embeddings
 Fz = np.load(args.feat or f"{P2}/features/{args.panel}/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
-EA, EB, EP = (Fz[k].astype(np.float32) for k in ("E_A", "E_B", "E_P")); allE = np.concatenate([EA, EB, EP]); mu = allE.mean(0)
-if args.pca > 0: U, S, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:args.pca].T   # PCA basis fitted on a 1/3 subsample of all rows (label-free)
-else: W = np.eye(allE.shape[1], dtype=np.float32)                          # Stage 3 Am. 5: full features, standardised below
+EA, EB, EP = (Fz[k].astype(np.float32) for k in ("E_A", "E_B", "E_P"))
+if len(EA) <= 100_000:
+    allE = np.concatenate([EA, EB, EP]); mu = allE.mean(0)
+    if args.pca > 0: U, S, Vt = np.linalg.svd(allE[::3] - mu, full_matrices=False); W = Vt[:args.pca].T   # PCA basis fitted on a 1/3 subsample of all rows (label-free)
+    del allE
+else:                                                                     # Stage 8 (Community Alignment, 269k pairs): same rows and statistics without materialising the concatenation
+    nE = len(EA); mu = ((EA.sum(0, dtype=np.float64) + EB.sum(0, dtype=np.float64) + EP.sum(0, dtype=np.float64)) / (3 * nE)).astype(np.float32)
+    rows = np.arange(0, 3 * nE, 3); sub = np.concatenate([EA[rows[rows < nE]], EB[rows[(rows >= nE) & (rows < 2 * nE)] - nE], EP[rows[rows >= 2 * nE] - 2 * nE]])
+    if args.pca > 0:                                                      # top right-singular vectors via the eigendecomposition of the Gram matrix (chunked, float64)
+        G_ = np.zeros((sub.shape[1], sub.shape[1]))
+        for c0 in range(0, len(sub), 20000): Zc = (sub[c0:c0 + 20000] - mu).astype(np.float64); G_ += Zc.T @ Zc
+        ev_, V_ = np.linalg.eigh(G_); W = V_[:, np.argsort(-ev_)[:args.pca]].astype(np.float32); del G_
+    del sub
+if args.pca <= 0: W = np.eye(EA.shape[1], dtype=np.float32)                        # Stage 3 Am. 5: full features, standardised below
 def proj(E): Z = (E - mu) @ W; return Z
 XA, XB, XP = proj(EA), proj(EB), proj(EP); sd = np.concatenate([XA, XB, XP]).std(0) + 1e-6; XA, XB, XP = (torch.tensor(x / sd, dtype=torch.float32, device=DEV) for x in (XA, XB, XP))
 XC = torch.cat([XA, XB, XP], 1); FD = XA.shape[1]                         # 3·FD inputs for the D-family (768 with PCA-256)

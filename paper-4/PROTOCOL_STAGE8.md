@@ -19,3 +19,5 @@ Secondary: the same at k = 50; log-likelihood; per assigned language. Learner-fr
 Any statement about later turns, or about countries/languages beyond the per-language secondary analysis.
 
 ## Amendments
+
+**Amendment 1 (2026-11-01 17:22, after the first Stage-8 jobs ran out of memory at start; no result).** Implementation only: for panels with more than 100,000 pairs `vpl_pal.py` computes the feature mean in float64 without concatenating the three embedding arrays and takes the PCA-256 basis from the eigendecomposition of the Gram matrix of the same row subsample (every third row of [E_A; E_B; E_P]), accumulated in chunks — mathematically the same basis up to sign; earlier panels keep the original code path. Jobs resubmitted with 20 GB each.
