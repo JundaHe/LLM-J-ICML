@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--feat_name", default="Qwen2.5-7B-Instruct", help="Stage 10: feature file name under features/<panel>/"); ap.add_argument("--concord", action="store_true", help="Stage 10: within-rater pairwise concordance of expected scores on test items"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -27,7 +27,7 @@ MODELS = MODELS + ("NT",)                                                 # Amen
 if args.models: MODELS = tuple(m_ for m_ in MODELS if m_ in args.models.split(","))
 TEXTL = bool(args.text_logits); LT = None
 if TEXTL: MODELS = tuple(m_ for m_ in MODELS if m_ in ("D", "DG", "DF", "DFs", "DL"))   # stage 2b: lg = a·ℓ_LoRA + b + rater terms
-F_ = np.load(f"{P2}/features/{args.panel}/Qwen2.5-7B-Instruct.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
+F_ = np.load(f"{P2}/features/{args.panel}/{args.feat_name}.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, Vt = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0)   # label-free PCA-256, unit-variance scores
 X = torch.tensor(X); Gp = np.asarray(PAN["groups"])
 
@@ -88,7 +88,7 @@ class Model:
             ll = lp[torch.arange(len(idx)), torch.tensor(yy)].numpy()
             cdf = torch.cumsum(pk, 1).numpy(); step = (np.arange(K)[None, :] >= yy[:, None]).astype(float); rps = ((cdf - step) ** 2).sum(1) / (K - 1)
             ey = (pk.numpy() * np.arange(K)).sum(1); dirc = np.where(yy == MID, np.nan, (np.sign(ey - MID) == np.sign(yy - MID)).astype(float))
-        return ll, rps, dirc
+        return ll, rps, dirc, ey
 
 def set_center(mdl, idx):
     """population mean of the rater-side parameters over the raters seen in training (prior mean for new raters)"""
@@ -203,6 +203,12 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                                          "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
                                          **{f"{kind}_perm_{mt}": float(np.nansum(resP[kind][j][sel])) for kind in resP for j, mt in enumerate(("ll", "rps", "dir"))},
                                          **{f"{kind}_oracle_{mt}": float(np.nansum(ORC[kind][j][np.isin(idx_te, te[sel])])) for kind in ORC for j, mt in enumerate(("ll", "rps", "dir"))}})
+                if args.concord:                                          # Stage 10: within-rater pairwise concordance (prediction ties count 1/2)
+                    yy = Y[te][sel]; ui, uj = np.triu_indices(len(yy), 1); ok = yy[ui] != yy[uj]; out["per_rater"][-1]["conc_den"] = int(ok.sum())
+                    for kind in MODELS:
+                        for tagc, rr_ in (("", res), ("_perm", resP)):
+                            if kind not in rr_: continue
+                            e_ = rr_[kind][3][sel]; sg = np.sign(e_[ui] - e_[uj])[ok] * np.sign(yy[ui] - yy[uj])[ok]; out["per_rater"][-1][f"{kind}{tagc}_conc"] = float((sg > 0).sum() + 0.5 * (sg == 0).sum())
         print(f"fold {f} k={k} done [{time.time()-t0:.0f}s]", flush=True)
     seen = {kind: fits[kind].per_rating(idx_seen)[0].mean() for kind in MODELS}; out["folds"][-1]["seen_ll"] = seen; print("seen-rater LL", {k_: round(v, 4) for k_, v in seen.items()}, flush=True)
     if args.seen_eval:                                                     # Stage 7 S7-3: seen-rater ceiling; derangement of the training raters (seed 777 + fold)

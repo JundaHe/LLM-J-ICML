@@ -500,3 +500,22 @@ def load_ca_pairs(seed=0):
                 evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in country.items()}, yb=df.yb.to_numpy(), resp_A=df.A.to_numpy(), resp_B=df.B.to_numpy(),
                 lang=df.lang.to_numpy(), pregen=df.pregen.to_numpy(), model="Qwen/Qwen2.5-7B-Instruct")
 LOADERS.update({"ca_pairs": load_ca_pairs})
+
+def load_bw_raters():
+    """paper 4 Stage 10: Buse–Weimer with persistent rater IDs as columns (crossed), no rater groups"""
+    P = load_bw(); P["name"] = "bw_raters"; P["groups"] = np.asarray(P["item_ids"]); P["rater_group"] = {}; return P
+def load_dorn_raters(min_ratings=10):
+    """paper 4 Stage 10: Dorn readability in long format — one row per (snippet, participant) rating, participants = rows of the three score files (shared order,
+    checked); participants with >= min_ratings ratings; groups = snippet; H = rating − 1 (0–4); item_ids '<lang>_<sid>|p<participant>'; snippet_ids index the dorn_all features"""
+    S = {lang: pd.read_csv(f"{DORN}/scores/{lang}.csv", header=None) for lang in ("java", "python", "cuda")}
+    pid = S["java"].iloc[:, 0].to_numpy(); assert all(np.array_equal(s.iloc[:, 0].to_numpy(), pid) for s in S.values())
+    rows = []
+    for lang, s in S.items():
+        snips = sorted(int(f.split(".")[0]) for f in os.listdir(f"{DORN}/snippets/{lang}")); M = s.iloc[:, 1:].to_numpy(float)
+        for j, sid in enumerate(snips):
+            for i in np.where(np.isfinite(M[:, j]))[0]: rows.append((f"{lang}_{sid}", f"p{pid[i]}", int(M[i, j])))
+    df = pd.DataFrame(rows, columns=["snip", "rater", "y"]); cnt = df.rater.value_counts(); df = df[df.rater.isin(cnt[cnt >= min_ratings].index)].reset_index(drop=True)
+    assert df.y.between(1, 5).all()
+    return dict(name="dorn_raters", texts=df.snip.tolist(), H=(df.y.to_numpy() - 1)[:, None], K=5, item_ids=(df.snip + "|" + df.rater).to_numpy(), groups=df.snip.to_numpy(),
+                evaluators=[[r] for r in df.rater], rater_ids=np.array(["rater"]), rater_group={}, snippet_ids=df.snip.to_numpy(), model="Qwen/Qwen2.5-Coder-7B-Instruct")
+LOADERS.update({"bw_raters": load_bw_raters, "dorn_raters": load_dorn_raters})
