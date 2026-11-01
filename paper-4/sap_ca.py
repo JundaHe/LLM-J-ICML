@@ -45,15 +45,16 @@ def fit_sap(base, idx, MU, prec):
     def cl():
         opt.zero_grad(); th = MU + d; loss = nll(base[ii] + (th[Rt[ii]] * A[ii]).sum(1), YB[ii]).sum() + 0.5 * (prec * d ** 2).sum(); loss.backward(); return loss
     opt.step(cl); return (MU + d).detach()
-def em(base, idx, MU, iso=False, nit=15):
+def em(base, idx, MU, iso=False, nit=40):   # Am. 7: MacKay fixed-point ARD update
     s2 = np.full(J, 0.1); us_ = np.unique(R[idx]); Ri = R[idx]
     for _ in range(nit):
         th = fit_sap(base, idx, MU, torch.tensor(1.0 / s2))
         with torch.no_grad():
-            it_ = torch.tensor(idx); p = torch.sigmoid(base[it_] + (th[Rt[it_]] * A[it_]).sum(1)); vs = p * (1 - p); acc = np.zeros(J)
+            it_ = torch.tensor(idx); p = torch.sigmoid(base[it_] + (th[Rt[it_]] * A[it_]).sum(1)); vs = p * (1 - p); acc = np.zeros(J); cc = np.zeros(J)
             for r in us_:
-                q = np.where(Ri == r)[0]; a = A[torch.tensor(idx[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2)); acc += (th[r] - MU[r]).numpy() ** 2 + np.diag(C)
-        s2 = np.maximum(acc / len(us_), 1e-6); s2 = np.full(J, max(float(s2.mean()), 1e-6)) if iso else s2
+                q = np.where(Ri == r)[0]; a = A[torch.tensor(idx[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2)); acc += (th[r] - MU[r]).numpy() ** 2; cc += np.diag(C)
+        if iso: s2 = np.full(J, float(np.clip(acc.sum() / max(1e-9, (len(us_) * J - (cc / s2).sum())), 1e-6, 10.0)))
+        else: s2 = np.clip(acc / np.clip(len(us_) - cc / s2, 1e-6, None), 1e-6, 10.0)
     return s2
 def fit_lr(base, idx, MU, Wm, zprec, lamW=None):
     z = torch.zeros(NR, 2, requires_grad=True); ii = torch.tensor(idx); Wv = Wm.clone().requires_grad_(lamW is not None); prm = [z] + ([Wv] if lamW is not None else [])

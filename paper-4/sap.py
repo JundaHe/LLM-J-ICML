@@ -50,14 +50,15 @@ for f in range(NF):
     one = torch.ones(J); zero = torch.zeros(J)
     mu, _ = fit(LPE, idx_tr, zero, torch.zeros(J), one, shared=True); mu = mu[0]                         # population weights μ
     s2 = np.full(J, 0.1); trr = np.unique(R[idx_tr])                                               # Am. 1: Laplace-EM (ARD) for diag σ² on the training raters
-    for it in range(NIT):
+    MK = os.environ.get("SAP_EM", "em") == "mackay"                          # Stage 9 Am. 7: MacKay fixed-point update (robustness)
+    for it in range(40 if MK else NIT):
         thr, Bsr = fit(LPE, idx_tr, mu, torch.tensor(1.0 / s2), one)
         with torch.no_grad():
-            p = predict(LPE, idx_tr, thr, Bsr).exp(); vs = (p * STEP ** 2).sum(1) - (p * STEP).sum(1) ** 2; acc = np.zeros(J)
+            p = predict(LPE, idx_tr, thr, Bsr).exp(); vs = (p * STEP ** 2).sum(1) - (p * STEP).sum(1) ** 2; acc = np.zeros(J); cc = np.zeros(J)
             for r in trr:
                 q = np.where(R[idx_tr] == r)[0]; a = AR[torch.tensor(idx_tr[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2))
-                acc += (thr[r] - mu).numpy() ** 2 + np.diag(C)
-        s2 = np.maximum(acc / len(trr), 1e-6) if not ISO else np.full(J, max(float(np.mean(acc / len(trr))), 1e-6))
+                acc += (thr[r] - mu).numpy() ** 2 + (0 if MK else np.diag(C)); cc += np.diag(C)
+        s2 = (np.clip(acc / np.clip(len(trr) - cc / s2, 1e-6, None), 1e-6, 10.0) if MK else np.maximum(acc / len(trr), 1e-6)) if not ISO else np.full(J, max(float(np.mean(acc / len(trr))), 1e-6))
     print(f"{tag} fold {f}: σ² " + ", ".join(f"{NAMES[j]} {s2[j]:.4f}" for j in np.argsort(-s2)[:6]), flush=True)
     mask = one; prec = torch.tensor(1.0 / s2)
     screen.append({"fold": f, "mu": mu.numpy().tolist(), "sigma2": s2.tolist(), "selected": [NAMES[j] for j in range(J) if s2[j] > 1e-3]})
@@ -90,6 +91,6 @@ for k in (20, 50):
             rng = np.random.RandomState(17); d = np.array([np.mean([x[f"own_{mt}"] - x[f"{ref_}_{mt}"] for x in by[z]]) for z in q])
             bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; out[f"k{k}_{mt}_own-{ref_}"] = [sc * d.sum() / wt.sum(), sc * np.percentile(bs, 2.5), sc * np.percentile(bs, 97.5), len(q)]
 cnt = collections.Counter(a for s in screen for a in s["selected"]); out["selected_4of5"] = sorted(a for a, c in cnt.items() if c >= 4)
-sfx = "" if NIT == 15 else f"_em{NIT}"
+sfx = ("" if NIT == 15 else f"_em{NIT}") + ("_mackay" if os.environ.get("SAP_EM", "em") == "mackay" else "")
 json.dump(out, open(f"{HERE}/results/stage9_sap_{tag}{sfx}.json", "w"), indent=1); json.dump(recs, open(f"{HERE}/results/stage9_sap_{tag}{sfx}_records.json", "w"))
 print(tag, json.dumps({k_: v for k_, v in out.items() if k_ != "screen"}), flush=True)

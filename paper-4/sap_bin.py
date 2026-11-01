@@ -47,13 +47,14 @@ for f in range(5):
     with torch.no_grad(): base = X @ w + b
     zero = torch.zeros(J); mu = fit(base, idx_all, zero, torch.zeros(J), shared=True)[0]
     s2 = np.full(J, 0.1); trr = np.unique(R[idx_all])
-    for it in range(15):
+    MK = os.environ.get("SAP_EM", "em") == "mackay"                          # Am. 7: MacKay fixed-point update (40 iterations)
+    for it in range(40 if MK else 15):
         th = fit(base, idx_all, mu, torch.tensor(1.0 / s2))
         with torch.no_grad():
-            p = torch.sigmoid(logit_of(base, idx_all, th)); vs = p * (1 - p); acc = np.zeros(J); Ra = R[idx_all]
+            p = torch.sigmoid(logit_of(base, idx_all, th)); vs = p * (1 - p); acc = np.zeros(J); cc = np.zeros(J); Ra = R[idx_all]
             for r in trr:
-                q = np.where(Ra == r)[0]; a = A[torch.tensor(idx_all[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2)); acc += (th[r] - mu).numpy() ** 2 + np.diag(C)
-        s2 = np.maximum(acc / len(trr), 1e-6)
+                q = np.where(Ra == r)[0]; a = A[torch.tensor(idx_all[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2)); acc += (th[r] - mu).numpy() ** 2 + (0 if MK else np.diag(C)); cc += np.diag(C)
+        s2 = np.clip(acc / np.clip(len(trr) - cc / s2, 1e-6, None), 1e-6, 10.0) if MK else np.maximum(acc / len(trr), 1e-6)
     screen.append({"fold": f, "lambda": lam, "mu": mu.numpy().tolist(), "sigma2": s2.tolist()})
     print(f"{panel} fold {f}: λ {lam}; σ² " + ", ".join(f"{NAMES[j]} {s2[j]:.4f}" for j in np.argsort(-s2)[:6]), flush=True)
     prec = torch.tensor(1.0 / s2); test_raters = np.unique(R[idx_te])
@@ -86,5 +87,6 @@ for k in KS:
             d = np.array([np.mean([x[f"own_{mt}"] - x[f"{ref_}_{mt}"] for x in by[z]]) for z in q]); rng = np.random.RandomState(17)
             bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; out[f"k{k}_{mt}_own-{ref_}"] = [100 * d.sum() / wt.sum(), 100 * np.percentile(bs, 2.5), 100 * np.percentile(bs, 97.5), len(q)]
 r20 = out.get("k20_acc_own-pop"); out["rule_content_personalisation"] = bool(r20 and r20[1] > 1.0)
-json.dump(out, open(f"{HERE}/results/stage9_sapbin_{panel}.json", "w"), indent=1); json.dump(recs, open(f"{HERE}/results/stage9_sapbin_{panel}_records.json", "w"))
+sf = "_mackay" if os.environ.get("SAP_EM", "em") == "mackay" else ""
+json.dump(out, open(f"{HERE}/results/stage9_sapbin_{panel}{sf}.json", "w"), indent=1); json.dump(recs, open(f"{HERE}/results/stage9_sapbin_{panel}{sf}_records.json", "w"))
 print(panel, json.dumps({k_: v for k_, v in out.items() if k_ != "screen"}), flush=True)
