@@ -19,7 +19,8 @@ tag = sys.argv[1]; ISO = tag.endswith("_iso"); ptag = tag[:-4] if ISO else tag  
 if ptag == "real": H = Hreal
 elif ptag == "real_perm":                                                  # Am. 3 (d): each item's ratings permuted across its raters
     rp = np.random.RandomState(5); H = np.array([row[rp.permutation(m)] for row in Hreal])
-else: H = np.load(f"{HERE}/results/synth/multipref_synth_{ptag}.npz")["H"]; Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
+else: H = np.load(f"{HERE}/results/synth/multipref_synth_{ptag}.npz")["H"]
+Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
 F_ = np.load(f"{P2}/features/multipref_overall/Qwen2.5-7B-Instruct.npz", allow_pickle=True)
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, _ = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0); X = torch.tensor(X)
 raw = [json.loads(l) for l in open(data_panels.MULTIPREF)]; A = torch.tensor(multipref_G(raw)); J = A.shape[1]; AR = A[It]
