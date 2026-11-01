@@ -92,7 +92,7 @@ for f in range(5):
         for lw in (1.0, 10.0, 100.0):
             _, _, Wr = fit_lr(LPE, rest, W0, lam_W=lw)
             for c in (0.1, 1.0, 10.0):
-                th_c, Bs_c, _ = fit_lr_c(LPE, ad_p, Wr, 1.0 / c); v = float(ll(predict(LPE, sc_p, th_c, Bs_c), sc_p).mean())
+                th_c, Bs_c = fit_lr_c(LPE, ad_p, Wr, 1.0 / c); v = float(ll(predict(LPE, sc_p, th_c, Bs_c), sc_p).mean())
                 if v > best[0]: best = (v, lw, c)
         CSEL = best[2]; W = fit_lr(LPE, idx_tr, W0, lam_W=best[1])[2] if CSEL > 0 else W0
         screen.append({"fold": f, "lam_W": best[1], "c": CSEL}); print(f"lr2 {tag} fold {f}: selected λ_W {best[1]}, c {CSEL}", flush=True)
