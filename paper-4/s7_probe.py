@@ -47,4 +47,5 @@ read = lambda r: "available" if r >= 0.5 else ("largely unavailable" if r < 0.2 
 L = ["# Stage 7 S7-1 — out-of-fold linear-probe R² of the injected features from each learner's inputs", "", "| input space | R²(g1, log length ratio) | R²(g2, random direction) |", "|---|---|---|"]
 L += [f"| {s} | {res[f'{s} | g1']['R2']:.3f} ({read(res[f'{s} | g1']['R2'])}) | {res[f'{s} | g2']['R2']:.3f} ({read(res[f'{s} | g2']['R2'])}) |" for s in SP]
 sfx = "_sem" if SEMP else ""; L[0] = L[0] + (" (semantic axes: g1 = formatting, g2 = hedging / refusal)" if SEMP else "")
+if SEMP: L[2] = "| input space | R²(formatting) | R²(hedging / refusal) |"
 json.dump(res, open(f"{HERE}/results/stage7_probe{sfx}.json", "w"), indent=1); open(f"{HERE}/results/stage7_probe{sfx}.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))

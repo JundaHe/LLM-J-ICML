@@ -1,0 +1,28 @@
+{
+ "sem5": {
+  "tau": 0.22362597286701202,
+  "target_gain": 0.05,
+  "oracle_gain_calibration": 0.050000382878851356,
+  "oracle_gain_realised": 0.04637587157450951,
+  "label_dist": [
+   4670,
+   6993,
+   10699,
+   10201,
+   9281
+  ]
+ },
+ "sem10": {
+  "tau": 0.4077018052339554,
+  "target_gain": 0.1,
+  "oracle_gain_calibration": 0.10001862131471824,
+  "oracle_gain_realised": 0.09669170529007509,
+  "label_dist": [
+   5433,
+   6941,
+   10201,
+   9661,
+   9608
+  ]
+ }
+}
