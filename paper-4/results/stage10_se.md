@@ -12,5 +12,5 @@
 | dorn_raters | 5 | +2.91 [+2.57, +3.30] (n = 3705) | +0.00 [-0.00, +0.00] (n = 3705) | +0.00 [+0.00, +0.00] (n = 3190) | +0.00 [+0.00, +0.00] (n = 3190) | -0.08 [-0.22, +0.05] (n = 3190) | 61.0 |
 | dorn_raters | 10 | +3.99 [+3.06, +4.91] (n = 3393) | +0.00 [-0.00, +0.00] (n = 3393) | +0.00 [+0.00, +0.00] (n = 2954) | +0.00 [+0.00, +0.00] (n = 2954) | +0.09 [-0.17, +0.35] (n = 2954) | 61.2 |
 
-**dorn_raters, k = 10: SE-1 holds (DF − D lower bound +3.06); SE-2: ranking null (largest lower bound +0.00, largest upper bound +0.00).**
+**dorn_raters, k = 10: SE-1 holds (DF − D lower bound +3.06); SE-2: degenerate (DL switched off by validation; Am. 3) (largest lower bound +0.00, largest upper bound +0.00).**
 

@@ -203,6 +203,6 @@
  },
  "rules_dorn_raters": {
   "SE1": true,
-  "SE2": "ranking null"
+  "SE2": "degenerate (DL switched off by validation; Am. 3)"
  }
 }
