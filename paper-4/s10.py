@@ -28,6 +28,6 @@ for panel, ks, kr in (("bw_raters", (5, 10, 20, 50), 20), ("dorn_raters", (5, 10
     c = out.get(f"{panel}_k{kr}")
     if c:
         se1 = bool(c["DF-D_ll"][1] > 0); lb = max(c["DL_own_conc"][1], c["DL_perm_conc"][1]); ub = max(c["DL_own_conc"][2], c["DL_perm_conc"][2])
-        se2 = "content personalisation detected" if lb > 1 else ("ranking null" if ub < 1 else "inconclusive"); out[f"rules_{panel}"] = {"SE1": se1, "SE2": se2}
+        se2 = "degenerate (DL switched off by validation; Am. 3)" if max(abs(x) for x in c["DL-D_ll"][:3]) < 1e-6 else ("content personalisation detected" if lb > 1 else ("ranking null" if ub < 1 else "inconclusive")); out[f"rules_{panel}"] = {"SE1": se1, "SE2": se2}
         L += ["", f"**{panel}, k = {kr}: SE-1 {'holds' if se1 else 'does not hold'} (DF − D lower bound {c['DF-D_ll'][1]:+.2f}); SE-2: {se2} (largest lower bound {lb:+.2f}, largest upper bound {ub:+.2f}).**", ""]
 json.dump(out, open(f"{R}/stage10_se.json", "w"), indent=1); open(f"{R}/stage10_se.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
