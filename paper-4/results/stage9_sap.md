@@ -7,6 +7,7 @@
 | t10 | +3.89 [+2.74, +5.04] | +6.19 [+5.06, +7.39] | +4.14 [+2.94, +5.54] | +3.76 [+2.74, +4.90] | code blocks, length, list/heading lines, paragraphs, prompt overlap, type-token ratio |
 | sem5 | +2.69 [+1.70, +3.64] | +5.00 [+4.03, +5.99] | +3.98 [+2.70, +5.22] | +2.78 [+2.00, +3.60] | digits, hedging/refusal, list/heading lines, prompt overlap |
 | sem10 | +7.53 [+5.92, +9.10] | +12.23 [+10.63, +13.82] | +9.35 [+7.60, +11.05] | +8.73 [+6.97, +10.57] | digits, evidence phrases, headings, hedging/refusal, length, list/heading lines, prompt overlap, safety/disclaimer, second person |
+| x10 | +3.26 [+2.23, +4.32] | +4.96 [+3.85, +6.10] | +4.02 [+2.90, +5.16] | +3.20 [+2.23, +4.20] | code blocks, length, type-token ratio |
 | real | +0.17 [-0.19, +0.55] | +0.45 [+0.03, +0.86] | +0.13 [-0.45, +0.63] | +0.22 [+0.03, +0.41] | bold/italic, code blocks, digits, first person, headings, hedging/refusal, length, paragraphs, prompt overlap, safety/disclaimer, second person, type-token ratio |
 
 **Rules:** {"M1_no_false_detection": true, "M2_detect": {"sem5": true, "sem10": true}, "M2_select": {"sem5": true, "sem10": true}, "M3_real_content_personalisation": false}
