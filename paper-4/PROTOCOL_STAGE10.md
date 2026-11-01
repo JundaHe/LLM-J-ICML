@@ -15,3 +15,5 @@ Secondary: k-curves, RPS, the population-level learner-free agreement of two dev
 A code-attribute version of SAP (classical readability features — line length, identifier length, comments, nesting, blank lines, …) follows in an amendment, with its dictionary fixed before it is run.
 
 ## Amendments
+
+**Amendment 1 (2026-11-01 15:18, after the first runs crashed; no result produced).** Two implementation fixes in `factorised_rm.py`, no change to the protocol for other panels: (i) the feature dimension was hard-coded to 256, but Buse–Weimer has 100 snippets, so its PCA has at most 99 informative components — the dimension is now min(256, items − 1) (unchanged = 256 for every earlier panel); (ii) on the long-format Dorn panel the PCA is computed over the 360 unique snippets and mapped to the rating rows (a full SVD over the 69,961 duplicated rows exhausted memory); the unit-variance scaling is still over rows.

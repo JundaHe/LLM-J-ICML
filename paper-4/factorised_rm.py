@@ -28,7 +28,11 @@ if args.models: MODELS = tuple(m_ for m_ in MODELS if m_ in args.models.split(",
 TEXTL = bool(args.text_logits); LT = None
 if TEXTL: MODELS = tuple(m_ for m_ in MODELS if m_ in ("D", "DG", "DF", "DFs", "DL"))   # stage 2b: lg = a·ℓ_LoRA + b + rater terms
 F_ = np.load(f"{P2}/features/{args.panel}/{args.feat_name}.npz", allow_pickle=True); assert np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
-E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, Vt = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0)   # label-free PCA-256, unit-variance scores
+if "snippet_ids" in PAN:                                                    # Stage 10: long-format panels repeat each snippet's features; PCA over the unique snippets, then mapped to rows
+    us, first, inv = np.unique(np.asarray(PAN["snippet_ids"]), return_index=True, return_inverse=True); Eu = F_["E_last"][first].astype(np.float64); Eu -= Eu.mean(0)
+    U, S, Vt = np.linalg.svd(Eu, full_matrices=False); XD = min(256, len(us) - 1); X = (U[:, :XD] * S[:XD])[inv]; X /= X.std(0)
+else:
+    E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, Vt = np.linalg.svd(E, full_matrices=False); XD = min(256, E.shape[0] - 1); X = U[:, :XD] * S[:XD]; X /= X.std(0)   # label-free PCA-256 (fewer components if fewer items), unit-variance scores
 X = torch.tensor(X); Gp = np.asarray(PAN["groups"])
 
 Phi = lambda z: 0.5 * (1 + torch.erf(z / np.sqrt(2)))
@@ -40,8 +44,8 @@ class Model:
     """parameters: text side (beta, c0, W, V/bias for D, group params) and rater side (delta, s, z) indexed by global rater id"""
     def __init__(s, kind, lam):
         s.kind, s.lam = kind, lam; d = args.d
-        s.p = {"beta": torch.zeros(256), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
-               "W": torch.randn(256, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(256, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(256), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(256, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3), "a": torch.ones(1)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
+        s.p = {"beta": torch.zeros(XD), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
+               "W": torch.randn(XD, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(XD, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(XD), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(XD, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3), "a": torch.ones(1)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
         s.center = {}
     def text_keys(s):
         if TEXTL and s.kind in ("D", "DG", "DF", "DFs", "DL"): return {"D": ["a", "b"], "DG": ["a", "b", "gb"], "DF": ["a", "b"], "DFs": ["a", "b"], "DL": ["a", "b", "W5", "w0"]}[s.kind]
