@@ -223,7 +223,8 @@ python analysis_block_popquorn.py; python sensitivity_popquorn_users.py
 1. **每完成一个原子步骤就 commit**，并 push 到 `origin main`。新结果都要提交，adapter 权重和日志除外。
 2. **每个里程碑都发给 Codex 审**，用 CLI，不要用 MCP（旧的 token 已失效）。审阅存进 `reviews/`，并按意见修改。
    ```bash
-   codex exec --model gpt-5.6-sol -c model_reasoning_effort=xhigh --sandbox read-only --skip-git-repo-check -o <绝对路径输出> - < <绝对路径prompt>
+   codex exec --model gpt-6.1-sol -c model_reasoning_effort=max --sandbox read-only --skip-git-repo-check -o <绝对路径输出> - < <绝对路径prompt>
+   （2026-11-01 起用户要求改用 gpt-6.1-sol；本机 Codex 沙箱无法读取文件，需把文件内容直接写进 prompt。）
    ```
    prompt 文件写到 `reviews/codex_roundNN_prompt_<日期>.md`，在后台运行。
 3. **先固定方案再看结果：** 新分析先写 protocol 并提交；看到结果后要改，只能在 protocol 末尾记修订，写明原因。
