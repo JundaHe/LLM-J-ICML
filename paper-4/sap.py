@@ -58,7 +58,8 @@ for f in range(NF):
             for r in trr:
                 q = np.where(R[idx_tr] == r)[0]; a = AR[torch.tensor(idx_tr[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2))
                 acc += (thr[r] - mu).numpy() ** 2 + (0 if MK else np.diag(C)); cc += np.diag(C)
-        s2 = (np.clip(acc / np.clip(len(trr) - cc / s2, 1e-6, None), 1e-6, 10.0) if MK else np.maximum(acc / len(trr), 1e-6)) if not ISO else np.full(J, max(float(np.mean(acc / len(trr))), 1e-6))
+        if ISO and MK: s2 = np.full(J, float(np.clip(acc.sum() / max(1e-9, len(trr) * J - (cc / s2).sum()), 1e-6, 10.0)))   # Am. 8: scalar MacKay update for SAP-iso
+        else: s2 = (np.clip(acc / np.clip(len(trr) - cc / s2, 1e-6, None), 1e-6, 10.0) if MK else np.maximum(acc / len(trr), 1e-6)) if not ISO else np.full(J, max(float(np.mean(acc / len(trr))), 1e-6))
     print(f"{tag} fold {f}: σ² " + ", ".join(f"{NAMES[j]} {s2[j]:.4f}" for j in np.argsort(-s2)[:6]), flush=True)
     mask = one; prec = torch.tensor(1.0 / s2)
     screen.append({"fold": f, "mu": mu.numpy().tolist(), "sigma2": s2.tolist(), "selected": [NAMES[j] for j in range(J) if s2[j] > 1e-3]})

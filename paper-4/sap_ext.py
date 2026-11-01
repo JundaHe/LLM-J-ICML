@@ -1,7 +1,7 @@
 """Stage 9 Am. 4 (PROTOCOL_STAGE9.md): matched-feature comparator and transfer-based screen. `sap_ext.py lr <tag>`: ATTR-LR, θ_r = μ + W z_r with W (24 × 2)
 learned on the training raters (ridge on W by half-split), z_r ~ N(0, I); `sap_ext.py tr <tag>`: SAP-T, SAP whose attributes are kept only if deleting their prior
 variance lowers held-out LL of pseudo-new training raters adapted on k = 20. Same base, dictionary, folds, draws and contrasts as sap.py (shared code below is copied from it)."""
-import sys; MODE = sys.argv.pop(1); assert MODE in ("lr", "tr")
+import sys; MODE = sys.argv.pop(1); assert MODE in ("lr", "tr", "lr2")   # lr2: Stage 9 Am. 6/8 — W ridge and adaptation strength (incl. none) chosen on pseudo-new raters at k = 20
 import os, sys, json, collections, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
@@ -59,6 +59,13 @@ def fit_lr(lpb, idx, W, lam_W=None, lam_s=2.0):
         opt.zero_grad(); th = mu + z @ Wv.T; c = (th[Rt[ii]] * AR[ii]).sum(1); lp = torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
         loss = -lp[torch.arange(len(idx)), Yt[ii]].sum() + 0.5 * (z ** 2).sum() + lam_s * (Bs ** 2).sum() + ((lam_W or 0.0) * (Wv ** 2).sum()); loss.backward(); return loss
     opt.step(cl); return (mu + z @ Wv.T).detach(), Bs.detach(), Wv.detach()
+def fit_lr_c(lpb, idx, W, zprec, lam_s=2.0):
+    """new-rater fit with W fixed and prior precision zprec on z"""
+    z = torch.zeros(NR, 2, requires_grad=True); Bs = torch.zeros(NR, 3, requires_grad=True); ii = torch.tensor(idx); opt = torch.optim.LBFGS([z, Bs], lr=0.5, max_iter=300, line_search_fn="strong_wolfe")
+    def cl():
+        opt.zero_grad(); th = mu + z @ W.T; c = (th[Rt[ii]] * AR[ii]).sum(1); lp = torch.log_softmax(lpb[ii] + Bs[Rt[ii]][:, SYM] + c[:, None] * STEP, 1)
+        loss = -lp[torch.arange(len(idx)), Yt[ii]].sum() + 0.5 * zprec * (z ** 2).sum() + lam_s * (Bs ** 2).sum(); loss.backward(); return loss
+    opt.step(cl); return (mu + z @ W.T).detach(), Bs.detach()
 recs = []; screen = []
 for f in range(5):
     test_r = rfold == f; tr_item = ifold[I] != f; idx_tr = np.where(~test_r[R] & tr_item)[0]; pool = np.where(test_r[R] & tr_item)[0]; idx_te = np.where(test_r[R] & ~tr_item)[0]
@@ -73,7 +80,23 @@ for f in range(5):
     trr = np.unique(R[idx_tr]); rng_s = np.random.RandomState(90 + f); half = np.zeros(len(idx_tr), bool)
     for r in trr:
         pos = np.where(R[idx_tr] == r)[0]; half[rng_s.permutation(pos)[: len(pos) // 2]] = True
-    if MODE == "lr":
+    if MODE == "lr2":
+        pr_ = np.random.RandomState(3 + f); pseudo = set(pr_.choice(trr, len(trr) // 5, replace=False)); isp = np.isin(R[idx_tr], list(pseudo)); rest = idx_tr[~isp]
+        ad_p, sc_p = [], []; rk = np.random.RandomState(60 + f)
+        for r in pseudo:
+            q = idx_tr[R[idx_tr] == r]
+            if len(q) < 30: continue
+            q = rk.permutation(q); ad_p.extend(q[:20]); sc_p.extend(q[20:])
+        ad_p, sc_p = np.array(ad_p, int), np.array(sc_p, int); W0 = torch.randn(J, 2, generator=torch.Generator().manual_seed(f)) * 0.01
+        _, Bs0 = fit(LPE, ad_p, mu, torch.full((J,), 1e6), one); best = (float(ll(predict(LPE, sc_p, mu.expand(NR, -1).clone(), Bs0), sc_p).mean()), 1.0, 0.0)   # no content adaptation (offsets only)
+        for lw in (1.0, 10.0, 100.0):
+            _, _, Wr = fit_lr(LPE, rest, W0, lam_W=lw)
+            for c in (0.1, 1.0, 10.0):
+                th_c, Bs_c, _ = fit_lr_c(LPE, ad_p, Wr, 1.0 / c); v = float(ll(predict(LPE, sc_p, th_c, Bs_c), sc_p).mean())
+                if v > best[0]: best = (v, lw, c)
+        CSEL = best[2]; W = fit_lr(LPE, idx_tr, W0, lam_W=best[1])[2] if CSEL > 0 else W0
+        screen.append({"fold": f, "lam_W": best[1], "c": CSEL}); print(f"lr2 {tag} fold {f}: selected λ_W {best[1]}, c {CSEL}", flush=True)
+    elif MODE == "lr":
         W0 = torch.randn(J, 2, generator=torch.Generator().manual_seed(f)) * 0.01; best = None
         for lw in (1.0, 10.0, 100.0):
             th_h, Bs_h, _ = fit_lr(LPE, idx_tr[half], W0, lam_W=lw); v = float(ll(predict(LPE, idx_tr[~half], th_h, Bs_h), idx_tr[~half]).mean())
@@ -106,7 +129,8 @@ for f in range(5):
                 keep.append(r); ad.extend(rng.choice(pr, k, replace=False))
             ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep)]
             o_ = np.random.RandomState(777 + 10_000 * f + 100 * k + dr).permutation(len(keep)); tgt = torch.tensor([int(keep[o_[i]]) for i in range(len(o_))]); src = torch.tensor([int(keep[o_[(i + 1) % len(o_)]]) for i in range(len(o_))])
-            if MODE == "lr": th, Bs, _ = fit_lr(LPE, ad, W)
+            if MODE == "lr2": th, Bs = (fit(LPE, ad, mu, torch.full((J,), 1e6), one) if CSEL == 0 else fit_lr_c(LPE, ad, W, 1.0 / CSEL)[:2])
+            elif MODE == "lr": th, Bs, _ = fit_lr(LPE, ad, W)
             else: th, Bs = fit(LPE, ad, mu, torch.tensor(1.0 / s2), one)
             thp, Bsp = th.clone(), Bs.clone(); thp[tgt] = th[src]; Bsp[tgt] = Bs[src]; th0 = mu.expand(NR, -1).clone()
             lps = {"own": predict(LPE, te, th, Bs), "other": predict(LPE, te, thp, Bsp), "pop": predict(LPE, te, th0, Bs)}
