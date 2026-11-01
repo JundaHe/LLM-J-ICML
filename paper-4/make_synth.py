@@ -4,7 +4,7 @@ so that the generator-oracle direction accuracy gain on the test ratings is 0, +
 import os, sys, json, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
-SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] == "seed" else None
+SEED = int(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[1] in ("seed", "span") else None   # Stage 7 Am. 4: `make_synth.py span <s>`
 V2 = len(sys.argv) > 1 and sys.argv[1] == "v2"
 ASP = len(sys.argv) > 1 and sys.argv[1] == "asp"
 SPAN = len(sys.argv) > 1 and sys.argv[1] == "span"
@@ -76,7 +76,8 @@ def oracle_gain(tau, seeds=range(100, 105)):
     c = tau * (TH0[R] * G[I]).sum(1); lpc = LP + c[:, None] * STEP[None, :]; lpc -= np.logaddexp.reduce(lpc, 1, keepdims=True)
     return float(np.mean([dir_acc(lpc, y, TEST) - dir_acc(LP, y, TEST) for y in (sample(lpc, s) for s in seeds)]))
 out = {}
-if SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
+if SEED is not None and SPAN: TARGETS = ((0.05, f"x5s{SEED}"), (0.10, f"x10s{SEED}"))
+elif SEED is not None: TARGETS = ((0.05, f"t5s{SEED}"), (0.10, f"t10s{SEED}"))
 elif V2: TARGETS = ((0.0, "v2t0"), (0.05, "v2t5"), (0.10, "v2t10"))
 elif ASP: TARGETS = ((0.02, "asp2"), (0.05, "asp5"))
 elif SPAN: TARGETS = ((0.05, "x5"), (0.10, "x10"))
@@ -94,4 +95,4 @@ for target, tag in TARGETS:
     os.makedirs(f"{HERE}/results/synth", exist_ok=True); np.savez_compressed(f"{HERE}/results/synth/multipref_synth_{tag}.npz", H=Hs, tau=tau, item_ids=np.asarray(PAN["item_ids"]).astype(str))
     out[tag] = {"tau": tau, "target_gain": target, "oracle_gain_calibration": oracle_gain(tau), "oracle_gain_realised": og, "label_dist": np.bincount(y, minlength=K).tolist()}
     print(tag, out[tag], flush=True)
-mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP and not SPAN and not SEM) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else ('span' if SPAN else ('sem' if SEM else 's' + str(SEED))))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
+mp = f"{HERE}/results/synth/synth_meta.json" if (SEED is None and not V2 and not ASP and not SPAN and not SEM) else f"{HERE}/results/synth/synth_meta_{'v2' if V2 else ('asp' if ASP else (('span' + ('' if SEED is None else f's{SEED}')) if SPAN else ('sem' if SEM else 's' + str(SEED))))}.json"; old = json.load(open(mp)) if (len(sys.argv) > 1 and os.path.exists(mp)) else {}; old.update(out); json.dump(old, open(mp, "w"), indent=1)
