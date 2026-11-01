@@ -1,0 +1,28 @@
+{
+ "x5s12": {
+  "tau": 0.20161785185337067,
+  "target_gain": 0.05,
+  "oracle_gain_calibration": 0.05006166281434643,
+  "oracle_gain_realised": 0.04705692108667536,
+  "label_dist": [
+   4503,
+   6956,
+   10720,
+   10204,
+   9461
+  ]
+ },
+ "x10s12": {
+  "tau": 0.34351564943790436,
+  "target_gain": 0.1,
+  "oracle_gain_calibration": 0.100006658782573,
+  "oracle_gain_realised": 0.09330143540669855,
+  "label_dist": [
+   5162,
+   6928,
+   10269,
+   9801,
+   9684
+  ]
+ }
+}

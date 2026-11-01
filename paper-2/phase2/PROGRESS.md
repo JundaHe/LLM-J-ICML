@@ -1047,3 +1047,6 @@ The S7-5 loader edit (4e1e56b, 11:24) left an extra parenthesis in data_panels.p
 
 ### 2026-11-01 12:22 — scheduling guard for the CA embedding job
 The resubmitted embedding job 11052 (first in line for the next GPU, ~13:04) was also blocked by my own per-user CPU cap (S7-5 jobs held all 16 CPUs). Pending S7-5 jobs are held and released by a throttle loop that keeps my CPU use ≤ 12 until 11052 runs, then releases the rest. S7-5 seed panels x5s11–13 / x10s11–13 generated (e.g. s12: oracle +4.7 / +9.3); learners in progress.
+
+### 2026-11-01 14:01 — paper 4 S7-5: in-span result replicates over four draws
+DL (tuned) own − other at k = 20 on the in-span panels: +10 points (oracle +9.3 … +10.9) +1.97, +2.83, +3.14, +1.44 [+0.92, +1.96] → detected in 3/4 (k = 50: +5.0 … +7.3, all four); +5 points +0.00 … +0.14 → 0/4. Reference learner stable (+7.4 … +8.3; +2.6 … +2.9). Am. 4 rule: both statements kept. Draft §5.6 and App. B updated; main text within 8 pages. CA embedding 11052 running (10k / 204k at 13:35, longest texts first).
