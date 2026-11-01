@@ -15,7 +15,11 @@ rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
 for g in np.unique(GRP):
     ids = np.where(GRP == g)[0]; ids = ids[rs.permutation(len(ids))]; rfold[ids] = np.arange(len(ids)) % 5
 Gp = np.asarray(base["groups"]); ug = np.unique(Gp); perm = np.random.RandomState(0).permutation(len(ug)); gf = {g_: perm[j] % 5 for j, g_ in enumerate(ug)}; ifold = np.array([gf[g_] for g_ in Gp])   # folds exactly as s5.py
-tag = sys.argv[1]; H = Hreal if tag == "real" else np.load(f"{HERE}/results/synth/multipref_synth_{tag}.npz")["H"]; Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
+tag = sys.argv[1]; ISO = tag.endswith("_iso"); ptag = tag[:-4] if ISO else tag                     # Am. 3 (a): "_iso" = one shared prior variance
+if ptag == "real": H = Hreal
+elif ptag == "real_perm":                                                  # Am. 3 (d): each item's ratings permuted across its raters
+    rp = np.random.RandomState(5); H = np.array([row[rp.permutation(m)] for row in Hreal])
+else: H = np.load(f"{HERE}/results/synth/multipref_synth_{ptag}.npz")["H"]; Y = H.reshape(-1); Yt = torch.tensor(Y); It, Rt = torch.tensor(I), torch.tensor(R)
 F_ = np.load(f"{P2}/features/multipref_overall/Qwen2.5-7B-Instruct.npz", allow_pickle=True)
 E = F_["E_last"].astype(np.float64); E -= E.mean(0); U, S, _ = np.linalg.svd(E, full_matrices=False); X = U[:, :256] * S[:256]; X /= X.std(0); X = torch.tensor(X)
 raw = [json.loads(l) for l in open(data_panels.MULTIPREF)]; A = torch.tensor(multipref_G(raw)); J = A.shape[1]; AR = A[It]
@@ -32,8 +36,9 @@ def predict(lpb, idx, th, Bs):
 def dirc(lp, idx):
     ey = (lp.exp() * torch.arange(K)).sum(1).numpy(); y = Y[idx]; return np.where(y == 2, np.nan, (np.sign(ey - 2) == np.sign(y - 2)).astype(float))
 def ll(lp, idx): return lp[torch.arange(len(idx)), Yt[torch.tensor(idx)]].numpy()
+NIT = int(os.environ.get("SAP_EM_ITERS", "15")); NF = int(os.environ.get("SAP_FOLDS", "5"))   # Am. 3 (e): convergence check uses 50 iterations on fold 0
 recs = []; screen = []
-for f in range(5):
+for f in range(NF):
     test_r = rfold == f; tr_item = ifold[I] != f; idx_tr = np.where(~test_r[R] & tr_item)[0]; pool = np.where(test_r[R] & tr_item)[0]; idx_te = np.where(test_r[R] & ~tr_item)[0]
     V = torch.zeros(256, K, requires_grad=True); b = torch.zeros(K, requires_grad=True); Bt = torch.zeros(NR, 3, requires_grad=True); ii = torch.tensor(idx_tr)
     opt = torch.optim.LBFGS([V, b, Bt], lr=0.5, max_iter=300, line_search_fn="strong_wolfe")
@@ -44,14 +49,14 @@ for f in range(5):
     one = torch.ones(J); zero = torch.zeros(J)
     mu, _ = fit(LPE, idx_tr, zero, torch.zeros(J), one, shared=True); mu = mu[0]                         # population weights μ
     s2 = np.full(J, 0.1); trr = np.unique(R[idx_tr])                                               # Am. 1: Laplace-EM (ARD) for diag σ² on the training raters
-    for it in range(15):
+    for it in range(NIT):
         thr, Bsr = fit(LPE, idx_tr, mu, torch.tensor(1.0 / s2), one)
         with torch.no_grad():
             p = predict(LPE, idx_tr, thr, Bsr).exp(); vs = (p * STEP ** 2).sum(1) - (p * STEP).sum(1) ** 2; acc = np.zeros(J)
             for r in trr:
                 q = np.where(R[idx_tr] == r)[0]; a = AR[torch.tensor(idx_tr[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2))
                 acc += (thr[r] - mu).numpy() ** 2 + np.diag(C)
-        s2 = np.maximum(acc / len(trr), 1e-6)
+        s2 = np.maximum(acc / len(trr), 1e-6) if not ISO else np.full(J, max(float(np.mean(acc / len(trr))), 1e-6))
     print(f"{tag} fold {f}: σ² " + ", ".join(f"{NAMES[j]} {s2[j]:.4f}" for j in np.argsort(-s2)[:6]), flush=True)
     mask = one; prec = torch.tensor(1.0 / s2)
     screen.append({"fold": f, "mu": mu.numpy().tolist(), "sigma2": s2.tolist(), "selected": [NAMES[j] for j in range(J) if s2[j] > 1e-3]})
@@ -84,5 +89,6 @@ for k in (20, 50):
             rng = np.random.RandomState(17); d = np.array([np.mean([x[f"own_{mt}"] - x[f"{ref_}_{mt}"] for x in by[z]]) for z in q])
             bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; out[f"k{k}_{mt}_own-{ref_}"] = [sc * d.sum() / wt.sum(), sc * np.percentile(bs, 2.5), sc * np.percentile(bs, 97.5), len(q)]
 cnt = collections.Counter(a for s in screen for a in s["selected"]); out["selected_4of5"] = sorted(a for a, c in cnt.items() if c >= 4)
-json.dump(out, open(f"{HERE}/results/stage9_sap_{tag}.json", "w"), indent=1); json.dump(recs, open(f"{HERE}/results/stage9_sap_{tag}_records.json", "w"))
+sfx = "" if NIT == 15 else f"_em{NIT}"
+json.dump(out, open(f"{HERE}/results/stage9_sap_{tag}{sfx}.json", "w"), indent=1); json.dump(recs, open(f"{HERE}/results/stage9_sap_{tag}{sfx}_records.json", "w"))
 print(tag, json.dumps({k_: v for k_, v in out.items() if k_ != "screen"}), flush=True)
