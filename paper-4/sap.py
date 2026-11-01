@@ -1,6 +1,6 @@
 """Stage 9 (PROTOCOL_STAGE9.md): screened attribute personalisation (SAP) on MultiPref-structured panels. `sap.py <tag>`, tag = real | t0 | t5 | t10 | sem5 | sem10 | x10 ...
 Estimated base (D head + DFs offsets on training raters × training items) + rater content term (θ_rᵀ a_i)(−2..2), a_i = the 24 attribute differences of attr_feats.py;
-θ_r ~ N(μ, diag σ²), μ shared on training raters, σ²_j by method of moments over training raters' MAP fits (screening: σ²_j = 0 fixes θ_rj = μ_j)."""
+θ_r ~ N(μ, diag σ²), μ shared on training raters, σ² by Laplace-EM (ARD) on the training raters (Am. 1); selected = σ²_j > 1e-3."""
 import os, sys, json, collections, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.join(os.path.dirname(HERE), "paper-2", "phase2"); sys.path.insert(0, P2)
 import data_panels
@@ -43,16 +43,18 @@ for f in range(5):
     with torch.no_grad(): LPE = torch.log_softmax(X[It] @ V + b, 1)
     one = torch.ones(J); zero = torch.zeros(J)
     mu, _ = fit(LPE, idx_tr, zero, torch.zeros(J), one, shared=True); mu = mu[0]                         # population weights μ
-    thr, Bsr = fit(LPE, idx_tr, mu, torch.full((J,), 0.1), one)                                      # training raters' MAP θ̂_r, weak prior N(μ, 10 I)
-    with torch.no_grad():
-        p = predict(LPE, idx_tr, thr, Bsr).exp(); vs = (p * STEP ** 2).sum(1) - (p * STEP).sum(1) ** 2   # Var_i(step) under the fitted model
-        trr = np.unique(R[idx_tr]); est, var = [], []
-        for r in trr:
-            q = np.where(R[idx_tr] == r)[0]; a = AR[torch.tensor(idx_tr[q])]; Hm = (a * vs[q][:, None]).T @ a + 0.1 * torch.eye(J)
-            est.append(thr[r].numpy()); var.append(np.diag(np.linalg.inv(Hm.numpy())))
-        est, var = np.array(est), np.array(var); s2 = np.maximum(0.0, est.var(0, ddof=1) - var.mean(0))
-    mask = torch.tensor((s2 > 0).astype(float)); prec = torch.tensor(np.where(s2 > 0, 1.0 / np.maximum(s2, 1e-12), 0.0))
-    screen.append({"fold": f, "mu": mu.numpy().tolist(), "sigma2": s2.tolist(), "selected": [NAMES[j] for j in range(J) if s2[j] > 0]})
+    s2 = np.full(J, 0.1); trr = np.unique(R[idx_tr])                                               # Am. 1: Laplace-EM (ARD) for diag σ² on the training raters
+    for it in range(15):
+        thr, Bsr = fit(LPE, idx_tr, mu, torch.tensor(1.0 / s2), one)
+        with torch.no_grad():
+            p = predict(LPE, idx_tr, thr, Bsr).exp(); vs = (p * STEP ** 2).sum(1) - (p * STEP).sum(1) ** 2; acc = np.zeros(J)
+            for r in trr:
+                q = np.where(R[idx_tr] == r)[0]; a = AR[torch.tensor(idx_tr[q])]; C = np.linalg.inv(((a * vs[q][:, None]).T @ a).numpy() + np.diag(1.0 / s2))
+                acc += (thr[r] - mu).numpy() ** 2 + np.diag(C)
+        s2 = np.maximum(acc / len(trr), 1e-6)
+    print(f"{tag} fold {f}: σ² " + ", ".join(f"{NAMES[j]} {s2[j]:.4f}" for j in np.argsort(-s2)[:6]), flush=True)
+    mask = one; prec = torch.tensor(1.0 / s2)
+    screen.append({"fold": f, "mu": mu.numpy().tolist(), "sigma2": s2.tolist(), "selected": [NAMES[j] for j in range(J) if s2[j] > 1e-3]})
     print(f"{tag} fold {f}: selected {screen[-1]['selected']}", flush=True)
     test_raters = np.unique(R[idx_te])
     for k in (20, 50):
