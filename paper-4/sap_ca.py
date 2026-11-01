@@ -22,7 +22,7 @@ YB = torch.tensor(np.asarray(PAN["yb"]).astype(float)); A = torch.tensor(attr_G(
 Fz = np.load(f"{P2}/features/ca_pairs/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
 EA, EB = Fz["E_A"].astype(np.float32), Fz["E_B"].astype(np.float32); sub = np.concatenate([EA[::6], EB[::6], Fz["E_P"][::6].astype(np.float32)]); mu0 = sub.mean(0)
 _, _, Vt = np.linalg.svd(sub - mu0, full_matrices=False); W256 = Vt[:256].T; del sub                                  # PCA-256 basis on a label-free subsample
-XA, XB = (EA - mu0) @ W256, (EB - mu0) @ W256; del EA, EB; sd = np.concatenate([XA, XB]).std(0) + 1e-6; X = torch.tensor((XB - XA) / sd); Rt = torch.tensor(R); Lt = torch.tensor(LI)
+XA, XB = (EA - mu0) @ W256, (EB - mu0) @ W256; del EA, EB; sd = np.concatenate([XA, XB]).std(0) + 1e-6; X = torch.tensor((XB - XA) / sd, dtype=torch.float64); Rt = torch.tensor(R); Lt = torch.tensor(LI)
 def nll(lg, y): return -(y * Fn.logsigmoid(lg) + (1 - y) * Fn.logsigmoid(-lg))
 def fit_base(idx, idx_va):
     best = None
