@@ -1044,3 +1044,6 @@ Own − other direction accuracy, k = 20 / 50 (PCA-256 for VPL / PAL-B; DL tuned
 
 ### 2026-11-01 11:52 — BUG (mine): syntax error in data_panels.py cost the GPU slot
 The S7-5 loader edit (4e1e56b, 11:24) left an extra parenthesis in data_panels.py; I compiled make_synth.py but not data_panels.py. A GPU freed at 11:26, the CA embedding job 10966 started and failed at import, its 15 Stage-8 dependents and the 39 S7-5 jobs became DependencyNeverSatisfied, and the GPU went to the other user's next job. Fixed (import of data_panels verified, both loaders present), orphaned jobs cancelled, everything resubmitted (embedding 11052, Stage 8 and S7-5 chains). Rule adopted: import-check every edited module (`python -c "import data_panels"`) before submitting jobs that depend on it.
+
+### 2026-11-01 12:22 — scheduling guard for the CA embedding job
+The resubmitted embedding job 11052 (first in line for the next GPU, ~13:04) was also blocked by my own per-user CPU cap (S7-5 jobs held all 16 CPUs). Pending S7-5 jobs are held and released by a throttle loop that keeps my CPU use ≤ 12 until 11052 runs, then releases the rest. S7-5 seed panels x5s11–13 / x10s11–13 generated (e.g. s12: oracle +4.7 / +9.3); learners in progress.
