@@ -8,6 +8,9 @@ L = ["# Stage 8 — Community Alignment (first turn, native choice; points; 95 %
 for tag, ms in (("", ("DFp", "VPL", "PAL2", "PAL4")), ("_lore", ("LORE",)), ("_lorer", ("LORER",))):
     rows = rows_of(f"{R}/stage2c_ca_pairs_E2_f?{tag}.json")
     if not rows: continue
+    if rows and "Dp_dir" not in rows[0]:                                  # LoRe-reg runs carry no Dp: take it from the LoRe runs (same folds, draws and raters)
+        dp = {(r["fold"], r["k"], r["draw"], r["rater"]): r["Dp_dir"] for r in rows_of(f"{R}/stage2c_ca_pairs_E2_f?_lore.json")}
+        rows = [dict(r, Dp_dir=dp[(r["fold"], r["k"], r["draw"], r["rater"])]) for r in rows if (r["fold"], r["k"], r["draw"], r["rater"]) in dp]
     for m in ms:
         if f"{m}_dir" not in rows[0]: continue
         for k in (20, 50):
