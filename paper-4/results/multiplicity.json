@@ -1,0 +1,572 @@
+{
+ "stage8_frozen": [
+  {
+   "test": "DFp own gain",
+   "est": -0.19,
+   "ci": [
+    -0.36,
+    -0.02
+   ],
+   "p": 0.028481603268475972,
+   "p_holm": 0.14240801634237987,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "DFp own-other",
+   "est": 0.07,
+   "ci": [
+    -0.08,
+    0.21
+   ],
+   "p": 0.34404306926715933,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "VPL own gain",
+   "est": 0.15,
+   "ci": [
+    0.03,
+    0.27
+   ],
+   "p": 0.014285621470542848,
+   "p_holm": 0.08571372882325709,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "VPL own-other",
+   "est": 0.31,
+   "ci": [
+    0.2,
+    0.42
+   ],
+   "p": 3.320543520393072e-08,
+   "p_holm": 2.6564348163144577e-07,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "PAL2 own gain",
+   "est": -0.05,
+   "ci": [
+    -0.19,
+    0.09
+   ],
+   "p": 0.48392730444614607,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL2 own-other",
+   "est": 0.03,
+   "ci": [
+    -0.08,
+    0.14
+   ],
+   "p": 0.5929642099912791,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL4 own gain",
+   "est": -0.2,
+   "ci": [
+    -0.38,
+    -0.02
+   ],
+   "p": 0.02942258510478855,
+   "p_holm": 0.14240801634237987,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL4 own-other",
+   "est": 0.29,
+   "ci": [
+    0.13,
+    0.45
+   ],
+   "p": 0.0003815890186292173,
+   "p_holm": 0.002671123130404521,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own gain",
+   "est": -2.34,
+   "ci": [
+    -2.79,
+    -1.88
+   ],
+   "p": 6.772612301339126e-24,
+   "p_holm": 7.449873531473038e-23,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own-other",
+   "est": 3.27,
+   "ci": [
+    2.85,
+    3.7
+   ],
+   "p": 2.1771167759688895e-51,
+   "p_holm": 2.6125401311626676e-50,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own gain",
+   "est": 0.35,
+   "ci": [
+    0.25,
+    0.46
+   ],
+   "p": 6.43217658413782e-11,
+   "p_holm": 5.788958925724037e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own-other",
+   "est": 0.36,
+   "ci": [
+    0.26,
+    0.46
+   ],
+   "p": 1.7136382493234494e-12,
+   "p_holm": 1.7136382493234494e-11,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  }
+ ],
+ "stage8_am2": [
+  {
+   "test": "VPL own-same-country other",
+   "est": 0.34,
+   "ci": [
+    0.24,
+    0.45
+   ],
+   "p": 2.2003015644193414e-10,
+   "p_holm": 8.801206257677366e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "PAL4 own-same-country other",
+   "est": 0.27,
+   "ci": [
+    0.11,
+    0.43
+   ],
+   "p": 0.0009413271186120453,
+   "p_holm": 0.002823981355836136,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own-same-country other",
+   "est": 3.22,
+   "ci": [
+    2.83,
+    3.6
+   ],
+   "p": 2.155527357680494e-60,
+   "p_holm": 1.2933164146082965e-59,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own-same-country other",
+   "est": 0.37,
+   "ci": [
+    0.28,
+    0.46
+   ],
+   "p": 7.769389388960004e-16,
+   "p_holm": 3.884694694480001e-15,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "DFp own-same-country other",
+   "est": 0.07,
+   "ci": [
+    -0.05,
+    0.2
+   ],
+   "p": 0.27237919286353973,
+   "p_holm": 0.4657046914527472,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL2 own-same-country other",
+   "est": 0.07,
+   "ci": [
+    -0.05,
+    0.18
+   ],
+   "p": 0.2328523457263736,
+   "p_holm": 0.4657046914527472,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  }
+ ],
+ "stage11_all": [
+  {
+   "test": "S11-2 C length",
+   "est": 0.32,
+   "ci": [
+    0.25,
+    0.4
+   ],
+   "p": 6.13162742977332e-17,
+   "p_holm": 1.7168556803365297e-15,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S11-2 C paragraphs (Am.1 adj.)",
+   "est": 0.76,
+   "ci": [
+    0.26,
+    1.35
+   ],
+   "p": 0.006272013651469728,
+   "p_holm": 0.09408020477204591,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-2 C list (Am.1 adj.)",
+   "est": 0.45,
+   "ci": [
+    -0.02,
+    0.95
+   ],
+   "p": 0.06897908876433728,
+   "p_holm": 0.482853621350361,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 transfer length",
+   "est": 0.41,
+   "ci": [
+    0.27,
+    0.55
+   ],
+   "p": 9.467655107691238e-09,
+   "p_holm": 2.1775606747689846e-07,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.3 transfer paragraphs",
+   "est": 0.18,
+   "ci": [
+    -0.34,
+    0.68
+   ],
+   "p": 0.48908510450769627,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 transfer list",
+   "est": 0.12,
+   "ci": [
+    -0.28,
+    0.52
+   ],
+   "p": 0.5565322928245953,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 acc",
+   "est": 0.13,
+   "ci": [
+    -0.28,
+    0.53
+   ],
+   "p": 0.5292601531294223,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 LL",
+   "est": -0.006,
+   "ci": [
+    -0.0121,
+    0.0
+   ],
+   "p": 0.05191937437857875,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 - rank-2",
+   "est": -0.06,
+   "ci": [
+    -0.36,
+    0.21
+   ],
+   "p": 0.6798765610102777,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 shrink x0.5 acc",
+   "est": 0.36,
+   "ci": [
+    0.01,
+    0.71
+   ],
+   "p": 0.04379997579019021,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 shrink x0.25 acc",
+   "est": 0.53,
+   "ci": [
+    0.23,
+    0.83
+   ],
+   "p": 0.0005348505503417279,
+   "p_holm": 0.009627309906151103,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.3 shrink x0.25 LL",
+   "est": 0.009,
+   "ci": [
+    0.006,
+    0.0119
+   ],
+   "p": 2.2360244166741348e-09,
+   "p_holm": 5.366458600017923e-08,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV acc",
+   "est": 0.49,
+   "ci": [
+    0.2,
+    0.77
+   ],
+   "p": 0.0007521605485560111,
+   "p_holm": 0.01278672932545219,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV LL",
+   "est": 0.0088,
+   "ci": [
+    0.0061,
+    0.0116
+   ],
+   "p": 3.564395818303484e-10,
+   "p_holm": 8.91098954575871e-09,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV - rank-2",
+   "est": 0.3,
+   "ci": [
+    0.04,
+    0.56
+   ],
+   "p": 0.02372593380738733,
+   "p_holm": 0.28471120568864794,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S12 smoke TRV acc 2-way",
+   "est": 0.49,
+   "ci": [
+    0.01,
+    0.97
+   ],
+   "p": 0.045410353908382814,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S12 smoke iso acc",
+   "est": 0.66,
+   "ci": [
+    0.37,
+    0.95
+   ],
+   "p": 8.169632421583676e-06,
+   "p_holm": 0.00016339264843167353,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S12 smoke TRV - iso",
+   "est": -0.17,
+   "ci": [
+    -0.29,
+    -0.05
+   ],
+   "p": 0.0054919469998735305,
+   "p_holm": 0.08787115199797649,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1a list AUC",
+   "est": 0.0001,
+   "ci": [
+    -0.0017,
+    0.0017
+   ],
+   "p": 0.9082120007094994,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1a length acc",
+   "est": 1.06,
+   "ci": [
+    0.8,
+    1.33
+   ],
+   "p": 4.505464303932262e-15,
+   "p_holm": 1.216475362061711e-13,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S11-1b length acc",
+   "est": 0.45,
+   "ci": [
+    0.14,
+    0.8
+   ],
+   "p": 0.007523739045150994,
+   "p_holm": 0.10533234663211391,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1b list acc",
+   "est": -0.12,
+   "ci": [
+    -0.3,
+    0.04
+   ],
+   "p": 0.16650259541667722,
+   "p_holm": 0.9990155725000633,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.8 within-cluster length",
+   "est": 0.206,
+   "ci": [
+    0.183,
+    0.231
+   ],
+   "p": 1.6462959552177372e-63,
+   "p_holm": 4.774258270131438e-62,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.8 own - matched other acc",
+   "est": 0.8,
+   "ci": [
+    0.45,
+    1.16
+   ],
+   "p": 1.0012587128627238e-05,
+   "p_holm": 0.0001902391554439175,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.8 own - matched other LL",
+   "est": 0.009,
+   "ci": [
+    0.0055,
+    0.0125
+   ],
+   "p": 4.655318460972035e-07,
+   "p_holm": 9.776168768041272e-06,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 W.E length",
+   "est": 0.88,
+   "ci": [
+    0.61,
+    1.13
+   ],
+   "p": 3.27050711723222e-11,
+   "p_holm": 8.503318504803773e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 W.G length",
+   "est": 1.08,
+   "ci": [
+    0.69,
+    1.47
+   ],
+   "p": 5.708734362929008e-08,
+   "p_holm": 1.2559215598443818e-06,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 O.E length",
+   "est": 0.26,
+   "ci": [
+    0.02,
+    0.5
+   ],
+   "p": 0.0337259293438939,
+   "p_holm": 0.3709852227828329,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.9 O.G length",
+   "est": 0.47,
+   "ci": [
+    0.12,
+    0.85
+   ],
+   "p": 0.011608219559286485,
+   "p_holm": 0.1509068542707243,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  }
+ ]
+}

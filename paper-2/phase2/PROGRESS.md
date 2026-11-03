@@ -1143,3 +1143,6 @@ Memory: S11-1 was OOM-killed at 25 G while loading (node has ~25.6 G free); `sap
 
 ### 2026-11-04 04:40 — paper 4: Stage 11 Am. 9 (why the WIMHF-style length gain is larger)
 2 × 2 on 1,799 common high-volume users, length at k = 16 (own − population, points): population from bottom-50 % users W · random events +0.88 [+0.61, +1.13], W · held-out prompts +1.08 [+0.69, +1.47]; other-fold population O · random +0.26 [+0.02, +0.50], O · held-out prompts +0.47 [+0.12, +0.85]. Prompt separation does not lower the gain; the weaker population model raises it by ~0.6 points (adaptation absorbs a population misfit shared by high-volume annotators). List/heading ≤ 0 everywhere. Draft §8 updated. Embedding 12557 running.
+
+### 2026-11-04 05:40 — paper 4: Stage 11 Am. 10 (multiplicity, reporting only)
+`multiplicity.py`: Holm over normal-approximation p-values from the reported intervals. Stage 8 frozen family: own − other of LoRe/LoRe-reg/VPL/PAL4 survive (detection unchanged); small own gains of VPL/PAL4/DFp do not. Stage 11 (29 contrasts as one family): 13/21 survive — all length statements, TRV and isotropic gains; paragraphs Ĉ, TRV − rank-2, TRV − isotropic, S11-1 (b) length +0.45 and Am. 9 O-cells do not → draft now reads TRV ≈ isotropic (indistinguishable). Embedding 12557: 110k / 414k at 4 h.
