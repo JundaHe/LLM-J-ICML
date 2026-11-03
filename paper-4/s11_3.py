@@ -30,6 +30,8 @@ def adapt(lg, ad, keep, C, cols, MU):
     for u in keep:
         s, I_ = sc_info(lg, np.array(per[u]), cols); th[u, cols] += C @ np.linalg.solve(np.eye(len(cols)) + I_ @ C, s)
     return torch.tensor(th)
+AM3 = os.environ.get("S113_AM3") == "1"                                   # Amendment 3: diagnosing the ceiling-vs-realised gap
+ZS, ZT = [], []
 old = {(x["fold"], x["draw"], x["rater"]): x for x in json.load(open(f"{HERE}/results/stage9_sapca_records.json"))}
 recs, info, ceil = [], [], []; MIS = [0.0, 0]                                   # pop-prediction disagreement with the Stage-9 rerun
 for f in range(5):
@@ -39,33 +41,57 @@ for f in range(5):
     base, lam = fit_base(idx_tr, idx_va); mu = fit_mu(base, idx_all); MU = mu[torch.tensor(ulang)]
     lg_pop = (base + (MU[Rt] * A).sum(1)).numpy()
     C3, nu, d3 = est_C(lg_pop, idx_all, PRIM); C7, _, d7 = est_C(lg_pop, idx_all, SEC7); C7 = np.diag(np.clip(d7, 0, None))
-    rob = {"min30": est_C(lg_pop, idx_all, PRIM, min_ev=30)[2].tolist(), "trim1": est_C(lg_pop, idx_all, PRIM, trim=0.01)[2].tolist()}
+    C3t = est_C(lg_pop, idx_all, PRIM, trim=0.01)[0]; rob = {"min30": est_C(lg_pop, idx_all, PRIM, min_ev=30)[2].tolist(), "trim1": np.diag(C3t).tolist()}
     info.append({"fold": f, "n_train_users": nu, "C3": C3.tolist(), "C3_diag_raw": d3.tolist(), "C7_diag": np.diag(C7).tolist(), "robust": rob})
     print(f"fold {f}: {nu} training users; Ĉ diag " + ", ".join(f"{NAMES[j]} {d3[i]:.3f}" for i, j in enumerate(PRIM)) + f"; robust {json.dumps(rob)}", flush=True)
     per_pool = events_of(pool); test_users = [r for r in np.unique(R[idx_te])]
     for dr in range(5):
         ad, keep = sample_ad(per_pool, test_users, np.random.RandomState(10_000 * f + dr)); te = idx_te[np.isin(R[idx_te], keep)]
-        th = {"pop": MU, "tr3": adapt(lg_pop, ad, keep, C3, PRIM, MU), "tr3d": adapt(lg_pop, ad, keep, np.diag(np.diag(C3)), PRIM, MU), "tr7": adapt(lg_pop, ad, keep, C7, SEC7, MU)}
+        if AM3: th = {"pop": MU, "tr3": adapt(lg_pop, ad, keep, C3, PRIM, MU), "tr3s50": adapt(lg_pop, ad, keep, 0.5 * C3, PRIM, MU), "tr3s25": adapt(lg_pop, ad, keep, 0.25 * C3, PRIM, MU)}
+        else: th = {"pop": MU, "tr3": adapt(lg_pop, ad, keep, C3, PRIM, MU), "tr3d": adapt(lg_pop, ad, keep, np.diag(np.diag(C3)), PRIM, MU), "tr7": adapt(lg_pop, ad, keep, C7, SEC7, MU)}
+        shift = np.linalg.norm((th["tr3"] - MU).numpy()[:, PRIM], axis=1)
+        if AM3 and dr == 0:                                               # 1. support -> test transfer on the evaluated users
+            pa = collections.defaultdict(list); pt = collections.defaultdict(list)
+            for j in ad: pa[R[j]].append(j)
+            for j in te: pt[R[j]].append(j)
+            for u in keep:
+                z_ = []
+                for js in (pa[u], pt[u]): s_, I_ = sc_info(lg_pop, np.array(js), PRIM); z_.append(np.linalg.solve(I_ + 1e-3 * np.eye(3), s_))
+                ZS.append(z_[0]); ZT.append(z_[1])
         sc = {m_: scores(base, te, t_) for m_, t_ in th.items()}
         for r in keep:
             sel = R[te] == r; o = old[(f, dr, int(r))]
             recs.append({"fold": f, "draw": dr, "rater": int(r), "lang": langs[ulang[r]], "n": int(sel.sum()), **{f"{m_}_acc": float(sc[m_][0][sel].sum()) for m_ in sc}, **{f"{m_}_ll": float(sc[m_][1][sel].sum()) for m_ in sc},
-                         **{f"{m_}_{mt}": o[f"{m_}_{mt}"] for m_ in ("sap", "lr") for mt in ("acc", "ll")}})
+                         **{f"{m_}_{mt}": o[f"{m_}_{mt}"] for m_ in ("sap", "lr") for mt in ("acc", "ll")}, "shift": float(shift[r])})
             assert o["n"] == recs[-1]["n"], "records do not align with Stage 9 Am. 6"; MIS[0] += abs(o["pop_acc"] - recs[-1]["pop_acc"]); MIS[1] += o["n"]
         if dr == 0:                                                       # learnability ceiling on this draw's design
             g = np.random.RandomState(900 + f); ui = {u: i for i, u in enumerate(keep)}; Lc = np.linalg.cholesky(C3 + 1e-9 * np.eye(3))
-            for mc in range(5):
-                dl = g.randn(len(keep), 3) @ Lc.T; D_ = np.zeros((NR, 3)); D_[keep] = dl; lgT = lg_pop + (D_[R] * An[:, PRIM]).sum(1); pT = 1 / (1 + np.exp(-lgT))
-                ysim = (g.rand(n) < pT).astype(float); Ysave = YB.clone(); YB[:] = torch.tensor(ysim); thE = adapt(lg_pop, ad, keep, C3, PRIM, MU); YB[:] = Ysave
+            for mc, (dist, Cg) in enumerate([("gauss", C3)] * 5 if not AM3 else [(d_, C_) for d_, C_ in (("gauss", C3), ("gauss_trim", C3t), ("t3", C3), ("mix10", C3)) for _ in range(5)]):
+                Lc = np.linalg.cholesky(Cg + 1e-9 * np.eye(3)); dl = g.randn(len(keep), 3) @ Lc.T
+                if dist == "t3": dl = dl * np.sqrt(1 / 3) / np.sqrt(g.chisquare(3, (len(keep), 1)) / 3)
+                if dist == "mix10": dl = dl * np.sqrt(10) * (g.rand(len(keep), 1) < 0.1)
+                D_ = np.zeros((NR, 3)); D_[keep] = dl; lgT = lg_pop + (D_[R] * An[:, PRIM]).sum(1); pT = 1 / (1 + np.exp(-lgT))
+                ysim = (g.rand(n) < pT).astype(float); Ysave = YB.clone(); YB[:] = torch.tensor(ysim); thE = adapt(lg_pop, ad, keep, Cg, PRIM, MU); YB[:] = Ysave
                 lgE = (base + (thE[Rt] * A).sum(1)).numpy(); hit = lambda lg_: np.where(lg_[te] > 0, pT[te], 1 - pT[te]).mean()
-                ceil.append({"fold": f, "mc": mc, "pop": float(hit(lg_pop)), "oracle": float(hit(lgT)), "tr3": float(hit(lgE))})
+                ceil.append({"fold": f, "mc": mc, "dist": dist, "pop": float(hit(lg_pop)), "oracle": float(hit(lgT)), "tr3": float(hit(lgE))})
             print(f"fold {f} ceiling: " + json.dumps({k_: float(np.mean([c[k_] for c in ceil if c['fold'] == f])) for k_ in ("pop", "oracle", "tr3")}), flush=True)
-def boot(key_a, key_b, mt):
+def boot(key_a, key_b, mt, users=None):
     by = collections.defaultdict(list)
-    for x in recs: by[(x["fold"], x["rater"])].append(x)
+    for x in recs:
+        if users is None or (x["fold"], x["rater"]) in users: by[(x["fold"], x["rater"])].append(x)
     q = list(by); wt = np.array([np.mean([x["n"] for x in by[z]]) for z in q]); d = np.array([np.mean([x[f"{key_a}_{mt}"] - x[f"{key_b}_{mt}"] for x in by[z]]) for z in q]); rng = np.random.RandomState(17)
     bs = [d[ix].sum() / wt[ix].sum() for ix in (rng.randint(0, len(q), len(q)) for _ in range(2000))]; return [100 * d.sum() / wt.sum(), 100 * np.percentile(bs, 2.5), 100 * np.percentile(bs, 97.5), len(q)]
 out = {"info": info, "pop_mismatch_rate": MIS[0] / max(1, MIS[1]), "ceiling": {k_: 100 * float(np.mean([c[k_] - c["pop"] for c in ceil])) for k_ in ("oracle", "tr3")}}
+if AM3:
+    out["ceiling_by_dist"] = {d_: {k_: 100 * float(np.mean([c[k_] - c["pop"] for c in ceil if c["dist"] == d_])) for k_ in ("oracle", "tr3")} for d_ in ("gauss", "gauss_trim", "t3", "mix10")}
+    ZS, ZT = np.array(ZS), np.array(ZT); P_ = ZS * ZT; rg = np.random.RandomState(17); bs = np.array([P_[rg.randint(0, len(P_), len(P_))].mean(0) for _ in range(2000)])
+    out["transfer_test_users"] = {NAMES[j]: [float(P_[:, i].mean()), float(np.percentile(bs[:, i], 2.5)), float(np.percentile(bs[:, i], 97.5))] for i, j in enumerate(PRIM)}
+    ms = collections.defaultdict(list)
+    for x in recs: ms[(x["fold"], x["rater"])].append(x["shift"])
+    ms = {z: np.mean(v) for z, v in ms.items()}; thr = np.percentile(list(ms.values()), 90); top = {z for z, v in ms.items() if v >= thr}
+    out["concentration"] = {"top10_acc": boot("tr3", "pop", "acc", top), "rest_acc": boot("tr3", "pop", "acc", set(ms) - top)}
+    for a_ in ("tr3", "tr3s50", "tr3s25"): out[f"{a_}-pop_acc"] = boot(a_, "pop", "acc"); out[f"{a_}-pop_ll"] = boot(a_, "pop", "ll")
+    json.dump(out, open(f"{HERE}/results/stage11_s113_am3.json", "w"), indent=1); print(json.dumps({k_: v for k_, v in out.items() if k_ != "info"}), flush=True); raise SystemExit
 for mt in ("acc", "ll"):
     for a_, b_ in (("tr3", "pop"), ("tr3d", "pop"), ("tr7", "pop"), ("tr3", "sap"), ("tr3", "lr")): out[f"{a_}-{b_}_{mt}"] = boot(a_, b_, mt)
 out["rule"] = bool(out["tr3-pop_acc"][1] > 1.0)
