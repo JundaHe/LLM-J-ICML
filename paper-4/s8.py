@@ -11,7 +11,7 @@ for tag, ms in (("", ("DFp", "VPL", "PAL2", "PAL4")), ("_lore", ("LORE",)), ("_l
     for m in ms:
         if f"{m}_dir" not in rows[0]: continue
         for k in (20, 50):
-            c = {"own": own(rows, k, m, "dir", "n"), "perm": pair(rows, k, f"{m}_dir", f"{m}_perm_dir", "n") if f"{m}_perm_dir" in rows[0] else None, "vsDp": pair(rows, k, f"{m}_dir", "Dp_dir", "n")}
+            c = {"own": own(rows, k, m, "dir", "n"), "perm": pair(rows, k, f"{m}_dir", f"{m}_perm_dir", "n") if any(f"{m}_perm_dir" in r for r in rows) else None, "vsDp": pair(rows, k, f"{m}_dir", "Dp_dir", "n")}
             out[f"{m}_k{k}"] = c; nr = len({(r["fold"], r["rater"]) for r in rows if r["k"] == k})
             L.append(f"| {m}{tag} | {k} | {fmt(c['own'])} | {fmt(c['perm']) if c['perm'] else '—'} | {fmt(c['vsDp'])} | {nr} |")
 k20 = [v for kk, v in out.items() if kk.endswith("_k20")]

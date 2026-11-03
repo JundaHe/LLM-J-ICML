@@ -8,7 +8,7 @@ import numpy as np, torch, torch.nn as nn, torch.nn.functional as Fn
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--fold", type=int, required=True); ap.add_argument("--eval", default="E1", choices=("E1", "E2")); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); ap.add_argument("--perm_control", action="store_true"); ap.add_argument("--pca", type=int, default=256, help="0 = full standardised features (Stage 3 Am. 5)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--max_epochs", type=int, default=20); ap.add_argument("--models", default="Dp,DFp,DFsp,VPL,PAL2,PAL4"); ap.add_argument("--feat", default=""); ap.add_argument("--tag", default=""); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--dump_ratings", action="store_true"); ap.add_argument("--perm_control", action="store_true"); ap.add_argument("--perm_within_group", action="store_true", help="Stage 8 Am. 2: derangement within rater_group"); ap.add_argument("--pca", type=int, default=256, help="0 = full standardised features (Stage 3 Am. 5)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.manual_seed(0); f = args.fold; KS = [int(k) for k in args.ks.split(",")]; MODELS = args.models.split(",")
 DEV = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -318,6 +318,11 @@ for k in KS:
         PERM = args.perm_control and k > 0
         if PERM:                                                          # Stage 3 Amendment 1: derangement of the test raters' adapted parameters
             o_ = np.random.RandomState(777 + 10_000 * f + 100 * k + dr).permutation(len(keep_r)); SRC = {int(keep_r[o_[i]]): int(keep_r[o_[(i + 1) % len(o_)]]) for i in range(len(o_))}
+            if args.perm_within_group:                                    # Stage 8 Amendment 2: cyclic shift of the same permutation within each rater group
+                SRC = {}; ordr = [int(keep_r[j]) for j in o_]
+                for g_ in np.unique(GRP[ordr]):
+                    mem = [r for r in ordr if GRP[r] == g_]
+                    SRC.update({mem[i]: mem[(i + 1) % len(mem)] for i in range(len(mem))})   # a singleton group maps to itself
             tgt_ = torch.tensor(list(SRC.keys()), device=DEV); src_ = torch.tensor(list(SRC.values()), device=DEV)
         for mname in MODELS:
             if mname == "VPLs": continue
