@@ -7,7 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.
 import data_panels
 from attr_feats import attr_G, NAMES
 torch.set_default_dtype(torch.float64); torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4"))); KEV = 20
-PAN = data_panels.load("ca_pairs"); n = len(PAN["item_ids"]); ev = PAN["evaluators"]
+PAN = data_panels.load(os.environ.get("CA_PANEL", "ca_pairs")); n = len(PAN["item_ids"]); ev = PAN["evaluators"]
 raters = sorted({e for row in ev for e in row}); rid = {r: j for j, r in enumerate(raters)}; NR = len(raters); R = np.array([rid[row[0]] for row in ev])
 gm = PAN["rater_group"]; glev = sorted({gm.get(r, "NA") for r in raters}); GRP = np.array([glev.index(gm.get(r, "NA")) for r in raters])   # folds as vpl_pal.py
 Gp = np.asarray(PAN["groups"]); rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
@@ -19,7 +19,7 @@ EVT = np.array([s.split("|")[0] for s in PAN["item_ids"]]); LANG = np.asarray(PA
 ulang = np.zeros(NR, int)
 for j in range(n): ulang[R[j]] = LI[j]
 YB = torch.tensor(np.asarray(PAN["yb"]).astype(float)); A = torch.tensor(attr_G(list(PAN["resp_A"]), list(PAN["resp_B"]), PAN["texts"])); J = A.shape[1]
-Fz = np.load(f"{P2}/features/ca_pairs/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
+Fz = np.load(f"{P2}/features/{PAN['name']}/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
 EA, EB = Fz["E_A"].astype(np.float32), Fz["E_B"].astype(np.float32); sub = np.concatenate([EA[::6], EB[::6], Fz["E_P"][::6].astype(np.float32)]); mu0 = sub.mean(0)
 _, _, Vt = np.linalg.svd(sub - mu0, full_matrices=False); W256 = Vt[:256].T; del sub                                  # PCA-256 basis on a label-free subsample
 XA, XB = (EA - mu0) @ W256, (EB - mu0) @ W256; del EA, EB; sd = np.concatenate([XA, XB]).std(0) + 1e-6; X = torch.tensor((XB - XA) / sd, dtype=torch.float64); Rt = torch.tensor(R); Lt = torch.tensor(LI)

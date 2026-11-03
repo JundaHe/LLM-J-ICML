@@ -1125,3 +1125,6 @@ Review `paper-4/reviews/codex_round04_gpt-6.1-sol.md`. Key points: sell as measu
 
 ### 2026-11-04 00:10 — paper 4 Stage 12: second-turn loader and embedding job
 `data_panels.load("ca_pairs_second")` (turn parameter; first-turn output verified byte-identical by hash): 248,889 pairs, 3,374 users. `embed_ca.py` takes CA_PANEL; GPU job 12553 (Qwen2.5-7B, --gres=gpu:1). No second-turn labels or results read. Next: s12.py (TRV + validated isotropic prior + tuned rank-2 on the frozen Stage-12 design).
+
+### 2026-11-04 00:25 — paper 4 Stage 12: s12.py written; smoke run on first turns
+`s12.py` implements PROTOCOL_STAGE12 (TRV unchanged; validated isotropic prior; tuned rank-2; half means and centred/within-language cross-covariances; user and prompt-group × user bootstraps; coded decisions). `sap_ca.py` takes CA_PANEL (default unchanged). Smoke run on the first-turn panel (debug job 12554) to test the code before the second-turn features exist; its numbers are exploratory (first turns were used to develop TRV) and will be reported only as the turn-1 counterpart of the new comparators. Embedding 12553 pending.
