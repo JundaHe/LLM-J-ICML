@@ -1149,3 +1149,6 @@ Memory: S11-1 was OOM-killed at 25 G while loading (node has ~25.6 G free); `sap
 
 ### 2026-11-04 06:32 — paper 4: Stage 12 queued behind the embedding
 Embedding 12557 at 160k / 414k (5 h; ~50k/h and rising; ETA ~3–4 h). Frozen Stage 12 run (`CA_PANEL=ca_pairs_second s12.py`, unchanged) queued as 12569 with afterok:12557 (debug, 25 G — the node's free memory; the PCA design is built chunked).
+
+### 2026-11-04 07:33 — paper 4: waiting on embedding
+Embedding 12557 at 230k / 414k (6 h; ~70k/h → ETA ~09:30). Stage 12 (12569) queued afterok. Round-5 Codex prompt header drafted (to be assembled with Stage 12 results, PROTOCOL_STAGE11/12 and the draft once Stage 12 is read).
