@@ -20,9 +20,14 @@ ulang = np.zeros(NR, int)
 for j in range(n): ulang[R[j]] = LI[j]
 YB = torch.tensor(np.asarray(PAN["yb"]).astype(float)); A = torch.tensor(attr_G(list(PAN["resp_A"]), list(PAN["resp_B"]), PAN["texts"])); J = A.shape[1]
 Fz = np.load(f"{P2}/features/{PAN['name']}/pairs_Qwen2.5-7B-Instruct.npz"); assert np.array_equal(Fz["item_ids"], np.asarray(PAN["item_ids"]).astype(str))
-EA, EB = Fz["E_A"].astype(np.float32), Fz["E_B"].astype(np.float32); sub = np.concatenate([EA[::6], EB[::6], Fz["E_P"][::6].astype(np.float32)]); mu0 = sub.mean(0)
-_, _, Vt = np.linalg.svd(sub - mu0, full_matrices=False); W256 = Vt[:256].T; del sub                                  # PCA-256 basis on a label-free subsample
-XA, XB = (EA - mu0) @ W256, (EB - mu0) @ W256; del EA, EB; sd = np.concatenate([XA, XB]).std(0) + 1e-6; X = torch.tensor((XB - XA) / sd, dtype=torch.float64); Rt = torch.tensor(R); Lt = torch.tensor(LI)
+CACHE = f"{P2}/features/{PAN['name']}/pca256_X_cache.npz"   # the PCA-256 design, computed once in row chunks (lower peak memory; same computation)
+if os.path.exists(CACHE): _z = np.load(CACHE); mu0, W256, X = _z["mu0"], _z["W256"], torch.tensor(_z["X"])
+else:
+    EA, EB = Fz["E_A"], Fz["E_B"]; sub = np.concatenate([EA[::6].astype(np.float32), EB[::6].astype(np.float32), Fz["E_P"][::6].astype(np.float32)]); mu0 = sub.mean(0)
+    _, _, Vt = np.linalg.svd(sub - mu0, full_matrices=False); W256 = Vt[:256].T; del sub                              # PCA-256 basis on a label-free subsample
+    proj = lambda E: np.concatenate([(E[i:i + 20000].astype(np.float32) - mu0) @ W256 for i in range(0, len(E), 20000)])
+    XA, XB = proj(EA), proj(EB); del EA, EB; sd = np.concatenate([XA, XB]).std(0) + 1e-6; X = torch.tensor((XB - XA) / sd, dtype=torch.float64); np.savez(CACHE, mu0=mu0, W256=W256, X=X.numpy())
+Rt = torch.tensor(R); Lt = torch.tensor(LI)
 def nll(lg, y): return -(y * Fn.logsigmoid(lg) + (1 - y) * Fn.logsigmoid(-lg))
 def fit_base(idx, idx_va):
     best = None
