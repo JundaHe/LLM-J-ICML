@@ -18,3 +18,12 @@
 **Decision rule (k = 20): largest upper bound +3.70, largest lower bound +2.85 → CONTENT PERSONALISATION DETECTED.**
 
 Learner-free: two annotators agree on 0.643 [0.639, 0.647] of shared response pairs; the text-only model (k = 0) is right on 0.717 of the 29232 tested ratings of those pairs.
+
+## Amendment 2 — within-country derangement (points, k = 20 / 50)
+
+| method | k | own − other (same country) | other (same) − other (any) | folds |
+|---|---|---|---|---|
+| LORE_lore | 20 | +3.50 [+2.99, +4.02] | -0.02 [-0.21, +0.17] | 3 |
+| LORE_lore | 50 | +4.20 [+3.58, +4.85] | -0.13 [-0.33, +0.07] | 3 |
+| LORER_lorer | 20 | +0.37 [+0.28, +0.46] | -0.01 [-0.03, +0.02] | 5 |
+| LORER_lorer | 50 | +0.65 [+0.50, +0.81] | -0.01 [-0.05, +0.03] | 5 |

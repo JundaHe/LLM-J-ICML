@@ -25,4 +25,15 @@ for fz in sorted(glob.glob(f"{R}/ratings/stage2c_ca_pairs_E2_f?.npz")):
 if hit:
     h = np.concatenate(hit); out["text_only_on_shared"] = [float(h.mean()), int(len(h))]
     L += ["", f"Learner-free: two annotators agree on {ag['agreement']:.3f} [{ag['ci'][0]:.3f}, {ag['ci'][1]:.3f}] of shared response pairs; the text-only model (k = 0) is right on {h.mean():.3f} of the {len(h)} tested ratings of those pairs."]
+L += ["", "## Amendment 2 — within-country derangement (points, k = 20 / 50)", "", "| method | k | own − other (same country) | other (same) − other (any) | folds |", "|---|---|---|---|---|"]
+for tag, ms in (("", ("DFp", "VPL", "PAL2", "PAL4")), ("_lore", ("LORE",)), ("_lorer", ("LORER",))):
+    fs = sorted(glob.glob(f"{R}/stage2c_ca_pairs_E2_f?{tag}_pg.json")); g = rows_of(f"{R}/stage2c_ca_pairs_E2_f?{tag}.json")
+    if not fs: continue
+    pg = [dict(r, **{kk.replace("_perm_", "_permg_"): v for kk, v in r.items() if "_perm_" in kk}) for f_ in fs for r in json.load(open(f_))["per_rater"]]
+    done = {r["fold"] for r in pg}; g = [r for r in g if r["fold"] in done]
+    for m in ms:
+        if not any(f"{m}_permg_dir" in r for r in pg): continue
+        for k in (20, 50):
+            c = {"own_vs_same": pair(pg, k, f"{m}_dir", f"{m}_permg_dir", "n"), "same_vs_any": pair(g + pg, k, f"{m}_permg_dir", f"{m}_perm_dir", "n"), "folds": sorted(done)}
+            out[f"{m}_k{k}_pg"] = c; L.append(f"| {m}{tag} | {k} | {fmt(c['own_vs_same'])} | {fmt(c['same_vs_any'])} | {len(done)} |")
 json.dump(out, open(f"{R}/stage8_ca.json", "w"), indent=1); open(f"{R}/stage8_ca.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
