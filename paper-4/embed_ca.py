@@ -14,6 +14,9 @@ def chat(p, r=None):
 keys = sorted({(p, a) for p, a in zip(P["texts"], P["resp_A"])} | {(p, b) for p, b in zip(P["texts"], P["resp_B"])}) + [(p, None) for p in sorted(set(P["texts"]))]
 strs = [chat(p, r) for p, r in keys]; lens = np.array([len(s) for s in strs]); order = np.argsort(-lens); emb = np.zeros((len(keys), 3584), np.float16)
 print(f"{len(keys)} unique texts", flush=True); MAXTOK = 24000; i = 0; done = 0
+import time; CK = f"{P2}/features/{P['name']}_ckpt.npz"; t_ck = time.time()  # resumable: a partial embedding is checkpointed every 30 min
+if os.path.exists(CK):
+    z = np.load(CK); assert z["emb"].shape == emb.shape; emb[:] = z["emb"]; i = done = int(z["i"]); print(f"resumed at {i}", flush=True)
 with torch.no_grad():
     while i < len(order):
         L0 = len(tok(strs[order[i]], add_special_tokens=False).input_ids); bs = max(1, min(64, MAXTOK // max(L0, 1))); idx = order[i:i + bs]
@@ -21,6 +24,8 @@ with torch.no_grad():
         h = model.model(input_ids=enc.input_ids, attention_mask=enc.attention_mask).last_hidden_state; last = enc.attention_mask.sum(1) - 1
         emb[idx] = h[torch.arange(len(idx)), last].float().cpu().numpy().astype(np.float16); i += bs; done += len(idx)
         if done // 10000 != (done - len(idx)) // 10000: print(f"{done}/{len(keys)}", flush=True)
+        if time.time() - t_ck > 1800: np.savez(CK + ".tmp.npz", emb=emb, i=i); os.replace(CK + ".tmp.npz", CK); t_ck = time.time(); print(f"checkpoint at {i}", flush=True)
 pos = {k: j for j, k in enumerate(keys)}
 EA = emb[[pos[(p, a)] for p, a in zip(P["texts"], P["resp_A"])]]; EB = emb[[pos[(p, b)] for p, b in zip(P["texts"], P["resp_B"])]]; EP = emb[[pos[(p, None)] for p in P["texts"]]]
 out = f"{P2}/features/{P['name']}"; os.makedirs(out, exist_ok=True); np.savez(f"{out}/pairs_Qwen2.5-7B-Instruct.npz", E_A=EA, E_B=EB, E_P=EP, item_ids=np.asarray(P["item_ids"]).astype(str)); print("saved", EA.shape, flush=True)
+if os.path.exists(CK): os.remove(CK)
