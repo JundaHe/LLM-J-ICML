@@ -53,15 +53,66 @@ def summarise(ZA, ZB, B=2000, seed=17):
     full = C(np.arange(len(ZA))); rg = np.random.RandomState(seed); bs = np.array([np.diag(C(rg.randint(0, len(ZA), len(ZA)))) for _ in range(B)])
     return np.diag(full), np.percentile(bs, 2.5, 0), np.percentile(bs, 97.5, 0), full
 out = {"n_users": len(users), "primary": [NAMES[j] for j in PRIM]}
+AM1 = os.environ.get("S11_AM1") == "1"
 ZA, ZB = transfer_cov(YB, LOGIT, PRIM); d, lo, hi, full = summarise(ZA, ZB)
 out["real_primary"] = {NAMES[j]: [float(d[i]), float(lo[i]), float(hi[i])] for i, j in enumerate(PRIM)}; out["real_primary_cov"] = full.tolist()
 print("real (primary):", json.dumps(out["real_primary"]), flush=True)
-ZA2, ZB2 = transfer_cov(YB, LOGIT, list(range(J))); d2, lo2, hi2, _ = summarise(ZA2, ZB2, B=1000)
-out["real_all24"] = {NAMES[j]: [float(d2[j]), float(lo2[j]), float(hi2[j])] for j in range(J)}
+ZA2, ZB2 = transfer_cov(YB, LOGIT, list(range(J if not AM1 else 1))); d2, lo2, hi2, _ = summarise(ZA2, ZB2, B=10 if AM1 else 1000)
+out["real_all24"] = {NAMES[j]: [float(d2[j]), float(lo2[j]), float(hi2[j])] for j in range(len(d2))}
 # ---- in-sample random-slope variances from the frozen Stage-9 CA run (fixed-point update), mean over folds
 s2 = np.mean([np.array(x["sigma2"]) for x in json.load(open(f"{HERE}/results/stage9_sapca.json"))["info"]], 0); out["insample_sigma2_primary"] = {NAMES[j]: float(s2[j]) for j in PRIM}
 # ---- simulation controls on the actual design
 uidx = {u: i for i, u in enumerate(users)}; sig = s2[PRIM]
+if os.environ.get("S11_AM1") == "1":                                     # Amendment 1 (exploratory)
+    from sklearn.cluster import KMeans
+    CL = KMeans(8, random_state=0, n_init=4).fit_predict((Fz["E_P"].astype(np.float32) - mu0) @ W256); print("prompt clusters:", np.bincount(CL).tolist(), flush=True)
+    D = (np.eye(8)[CL][:, :, None] * A[:, None, PRIM]).reshape(n, -1)          # cluster x primary-attribute interactions
+    def fit_adj(y, off=LOGIT, lam=1.0):
+        """cluster x attribute weights by ridge logistic (Newton) with the population logit as offset, cross-fitted over user folds"""
+        lg = off.copy(); W = []
+        for f in range(5):
+            tr = rfold[R] != f; d = D[tr]; w = np.zeros(D.shape[1])
+            for _ in range(25):
+                p = 1 / (1 + np.exp(-(off[tr] + d @ w))); g = d.T @ (y[tr] - p) - lam * w; H = (d * (p * (1 - p))[:, None]).T @ d + lam * np.eye(len(w)); st = np.linalg.solve(H, g); w += st
+                if np.abs(st).max() < 1e-8: break
+            lg[~tr] = off[~tr] + D[~tr] @ w; W.append(w)
+        return lg, np.mean(W, 0)
+    am = {"n_users": len(users), "cluster_sizes": np.bincount(CL).tolist()}
+    LADJ, dhat = fit_adj(YB); am["cluster_interactions"] = dhat.reshape(8, 3).tolist()
+    for tag, lg in (("unadjusted", LOGIT), ("adjusted", LADJ)):
+        d_, lo_, hi_, _ = summarise(*transfer_cov(YB, lg, PRIM)); am[f"real_{tag}"] = {NAMES[j]: [float(d_[i]), float(lo_[i]), float(hi_[i])] for i, j in enumerate(PRIM)}
+        print(tag, json.dumps(am[f"real_{tag}"]), flush=True)
+    sec = {}
+    for j in range(J):                                                     # one-dimensional secondaries, Holm across the 24
+        za, zb = transfer_cov(YB, LOGIT, [j]); C = lambda ix: float((za[ix, 0] * zb[ix, 0]).mean()); rg = np.random.RandomState(17)
+        bs = np.array([C(rg.randint(0, len(za), len(za))) for _ in range(1000)]); sec[NAMES[j]] = [C(np.arange(len(za))), *np.percentile(bs, [2.5, 97.5]).tolist(), float(min(1, 2 * min((bs <= 0).mean(), (bs >= 0).mean())))]
+    order = sorted(sec, key=lambda k: sec[k][3]); run = 0
+    for r_, k in enumerate(order): run = max(run, min(1, (J - r_) * sec[k][3])); sec[k].append(run)
+    am["secondary_1d"] = sec
+    def sim1(kind, rep):
+        g = np.random.RandomState(5000 + rep); lg = LOGIT.copy()
+        if kind == "stable": lg = lg + (g.randn(NR, 3)[R] * np.sqrt(sig) * A[:, PRIM]).sum(1)
+        elif kind == "context":
+            side = np.zeros(n, int)
+            for u in users: side[halves[u][1]] = 1
+            lg = lg + (np.where(side[:, None] == 0, g.randn(NR, 3)[R], g.randn(NR, 3)[R]) * np.sqrt(sig) * A[:, PRIM]).sum(1)
+        elif kind == "cluster": lg = lg + D @ dhat
+        y = (g.rand(n) < 1 / (1 + np.exp(-lg))).astype(float); res = {"adjusted": summarise(*transfer_cov(y, fit_adj(y)[0], PRIM), B=400, seed=rep)[:3]}
+        if kind == "cluster": res["unadjusted"] = summarise(*transfer_cov(y, LOGIT, PRIM), B=400, seed=rep)[:3]
+        return res
+    NREP = int(os.environ.get("S11_REPS", "200")); am["sims"] = {}
+    for kind in ("null", "context", "cluster", "stable"):
+        res = [sim1(kind, r) for r in range(NREP)]
+        for an in res[0]:
+            dd = np.array([x[an][0] for x in res]); l_ = np.array([x[an][1] for x in res])
+            am["sims"][f"{kind}_{an}"] = {"mean": dd.mean(0).tolist(), "n_detect": (l_ > 0).sum(0).tolist(), "reps": NREP}; print(kind, an, json.dumps(am["sims"][f"{kind}_{an}"]), flush=True)
+    dec = {}
+    for i, j in enumerate(PRIM):
+        cal = all(am["sims"][f"{k}_adjusted"]["n_detect"][i] <= NREP // 20 for k in ("null", "context", "cluster")) and am["sims"]["stable_adjusted"]["n_detect"][i] >= 0.8 * NREP
+        r = am["real_adjusted"][NAMES[j]]
+        dec[NAMES[j]] = ("not calibrated" if not cal else f"transferable heterogeneity (exploratory; share {r[0] / sig[i]:.2f} of in-sample σ²)" if r[1] > 0 else "calibrated, not detected")
+    am["decisions"] = dec; print("decisions:", json.dumps(dec), flush=True)
+    json.dump(am, open(f"{HERE}/results/stage11_transfer_am1.json", "w"), indent=1); sys.exit(0)
 def simulate(kind, rep):
     g = np.random.RandomState(1000 + rep); lg = LOGIT.copy()
     if kind in ("stable", "half"):
