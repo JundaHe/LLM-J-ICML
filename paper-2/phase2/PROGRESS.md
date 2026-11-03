@@ -1146,3 +1146,6 @@ Memory: S11-1 was OOM-killed at 25 G while loading (node has ~25.6 G free); `sap
 
 ### 2026-11-04 05:32 — paper 4: Stage 11 Am. 10 (multiplicity, reporting only)
 `multiplicity.py`: Holm over normal-approximation p-values from the reported intervals. Stage 8 frozen family: own − other of LoRe/LoRe-reg/VPL/PAL4 survive (detection unchanged); small own gains of VPL/PAL4/DFp do not. Stage 11 (29 contrasts as one family): 13/21 survive — all length statements, TRV and isotropic gains; paragraphs Ĉ, TRV − rank-2, TRV − isotropic, S11-1 (b) length +0.45 and Am. 9 O-cells do not → draft now reads TRV ≈ isotropic (indistinguishable). Embedding 12557: 110k / 414k at 4 h.
+
+### 2026-11-04 06:32 — paper 4: Stage 12 queued behind the embedding
+Embedding 12557 at 160k / 414k (5 h; ~50k/h and rising; ETA ~3–4 h). Frozen Stage 12 run (`CA_PANEL=ca_pairs_second s12.py`, unchanged) queued as 12569 with afterok:12557 (debug, 25 G — the node's free memory; the PCA design is built chunked).
