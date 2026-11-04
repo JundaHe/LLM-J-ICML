@@ -1192,3 +1192,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-04 13:45 — paper 4: audit follow-up
 - Traced SAP − rank-2 on real MultiPref: recomputed from stage9_sap_real_mackay_records vs stage9_lr2_real_records (paired by fold/k/draw/rater, user bootstrap seed 17) = +0.41 [+0.15, +0.66], k = 20, 209 raters — matches the draft (the amended MacKay-screened SAP; the original-screening SAP gives +0.31 [+0.03, +0.60]). Remaining untraced appendix figures are low-stakes and will be checked before the final Codex round.
 - Job 12578 still embedding; projected finish ≈ 23:00.
+
+## 2026-11-04 14:32 — paper 4: audit follow-up 2; embedding progress
+- Job 12578: checkpoint at 10,995/202,190 after ~1.5 h (≈ 3.6k texts per 30 min on the longest texts; should accelerate as texts shorten; projection unchanged, ≈ 10 h).
+- Traced: App. G CA prior variances (stage9_sapca.json sigma2: length 0.29–0.37, paragraphs 0.25–0.30, list/heading 0.19–0.23; fold 2 gives URLs 1.37, an isolated value now stated in the draft); App. B joint-training consensus contrasts (PROGRESS 2026-10-28 10:21 framing check from existing k = 0 numbers); aspect oracle strengths +1.4/+5.0 (PROGRESS 2026-10-31 15:21, S5-4 Am. 3). Still untraced: App. D ratio 19–36, "about half at k = 0", LoRA DFs 0.689 (draw-0 table stage2a_multipref_overall_lora_f2.md).
