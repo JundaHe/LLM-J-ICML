@@ -1327,3 +1327,11 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - No other layout defects seen: tables 1–5 have captions and fit the page width, and figures and headings are intact.
 - LaTeX source contains no stray "\_" or caret escapes other than in file names.
 - Build: 0 errors, 0 undefined citations, 20 pages; main text ends on p.8.
+
+## 2026-11-05 07:31 status check
+- No Slurm jobs running; repository in sync; no experiments pending.
+- ICML 2027 check:
+  - icml.cc says the call for papers "will be posted soon" (Rio de Janeiro, 31 Jul – 6 Aug 2027).
+  - No official deadline or style files yet.
+  - Third-party projection: abstract 16 Jan 2027, paper 22 Jan 2027 AoE (planning estimate only).
+- Paper 4 stays on the ICML 2025 style as a stand-in until the 2027 template is released.
