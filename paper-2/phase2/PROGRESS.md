@@ -1257,3 +1257,16 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
   - CLAIMS #1, #2, #4, #5, #10, #12.
 - Added: Table 6 (choice-level results with comparator, support unit, primary/secondary intervals, status; two-way values read from stage12_*.json / stage13_s1.json) and an Appendix-A chronology. Appendix F.2 marked archive-only.
 - Next: remove remaining duplicate prose, compress SAP/covariance appendices, then convert to LaTeX (ICML 2026 template provisionally; ICML 2027 instructions not yet posted).
+
+## 2026-11-05 03:36 — paper 4: LaTeX build fits ICML 8 pages
+- build_latex.py: Appendix F.2 (archive) excluded from the PDF; Unicode maps for δ̂, θ̂, Ĉ, ᵀ, ⁻, ¹, ₃; blank line enforced before headings (a missing blank line had silently dropped the §6 and §7 headings); pandoc "Table:" captions moved into table* floats; repeated longtable header removed; running title updated.
+- Main text cut from ~9.9 to 8 pages:
+  - §2 related work condensed;
+  - §5.6 positive control condensed (full text moved to Appendix B);
+  - §5.7 and §5.9 reduced to one sentence each (full text to Appendix B);
+  - §6 covariance and robustness details shortened, since the numbers are in Table 1 and Appendix F;
+  - intro paragraph 1, §8 and §9 tightened.
+  - No result or qualification removed from the paper as a whole.
+- Table 1 (choice-level results) rebuilt as 5 columns with caption; renders within the page width.
+- Build: 0 errors, 0 undefined citations, 20 pages; Impact Statement starts on page 9 (outside the limit).
+- Commit includes results/stage13_s3.json (the S13-3 summary; previously untracked).

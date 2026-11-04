@@ -5,6 +5,8 @@ HERE = os.path.dirname(os.path.abspath(__file__)); P4 = os.path.dirname(HERE)
 md = open(f"{P4}/PAPER4_DRAFT.md").read()
 title = md.splitlines()[0].lstrip("# ").strip()
 body = "\n".join(l for l in md.splitlines()[1:] if not l.startswith("*Draft"))
+body = re.sub(r"(?ms)^## Appendix F\.2\..*?(?=^## |\Z)", "", body)
+body = re.sub(r"(?m)(?<=[^\n])\n(?=#{1,4} )", "\n\n", body)   # pandoc needs a blank line before each heading   # analysis archive only, not in the submitted PDF
 CIT = {"Shenfeld et al., 2025": "shenfeld2025pref", "Luo et al., 2025": "luo2025pca", "Kobalczyk et al., 2024": "kobalczyk2024fewshot", "Jang et al., 2023": "jang2023soups", "Zhao et al., 2024": "zhao2024gpo", "Chakraborty et al., 2024": "chakraborty2024maxmin", "Park et al., 2024": "park2024heterogeneous", "Feng et al., 2024": "feng2024modular", "Sorensen et al., 2025": "sorensen2025valueprofiles", "Castricato et al., 2025": "castricato2025persona", "Zollo et al., 2025": "zollo2025personalllm", "Zhang et al., 2026": "zhang2026community", "Gordon et al., 2021": "gordon2021deconvolution", "Kumar et al., 2021": "kumar2021toxic", "Fleisig et al., 2023": "fleisig2023majority", "Homan et al., 2024": "homan2024intersectionality", "Touvron et al., 2023": "touvron2023llama2", "Wang et al., 2025": "wang2025helpsteer2pref", "Rao & Kupper, 1967": "rao1967ties", "Davidson, 1970": "davidson1970ties", "Siththaranjan et al., 2024": "siththaranjan2024dpl", "Kirk et al., 2024": "kirk2024prism", "Gordon et al., 2022": "gordon2022jury", "Poddar et al., 2024": "poddar2024vpl",
        "Chen et al., 2025": "chen2025pal", "Sorensen et al., 2024": "sorensen2024roadmap", "Zhang et al., 2025": "zhang2025diverging", "Miranda et al., 2025": "miranda2025hybrid",
        "Davani et al., 2022": "davani2022dealing", "Li et al., 2024": "li2024prlhf", "Orlikowski et al., 2023": "orlikowski2023ecological", "Baumgartner & Steenkamp, 2001": "baumgartner2001response",
@@ -23,12 +25,15 @@ tex = re.sub(r"\\label\{[^}]*\}", "", tex); tex = re.sub(r"\\section\{\d+\.?\s*"
 def tab(mm):
     t = mm.group(0); spec = re.search(r"\\begin\{longtable\}\[\]\{(.*?)\}\n", t).group(1)
     t = re.sub(r"\\begin\{longtable\}\[\]\{.*?\}\n", "\\\\begin{table*}[t]\\\\centering\\\\footnotesize\\\\begin{tabular}{" + re.sub(r"@\{\}", "", spec).replace("\\real", "") + "}\n", t, count=1)
+    cap = re.search(r"\\caption\{(.*?)\}\\tabularnewline\n", t, re.S)
+    if cap: t = t.replace(cap.group(0), ""); t = t.replace("\\centering\\footnotesize", "\\centering\\caption{" + cap.group(1) + "}\\scriptsize\\setlength{\\tabcolsep}{3pt}", 1)
+    t = re.sub(r"\\endfirsthead.*?\\endhead", "", t, flags=re.S)   # drop the repeated page header of longtable
     t = re.sub(r"\\endhead|\\endfirsthead|\\endlastfoot|\\endfoot", "", t); t = t.replace("\\bottomrule\\noalign{}", "").replace("\\bottomrule", ""); t = t.replace("\\end{longtable}", "\\bottomrule\n\\end{tabular}\\end{table*}")
     t = re.sub(r">\{\\raggedright\\arraybackslash\}p\{\(\\linewidth - \d+\\tabcolsep\) \* \\real\{[0-9.]+\}\}", "l", t)
     return t
 tex = re.sub(r"\\begin\{longtable\}.*?\\end\{longtable\}", tab, tex, flags=re.S)
 tex = re.sub(r"\\begin\{minipage\}\[b\]\{\\linewidth\}\\raggedright\s*(.*?)\s*\\end\{minipage\}", r"\1", tex, flags=re.S)
-U = {"−": "$-$", "≈": "$\\approx$", "≤": "$\\leq$", "≥": "$\\geq$", "×": "$\\times$", "…": "\\ldots{}", "²": "$^2$", "₀": "$_0$", "ℓ": "$\\ell$", "ρ": "$\\rho$", "∈": "$\\in$",
+U = {"θ̂": "$\\hat\\theta$", "δ̂": "$\\hat\\delta$", "Ĉ": "$\\hat C$", "δ": "$\\delta$", "ᵀ": "$^{\\top}$", "⁻": "$^{-}$", "¹": "$^{1}$", "₃": "$_3$", "−": "$-$", "≈": "$\\approx$", "≤": "$\\leq$", "≥": "$\\geq$", "×": "$\\times$", "…": "\\ldots{}", "²": "$^2$", "₀": "$_0$", "ℓ": "$\\ell$", "ρ": "$\\rho$", "∈": "$\\in$",
      "·": "$\\cdot$", "½": "$\\tfrac12$", "§": "\\S{}", "–": "--", "—": "---", "→": "$\\to$", "θ": "$\\theta$", "τ": "$\\tau$", "±": "$\\pm$", "α": "$\\alpha$", "μ": "$\\mu$", "σ": "$\\sigma$"}
 for k, v in U.items(): tex = tex.replace(k, v); abstract = abstract.replace(k, v); title = title.replace(k, v)
 i_app = tex.find("\\section{Appendix A.")
@@ -49,7 +54,7 @@ pre = r"""\documentclass{article}
 \newcommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \providecommand{\real}[1]{#1}
 \usepackage{icml2025}
-\icmltitlerunning{What Personalised Reward Models Learn About a New Rater}
+\icmltitlerunning{What Do Gains in Personalised Reward Modelling Measure?}
 \begin{document}
 \twocolumn[
 \icmltitle{""" + title + r"""}
