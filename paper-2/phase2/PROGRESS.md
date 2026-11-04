@@ -1270,3 +1270,8 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - Table 1 (choice-level results) rebuilt as 5 columns with caption; renders within the page width.
 - Build: 0 errors, 0 undefined citations, 20 pages; Impact Statement starts on page 9 (outside the limit).
 - Commit includes results/stage13_s3.json (the S13-3 summary; previously untracked).
+
+## 2026-11-05 04:31 paper 4 — round-9 review launched
+- No Slurm jobs running; no experiments pending (turn 4 stays closed).
+- Codex round 9 (gpt-6.1-sol, max) on the pdftotext of latex/main.pdf: cross-checks numbers between the main text, tables and appendices; looks for overclaims and typesetting defects; ranks remaining reviewer asks.
+- The PDF has no undefined references (no "??").
