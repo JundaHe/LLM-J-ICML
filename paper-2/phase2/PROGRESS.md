@@ -1204,3 +1204,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-04 16:32 — paper 4: numeric audit closed; embedding at 32 %
 - Job 12578 checkpoint 22,554/202,190 texts = 32.4 % of tokens after 3.5 h (~3.7 % per 30 min); projection unchanged, finish ≈ 01:30 on 11-05.
 - Remaining audit items traced: App. D per-fold rater-vs-item ratio 19.1–35.7 (rater_long_multipref_overall_tuned.json heldout_ll_M{0,2,4}_folds; shift +0.005, scale +0.031 also match); "about half at k = 0" (stage2a_multipref_overall_A5.md: DFs − D direction +0.0025 at k = 0 vs +0.005 at k = 20; the joint-training MultiPref contrast −0.003 / +0.3 pt is DF − D at k = 0 in the same table); LoRA DFs 0.689 is the draw-0 direction accuracy (STAGE2A_REPORT.md l.130; draft labels the block draw 0). Every quantitative claim in the draft now has a located source.
+
+## 2026-11-04 17:31 — paper 4: embedding at 40 %
+- Job 12578 checkpoint 31,484/202,190 texts = 39.8 % of tokens after 4.6 h; steady ~3.7 % per 30 min; projected finish ≈ 01:30–02:00 on 11-05. S13-3b chained. No new results, no bug signs.
