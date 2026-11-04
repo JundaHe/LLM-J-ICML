@@ -1299,3 +1299,10 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
     - TRV expanded in Table 5;
     - Stage-13 methods block added to Appendix F.
 - Build: 0 errors, 0 undefined citations, 20 pages; main text ends on page 8 (Impact Statement starts page 9).
+
+## 2026-11-05 05:31 paper 4 — round-10 verification launched
+- No Slurm jobs running; repository in sync with origin/main.
+- Codex round 10 (gpt-6.1-sol, max) was given the round-9 review together with the rebuilt PDF text.
+  - It marks each round-9 item fixed / partly fixed / not fixed.
+  - It flags any defect the revision introduced, such as table numbering or caption–body mismatches.
+  - It gives a readiness verdict for the main text.
