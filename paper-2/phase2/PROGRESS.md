@@ -1152,3 +1152,6 @@ Embedding 12557 at 160k / 414k (5 h; ~50k/h and rising; ETA ~3–4 h). Frozen St
 
 ### 2026-11-04 07:33 — paper 4: waiting on embedding
 Embedding 12557 at 230k / 414k (6 h; ~70k/h → ETA ~09:30). Stage 12 (12569) queued afterok. Round-5 Codex prompt header drafted (to be assembled with Stage 12 results, PROTOCOL_STAGE11/12 and the draft once Stage 12 is read).
+
+### 2026-11-04 09:35 — paper 4: Stage 12 (frozen TRV on CA second turns) result
+Embedding finished (248,889 pairs); s12.py unchanged (13.5 min). 1,702 test users, k = 20: **TRV +0.38 [+0.13, +0.64] points, +0.0046 [+0.0031, +0.0063] nats**; isotropic +0.31 [+0.05, +0.58], +0.0038; rank-2 −0.05 (no adaptation selected in 3/5 folds); TRV − iso +0.07 [−0.07, +0.22]; two-way accuracy interval [−0.04, +0.83]. Decisions: reproducible benefit **met**, meaningful gain not met, **sub-threshold met**, advantage over isotropic **not met**, over rank-2 met (largely vs μ). Length cross-moment 0.12–0.19 in every fold; list/heading does not reproduce. Draft abstract + §6 updated. Next: Codex round 5.

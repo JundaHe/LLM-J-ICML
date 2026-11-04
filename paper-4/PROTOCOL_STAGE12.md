@@ -21,3 +21,12 @@ Secondary: the same per language; Stage 8's LoRe and LoRe-reg are not rerun.
 "Untouched users"; "replication on new data" without the qualification above; any claim about turns three and four; "calibration gain" for a log-likelihood gain (it is a predictive log-likelihood gain).
 
 ## Amendments
+
+## Result (2026-11-04 09:35, job 12569; read by the frozen rules, no revision)
+1,702 test users, CA second turns, k = 20 events. Selected on pseudo-new users: TRV {length, c = 1; prim3, 0.25; length, 0.25; length, 1; prim3, 0.125}; isotropic {length, 0.3; prim3, 0.1; length, 0.03; prim3, 0.03; prim3, 0.03}; rank-2 adaptation c = 0.1 in folds 0–1 and **no adaptation** in folds 2–4.
+- **TRV own − μ: +0.38 [+0.13, +0.64] choice points; +0.0046 [+0.0031, +0.0063] nats per pair** (two-way prompt-group × user interval: accuracy [−0.04, +0.83], LL [+0.0018, +0.0074]).
+- Isotropic own − μ: +0.31 [+0.05, +0.58] points, +0.0038 [+0.0021, +0.0057] nats. Rank-2: −0.05 [−0.34, +0.24], −0.0013 nats.
+- TRV − isotropic: +0.07 [−0.07, +0.22] points, +0.0008 [−0.0000, +0.0016] nats. TRV − rank-2: +0.43 [+0.15, +0.74] points.
+- Per language (accuracy): en +0.21, fr +0.49, hi +0.44, it +0.35, pt +0.61; every interval covers 0.
+- One-step diagnostics: length cross-moment 0.12–0.19 in every fold (centring and within-language centring change it by < 1 %); paragraphs 0.09–0.68; list/heading negative in two folds (−0.53, −0.34 centred).
+**Decisions:** reproducible predictive benefit — **met**; practically meaningful choice gain — **not met**; **sub-threshold** for this procedure and population — **met** (upper bound +0.64 < +1); advantage over ordinary validated shrinkage — **not met**; advantage over the rank-2 model — met (in three of five folds the tuned rank-2 model selects no adaptation, so this is largely TRV vs μ). The primary user-bootstrap interval excludes 0; the secondary two-way interval does not.
