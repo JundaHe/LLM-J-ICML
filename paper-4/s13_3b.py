@@ -16,6 +16,8 @@ del Hz, PAN0
 exec(open(f"{HERE}/sap_ca.py").read().split("recs = []; info = []")[0])   # population-model code of sap_ca.py on the third-turn panel (history features)
 D1 = json.load(open(f"{HERE}/results/stage13_delta1.json")); assert D1["names"] == NAMES
 rfold = np.array([D1["rfold"].get(r, -1) for r in raters])                  # first-turn user folds; users absent from the first-turn panel (-1) are training-only
+from attr_feats import attrs
+RAW3 = np.stack([attrs(str(b), str(p)) - attrs(str(a), str(p)) for a, b, p in zip(PAN["resp_A"], PAN["resp_B"], PAN["texts"])]); A1u = (RAW3 - np.array(D1["mean1"])) / np.array(D1["sd1"]); del RAW3   # third-turn differences in first-turn attribute units
 An = A.numpy(); Yn = YB.numpy(); recs = []
 for f in range(5):
     test_r = rfold == f; is_tr = ~test_r[R]; idx_tr = np.where(is_tr & ~va_item)[0]; idx_va = np.where(is_tr & va_item)[0]; idx_all = np.concatenate([idx_tr, idx_va])
@@ -25,7 +27,7 @@ for f in range(5):
         if u is None or u["fold"] != f: continue
         js = np.where((R == r) & ~np.isin(EVT, u["support_conv"]))[0]
         if len(np.unique(EVT[js])) < 5: continue
-        lt = lg3[js] + An[np.ix_(js, u["cols"])] @ np.array(u["delta"]); lp = lg3[js]; y = Yn[js]
+        lt = lg3[js] + A1u[np.ix_(js, u["cols"])] @ np.array(u["delta"]); lp = lg3[js]; y = Yn[js]
         ll = lambda lg_: y * -np.logaddexp(0, -lg_) + (1 - y) * -np.logaddexp(0, lg_)
         recs.append({"fold": f, "rater": int(r), "n": int(len(js)), "acc_d": float(((lt > 0) == y).sum() - ((lp > 0) == y).sum()), "ll_d": float((ll(lt) - ll(lp)).sum()), "groups": [str(g) for g in Gp[js]],
                      "acc_rows": (((lt > 0) == y).astype(float) - ((lp > 0) == y).astype(float)).tolist(), "ll_rows": (ll(lt) - ll(lp)).tolist()})

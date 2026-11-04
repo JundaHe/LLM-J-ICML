@@ -3,7 +3,10 @@ Writes results/stage13_delta1.json: per user the fold, selected columns, τ², �
 import os, json, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); os.environ["CA_PANEL"] = "ca_pairs"
 exec(open(f"{HERE}/s12.py").read().split("recs, info, PAIR = ")[0])
-OUT = {"users": {}, "rfold": {raters[i]: int(rfold[i]) for i in range(NR)}, "names": NAMES}
+from attr_feats import attrs
+RAW = np.stack([attrs(str(b), str(p)) - attrs(str(a), str(p)) for a, b, p in zip(PAN["resp_A"], PAN["resp_B"], PAN["texts"])]); SD1 = RAW.std(0); SD1[SD1 == 0] = 1.0   # first-turn standardisation (as attr_G)
+assert np.allclose((RAW - RAW.mean(0)) / SD1, An, atol=1e-6)
+OUT = {"users": {}, "rfold": {raters[i]: int(rfold[i]) for i in range(NR)}, "names": NAMES, "mean1": RAW.mean(0).tolist(), "sd1": SD1.tolist()}; del RAW
 for f in range(5):
     test_r = rfold == f; tr_item = ifold != f; is_tr = ~test_r[R]
     idx_tr = np.where(is_tr & tr_item & ~va_item)[0]; idx_va = np.where(is_tr & tr_item & va_item)[0]; idx_all = np.concatenate([idx_tr, idx_va]); pool = np.where(test_r[R] & tr_item)[0]
