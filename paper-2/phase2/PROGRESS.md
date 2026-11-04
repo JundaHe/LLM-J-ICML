@@ -1306,3 +1306,17 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
   - It marks each round-9 item fixed / partly fixed / not fixed.
   - It flags any defect the revision introduced, such as table numbering or caption–body mismatches.
   - It gives a readiness verdict for the main text.
+
+## 2026-11-05 05:38 paper 4 — round-10 verification applied
+- Codex round 10 (reviews/codex_round10_gpt-6.1-sol.md): 15 of the 22 round-9 items marked fixed. The rest were partly fixed or flagged as unverifiable from extracted text. Verdict: "pages 1–8 are substantively ready" apart from small editorial items.
+- Fixed this round:
+  - Appendix B/G mechanism wording:
+    - the compressed-feature claim is now limited to PAL-B (full-feature VPL collapses);
+    - "limitation lies in finding the dimension" → "twenty ratings sufficed once the dimension was supplied; the evaluated learners did not find it";
+    - "§5.6 points to where the failure lies" was rewritten.
+  - H3r on PRISM: "tie" → "formally not non-inferior (bound −0.006 < −0.005)".
+  - "Three caveats" → "Four caveats".
+  - Table 5 accuracy column header now separates % (assignment) from gain in points; caption shortened.
+  - Acronyms: TRV expanded at first mention (transfer-calibrated covariance variant); WIMHF named as a protocol with its citation.
+- Visual check of the rendered page 3 found a real defect: §4 showed "b_r ∈ RˆK" with literal underscores. Plain-text subscripts in §4 and Appendices C/F/G are now LaTeX math. "ρ < ½" is \tfrac12 in the source, so that one was only an extraction artefact.
+- Build: 0 errors, 0 undefined citations, 20 pages; main text ends on page 8.
