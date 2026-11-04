@@ -1170,3 +1170,6 @@ S13-1 (`s13_1.py`, job 12574): label-blind gate passed (fold 0 alone: 312 items 
 
 ### 2026-11-04 11:14 — paper 4: Am. 2 result; S13-3 part a; draft restructured
 Am. 2 (position control): identical-item identity survives — attribute part +0.060 [+0.032, +0.084] nats (61.5 %); position habits alone predict 63.8 % (a second text-independent response style); benefit with position controls +1.07 [+0.53, +1.66] points. S13-3a: frozen first-turn isotropic deviations for 1,901 users (prim3, τ² = 0.1 every fold; first-turn attribute standardisation saved so the transported deviations keep first-turn units). S13-3b queued afterok on the third-turn history embedding (12578, waiting: both GPUs busy with other users' jobs). Draft: title "What Do Gains in Personalised Reward Modelling Measure?", three contributions, §6 identical-item result, SAP → Appendix G; CLAIMS.md claim–evidence table.
+
+### 2026-11-04 11:35 — paper 4: abstract updated; Codex round 7 sent
+Embedding 12578 still waiting (both GPUs held by other users' jobs, up to ~13 h remaining). Abstract rewritten with the Stage 13 results (identical-item 62.2 %, +0.70 / +0.38 points, MultiPref null, population-model sensitivity; 217 words). Round-7 review (gpt-6.1-sol, max) sent with PROTOCOL_STAGE13, CLAIMS.md, the draft and the endpoint-A code.
