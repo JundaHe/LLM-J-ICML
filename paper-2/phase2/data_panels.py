@@ -520,3 +520,21 @@ def load_dorn_raters(min_ratings=10):
     return dict(name="dorn_raters", texts=df.snip.tolist(), H=(df.y.to_numpy() - 1)[:, None], K=5, item_ids=(df.snip + "|" + df.rater).to_numpy(), groups=df.snip.to_numpy(),
                 evaluators=[[r] for r in df.rater], rater_ids=np.array(["rater"]), rater_group={}, snippet_ids=df.snip.to_numpy(), model="Qwen/Qwen2.5-Coder-7B-Instruct")
 LOADERS.update({"bw_raters": load_bw_raters, "dorn_raters": load_dorn_raters})
+
+def load_multipref_pairs(crit="overall"):
+    """paper 4 Stage 13 S13-2 (PROTOCOL_STAGE13.md): MultiPref in long binary format — one row per (comparison, annotator) with a non-tie preference; yb = 1 if B preferred;
+    texts = the prompt, resp_A / resp_B = the completions; groups = prompt_id; rater_group = crowd / expert (annotation pool); lang = "en"; item_ids '<comparison>:<annotator>|x'
+    (each row is its own choice event); src = index of the comparison in load_multipref (features are those of the comparison)."""
+    import json
+    rows = [json.loads(l) for l in open(MULTIPREF)]; out = []
+    for i, r in enumerate(rows):
+        for pool, anns in (("crowd", r["normal_worker_annotations"]), ("expert", r["expert_worker_annotations"])):
+            for a in anns:
+                lv = _MP_LV[a[f"{crit}_pref"]]
+                if lv == 2: continue
+                out.append((f"{r['comparison_id']}:{a['evaluator']}|x", str(r["text"]), str(r["completion_a"]), str(r["completion_b"]), int(lv > 2), str(a["evaluator"]), str(r["prompt_id"]), pool, i))
+    df = pd.DataFrame(out, columns=["pid", "prompt", "A", "B", "yb", "user", "group", "pool", "src"]); pool = df.groupby("user").pool.first().to_dict()
+    return dict(name=f"multipref_pairs", texts=df.prompt.tolist(), H=np.where(df.yb.to_numpy() == 1, 4, 0)[:, None], K=5, item_ids=df.pid.to_numpy(), groups=df.group.to_numpy(), rater_ids=np.array(["user"]),
+                evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in pool.items()}, yb=df.yb.to_numpy(), resp_A=df.A.to_numpy(), resp_B=df.B.to_numpy(),
+                lang=np.array(["en"] * len(df)), src=df.src.to_numpy(), model="Qwen/Qwen2.5-7B-Instruct")
+LOADERS.update({"multipref_pairs": load_multipref_pairs})
