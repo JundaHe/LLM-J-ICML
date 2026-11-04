@@ -1200,3 +1200,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-04 15:38 — paper 4: embedding projection revised
 - Job 12578 at 18,481/202,190 texts after 2.5 h. Using token counts (median 621, max 8,420 tokens) instead of characters, this is 28.7 % of the tokens; throughput per token is falling as texts shorten (batch cap 64), so the revised projection is ≈ 12–13 h total, finish ≈ 01:00–02:00 on 11-05, still inside the 20 h limit (ends 08:54). S13-3b (afterok, 2 h) follows.
 - Audit: App. D rater-vs-item ratio 25 traced to results/STAGE1_REPORT.md (M2 − M0 +0.0364 vs M4 − M2 +0.0014); the per-fold range 19–36 and "about half at k = 0" remain to be traced. No new results; no bug signs.
+
+## 2026-11-04 16:32 — paper 4: numeric audit closed; embedding at 32 %
+- Job 12578 checkpoint 22,554/202,190 texts = 32.4 % of tokens after 3.5 h (~3.7 % per 30 min); projection unchanged, finish ≈ 01:30 on 11-05.
+- Remaining audit items traced: App. D per-fold rater-vs-item ratio 19.1–35.7 (rater_long_multipref_overall_tuned.json heldout_ll_M{0,2,4}_folds; shift +0.005, scale +0.031 also match); "about half at k = 0" (stage2a_multipref_overall_A5.md: DFs − D direction +0.0025 at k = 0 vs +0.005 at k = 20; the joint-training MultiPref contrast −0.003 / +0.3 pt is DF − D at k = 0 in the same table); LoRA DFs 0.689 is the draw-0 direction accuracy (STAGE2A_REPORT.md l.130; draft labels the block draw 0). Every quantitative claim in the draft now has a located source.
