@@ -1235,4 +1235,4 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 02:31 — paper 4: third-turn embedding done; S13-3b resubmitted
 - Job 12578 finished 02:12: features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz, (40,438 conversations, 5, 3584).
-- S13-3b (12582) failed at load in 21 s: conversation_id is stored as an object array, so np.load needs allow_pickle=True (our own file). Loader-only fix in s13_3b.py, no change to the analysis; resubmitted as job 12615.
+- S13-3b (12582) failed at load in 21 s: conversation_id is stored as an object array, so np.load needs allow_pickle=True (our own file). Loader-only fix in s13_3b.py, no change to the analysis; resubmitted as job 12615, which failed because the edit commented out the `ci` map on the same line; corrected and resubmitted as job 12616.
