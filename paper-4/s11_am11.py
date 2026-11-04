@@ -8,7 +8,7 @@ if PART == "fact":
         for S_ in ("E", "G"):
             g_, nn = [], []
             for u in ok:
-                s2 = s2W if P_ == "W" else S2["O"]["length"][rfold[u]]; js = np.array([j for e in SUP[S_][u] for j in e]); d = map_dev(LG[P_][js], An[js, col], Yn[js], s2)
+                s2 = s2W if P_ == "W" else S2["O"]["length"][rfold[u]]; js = np.array([j for e in SUP[S_][u] for j in e]); d = map_dev(LG[P_][js], An[js, col], Yn[js], s2)[0]
                 t = np.array(TEST[S_][u]); y = Yn[t]; lp = LG[P_][t]; lo = lp + d * An[t, col]; g_.append(((lo > 0) == y).sum() - ((lp > 0) == y).sum()); nn.append(len(t))
             G[P_ + S_] = (np.array(g_, float), np.array(nn, float))
     rng = np.random.RandomState(17); BS = [rng.randint(0, len(ok), len(ok)) for _ in range(2000)]; out = {"n_users": len(ok)}
