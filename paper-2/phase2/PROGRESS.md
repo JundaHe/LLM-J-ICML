@@ -1196,3 +1196,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-04 14:32 — paper 4: audit follow-up 2; embedding progress
 - Job 12578: checkpoint at 10,995/202,190 after ~1.5 h (≈ 3.6k texts per 30 min on the longest texts; should accelerate as texts shorten; projection unchanged, ≈ 10 h).
 - Traced: App. G CA prior variances (stage9_sapca.json sigma2: length 0.29–0.37, paragraphs 0.25–0.30, list/heading 0.19–0.23; fold 2 gives URLs 1.37, an isolated value now stated in the draft); App. B joint-training consensus contrasts (PROGRESS 2026-10-28 10:21 framing check from existing k = 0 numbers); aspect oracle strengths +1.4/+5.0 (PROGRESS 2026-10-31 15:21, S5-4 Am. 3). Still untraced: App. D ratio 19–36, "about half at k = 0", LoRA DFs 0.689 (draw-0 table stage2a_multipref_overall_lora_f2.md).
+
+## 2026-11-04 15:38 — paper 4: embedding projection revised
+- Job 12578 at 18,481/202,190 texts after 2.5 h. Using token counts (median 621, max 8,420 tokens) instead of characters, this is 28.7 % of the tokens; throughput per token is falling as texts shorten (batch cap 64), so the revised projection is ≈ 12–13 h total, finish ≈ 01:00–02:00 on 11-05, still inside the 20 h limit (ends 08:54). S13-3b (afterok, 2 h) follows.
+- Audit: App. D rater-vs-item ratio 25 traced to results/STAGE1_REPORT.md (M2 − M0 +0.0364 vs M4 − M2 +0.0014); the per-fold range 19–36 and "about half at k = 0" remain to be traced. No new results; no bug signs.
