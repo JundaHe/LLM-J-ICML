@@ -22,7 +22,7 @@ Secondary: the same per language; Stage 8's LoRe and LoRe-reg are not rerun.
 
 ## Amendments
 
-## Result (2026-11-04 09:35, job 12569; read by the frozen rules, no revision)
+## Result (2026-11-04 09:31, job 12569; read by the frozen rules, no revision)
 1,702 test users, CA second turns, k = 20 events. Selected on pseudo-new users: TRV {length, c = 1; prim3, 0.25; length, 0.25; length, 1; prim3, 0.125}; isotropic {length, 0.3; prim3, 0.1; length, 0.03; prim3, 0.03; prim3, 0.03}; rank-2 adaptation c = 0.1 in folds 0–1 and **no adaptation** in folds 2–4.
 - **TRV own − μ: +0.38 [+0.13, +0.64] choice points; +0.0046 [+0.0031, +0.0063] nats per pair** (two-way prompt-group × user interval: accuracy [−0.04, +0.83], LL [+0.0018, +0.0074]).
 - Isotropic own − μ: +0.31 [+0.05, +0.58] points, +0.0038 [+0.0021, +0.0057] nats. Rank-2: −0.05 [−0.34, +0.24], −0.0013 nats.
