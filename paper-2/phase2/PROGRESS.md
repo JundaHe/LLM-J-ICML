@@ -1180,6 +1180,6 @@ Round 7 (gpt-6.1-sol): 6/10, 50–60 %; S13-1 assignment score sound (σ(S) deri
 ### 2026-11-04 12:32 — paper 4: writing pass (round-7 order)
 GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queued). §6 CA rewritten as identity → position → benefit → baseline sensitivity → earlier evidence (1,808 → 1,327 words; old text kept in Appendix F.2); §7 recommendations, §8 discussion, impact statement, limitations and the introduction rewritten around the separation of graded-rating gains, user-specific choice predictability and gains over a population model.
 
-## 2026-11-04 13:40 — paper 4: third-turn embedding running
+## 2026-11-04 13:35 — paper 4: third-turn embedding running
 - Job 12578 (embed_ca3) started on GPU at ~12:54 (first checkpoint at 3,718/202,190 texts). Texts are processed longest-first; by character-length share the first checkpoint is ~5–6 % of the work, so the projected total is ~10 h (finish ≈ 23:00), inside the 20 h limit; checkpoint/resume in place. S13-3b (12582) is chained afterok.
 - No new results; no bug signs. Started a full numeric cross-check of PAPER4_DRAFT.md / CLAIMS.md against results/*.json and protocol Result sections (read-only audit).
