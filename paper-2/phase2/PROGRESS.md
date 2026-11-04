@@ -1223,3 +1223,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-04 22:31 — paper 4: embedding at 75 %
 - Job 12578 checkpoint 100,531/202,190 texts = 74.9 % of tokens after 9.6 h; throughput per token easing (~3.2 % per 30 min, short texts batch less efficiently); projected finish ≈ 02:00–02:30 on 11-05, well inside the limit (08:54). No new results, no bug signs.
+
+## 2026-11-04 23:31 — paper 4: embedding at 81 %
+- Job 12578 checkpoint 119,968/202,190 texts = 81.1 % of tokens after 10.6 h (~3.1 % per 30 min); projected finish ≈ 02:30 on 11-05. No new results, no bug signs.
