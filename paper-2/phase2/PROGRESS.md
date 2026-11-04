@@ -1232,3 +1232,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 01:31 — paper 4: embedding in final stretch
 - Job 12578 past 170,000/202,190 texts (checkpoint 165,857); the remaining texts are the shortest, finish expected ≈ 02:00. S13-3b (12582, afterok) inputs verified: reads features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz and results/stage13_delta1.json (present). No new results, no bug signs.
+
+## 2026-11-05 02:31 — paper 4: third-turn embedding done; S13-3b resubmitted
+- Job 12578 finished 02:12: features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz, (40,438 conversations, 5, 3584).
+- S13-3b (12582) failed at load in 21 s: conversation_id is stored as an object array, so np.load needs allow_pickle=True (our own file). Loader-only fix in s13_3b.py, no change to the analysis; resubmitted as job 12615.

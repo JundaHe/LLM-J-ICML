@@ -4,7 +4,7 @@ on each eligible user's third turns of conversations not used as first-turn supp
 import os, sys, json, collections, numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2); os.environ["CA_PANEL"] = "ca_pairs_third"
 import data_panels
-PAN0 = data_panels.load("ca_pairs_third"); Hz = np.load(f"{P2}/features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz"); ci = {c: i for i, c in enumerate(Hz["conversation_id"])}
+PAN0 = data_panels.load("ca_pairs_third"); Hz = np.load(f"{P2}/features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz", allow_pickle=True)  # own file; conversation_id is an object array; ci = {c: i for i, c in enumerate(Hz["conversation_id"])}
 EVT0 = np.array([s.split("|")[0] for s in PAN0["item_ids"]]); OTH = np.array([s.split("|")[1] for s in PAN0["item_ids"]]); ch = {}
 for e_, o_ in zip(EVT0, OTH): ch.setdefault(e_, set("abcd")).discard(o_)
 CH = np.array([next(iter(ch[e_])) for e_ in EVT0]); yb = np.asarray(PAN0["yb"]); LB = np.where(yb == 1, CH, OTH); LA = np.where(yb == 1, OTH, CH); L_ = {x: i for i, x in enumerate("abcd")}
