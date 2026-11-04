@@ -1320,3 +1320,10 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
   - Acronyms: TRV expanded at first mention (transfer-calibrated covariance variant); WIMHF named as a protocol with its citation.
 - Visual check of the rendered page 3 found a real defect: §4 showed "b_r ∈ RˆK" with literal underscores. Plain-text subscripts in §4 and Appendices C/F/G are now LaTeX math. "ρ < ½" is \tfrac12 in the source, so that one was only an extraction artefact.
 - Build: 0 errors, 0 undefined citations, 20 pages; main text ends on page 8.
+
+## 2026-11-05 06:31 paper 4 — visual pass of pages 1–8
+- No Slurm jobs running; repository in sync.
+- Rendered pages 1–8 and inspected each one. Defect found: literal tildes rendered as accents ("by ˜0.6 points" on p.2, "z ˜ N(0, I)" in an appendix). Replaced with "about" and math respectively.
+- No other layout defects seen: tables 1–5 have captions and fit the page width, and figures and headings are intact.
+- LaTeX source contains no stray "\_" or caret escapes other than in file names.
+- Build: 0 errors, 0 undefined citations, 20 pages; main text ends on p.8.
