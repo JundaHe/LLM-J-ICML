@@ -1229,3 +1229,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 00:31 — paper 4: embedding at 87 %
 - Job 12578 checkpoint 141,357/202,190 texts (150k passed) = 87.1 % of tokens after 11.6 h; projected finish ≈ 02:30. S13-3b (afterok) then runs ≤ 2 h. No new results, no bug signs.
+
+## 2026-11-05 01:31 — paper 4: embedding in final stretch
+- Job 12578 past 170,000/202,190 texts (checkpoint 165,857); the remaining texts are the shortest, finish expected ≈ 02:00. S13-3b (12582, afterok) inputs verified: reads features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz and results/stage13_delta1.json (present). No new results, no bug signs.
