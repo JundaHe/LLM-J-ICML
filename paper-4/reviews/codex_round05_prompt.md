@@ -1,0 +1,919 @@
+You are a senior ICML reviewer and co-author. Round 5. Since round 4 we did what you prioritised: (1) the frozen Stage 12 evaluation of TRV (unchanged) on CA second turns of the same users, with the validated isotropic prior and tuned rank-2 as comparators (result below, read by the pre-set rules); (2) S11-1, the WIMHF-style reproduction (held-out high-volume annotators, population model on low-volume ones, prompts not separated) vs our protocol, plus a 2 × 2 (population model × prompt separation) on common users (Am. 7, 9); (3) an observational proxy for your balanced-prompt-bank test (CA has no shared prompt bank): length transfer centred within language × prompt cluster, and own − task-mix-matched other (Am. 8); (4) event-level learnability ceilings with one winner per choice event (Am. 6); (5) exact intervals on calibration rates (Am. 5) and a Holm-adjusted detection table (Am. 10). On turn 1 the validated isotropic prior matched or beat TRV (exploratory). Protocols, results and the current draft are inlined.
+Please give: 1) score / acceptance probability now and what changed; 2) given Stage 12, what the paper's central claim, title and ≤ 230-word abstract should be — be concrete; 3) whether the WIMHF 2 × 2 result (population-model misfit, not prompt sharing, inflates the gain) is sound and how strongly it can be stated; 4) the most damaging remaining weaknesses and at most 2 further experiments worth doing before submission, with pre-set rules, or say "stop experimenting and write"; 5) any statistical or logical errors in the numbers or reasoning.
+Be blunt and specific. Do not invent numbers.
+
+=================== FILE: PROTOCOL_STAGE11.md ===================
+# Paper 4 — Stage 11: which individual preferences transfer across prompts? (frozen before any result)
+Committed 2026-11-01, after the frozen Community Alignment (CA) evaluation (Stage 9 Am. 6–7: SAP abstains by validation; the fitted model nevertheless assigns large training-user variance to length, paragraphs and list/heading structure) and a brainstorm with gpt-6.1-sol that identified two close precedents: WIMHF (Movva et al., 2025: annotator-specific weights on one interpretable feature, paragraphs vs lists, on CA for *seen* high-volume annotators, held-out AUC +1.1 % at k = 16) and Chen et al. (2026: stated vs revealed preferences on PRISM). CA outcomes have informed the hypotheses, so this is a prospectively specified new analysis of previously studied data. Any change after the first result is logged under "Amendments".
+
+## Common elements
+CA first-turn chosen-vs-other pairs (Stage 8 panel), grouped into choice events (conversations); the 24 standardised attribute differences a_i of `attr_feats.py`; **primary attributes: length (1), paragraphs (13), list/heading lines (2)**; the per-language population model = ridge logistic regression of the choice on the PCA-256 response difference plus per-language population attribute weights μ_ℓ (as `sap_ca.py`), **cross-fitted over the five user folds** (the model used for a user is fitted on the other four folds' users). Uncertainty: user bootstrap (seed 17) keeping all of a user's events together; prompt-group/user two-way bootstrap for S11-1 contrasts.
+
+## S11-1: reproducing the WIMHF personalisation result under our controls
+One attribute (list/heading lines, our closest observable proxy of WIMHF's paragraphs-vs-lists feature; length and paragraphs as secondary), a user-specific coefficient with a Gaussian prior centred at the population coefficient (prior variance by marginal likelihood on the training users), other attributes at their population weights. Two populations: (a) **WIMHF-style seen users** — the population model fitted on the bottom 50 % of users by event count, the top-50 % users' first k events (k ∈ {1, 2, 4, 8, 16}) fit their coefficient, their remaining events are the test set; (b) **unseen users** — our protocol (user folds, prompt-group folds, k events from training prompts, test on held-out prompt groups). Outcomes: held-out AUC and choice accuracy of own coefficient vs population coefficient, and own vs another user's coefficient (derangement within language). Reading: the WIMHF result is reproduced if (a)'s AUC gain at k = 16 has a lower bound above 0; we report whether it survives the other-user control, the switch to unseen users / held-out prompts, and choice accuracy.
+
+## S11-2: cross-fitted transferable heterogeneity (the diagnostic)
+For every user with at least 10 events, the events are split at random (seed 5) into two halves with **disjoint prompt groups**. For each half h the one-step estimate of the user's attribute deviation from the population is z_u^h = I_u^h⁻¹ s_u^h, with s_u^h = Σ_{i∈h} a_i (y_i − p̂_i) (population-model residual scores) and I_u^h = Σ_{i∈h} p̂_i(1 − p̂_i) a_i a_iᵀ + 10⁻³ I (computed for the three primary attributes jointly). **Transferable covariance** Ĉ = mean_u z_u^A z_u^Bᵀ (symmetrised): an estimate of the covariance of the user's deviations that reproduces across independent prompts; its diagonal Ĉ_jj is the transferable variance of attribute j. Compared with the in-sample random-slope variance (the Laplace/fixed-point σ²_j of Stage 9 on the same users) as the **transferable share** Ĉ_jj / σ²_j.
+**Simulation controls on the actual CA design** (observed users, events, attributes and population predictions; labels re-drawn), fixed now: (i) *stable positive control* — θ_u − μ ~ N(0, diag σ²) with σ² = the fitted Stage-9 variances of the three attributes; (ii) *half-strength* — σ²/4; (iii) *null* — θ_u = μ; (iv) *context-dependent* — independent deviations in the two halves (no cross-half covariance) with the same marginal variance; (v) *misspecified population* — labels from a population model in which the length weight differs by prompt-length tercile (±0.3 around μ), an interaction the fitted model omits, θ_u = μ. Each control 20 replicates. The diagnostic is **calibrated** if (iii) and (iv) give Ĉ_jj intervals covering 0 in ≥ 95 % of replicates and (i) is detected (lower bound > 0) in ≥ 80 % of replicates.
+**Decision rules (real data, primary attributes):** if calibrated and Ĉ_jj has a lower 95 % bound above 0 → transferable heterogeneity exists for attribute j, reported with its share; if calibrated, Ĉ_jj's upper bound is below the half-strength control's mean and the half-strength control is detected in ≥ 80 % → "the fitted variance lacks a corresponding transferable signal" for attribute j; otherwise inconclusive. All 24 attributes secondary (Holm correction across them).
+
+## S11-3 (conditional on S11-2 finding transferable variance for at least one primary attribute): transfer-trained adaptation
+A new user's deviation is predicted by the linear empirical-Bayes rule θ̂_u − μ = Ĉ (Ĉ + V_u)⁻¹ z_u, with Ĉ the cross-fitted transferable covariance estimated on training users only and V_u = (I_u)⁻¹ from the user's k = 20 support events; evaluated on the frozen CA test split of Stage 9 Am. 6 with its eligibility rules and contrasts (own − μ choice accuracy and LL; paired against validation-selected SAP, the tuned rank-2 comparator and abstention). Method claim only if own − μ choice accuracy has a lower bound above +1 point (the paper's threshold), else reported as such.
+
+## Forbidden statements
+"Preferences are context-dependent" from a gap that only reflects harmful cross-half adaptation; any claim about attributes outside the dictionary; individual-prompt-level preference variance (not identifiable without repeated judgements).
+
+## Amendments
+
+**Amendment 1 (2026-11-03 16:20, after the first S11-2 result; exploratory, the frozen reading is reported first and unchanged).** Frozen result: real transferable variances length 0.32 [0.25, 0.40], paragraphs 0.72 [0.23, 1.29], list/heading 0.46 [−0.01, 0.98]; the diagnostic did **not** meet the calibration rule (null cover-0 rates 0.90/0.95/0.85; stable detection 1.00/0.70/0.30), so by the frozen rule all three primaries are **inconclusive** and S11-3 is not triggered. Two problems found on reflection: (a) with 20 replicates the ≥ 95 % coverage rule is decided by binomial noise (18/20 under nominal 95 % coverage has probability 0.26 of occurring or worse), and two-sided coverage penalises negative excursions that cannot produce a false detection; (b) the misspecification control does not cover the confound most likely to create spurious *transferable* user variance: users' prompt mix is stable across halves, so a prompt-type × attribute interaction omitted from the population model appears as a user-level deviation that reproduces across disjoint prompt groups. The all-24 secondary analysis is degenerate (joint 24-dimensional one-step inversion on ~5 events per half; estimates up to 10³) and is not interpreted. Added analyses (`S11_AM1=1`):
+1. **Prompt-cluster-adjusted population model:** k-means (k = 8, seed 0) on the PCA-256 prompt embeddings; cluster × primary-attribute interaction weights fitted by ridge logistic regression (λ = 1) with the cross-fitted population logit as offset, cross-fitted over the same user folds; Ĉ recomputed with the adjusted logit. The estimated interactions are reported.
+2. **Cluster-confound control:** labels drawn from the adjusted logit (with the estimated interactions, real user prompt mixes), θ_u = μ, analysed with the *unadjusted* logit (does the confound create spurious Ĉ?) and with the adjusted logit refitted on the simulated labels (does the adjustment remove it?).
+3. **200 replicates** per control; per-attribute calibration: false detections (lower bound > 0) in ≤ 10/200 replicates for each of null, context and cluster-confound-with-adjustment, and stable detection ≥ 80 %.
+4. Secondary attributes: each of the 24 attributes on its own (one-dimensional z), Holm across the 24.
+Exploratory reading: attribute j has **transferable heterogeneity (exploratory)** if it is calibrated by 3 and its adjusted Ĉ_jj has a lower 95 % bound above 0; S11-3 then runs as an exploratory analysis, labelled as such.
+
+**Amendment 2 (2026-11-03 18:45, after the Amendment-1 result; exploratory).** Amendment-1 result: the prompt-cluster interactions are negligible (|weights| ≤ 0.024) and the adjustment leaves Ĉ unchanged (length 0.32 [0.25, 0.40], paragraphs 0.76 [0.26, 1.35], list/heading 0.45 [−0.02, 0.95]); 200-replicate false detections are length 10/9/4, paragraphs 4/4/5 and list/heading 3/2/5 of 200 (null/cluster/context), and stable detection is 200/169/109 → by the Am.-1 reading **length and paragraphs show transferable heterogeneity (exploratory)**, list/heading is not calibrated (power). Length sits exactly at the false-detection limit (10/200), and paragraphs' Ĉ exceeds its in-sample σ² by 2.7×, which suggests heavy-tailed one-step estimates; both are reported as caveats. One-dimensional secondaries (uncalibrated, Holm): length, list/heading, bold/italic, digits, paragraphs, type-token ratio and headings have Holm p < 0.05. Stage 8 Am. 2 found that the individual (within-country) part of LoRe's own − other is +3.5 points with a group part ≈ 0, consistent with this. S11-3 therefore runs (exploratory), implemented as specified, with these details fixed now (`s11_3.py`):
+- Ĉ is re-estimated **within each frozen CA fold on training users only** (all training events, population logit = the fold's base model plus μ_ℓ, halves with disjoint prompt groups, seed 5, users with ≥ 10 events), symmetrised and projected to the positive semi-definite cone; the support score s_u and information I_u use the same population logit on the user's 20 support events; θ̂_u − μ = Ĉ (I + I_u Ĉ)⁻¹ s_u (the stated rule rewritten without inverting Ĉ). Methods: **TR3** (three primary attributes, full Ĉ; primary), TR3-diag (diagonal Ĉ), TR7 (the seven Holm-significant one-dimensional attributes, diagonal Ĉ; the selection used all users, so it is labelled as leaking selection).
+- Same test users, draws (seeds 10,000 f + d) and records as Stage 9 Am. 6; paired contrasts against μ, against SAP-as-selected (= μ, it abstained) and against the tuned rank-2 model from `stage9_sapca_records.json`.
+- **Learnability ceiling** (on the same design, labels simulated from the fitted model): δ_u ~ N(0, Ĉ), true p = σ(population logit + δ_u·a); expected test choice accuracy of the oracle (knowing δ_u), of TR3 adapted on simulated support labels, and of μ; 5 Monte Carlo draws per fold. This bounds what transferable heterogeneity of the estimated size could give at k = 20.
+- Robustness of Ĉ per fold (point estimates): users with ≥ 30 events; dropping the 1 % largest |z^A z^B| contributions.
+The method claim stays the frozen one (own − μ choice accuracy lower bound above +1 point).
+
+**Amendment 3 (2026-11-03 21:45, after the S11-3 result; exploratory).** S11-3 result (1,897 test users, k = 20 events): TR3 own − μ +0.13 [−0.28, +0.53] choice points and −0.0060 [−0.0121, +0.0000] nats; TR3-diag +0.07, TR7 −0.24; TR3 − rank-2 −0.06 [−0.36, +0.21] → the frozen method rule is **not met**. Learnability ceiling under the fitted Gaussian model: oracle +4.16 points, TR3 adapted on simulated labels **+2.81** points — twenty times the realised +0.13. The in-fold Ĉ is unstable (list/heading −0.32 … +0.96 across folds; ≥ 30-event users paragraphs −5.8 in one fold), and trimming the 1 % largest cross-half products halves it (length 0.23–0.30, paragraphs 0.25–0.49, list 0.04–0.18). The model-implied gain therefore overstates the realised gain by an order of magnitude; we test four explanations, fixed now (`S113_AM3=1`, the same folds, draws and test users):
+1. **Direct out-of-sample transfer on the evaluated users:** Ĉ_test = mean over test users of z_u(support) z_u(test)ᵀ (support = the k = 20 events from training prompt groups, test = the held-out prompt groups; draw 0), user bootstrap across folds. If its diagonal is near the training Ĉ, the deviations do transfer to the evaluated split and the gap lies in learnability; if near 0, the half-split Ĉ does not describe the support→test transfer.
+2. **Heavy tails:** the ceiling recomputed with the trimmed Ĉ, with δ_u from a multivariate t (3 degrees of freedom, scaled to covariance Ĉ), and with a concentration mixture (10 % of users carry deviations with covariance 10 Ĉ, the rest none) — same total covariance, different distributions.
+3. **Concentration of the realised gain:** the TR3 − μ gain among the decile of test users with the largest predicted shift ‖θ̂_u − μ‖ against the rest (user bootstrap).
+4. **Overconfident adaptation:** TR3 with Ĉ shrunk by factors 0.5 and 0.25 (a grid reported in full, not selected on test).
+Reading: the paper states that "variance-based diagnostics overstate learnable personalisation by an order of magnitude on CA" only if 1 shows a non-zero transfer and 2–4 do not close the gap to within a factor of three; any explanation that closes the gap is reported as the explanation.
+
+**Amendment 4 (2026-11-03 22:45, after the Amendment-3 result; exploratory).** Am.-3 results: (1) support→test transfer on the evaluated users is clear for length, 0.41 [0.27, 0.55], and not shown for paragraphs 0.18 [−0.34, +0.68] or list/heading 0.12 [−0.28, +0.52]; (2) TR3-achievable ceilings: Gaussian +2.81, trimmed Ĉ +1.76, t3 +1.59, 10 %-concentration mixture +0.38 points (oracle +4.16 / +2.95 / +2.92 / +1.37); (3) the top shift decile gains −0.38 [−2.39, +1.67] (uninformative); (4) shrinking Ĉ raises the realised gain monotonically: ×1 +0.13 [−0.28, +0.53], ×0.5 +0.36 [+0.01, +0.71], ×0.25 **+0.53 [+0.23, +0.83]** points and +0.0090 [+0.0060, +0.0119] nats. By the pre-set reading the gap is explained (to within a factor of three) by over-adaptation with a too-large, non-Gaussian prior — the order-of-magnitude statement is **not** made; the paragraphs/list parts of Ĉ do not transfer to the evaluated split. Since the shrink grid was read on test users, a validated version is fixed now (`S113_AM4=1`): within each fold, the pseudo-new-user selection of Stage 9 Am. 6 (the same 20 % of training users, seeds 3 + f and 40 + f, base and μ refitted without them, k = 20 support events, the rest scored) selects by mean log-likelihood the attribute set {length; the three primaries} and the prior scale c ∈ {1, 0.5, 0.25, 0.125, 0.0625, 0} (c = 0 is no adaptation) with Ĉ estimated on the remaining training users; the selected (set, c) is applied with the fold's full-training Ĉ to the frozen test users. Outcomes: own − μ choice accuracy and LL, paired against the tuned rank-2 model. The method claim keeps the frozen threshold (lower bound above +1 point); a lower bound above 0 on LL is reported as a calibration gain only.
+
+**Amendment 5 (2026-11-04 01:45; reporting only, no new analysis of data).** Following the fourth review ("Monte Carlo intervals on calibration rates"), the Am.-1 simulation counts are reported with exact (Clopper–Pearson) 95 % intervals. False detections (length / paragraphs / list-heading, of 200): null 10 [2.4, 9.0 %], 4 [0.5, 5.0 %], 3 [0.3, 4.3 %]; cluster-confound (adjusted) 9 [2.1, 8.4 %], 4, 2 [0.1, 3.6 %]; context 4, 5 [0.8, 5.7 %], 5. Stable detection 200 [98.2, 100 %], 169 [78.7, 89.2 %], 109 [47.3, 61.5 %]. Reading: the Am.-1 rule (≤ 10/200) is met by the point counts, but the length false-detection rate is not shown to be ≤ 5 % (upper bound 9.0 %); the length transferability statement carries this caveat. Paragraphs' stable-detection power is not shown to be ≥ 80 % (lower bound 78.7 %).
+
+**Amendment 6 (2026-11-04 02:00, before running; exploratory robustness of the Am.-3 learnability ceiling).** The fourth review noted that the Am.-3 ceilings draw the three pairs of a choice event independently, which does not preserve the single winner of an event, so they may misstate learnability. `s11_ev.py` recomputes the ceiling with **event-level** simulated labels on the same design (first turns, 5 folds, draw 0 of each fold's support sampling, the S11-3 test users, Ĉ = the fold's full-training PSD cross-moment over the three primaries): each event's responses get utilities relative to the chosen one from the population logits (u_c = 0, u_o = −logit(c ≻ o)) plus the simulated deviation's attribute term; one winner is drawn from the multinomial logit over the event's responses; the event's pairs are then winner-vs-each-other. Deviations: Gaussian N(0, Ĉ), t₃ and 10 %-mixture (as Am. 3), 5 Monte Carlo draws each (seed 900 + f). Learners: μ, oracle (true utilities), TR3 at c = 1 and at c = 0.25. The pair-level version is recomputed in the same script as a consistency check (it must reproduce the Am.-3 Gaussian figure within Monte Carlo error). Reported: oracle − μ and learner − μ accuracy in points per distribution and mode. Reading: if the event-level TR3 ceiling (Gaussian) is within a factor of 1.5 of the pair-level one, the Am.-3/Am.-4 learnability statements stand; otherwise the draft's ceiling numbers are replaced by the event-level ones. No real-data result changes.
+*Am.-6 result (2026-11-04 02:35, job 12558).* Pair-level recomputation reproduces Am. 3 (Gaussian oracle +4.26, TR3 c = 1 +2.87 ± 0.08 MC s.e.; t₃ +1.58; mixture +0.37). Event-level (one winner per event): Gaussian oracle +3.56, TR3 c = 1 **+1.93 ± 0.09**, c = 0.25 +2.12; t₃ oracle +2.57, TR3 +0.93 / +1.27; mixture oracle +1.17, TR3 −0.38 / +0.38. Event/pair ratio for Gaussian TR3 = 0.672 → within the factor-1.5 tolerance (barely; bound 0.667), so by the pre-set reading the Am.-3/Am.-4 learnability statements stand; the draft reports both figures. The realised TR3 gain (+0.13) is ~15× below the event-level Gaussian ceiling and TRV's +0.49 is ~4× below the c = 0.25 one.
+
+**Amendment 7 (2026-11-04 02:50, before running; S11-1 implementation details, the S11-1 specification above unchanged).** The fourth review asked to finish S11-1 and corrected our label: WIMHF adapts high-volume annotators excluded from population training, so population (a) is called **"WIMHF-style held-out high-volume users, prompts not separated"**, not "seen users". Fixed now (`s11_1.py`, first turns): per attribute (list/heading primary; length, paragraphs secondary, each one-dimensional), the user deviation d_u ~ N(0, σ²) added to the population weight, MAP by Newton; σ² maximises the summed Laplace marginal likelihood of the population model's training users over a log grid (10⁻³ … 10, 25 points). (a) Users ranked by event count (ties by id); the population model (base ridge, λ by the validation flag; per-language μ) is fitted on the bottom 50 %; top-50 % users with ≥ 17 events: events in a random order (seed 0), the first k ∈ {1, 2, 4, 8, 16} fit d_u, and the events after the 16th are the common test set for all k. (b) Our protocol: per fold the Stage-8/11 population model, test users with ≥ 16 support events in training prompt groups and test pairs in held-out prompt groups, k support events drawn once (seed 10,000 f), nested across k (first k of one random order). Outcomes per k: pooled pair AUC (label = A chosen; logit of A over B) and choice accuracy of own vs population, and own vs **another user of the same language** (cyclic shift within language over a seed-0 permutation; the other user's d from their own k events). User bootstrap (seed 17, 1,000 resamples) for AUC differences, 2,000 for accuracy. Reading as frozen: WIMHF reproduced if (a)'s own − population AUC gain at k = 16 has a lower bound above 0; survival of the other-user control, of (b), and of choice accuracy reported separately. An AUC result does not establish a choice benefit.
+
+**Amendment 8 (2026-11-04 03:45, before running; exploratory, observational proxy for the review's "balanced prompt bank").** The fourth review's second experiment (users answering a shared, balanced prompt bank) needs new data collection; CA's `in_balanced_subset` balances demographics, not prompts, so it cannot serve. The identification problem it targets — users' stable prompt mix creating stable residual coefficients without different preferences on the same tasks — is probed observationally on CA first turns, with **length as the single primary attribute** (`s11_mix.py`). Prompt clusters: k-means (k = 8, seed 0; k = 32 secondary) on the PCA-256 prompt embeddings, as Am. 1. Population logits: the fold model of each user's own fold (cross-fitted, as S11-1 (b)). (1) **Within-task-type transfer:** for users with ≥ 10 events, the S11-2 halves (disjoint prompt groups, seed 5); within each (user, cluster) cell with ≥ 2 events in each half, the one-dimensional one-step length deviation z^h = s^h / (I^h + 10⁻³) per half; z centred by its mean over the cells of the same (language, cluster) in that half; statistic = the I^A I^B / (I^A + I^B)-weighted mean of the centred products z^A z^B (user bootstrap, seed 17, 2,000). Reported beside it on the same users: the uncentred within-cell version and the pooled (all clusters) one-dimensional length cross-moment. Centring removes any task-type-specific population misfit, so a positive centred within-cell covariance is user variation in length weight **within a task type across different prompts**. (2) **Task-mix-matched own − other:** S11-1 (b) length adaptation at k = 16 (same users, support events, σ² per fold); "other" = the same-language user whose support-event cluster shares (k = 8) are nearest in L1 (excluding self); also the same-language cyclic other of S11-1. Outcomes: own − matched-other choice accuracy and log-likelihood per pair, own − population likewise (user bootstrap, 2,000). **Decisions (fixed now):** "reproducible individual length-related preference signal under matched task type (observational)" if (1)'s centred k = 8 statistic and (2)'s own − matched-other log-likelihood both have lower bounds above 0; otherwise the CA finding is restricted to "user-associated residual structure under CA's observed task mix". The +1-point rule applies separately to own − population accuracy. A shared prompt bank remains the required design for a causal claim; this is stated.
+*S11-1 result (2026-11-04 03:50, job 12566; frozen reading first).* (a) WIMHF-style held-out high-volume users (1,802 users, 106,665 test pairs; population AUC 0.728): **list/heading at k = 16, own − population AUC +0.0001 [−0.0017, +0.0017], accuracy −0.09 [−0.23, +0.05] → WIMHF's personalisation result is not reproduced with our list/heading proxy** (not WIMHF's own discovered feature). Own − same-language other is positive (+0.012 AUC, +0.64 points), i.e. adapted coefficients are user-specific but do not beat the population coefficient. Secondaries at k = 16: length own − population **AUC +0.010 [+0.008, +0.013], accuracy +1.06 [+0.80, +1.33]**; paragraphs +0.0003 AUC, −0.02 points. (b) Our protocol (2,425 users, 45,642 test pairs, population AUC 0.743): list/heading +0.0003 AUC, −0.12 points; length **+0.0068 [+0.0039, +0.0099] AUC, +0.45 [+0.14, +0.80] points**; paragraphs +0.0019, +0.02. Reading: of the three attributes only length personalises; moving from WIMHF's setting (a weaker population model fitted on low-volume users, prompts not separated) to new users on held-out prompts roughly halves its choice gain (+1.06 → +0.45), and neither reaches a lower bound of +1. k = 1–8: own − population is ≤ 0 for list/heading and paragraphs at every k.
+*Am.-8 result (2026-11-04 03:58, job 12567).* (1) Within-task-type length transfer, centred within language × cluster: k = 8 **0.206 [0.183, 0.231]** (2,955 users, 4,859 cells; uncentred 0.210), k = 32 0.272 [0.225, 0.322]; pooled one-dimensional length cross-moment on the same users 0.190 [0.172, 0.210] — centring on task type changes nothing. (2) At k = 16 (2,425 users; own − population +0.45 [+0.11, +0.79] points, +0.0038 [+0.0010, +0.0066] nats, matching S11-1 (b)): matched other (mean L1 distance of cluster shares 0.002, vs 0.23 for the cyclic other) **own − matched other +0.80 [+0.45, +1.16] points, +0.0090 [+0.0055, +0.0125] nats**; own − cyclic other +1.54 points; matched − cyclic other +0.75 [+0.36, +1.14]. **Decision: "reproducible individual length-related preference signal under matched task type (observational)" — met**; practical gain (own − population lower bound > +1) not met. About half of the unmatched own − other contrast is task mix (a matched other's coefficient predicts better than a random same-language other's), the other half is individual. Caveat: matching and centring use 8/32 embedding clusters; finer task variation is not controlled, and a shared prompt bank remains the design for a causal claim.
+
+**Amendment 9 (2026-11-04 04:35, before running; exploratory decomposition of the S11-1 contrast).** S11-1 found length's own − population gain at k = 16 of +1.06 points in WIMHF's setting and +0.45 in ours, but the two settings differ in users, population model and prompt separation at once. A 2 × 2 on **common users** separates them (`s11_fact.py`): users = the top-50 %-by-event-count users of S11-1 (a) that also have ≥ 16 events in their fold's training prompt groups and ≥ 1 test pair in its held-out groups; population model **W** (S11-1 (a): fitted on the bottom-50 % users) or **O** (the user's fold model, fitted on all users of the other folds; σ² by fold); split **E** (events in random order, seed 0, first 16 support, rest test) or **G** (16 support events from training prompt groups, drawn as S11-1 (b), test on held-out prompt groups). Attributes length (primary) and list/heading. Outcomes at k = 16 as S11-1: own − population AUC and accuracy, own − same-language other. Reading (descriptive): the change from W to O at fixed split is the population-model effect, from E to G at fixed population the prompt-separation effect; no new claim about WIMHF.
+*Am.-9 result (2026-11-04 04:40, job 12568).* 1,799 common users; length own − population at k = 16 (accuracy points; AUC): **W·E +0.88 [+0.61, +1.13] (+0.0094)**, **W·G +1.08 [+0.69, +1.47] (+0.0098)**, **O·E +0.26 [+0.02, +0.50] (+0.0054)**, **O·G +0.47 [+0.12, +0.85] (+0.0072)**; population AUC W 0.729/0.733, O 0.737/0.738. List/heading ≤ 0 in all four cells. Reading: prompt separation does not reduce the gain (E → G: +0.20 / +0.21); the **population model does** (W → O: −0.62 / −0.61). The larger WIMHF-style gain therefore comes mostly from a population model fitted on low-volume annotators, whose length weight fits high-volume annotators less well — "personalisation" then partly corrects a population misfit common to the adapted group — not from shared prompts. Own − other remains positive in every cell (+1.3 to +2.1 points).
+
+**Amendment 10 (2026-11-04 05:32; reporting only, no new data analysis).** The fourth review asked for a multiplicity-adjusted detection analysis that leaves the frozen literal outcomes unchanged. `multiplicity.py` takes every interval on CA first turns that the draft reports from Stage 8 (the frozen rule's family: six methods × {own gain, own − other} at k = 20, i.e. 12 tests, plus the Am.-2 within-country contrasts) and from Stage 11 (all reported S11-2/S11-3/Am. 1–9 contrasts, including those not excluding 0), converts each to a two-sided normal-approximation p-value from its 95 % interval (s.e. = width / 3.92), and applies Holm at 0.05 (a) within the Stage-8 frozen family and (b) across the whole Stage-11 family (one family, deliberately conservative). Reported: which statements survive. The "all methods below the one-point threshold" conjunctions are not adjusted (an intersection of upper-bound statements, each must hold separately; adjustment would make them weaker, not stronger), as the review notes. The literal frozen outcomes are unchanged.
+*Am.-10 result.* Stage 8 frozen family: 9/12 unadjusted, 6 Holm-significant (lost: the own gains of DFp, VPL, PAL4; all own − other detections of LoRe, LoRe-reg, VPL, PAL4 kept → the frozen detection is unchanged). Am. 2 within-country: 4/6, all kept. Stage 11 (29 contrasts): 21 unadjusted, 13 Holm (lost: paragraphs Ĉ, shrink ×0.5, TRV − rank-2, TRV two-way interval, TRV − isotropic, S11-1 (b) length, Am. 9 O·E and O·G). All length transfer / matched-other statements, TRV and isotropic own − μ survive.
+
+=================== FILE: PROTOCOL_STAGE12.md ===================
+# Paper 4 — Stage 12: frozen evaluation of transfer-calibrated adaptation on untouched Community Alignment turns (frozen before any second-turn data are embedded or analysed)
+Committed 2026-11-03 23:55, after the fourth review with gpt-6.1-sol (`reviews/codex_round04_gpt-6.1-sol.md`: "independently evaluate the complete Amendment-4 procedure… freeze the existing procedure rather than adding another adaptation family"). Stage 11 Am. 1–4 developed the procedure (TRV) on the CA first turns after inspecting test results; its +0.49 [+0.20, +0.77] choice points and +0.0088 nats are exploratory. This stage evaluates it, unchanged, on CA **second turns**, which no analysis of this project has read (no features, no labels, no counts beyond the number of non-missing preferences, 83,238, read to establish availability). The users are the same people as in Stages 8–11 (no CA user is untouched), so this is a frozen evaluation on **new prompts and conversation turns of previously studied users**, and is described as such. Any change after the first result is logged under "Amendments" and does not alter the readings below.
+
+## Panel (fixed now)
+Second turn of each CA conversation with four second-turn responses and a preferred one; the chosen response paired with each of the three others (A/B side randomised, seed 0); label = native choice; choice event = the conversation's second turn; prompt group = the second-turn prompt text; the user folds of Stage 8 (country-stratified, seed 0) and prompt-group folds (seed 0) and validation flag (seed 1), all re-derived on this panel by the same code. **Features:** Qwen2.5-7B-Instruct last-layer final-token state of the chat-formatted (second-turn prompt, response) and of the second-turn prompt alone, each text truncated at 4,000 characters; the first turn is not included in the context (stated limitation: second-turn responses were generated with the conversation context). Attributes: the 24 `attr_feats.py` differences with the second-turn prompt as the prompt text.
+
+## Procedure (TRV, exactly Stage 11 Am. 4)
+Per fold: population model = ridge logistic regression on the PCA-256 response difference (λ by validation in {1, 10, 100, 1000}) plus per-language attribute weights μ_ℓ; Ĉ = the symmetrised, PSD-projected uncentred cross-moment of one-step deviations over two halves with disjoint prompt groups (seed 5; users with ≥ 10 events; ridge 10⁻³), for the attribute set; pseudo-new-user selection (20 % of training users, seeds 3 + f, 40 + f; base and μ refitted without them; 20 support events, rest scored) of the attribute set {length; length, paragraphs, list/heading lines} and prior scale c ∈ {1, 0.5, 0.25, 0.125, 0.0625, 0} by mean log-likelihood; θ̂_u − μ = c Ĉ (I + c I_u Ĉ)⁻¹ s_u from the user's k = 20 support events (training prompt groups), Ĉ from all training users. Test: held-out prompt groups of test-fold users with ≥ 20 support events; 5 support draws (seeds 10,000 f + d).
+**Comparators**, each with its adaptation strength (including none) selected on the same pseudo-new users: (a) μ (no adaptation); (b) **validated isotropic attribute prior** — the same rule with Ĉ replaced by τ² I over the same selected-set candidates, τ² ∈ {0.01, 0.03, 0.1, 0.3, 1, 0}; (c) the tuned rank-2 model of Stage 9 Am. 6 (`sap_ca.py` ATTR-LR-bin, its grid). Also reported: the half-specific means and centred cross-covariance of the one-step deviations, overall and within language.
+
+## Outcomes and decision rules (fixed now)
+Primary: own − μ choice accuracy (points) and log-likelihood (nats per pair), user bootstrap (seed 17, 2,000 resamples, users weighted by test pairs); prompt-group/user two-way bootstrap as a secondary interval.
+- **Reproducible predictive benefit** if both own − μ accuracy and log-likelihood have lower 95 % bounds above 0.
+- **Practically meaningful choice gain** if the accuracy lower bound is above +1 point.
+- **Sub-threshold** for this procedure and population if the accuracy upper bound is below +1 point.
+- **Advantage over ordinary validated shrinkage** if TRV − (b) accuracy has a lower bound above 0; over the rank-2 model likewise against (c).
+- Otherwise inconclusive. Outcomes failing these conditions are reported without further test-driven revision.
+Secondary: the same per language; Stage 8's LoRe and LoRe-reg are not rerun.
+
+## Forbidden statements
+"Untouched users"; "replication on new data" without the qualification above; any claim about turns three and four; "calibration gain" for a log-likelihood gain (it is a predictive log-likelihood gain).
+
+## Amendments
+
+## Result (2026-11-04 09:35, job 12569; read by the frozen rules, no revision)
+1,702 test users, CA second turns, k = 20 events. Selected on pseudo-new users: TRV {length, c = 1; prim3, 0.25; length, 0.25; length, 1; prim3, 0.125}; isotropic {length, 0.3; prim3, 0.1; length, 0.03; prim3, 0.03; prim3, 0.03}; rank-2 adaptation c = 0.1 in folds 0–1 and **no adaptation** in folds 2–4.
+- **TRV own − μ: +0.38 [+0.13, +0.64] choice points; +0.0046 [+0.0031, +0.0063] nats per pair** (two-way prompt-group × user interval: accuracy [−0.04, +0.83], LL [+0.0018, +0.0074]).
+- Isotropic own − μ: +0.31 [+0.05, +0.58] points, +0.0038 [+0.0021, +0.0057] nats. Rank-2: −0.05 [−0.34, +0.24], −0.0013 nats.
+- TRV − isotropic: +0.07 [−0.07, +0.22] points, +0.0008 [−0.0000, +0.0016] nats. TRV − rank-2: +0.43 [+0.15, +0.74] points.
+- Per language (accuracy): en +0.21, fr +0.49, hi +0.44, it +0.35, pt +0.61; every interval covers 0.
+- One-step diagnostics: length cross-moment 0.12–0.19 in every fold (centring and within-language centring change it by < 1 %); paragraphs 0.09–0.68; list/heading negative in two folds (−0.53, −0.34 centred).
+**Decisions:** reproducible predictive benefit — **met**; practically meaningful choice gain — **not met**; **sub-threshold** for this procedure and population — **met** (upper bound +0.64 < +1); advantage over ordinary validated shrinkage — **not met**; advantage over the rank-2 model — met (in three of five folds the tuned rank-2 model selects no adaptation, so this is largely TRV vs μ). The primary user-bootstrap interval excludes 0; the secondary two-way interval does not.
+
+=================== FILE: results/stage8_ca.md ===================
+# Stage 8 — Community Alignment (first turn, native choice; points; 95 % rater bootstrap)
+
+| method | k | own gain | own − other | − Dp | raters |
+|---|---|---|---|---|---|
+| DFp | 20 | -0.19 [-0.36, -0.02] | +0.07 [-0.08, +0.21] | -0.28 [-0.53, -0.02] | 2957 |
+| DFp | 50 | -0.12 [-0.34, +0.11] | +0.25 [+0.05, +0.45] | -0.24 [-0.54, +0.06] | 2337 |
+| VPL | 20 | +0.15 [+0.03, +0.27] | +0.31 [+0.20, +0.42] | +0.36 [+0.01, +0.69] | 2957 |
+| VPL | 50 | +0.17 [+0.04, +0.31] | +0.33 [+0.21, +0.46] | +0.32 [-0.08, +0.68] | 2337 |
+| PAL2 | 20 | -0.05 [-0.19, +0.09] | +0.03 [-0.08, +0.14] | -0.85 [-1.27, -0.43] | 2957 |
+| PAL2 | 50 | -0.10 [-0.28, +0.09] | +0.12 [-0.04, +0.28] | -0.91 [-1.38, -0.45] | 2337 |
+| PAL4 | 20 | -0.20 [-0.38, -0.02] | +0.29 [+0.13, +0.45] | -1.11 [-1.53, -0.69] | 2957 |
+| PAL4 | 50 | -0.16 [-0.39, +0.06] | +0.30 [+0.08, +0.50] | -1.17 [-1.66, -0.66] | 2337 |
+| LORE_lore | 20 | -2.34 [-2.79, -1.88] | +3.27 [+2.85, +3.70] | -2.64 [-3.06, -2.19] | 2957 |
+| LORE_lore | 50 | -1.26 [-1.76, -0.77] | +3.69 [+3.23, +4.15] | -1.61 [-2.11, -1.12] | 2337 |
+| LORER_lorer | 20 | +0.35 [+0.25, +0.46] | +0.36 [+0.26, +0.46] | +0.06 [-0.29, +0.39] | 2957 |
+| LORER_lorer | 50 | +0.55 [+0.39, +0.72] | +0.64 [+0.48, +0.80] | +0.20 [-0.19, +0.59] | 2337 |
+
+**Decision rule (k = 20): largest upper bound +3.70, largest lower bound +2.85 → CONTENT PERSONALISATION DETECTED.**
+
+Learner-free: two annotators agree on 0.643 [0.639, 0.647] of shared response pairs; the text-only model (k = 0) is right on 0.717 of the 29232 tested ratings of those pairs.
+
+## Amendment 2 — within-country derangement (points, k = 20 / 50)
+
+| method | k | own − other (same country) | other (same) − other (any) | folds |
+|---|---|---|---|---|
+| DFp | 20 | +0.07 [-0.05, +0.20] | +0.03 [-0.04, +0.10] | 5 |
+| DFp | 50 | +0.21 [+0.01, +0.40] | +0.05 [-0.03, +0.14] | 5 |
+| VPL | 20 | +0.34 [+0.24, +0.45] | -0.01 [-0.05, +0.02] | 5 |
+| VPL | 50 | +0.36 [+0.24, +0.47] | -0.01 [-0.05, +0.02] | 5 |
+| PAL2 | 20 | +0.07 [-0.05, +0.18] | -0.02 [-0.05, +0.02] | 5 |
+| PAL2 | 50 | +0.07 [-0.09, +0.22] | +0.02 [-0.02, +0.07] | 5 |
+| PAL4 | 20 | +0.27 [+0.11, +0.43] | +0.01 [-0.05, +0.07] | 5 |
+| PAL4 | 50 | +0.31 [+0.10, +0.52] | -0.01 [-0.08, +0.06] | 5 |
+| LORE_lore | 20 | +3.22 [+2.83, +3.60] | +0.03 [-0.12, +0.18] | 5 |
+| LORE_lore | 50 | +3.71 [+3.24, +4.21] | -0.01 [-0.15, +0.14] | 5 |
+| LORER_lorer | 20 | +0.37 [+0.28, +0.46] | -0.01 [-0.03, +0.02] | 5 |
+| LORER_lorer | 50 | +0.65 [+0.50, +0.81] | -0.01 [-0.05, +0.03] | 5 |
+
+=================== FILE: results/multiplicity.json ===================
+{
+ "stage8_frozen": [
+  {
+   "test": "DFp own gain",
+   "est": -0.19,
+   "ci": [
+    -0.36,
+    -0.02
+   ],
+   "p": 0.028481603268475972,
+   "p_holm": 0.14240801634237987,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "DFp own-other",
+   "est": 0.07,
+   "ci": [
+    -0.08,
+    0.21
+   ],
+   "p": 0.34404306926715933,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "VPL own gain",
+   "est": 0.15,
+   "ci": [
+    0.03,
+    0.27
+   ],
+   "p": 0.014285621470542848,
+   "p_holm": 0.08571372882325709,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "VPL own-other",
+   "est": 0.31,
+   "ci": [
+    0.2,
+    0.42
+   ],
+   "p": 3.320543520393072e-08,
+   "p_holm": 2.6564348163144577e-07,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "PAL2 own gain",
+   "est": -0.05,
+   "ci": [
+    -0.19,
+    0.09
+   ],
+   "p": 0.48392730444614607,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL2 own-other",
+   "est": 0.03,
+   "ci": [
+    -0.08,
+    0.14
+   ],
+   "p": 0.5929642099912791,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL4 own gain",
+   "est": -0.2,
+   "ci": [
+    -0.38,
+    -0.02
+   ],
+   "p": 0.02942258510478855,
+   "p_holm": 0.14240801634237987,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL4 own-other",
+   "est": 0.29,
+   "ci": [
+    0.13,
+    0.45
+   ],
+   "p": 0.0003815890186292173,
+   "p_holm": 0.002671123130404521,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own gain",
+   "est": -2.34,
+   "ci": [
+    -2.79,
+    -1.88
+   ],
+   "p": 6.772612301339126e-24,
+   "p_holm": 7.449873531473038e-23,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own-other",
+   "est": 3.27,
+   "ci": [
+    2.85,
+    3.7
+   ],
+   "p": 2.1771167759688895e-51,
+   "p_holm": 2.6125401311626676e-50,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own gain",
+   "est": 0.35,
+   "ci": [
+    0.25,
+    0.46
+   ],
+   "p": 6.43217658413782e-11,
+   "p_holm": 5.788958925724037e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own-other",
+   "est": 0.36,
+   "ci": [
+    0.26,
+    0.46
+   ],
+   "p": 1.7136382493234494e-12,
+   "p_holm": 1.7136382493234494e-11,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  }
+ ],
+ "stage8_am2": [
+  {
+   "test": "VPL own-same-country other",
+   "est": 0.34,
+   "ci": [
+    0.24,
+    0.45
+   ],
+   "p": 2.2003015644193414e-10,
+   "p_holm": 8.801206257677366e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "PAL4 own-same-country other",
+   "est": 0.27,
+   "ci": [
+    0.11,
+    0.43
+   ],
+   "p": 0.0009413271186120453,
+   "p_holm": 0.002823981355836136,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe own-same-country other",
+   "est": 3.22,
+   "ci": [
+    2.83,
+    3.6
+   ],
+   "p": 2.155527357680494e-60,
+   "p_holm": 1.2933164146082965e-59,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "LoRe-reg own-same-country other",
+   "est": 0.37,
+   "ci": [
+    0.28,
+    0.46
+   ],
+   "p": 7.769389388960004e-16,
+   "p_holm": 3.884694694480001e-15,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "DFp own-same-country other",
+   "est": 0.07,
+   "ci": [
+    -0.05,
+    0.2
+   ],
+   "p": 0.27237919286353973,
+   "p_holm": 0.4657046914527472,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "PAL2 own-same-country other",
+   "est": 0.07,
+   "ci": [
+    -0.05,
+    0.18
+   ],
+   "p": 0.2328523457263736,
+   "p_holm": 0.4657046914527472,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  }
+ ],
+ "stage11_all": [
+  {
+   "test": "S11-2 C length",
+   "est": 0.32,
+   "ci": [
+    0.25,
+    0.4
+   ],
+   "p": 6.13162742977332e-17,
+   "p_holm": 1.7168556803365297e-15,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S11-2 C paragraphs (Am.1 adj.)",
+   "est": 0.76,
+   "ci": [
+    0.26,
+    1.35
+   ],
+   "p": 0.006272013651469728,
+   "p_holm": 0.09408020477204591,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-2 C list (Am.1 adj.)",
+   "est": 0.45,
+   "ci": [
+    -0.02,
+    0.95
+   ],
+   "p": 0.06897908876433728,
+   "p_holm": 0.482853621350361,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 transfer length",
+   "est": 0.41,
+   "ci": [
+    0.27,
+    0.55
+   ],
+   "p": 9.467655107691238e-09,
+   "p_holm": 2.1775606747689846e-07,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.3 transfer paragraphs",
+   "est": 0.18,
+   "ci": [
+    -0.34,
+    0.68
+   ],
+   "p": 0.48908510450769627,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 transfer list",
+   "est": 0.12,
+   "ci": [
+    -0.28,
+    0.52
+   ],
+   "p": 0.5565322928245953,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 acc",
+   "est": 0.13,
+   "ci": [
+    -0.28,
+    0.53
+   ],
+   "p": 0.5292601531294223,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 LL",
+   "est": -0.006,
+   "ci": [
+    -0.0121,
+    0.0
+   ],
+   "p": 0.05191937437857875,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-3 TR3 - rank-2",
+   "est": -0.06,
+   "ci": [
+    -0.36,
+    0.21
+   ],
+   "p": 0.6798765610102777,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 shrink x0.5 acc",
+   "est": 0.36,
+   "ci": [
+    0.01,
+    0.71
+   ],
+   "p": 0.04379997579019021,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.3 shrink x0.25 acc",
+   "est": 0.53,
+   "ci": [
+    0.23,
+    0.83
+   ],
+   "p": 0.0005348505503417279,
+   "p_holm": 0.009627309906151103,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.3 shrink x0.25 LL",
+   "est": 0.009,
+   "ci": [
+    0.006,
+    0.0119
+   ],
+   "p": 2.2360244166741348e-09,
+   "p_holm": 5.366458600017923e-08,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV acc",
+   "est": 0.49,
+   "ci": [
+    0.2,
+    0.77
+   ],
+   "p": 0.0007521605485560111,
+   "p_holm": 0.01278672932545219,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV LL",
+   "est": 0.0088,
+   "ci": [
+    0.0061,
+    0.0116
+   ],
+   "p": 3.564395818303484e-10,
+   "p_holm": 8.91098954575871e-09,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.4 TRV - rank-2",
+   "est": 0.3,
+   "ci": [
+    0.04,
+    0.56
+   ],
+   "p": 0.02372593380738733,
+   "p_holm": 0.28471120568864794,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S12 smoke TRV acc 2-way",
+   "est": 0.49,
+   "ci": [
+    0.01,
+    0.97
+   ],
+   "p": 0.045410353908382814,
+   "p_holm": 0.4379997579019021,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S12 smoke iso acc",
+   "est": 0.66,
+   "ci": [
+    0.37,
+    0.95
+   ],
+   "p": 8.169632421583676e-06,
+   "p_holm": 0.00016339264843167353,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S12 smoke TRV - iso",
+   "est": -0.17,
+   "ci": [
+    -0.29,
+    -0.05
+   ],
+   "p": 0.0054919469998735305,
+   "p_holm": 0.08787115199797649,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1a list AUC",
+   "est": 0.0001,
+   "ci": [
+    -0.0017,
+    0.0017
+   ],
+   "p": 0.9082120007094994,
+   "p_holm": 1.0,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1a length acc",
+   "est": 1.06,
+   "ci": [
+    0.8,
+    1.33
+   ],
+   "p": 4.505464303932262e-15,
+   "p_holm": 1.216475362061711e-13,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "S11-1b length acc",
+   "est": 0.45,
+   "ci": [
+    0.14,
+    0.8
+   ],
+   "p": 0.007523739045150994,
+   "p_holm": 0.10533234663211391,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "S11-1b list acc",
+   "est": -0.12,
+   "ci": [
+    -0.3,
+    0.04
+   ],
+   "p": 0.16650259541667722,
+   "p_holm": 0.9990155725000633,
+   "unadjusted_sig": false,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.8 within-cluster length",
+   "est": 0.206,
+   "ci": [
+    0.183,
+    0.231
+   ],
+   "p": 1.6462959552177372e-63,
+   "p_holm": 4.774258270131438e-62,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.8 own - matched other acc",
+   "est": 0.8,
+   "ci": [
+    0.45,
+    1.16
+   ],
+   "p": 1.0012587128627238e-05,
+   "p_holm": 0.0001902391554439175,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.8 own - matched other LL",
+   "est": 0.009,
+   "ci": [
+    0.0055,
+    0.0125
+   ],
+   "p": 4.655318460972035e-07,
+   "p_holm": 9.776168768041272e-06,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 W.E length",
+   "est": 0.88,
+   "ci": [
+    0.61,
+    1.13
+   ],
+   "p": 3.27050711723222e-11,
+   "p_holm": 8.503318504803773e-10,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 W.G length",
+   "est": 1.08,
+   "ci": [
+    0.69,
+    1.47
+   ],
+   "p": 5.708734362929008e-08,
+   "p_holm": 1.2559215598443818e-06,
+   "unadjusted_sig": true,
+   "holm_sig": true
+  },
+  {
+   "test": "Am.9 O.E length",
+   "est": 0.26,
+   "ci": [
+    0.02,
+    0.5
+   ],
+   "p": 0.0337259293438939,
+   "p_holm": 0.3709852227828329,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  },
+  {
+   "test": "Am.9 O.G length",
+   "est": 0.47,
+   "ci": [
+    0.12,
+    0.85
+   ],
+   "p": 0.011608219559286485,
+   "p_holm": 0.1509068542707243,
+   "unadjusted_sig": true,
+   "holm_sig": false
+  }
+ ]
+}
+=================== FILE: PAPER4_DRAFT.md ===================
+# Detectable Preferences, Limited Choice Gains: Evaluating Personalised Reward Models for New Raters
+
+*Draft v1.0, 2026-11-01 — paper 4 (ICML target). Every number is copied from a committed artefact (paper-4/results/STAGE1_REPORT.md, STAGE2A_REPORT.md and the files they cite); protocols (incl. PROTOCOL_STAGE7.md, 9, 10): PROTOCOL_STAGE1.md (Amendments 1–2), PROTOCOL_STAGE2.md (Amendments 1–10), PROTOCOL_STAGE2B.md (Amendments 1–4), PROTOCOL_STAGE2C.md (Amendments 1–5), PROTOCOL_STAGE3.md (Amendments 1–5), PROTOCOL_STAGE4.md (Amendments 1–2), PROTOCOL_STAGE5.md (Amendments 1–3). Revised after an external-style review and two independent numbers audits and a second review (positive control added).*
+
+## Abstract (draft)
+Personalised reward models aim to predict individual judgements from a few ratings, but detectable user information need not yield better choices. We evaluate adaptation to raters never seen in training, on held-out prompts, with population, shuffled-rater and scale-use controls. Text-independent rater offsets improve log-likelihood by 0.08–0.10 nats per rating at k = 20 on three preference and safety datasets and by 0.04–0.05 in two code-readability studies. On MultiPref and native PRISM choices, the evaluated published, low-rank, in-context and fine-tuned methods' own k = 20 gains have upper 95 % bounds below one point of direction or choice accuracy, and semi-synthetic controls show that these learners miss injected preferences that are recoverable when their generating attributes are supplied. On Community Alignment, built for preference diversity, LoRe's own adapted parameters beat other users' by 3.27 [2.85, 3.70] choice points, although its adaptation lowers accuracy by 2.34 points relative to its unadapted state; an exploratory within-country control retains the contrast. Further exploratory analyses, developed after examining test results, find that users' residual length effects reproduce across disjoint prompt sets; covariance-based adaptation with attributes and shrinkage selected on training users gains +0.49 [+0.20, +0.77] choice points and +0.0088 nats per pair at twenty choice events. Frozen and re-evaluated on the same users' unanalysed second turns, it gains +0.38 [+0.13, +0.64] points and +0.0046 [+0.0031, +0.0063] nats — a reproducible but sub-threshold benefit (upper bound below one point) that ordinary validated isotropic shrinkage matches (+0.07 [−0.07, +0.22]). The results separate scale-use prediction, detectable user-specific content signal and useful adaptation, and leave the exploratory gains for independent confirmation.
+
+## 1. Introduction
+Reward models and LLM judges are trained on human ratings that disagree. A recent line of work treats this disagreement as signal to be modelled rather than noise to be averaged: distributional preference learning estimates a distribution over each alternative's utility rather than a point score (Siththaranjan et al., 2024); jury learning predicts individual annotators from content, annotator and demographic-group embeddings (Gordon et al., 2022), and large datasets such as PRISM are analysed by sociodemographic group (Kirk et al., 2024); personalised reward models learn a per-user latent, inferred for a new user from a few examples (Poddar et al., 2024; Chen et al., 2025). The pluralistic-alignment agenda (Sorensen et al., 2024) makes the representation of individual and group differences a first-class goal.
+
+What these models learn about a person is rarely tested directly. Evaluations typically use synthetic users whose preferences differ by construction, binary preference labels, or users seen in training. We ask a simple question under a common protocol on real raters: **given k ratings from someone the model has never seen, how much better can it predict their other ratings — in particular, which response they prefer — and what is it that it learns?** The largest demonstrated gains are captured by scale-use offsets, while practically meaningful ranking gains are not established in the primary evaluations; semi-synthetic controls show what content preferences the methods could and could not have detected.
+
+Measurement theory suggests a candidate answer that reward modelling largely ignores: raters differ in **how they use the response scale** — some say "clearly better" where others say "slightly better", some rarely call a tie, some are harsher across the board (Linacre, 1989; Baumgartner & Steenkamp, 2001). Such response styles are text-independent, cheap to estimate, and invisible to models that condition only on content or demographics. We make them a reference point for calibration. Because they are text-independent they barely change which response a rater is predicted to prefer (only through asymmetric "clearly"/"slightly" mass); a personalised reward model that learns content preferences should therefore show its value in ranking, and a model whose likelihood gain does not exceed the scale-use offsets has not shown that it learns more than scale use.
+
+**Contributions.** (1) A new-rater evaluation protocol for personalised reward models — held-out raters and items, k-shot adaptation, a permutation control (own versus another rater's adapted parameters) — and a scale-use baseline (a few text-independent offsets per rater; two identifiable on two-sided preferences) that plugs into any graded reward model (§4–5). (2) A systematic test on three datasets of group-conditioned, low-rank, published (VPL, PAL, LoRe), in-context and fine-tuned personalisation: the largest few-shot gains are scale use, which improves calibration rather than ranking and vanishes under the tested binary-label construction (§5–6). (3) A detection-limit analysis: a semi-synthetic positive control with a well-specified reference learner and linear probes of each method's inputs show how strong a content preference must be for these methods to find it, and that the limit lies in finding the content dimension rather than in the number of ratings; on MultiPref, annotators' own aspect labels show that value conflicts — where individual trade-offs could change a ranking — occur in 4 % of held-out non-tie comparisons (§5.6–5.7). (4) Screened attribute personalisation, an empirical-Bayes learner over interpretable attribute differences that matches the known-feature learner on semantic injections with near-zero effects on null panels, and a prospectively specified real-data evaluation in which it abstains (§5.8–5.9). Supporting measurements of where the predictable structure sits are in §3 and Appendix D; protocols, amendments and failed hypotheses in Appendices A, B and E.
+
+## 2. Related work
+**Pluralistic and distributional reward models.** Distributional preference learning (Siththaranjan et al., 2024), diverging-preference detection (Zhang et al., 2025), PRISM (Kirk et al., 2024), MultiPref (Miranda et al., 2025) and DICES (Aroyo et al., 2023) motivate modelling disagreement; jury learning (Gordon et al., 2022) and multi-annotator models (Davani et al., 2022) predict individual annotators, as do disagreement deconvolution (Gordon et al., 2021), per-rater toxicity models (Kumar et al., 2021), demographic and opinion-based prediction of unseen annotators (Fleisig et al., 2023) and multilevel models of DICES raters (Homan et al., 2024). Graded preference strength enters reward training as a margin (Touvron et al., 2023; Wang et al., 2025), and ties have classical paired-comparison models (Rao & Kupper, 1967; Davidson, 1970). **Personalised reward models** infer a user latent from a few examples (Poddar et al., 2024; Chen et al., 2025), represent users in a low-rank reward subspace (Bose et al., 2025), induce persona prompts from a user's history (Ryan et al., 2025, who also release a benchmark of PRISM and Chatbot Arena users), learn per-user embeddings jointly with the reward model (Li et al., 2024), fit a new user as a combination of shared base rewards (Shenfeld et al., 2025; Luo et al., 2025), or infer the user with neural processes (Kobalczyk et al., 2024); related work personalises the policy (Jang et al., 2023; Feng et al., 2024), adapts to groups (Zhao et al., 2024; Chakraborty et al., 2024) or studies personalisation versus aggregation (Park et al., 2024). Value profiles condition a rating decoder on a rater's demonstrations and are tested on held-out raters (Sorensen et al., 2025). Benchmarks often simulate users by personas or mixtures of reward models (Castricato et al., 2025; Zollo et al., 2025); real multi-rater data with deliberately diverse candidates are emerging (Zhang et al., 2026). VPL's latent can collapse under sparse preference data (Kim & Kim, 2026). A multi-faceted comparison of personalisation methods (Dong et al., 2025) reports large differences between methods and safety costs. Annotator embeddings (Deng et al., 2023) and per-annotator heads (Davani et al., 2022) are close relatives of our offsets; our contribution is not the offset model but the new-rater test and what it shows. Rater groups have been found to use safety severity scales differently (Mishra et al., 2026), which is consistent with the leniency component we find on DICES. **Annotator demographics** as predictors of labels have been found weak in several studies (e.g. Orlikowski et al., 2023). **Measurement theory**: rater severity and scale use are standard facets in many-facet Rasch measurement (Linacre, 1989; Eckes, 2011) and response styles are a classical survey-methods topic (Baumgartner & Steenkamp, 2001). We connect the last line to the first: for new-rater prediction, the measurement-theory rater facet is what the reward model is missing. **Collaborative filtering and annotator models.** User and item bias terms carry much of the predictive gain in collaborative filtering (Koren et al., 2009), and user-specific ordinal thresholds predict personal rating distributions (Koren & Sill, 2011); annotator models estimate rater-specific labelling behaviour (Dawid & Skene, 1979; Raykar et al., 2010; Hovy et al., 2013), and the label-variation literature argues for modelling it (Plank, 2022; Uma et al., 2021). Our offsets are of this kind and are not new; what is new is testing personalised reward models against them on new raters, and measuring what content personalisation these models could detect at all.
+
+## 3. Data, and where the predictable structure sits
+**Data.** MultiPref (Miranda et al., 2025; 10,461 comparisons; 4 ratings each by 2 crowd and 2 expert raters; 227 persistent raters; 5 ordered levels A-clearly … B-clearly). PRISM (Kirk et al., 2024; 68,371 responses each rated 1–100 by one of 1,396 users; binned to 5 fixed levels). DICES-350 (Aroyo et al., 2023; 350 conversations fully crossed with 104 quality-checked raters; safe / unsure / unsafe).
+
+**A learner-free measurement (Appendix D).** Before fitting any personalised model we measured, on MultiPref, where held-out predictable structure sits: beyond item location, rater-specific thresholds improve held-out likelihood about 25 times more than item-specific dispersion (+0.036 vs +0.0014 nats per rating), the item-level shape of the rating distribution that replicates across disjoint rater panels is small (split-half reliability 0.25), and about a tenth of it is decodable from text. Beyond item location, the predictable structure is therefore mostly rater-side scale use, while the item-level shape that replicates across disjoint panels is small and only partly in the text. These two facts come from different estimands and do not say that disagreement is "not in the text". The stage-1 decision rule we had written down returned **"mixed"**, because G/X was not ≤ 10 % (interval 5.7–11.9 %); the factorised model of §4 was chosen with that outcome known.
+
+## 4. A three-parameter scale-use baseline
+(Figure 2 illustrates the effect of the offsets.) Let ℓ(x) ∈ R^K be the class logits of a text-only distributional reward model for item x (K ordered rating levels). For rater r we add a text-independent offset vector: p(y | x, r) = softmax(ℓ(x) + b_r). Variants: **DF** (b_r ∈ R^K, free), **DFs** (two-sided preference scales only: b_r tied symmetrically, (e, s, t, s, e) — extreme, slight, tie — 3 parameters, of which 2 are identifiable because the softmax is invariant to a common shift; no A-vs-B position term). Rater offsets have a Gaussian prior centred on the training-rater mean; a new rater's offsets are the MAP estimate from k of their ratings with the text model frozen. Baselines under the same protocol: **D** (text-only distributional RM), **DG** (group offsets: crowd/expert, race, region), **DL** (low-rank text-interacting latent: ℓ(x) + (Wx + w₀)·z_r, d = 8, the personalised-RM family). An interpretable probit family (rater shift / log-scale on an ordered-probit text head) is reported as a secondary analysis.
+
+**Training and adaptation.** The text model and the training raters' offsets are fitted jointly by penalised maximum likelihood,
+$$\min \sum_{(i,r,y)} -\log p(y \mid x_i, r) + \lambda_{\text{text}} \|V\|^2 + \lambda_r \sum_r \|b_r\|^2,$$
+with $\lambda_{\text{text}}$ chosen on the text-only model and $\lambda_r$ on held-out items of the training raters. A new rater $r^*$ is adapted from $k$ ratings $\{(x_j, y_j)\}$ by $\hat b_{r^*} = \arg\min_b \sum_j -\log \mathrm{softmax}(\ell(x_j) + b)_{y_j} + \lambda_r \|b - \bar b\|^2$, with $\bar b$ the training-rater mean (the prior mean; $\hat b = \bar b$ at $k = 0$) and the text model frozen — a convex problem in 3–5 parameters, solved in milliseconds. Any text model that outputs graded log-probabilities can be used: we use a ridge head on frozen LLM features (§5.1–5.2), a LoRA-fine-tuned LLM reward model (§5.3) and the decoder of a published personalised reward model (§5.4).
+
+## 5. Experiments
+**Protocol.** 5 folds; in each, 20 % of raters (stratified by group) and 20 % of prompt groups are held out; models are trained on training raters × training items with penalties chosen on a validation split; each test rater is adapted on k ∈ {0, 5, 10, 20, 50} of their ratings of *training* items (5 random draws) and evaluated on their ratings of *held-out* items. Primary metric: held-out log-likelihood per rating; also RPS and preference-direction accuracy; rater-cluster bootstrap (B = 2,000). Because test raters share test items on MultiPref and DICES, the headline k = 20 contrasts were also re-estimated with a two-way bootstrap that resamples raters and prompt groups independently: on graded labels every log-likelihood interval widens by at most 0.007 on either side and no log-likelihood conclusion changes; direction-accuracy differences of about a point or less (the style model's +0.5 on MultiPref, VPL's direction advantage over the style model) lose significance and are marked where they appear. Text model in §5.1–5.2: frozen Qwen2.5-7B features with a ridge head; §5.3: a LoRA-fine-tuned reward model.
+
+### 5.1 Main result (MultiPref)
+Figure 1 shows the gain over the text-only reward model as a function of k on all three datasets. In the table, DF/DFs/DG use the training-rater prior and DL and the DFs − DL column use the few-shot-tuned prior (the DFs − DL contrast is post hoc).
+
+| k | DF − D | DFs − D | DG − D | DL − D (tuned prior) | DFs − DL (tuned, post hoc) |
+|---|---|---|---|---|---|
+| 5 | +0.028 [+0.012, +0.044] | +0.048 [+0.029, +0.070] | ≈ 0 | +0.023 [−0.002, +0.047] | +0.026 [+0.016, +0.037] |
+| 20 | +0.080 [+0.055, +0.106] | **+0.100 [+0.074, +0.128]** | ≈ 0 | +0.095 [+0.069, +0.122] | +0.0045 [−0.0004, +0.0092] |
+| 50 | +0.114 [+0.087, +0.142] | +0.128 [+0.101, +0.156] | ≈ 0 | +0.120 | +0.007 [+0.002, +0.013] |
+
+Preference-direction accuracy (D: 0.674): DFs +0.005 [+0.001, +0.008] at k = 20 (not significant once items are also resampled: [−0.001, +0.011]); DF −0.014 [−0.020, −0.007]. A three-number style model gains as much as a tuned 8-dimensional text-interacting latent (tie at k = 20) and more at k = 5, 10 and 50; fitting a rater's A-vs-B position from few ratings costs direction accuracy.
+
+**Reference points.** To size these gains: on MultiPref at k = 20 a uniform forecast scores −1.609 nats per rating, a forecast that ignores the text and uses only the new rater's 20 ratings −1.487, the text-only model −1.441, the text model with the three offsets −1.342, and offsets fitted in-sample on all of the rater's held-out ratings (an optimistic ceiling for text-independent offsets) −1.262. Twenty ratings of a person, without the text, recover 73 % of the text model's gain over uniform; the offsets close 56 % of the gap between the text-only model and the in-sample ceiling. On DICES the rater's ratings alone predict better than the text alone (−0.766 vs −0.840 at k = 20). Even the in-sample ceiling raises MultiPref direction accuracy by only 1.3 points (0.674 → 0.687), confirming that text-independent offsets cannot carry ranking.
+
+### 5.2 Replications (k = 20)
+DF − D and DG − D use the training-rater prior, DF − DL the few-shot-tuned prior. Direction accuracy on PRISM means good-vs-bad around the scale midpoint.
+
+| dataset | DF − D | DG − D (groups) | DF − DL (tuned prior) | direction acc. DF − D |
+|---|---|---|---|---|
+| DICES-350 (safety) | +0.089 [+0.064, +0.117] | −0.006 (race) | +0.037 [+0.022, +0.053] | +0.048 [+0.025, +0.076] |
+| PRISM (ratings) | +0.080 [+0.071, +0.090] | +0.003 (region) | −0.001 [−0.006, +0.003] (formally not non-inferior: bound −0.006 < −0.005) | +0.005 [+0.001, +0.009] |
+
+### 5.3 On a fine-tuned reward model
+With a LoRA-fine-tuned Qwen2.5-7B reward model as the text model, the three offsets still add +0.100 [+0.071, +0.130] nats per rating at k = 20 — as on the frozen-feature head — and the gains of fine-tuning and of personalisation add. Against in-context personalisation (a LoRA model given the rater's k ratings in the prompt, three seeds per fold) the offsets are better by +0.041 [+0.027, +0.054] nats and +1.9 [+0.9, +2.7] direction points (Appendix B).
+
+### 5.4 Published personalised reward models
+We reimplemented VPL (Poddar et al., 2024) and PAL-B (Chen et al., 2025) from their official code as heads on the same frozen per-response embeddings and evaluated them under the same new-rater protocol, refitting the text-only and style models on those embeddings. On graded labels, at k = 20 the style model is better than VPL by +0.092 [+0.068, +0.119] nats per rating ([+0.063, +0.124] when prompt groups are also resampled) and than PAL-B by +0.158. VPL's latent does carry rater information once its posterior collapse is prevented (KL weight selected as 0 or 0.001; +0.087 over its own unpersonalised version), but only lifts it to the level of the text-only model; PAL-B's few-shot user weights give no gain. Their user representations are unrelated to response style (cross-validated R² ≈ 0 against the style offsets). On binary labels — the setting in which both methods were proposed — every method's personalisation gain is at most 0.002 nats (small but nonzero for PAL-B with K = 4, and for VPL and the style model at k = 50), and VPL's text head is the best binary model (the style model is 0.010 nats behind it and 0.005 behind the text-only model, differences of the size of item-sampling noise): the individual differences that are predictable for new raters live in the graded levels and ties that binary preference data discard. VPL's per-response reward head is slightly better at predicting *which* response is preferred (0.677 vs 0.668), an effect present without personalisation and not significant once prompt groups are also resampled (style model − VPL: −0.9 points [−2.7, +0.8]). The offsets are also a plug-in: added to VPL (fitted on the same k ratings, VPL frozen) they improve it by +0.088 [+0.066, +0.111] nats per rating at k = 20, tie with the style model on likelihood (−0.004 [−0.014, +0.005]) and keep VPL's direction accuracy (+1.1 points over the style model alone; rater bootstrap only).
+
+### 5.5 Summary of baselines (MultiPref, new raters, k = 20)
+Gains are relative to each block's text-only model (D, Dp, D-LoRA); the LoRA block uses adaptation draw 0 only (the draw the in-context model was evaluated on), hence the style model's +0.092 here against +0.100 averaged over five draws in §5.3.
+
+| text model | personalisation | gain in LL per rating vs the block's text-only model | direction accuracy |
+|---|---|---|---|
+| frozen features (joint item embedding) | group offsets (crowd / expert) | ≈ 0 | 0.677 |
+| | low-rank latent, tuned prior | +0.095 [+0.069, +0.122] | 0.679 |
+| | **style offsets, 3 numbers (DFs)** | **+0.100 [+0.074, +0.128]** | **0.679** |
+| frozen features (per-response embeddings) | VPL (reimplemented) | +0.002 [−0.008, +0.012] | 0.677 |
+| | PAL-B (reimplemented) | −0.065 (worse) | 0.666 |
+| | **DFs** | **+0.094 [+0.069, +0.120]** | 0.668 |
+| | VPL + style offsets | +0.090 | 0.679 |
+| LoRA-fine-tuned Qwen2.5-7B (209 raters) | in-context rater history (RC-LoRA, mean of 3 training seeds) | +0.051 [+0.024, +0.079] | 0.671 |
+| | **DFs** | **+0.092 [+0.063, +0.125]** | 0.689 |
+
+Rows within a block share the text model and the raters; across blocks the text models differ (text-only direction accuracy 0.674 / 0.670 / 0.688). VPL's and PAL-B's own gains over their unpersonalised versions are +0.087 and −0.000.
+
+### 5.6 Could these methods have detected content personalisation? A semi-synthetic positive control
+A ranking null is informative only if the methods would detect content-dependent preferences where they exist. We keep MultiPref's structure (raters, items, who rated what, folds and k-shot draws) and replace the labels by semi-synthetic ones. A generator — the text-only head plus scale-use offsets, fitted on all ratings — gives each rating a distribution, to which a rater-specific content term $(\theta_r^\top g_i)\,(-2,-1,0,1,2)$ is added to the logits; $g_i$ are two features of the response pair (the log length ratio and a random direction in the per-response embedding space, orthogonal to the consensus quality direction) and $\theta_r \sim N(0, \tau^2 I)$. The scale $\tau$ is calibrated on the generator alone so that an oracle that knows $\theta_r$ gains +1.7, +5.2, +10.1 or +21.1 points of direction accuracy on the test ratings; $\tau = 0$ is a null control. Every method is then run under the paper's protocol. Because a method whose unpersonalised state is not the population state can improve with anyone's ratings, the contrast is **the method adapted on the rater's own k ratings minus the same method given another test rater's adapted parameters** (a random derangement within fold, k and draw). Before the runs we fixed that the protocol has power at a strength if some content-interacting method has a lower 95 % bound above +1 point at k = 20; the +10 and +21 panels and the untuned-prior low-rank runs were added after the first results and are exploratory.
+
+| panel | oracle gain | low-rank latent (DL) | VPL | PAL-B | PAL-B, full features |
+|---|---|---|---|---|---|
+| null control (τ = 0) | 0 | −0.10 [−0.38, +0.17] | −0.04 [−0.08, +0.01] | −0.23 [−0.45, +0.00] | −0.04 [−0.25, +0.17] |
+| injected, τ2 | +1.7 | −0.01 [−0.29, +0.26] | +0.01 [−0.07, +0.10] | −0.10 [−0.36, +0.15] | — |
+| injected, τ5 | +5.2 | −0.02 [−0.28, +0.26] | +0.01 [+0.00, +0.03] | +0.23 [−0.04, +0.51] | +0.26 [−0.14, +0.66] |
+| injected, τ10 (exploratory) | +10.1 | +0.09 [−0.18, +0.36] | +0.27 [+0.02, +0.54] | +0.42 [−0.08, +0.96] | +1.95 [+1.16, +2.74] |
+| injected, τ20 (exploratory) | +21.1 | +1.47 [+0.83, +2.18] | +6.92 [+5.63, +8.30] | +4.62 [+3.47, +5.78] | +8.13 [+6.54, +9.77] |
+| real MultiPref | — | +0.30 [−0.00, +0.60] | −0.01 [−0.04, +0.02] | −0.43 [−0.72, −0.15] | +0.11 [−0.16, +0.37] |
+
+Own minus another rater's k = 20 ratings, direction accuracy in points, 95 % rater bootstrap; 209 new raters, 5 folds. The low-rank latent uses the few-shot-tuned prior. k = 50 contrasts use the 180 of 209 raters with at least 50 training-item ratings. PAL-B's own − other contrast is negative with compressed features (null control −0.23, real data −0.43): its per-rater adaptation adds noise there; with full features it is at zero (−0.04, +0.11). The injection uses one draw of θ and of the labels, so seed variability of the synthetic panels is not in the intervals. Last column: PAL-B on the full 3,584-dimensional features instead of their PCA-256 (exploratory; τ2 not run).
+
+No method has power at the pre-specified strengths. In the exploratory dose-response, VPL and PAL-B detect +21-point preferences but recover less than half a point of +10; on the real data they are at the null-control level, and the low-rank latent's +0.30 [−0.00, +0.60] is matched by the text-independent offsets (+0.32), i.e. scale use. With full features PAL-B detects +10 points but not +5. **How far are these methods from what the data allow?** A well-specified reference learner — the two injected features known, an empirical-Bayes prior on each rater's weights, style offsets re-fitted — recovers +0.89 [+0.40, +1.37], +3.1 [+2.3, +4.0] and +8.0 points of +1.7, +5.2 and +10.1-point oracle gains from 20 ratings (own versus population weights, the oracle's scale). Linear probes show the injected direction is available to VPL and PAL-B (out-of-fold R² 0.65 compressed, 1.00 full) but not to the low-rank latent's joint embedding (0.02); re-injected inside that embedding, the latent detects +10 points (3 of 4 draws) but not +5 (0 of 4). With semantic axes (formatting, hedging/refusal) no method detects even +9.7 points. Twenty ratings permit useful recovery in these injected families when the generating features are supplied; the observed gap implicates feature representation and the learners' inductive biases. These are comparisons with synthetic panels of specific injected forms (noisier than the real data), not formal exclusion bounds; details and seed variability in Appendix B.
+
+### 5.7 How much room is there? Conflicts among aspect judgements are rare
+Every MultiPref annotation carries the annotator's own helpfulness, truthfulness and harmlessness preferences, so a rater's trade-off between these values is observable. With the rater's own aspect labels as inputs (an oracle for the content side), a pooled trade-off already gets 97.5 % of directions right, and a rater-specific trade-off fitted on all of the rater's training ratings adds only +0.10 [−0.24, +0.43] points (+0.44 even in-sample). The three recorded aspect judgements point in opposite directions in only 4.0 % of held-out non-tie comparisons; there individual trade-offs matter (in-sample +9.7 points), but they are too rare to move accuracy. A calibrated test with the item's consensus aspects from other annotators finds individual weights transferring worse than the population's (−0.28 [−0.56, −0.06] at k = 20; exploratory, Appendix B).
+
+### 5.8 A learner that finds the axes: screened attribute personalisation
+§5.6 locates the failure: 20 ratings suffice when the content axes are known, and the published learners do not find them. **Screened attribute personalisation (SAP)** supplies candidate axes and learns from the training raters which of them people differ on. Each comparison is described by 24 interpretable attribute differences fixed in advance (length, markdown structure, hedging/refusal, code, digits, questions, pronouns, sentence and word length, examples, disclaimers, summaries, evidence phrases, politeness, refusal, lexical diversity, overlap with the prompt, …); a rater's content term $(\theta_r^\top a_i)(-2,\dots,2)$ is added to the scale-use model's logits, with $\theta_r \sim N(\mu, \mathrm{diag}\,\sigma^2)$, the population weights $\mu$ and the per-attribute variances $\sigma^2$ estimated on the training raters by automatic relevance determination (Laplace approximation, MacKay's fixed-point update); a new rater's $\theta_r$ is their MAP from k ratings. The contrast is the rater's own weights against the population weights $\mu$, with the rater's own scale-use offsets kept (oracle scale).
+
+| panel (oracle gain) | SAP | one shared variance | same attributes, rank-2 subspace (tuned) | VPL / PAL-B / low-rank latent | features known (reference) |
+|---|---|---|---|---|---|
+| null, 4 draws (0) | −0.03 … +0.04 | +0.06 | 0 (abstains) | — | — |
+| formatting + hedging (+4.6), 4 draws | +2.29 … +2.82 | +0.69 [+0.21, +1.18] | +2.78 [+1.84, +3.72] | ≤ +0.09 | +2.57 [+1.61, +3.57] |
+| formatting + hedging (+9.7), 4 draws | +7.44 … +8.12 | +3.09 [+2.13, +4.02] | +7.75 [+6.09, +9.36] | ≤ +0.27 | +7.44 [+5.96, +8.91] |
+| two axes outside the dictionary (+10.5) | +0.95 [+0.50, +1.39] | — | — | — | — |
+| real MultiPref | +0.28 [−0.00, +0.58] | +0.28 [+0.04, +0.53] | −0.14 [−0.51, +0.24] | — | — |
+| real MultiPref, ratings permuted within item | −0.09 [−0.23, +0.05] | — | — | — | — |
+| Community Alignment, frozen, k = 20 choice events | 0 (abstains); forced −0.40 [−0.87, +0.06] | −0.70 [−1.15, −0.25] | +0.17 [−0.17, +0.51] (tuned) | — | — |
+
+Own minus population weights, direction accuracy at k = 20 in points, 95 % rater bootstrap (ranges over four synthetic draws; VPL / PAL-B / low-rank latent: own − other on the same panels, §5.6). Rules fixed in advance: no detection on the null draws (none), detection of the semantic panels in at least three of four draws (four of four each). The SAP column uses the fixed-point variance update adopted after the pre-registered EM update was found to stall when raters have few ratings (EM results in Appendix B); the shared-variance column uses the same update; the rank-2 model's map ridge and adaptation strength (including none) are selected on held-out training raters at k = 20. Exploratory: the ablations and the out-of-dictionary panels.
+
+SAP recovers what the published learners miss and matches the learner told the features; attribute-specific variances improve recovery over one shared variance under the same update (which loses 60–76 % of the gain); a rank-2 subspace on the same attributes, tuned with the same care, matches SAP on the semantic panels and abstains on the null (untuned, it lost 2.1–2.7 points; Appendix B), while on real MultiPref SAP is ahead of it by +0.41 [+0.15, +0.66] points (paired, exploratory). The variance assigned to correlated attributes means the high-variance set is a set of candidates, not independently identified preference dimensions. SAP learns transferable shrinkage over supplied axes; it does not discover new ones (outside the dictionary it recovers under a tenth of a +10.5-point preference). With the fixed-point update its estimated effects on the four null draws are near zero (−0.03 … +0.11 at k = 20 and 50; with EM it lost up to 0.5 points at k = 50); this is not a calibrated false-positive rate, and forced adaptation does hurt on Community Alignment (below). On real MultiPref its gain over population attribute weights (the rater's offsets kept) is +0.28 [−0.00, +0.58] direction points and +0.0028 [+0.0013, +0.0043] nats per rating — SAP's achieved gain under this protocol, not a bound on what these attributes could offer. **The decisive test** was frozen before its data were embedded: Community Alignment's native choices (1,897 new users in five languages, k = 20 choice events, per-language population weights, adaptation strength of every method chosen on held-out training users). The fitted model assigns substantial training-user variation to length, paragraphs and formatting (prior variances 0.2–0.37), yet adaptation from 20 choice events does not improve held-out prediction: validation switches SAP off in all five folds, forcing it costs −0.40 [−0.87, +0.06] choice points and −0.0097 [−0.0143, −0.0052] nats, and the tuned low-rank model gains +0.17 [−0.17, +0.51]. The pre-set rule (lower bound above +1 point) is not met.
+
+### 5.9 Developers rating code readability
+Two code-readability studies have persistent developer identities: Buse–Weimer (121 raters × 100 Java snippets) and Dorn (3,393 developers with at least ten ratings of 360 Java/Python/CUDA snippets). With Qwen2.5-Coder-7B features, scale use transfers to new developers: offsets gain +0.054 [+0.036, +0.074] nats per rating at k = 20 (Buse–Weimer) and +0.040 [+0.031, +0.049] at k = 10 (Dorn). For content we measure within-developer concordance of predicted and given ratings over snippet pairs, comparing a developer's own weights with population weights under the same offsets. SAP with 22 classical readability attributes (line and identifier length, indentation, nesting, comments, operators, …) gives +0.40 [−0.25, +1.06] points at the pre-set k = 20 on Buse–Weimer (+1.30 [+0.46, +2.18] at k = 50, exploratory) and −0.19 [−0.81, +0.42] on Dorn; the low-rank latent is inconclusive on Buse–Weimer and switched off by validation on Dorn. Details, the pre-set rule's literal outcome on Dorn (met through the own − other contrast, which is not on the oracle scale) and permutation controls are in Appendices A–B.
+
+## 6. What personalisation buys: mostly calibration
+**Binary labels remove the signal on MultiPref.** On MultiPref with ties dropped and labels binarised, every method's personalisation gain is at most 0.002 nats per rating (§5.4), and the scale-use baseline's binary accuracy equals the text-only model's (−0.0002). The individual differences that are predictable for new raters live in the graded levels and in ties — exactly what binary preference data discard, and the format in which most personalised reward models are trained and evaluated.
+**Ranking moves little.** Text-independent offsets change how strongly a rater is predicted to prefer a response, not which response: on MultiPref the scale-use baseline raises direction accuracy by only +0.005 [+0.001, +0.008] at k = 20 (about half of it already at k = 0), while RPS drops from 0.1593 to 0.1532. On single-response safety ratings the same offsets do move the safe/unsafe decision (+4.8 points on DICES), because there a rater's threshold *is* the decision. Text-only direction accuracy on MultiPref (0.674) is already as high as the agreement in direction between two human raters of the same item (0.673 [0.666, 0.680]): a population model predicts a new rater about as well as another person does. **Seen raters.** With all their training ratings (median 134), training raters' own parameters beat another rater's by −0.11 [−0.57, +0.36] direction points for the low-rank latent (offsets +0.10, −0.23): the ranking null is not specific to few-shot adaptation (exploratory, Appendix B). Against its own k = 0 version, no method's direction accuracy on MultiPref rises by more than 0.2 points at k = 20, and every upper 95 % bound stays below +0.8 points even when prompt groups are resampled together with raters (VPL +0.07 [−0.57, +0.74], style model −0.10 [−0.69, +0.54], PAL-B −0.48 [−1.11, +0.14]).
+**The ranking null replicates on real users' own choices.** PRISM users each saw 2–4 responses to their own prompt, scored them and chose one; pairing the chosen response with every other one gives 41,199 native pairwise choices of 1,396 users. Under the same new-user protocol (5 user folds × 5 conversation folds, k of the user's pairs from training conversations), we fixed before any result that the ranking null would be stated only if every method's improvement in choice accuracy over its own k = 0 version had an upper 95 % bound below one point at k = 20. It holds for all of them (1,033 new users at k = 0; the 669 with at least 20 adaptation pairs at k = 20): VPL +0.12 points [−0.08, +0.33], PAL-B +0.0 [−0.4, +0.4] (K = 2) and +0.3 [−0.1, +0.7] (K = 4), the 5-offset model −0.6 [−1.4, +0.2]; the symmetric scale-use model is identical to the text-only model on binary choices, because a binary label carries no intensity. LoRe (Bose et al., 2025), which reports +10 points for unseen PRISM users, run here with its own few-shot fit and with a validated adaptation ridge under the same pre-set rule, also fails it: own gain at k = 20 −1.5 [−2.5, −0.4] (regularised −0.5 [−1.2, +0.2]), own − other +0.2 [−0.8, +1.2]. In LoRe's own setting (its embeddings, split and pair construction) we obtain 67.4 % for the monolithic model and 63.6 % for LoRe (published 61.0 % and 71.0 %; Appendix B): the published gain is not reproduced. With a graded label cut from the users' own score differences (thresholds fixed in advance), the MultiPref pattern returns at half the size (scale-use model +0.043 [+0.031, +0.057] nats per rating at k = 20, VPL +0.015, PAL-B 0.000; no direction gain above +0.2 points).
+**On a dataset built for preference diversity, user-specific signal exists; estimated choice gains remain small.** Community Alignment (first turns, 2,957 new users in five countries, the chosen response paired with each other one; Stage 8): at k = 20 every method's own gain over its own k = 0 version has an upper bound below +0.5 points (VPL +0.15 [+0.03, +0.27], LoRe-reg +0.35 [+0.25, +0.46], LoRe −2.34 [−2.79, −1.88]), yet a user's own adapted parameters beat another user's — the frozen rule's own − other half, which a summary-script bug first dropped and which therefore literally reads "content personalisation detected": LoRe +3.27 [+2.85, +3.70], LoRe-reg +0.36, VPL +0.31. A within-country derangement (added after the result) retains the contrast, so country and language do not explain it (own − same-country other +3.22 [+2.83, +3.60]; same-country − any-country +0.03 [−0.12, +0.18]). A cross-fitted, simulation-calibrated diagnostic agrees on what the signal is: users' deviations from the population weights on response length and paragraphing reproduce across disjoint prompt sets (transferable variances 0.32 [0.25, 0.40] and 0.76 [0.26, 1.35], unchanged by prompt-type adjustment; exploratory, Stage 11; with 200 simulation replicates the length false-detection rate is 5.0 % [2.4, 9.0] and paragraphs' power 85 % [79, 89], so neither calibration target is established beyond binomial error), while no method converts them into a one-point gain at k ≤ 50. Users' stable prompt mixes could create such residual structure without different preferences on the same tasks; as an observational check (no shared prompt bank exists in CA) the length cross-covariance centred within language × prompt-cluster cells is unchanged (0.21 [0.18, 0.23] vs 0.19 pooled), and a same-language user with a matched task mix (cluster shares within L1 0.002) is a worse predictor than the user's own coefficient by +0.80 [+0.45, +1.16] points and +0.009 nats, though better than a random other by +0.75 — about half of the unmatched own − other contrast is task mix (Stage 11 Am. 8). Two annotators agree on 64.3 % of shared response pairs, the text-only model is right on 71.7 % of them. **Using the transferable covariance as the prior** (θ̂_u − μ = c Ĉ (I + c I_u Ĉ)⁻¹ s_u over length, paragraphs and list/heading, Ĉ estimated on training users only; S11-3) gives +0.13 [−0.28, +0.53] points at c = 1, although the fitted Gaussian model implies +2.8 for this learner at k = 20 (oracle +4.2; with event-level simulated labels that keep one winner per choice event, +1.9 and oracle +3.6 — a third lower, just inside the pre-set factor-1.5 tolerance, Stage 11 Am. 6). The gap is not mysterious: on the evaluated split transfer from support to test prompts is established for length (0.41 [0.27, 0.55]) but not for paragraphs or lists (intervals cover 0), heavier-tailed or concentrated deviations with the same covariance lower the simulated gain of this learner to +1.6 to +0.4 (event-level: +0.9 to −0.4) (so covariance alone does not determine learnability; this does not show that concentration explains the real data), and the full-size prior over-adapts. With the attribute set and prior scale chosen on pseudo-new training users (c = 0.125–0.25 in every fold, never "no adaptation"), transfer-calibrated adaptation gains **+0.49 [+0.20, +0.77] choice points and +0.0088 [+0.0061, +0.0116] nats** on the frozen test users, ahead of the tuned rank-2 model by +0.30 [+0.04, +0.56] points — but not of ordinary validated shrinkage: an isotropic prior over the same three attributes, its scale chosen the same way (τ² = 0.1 in every fold), gains +0.66 [+0.37, +0.95] points and +0.0110 nats, and TRV − isotropic is −0.17 [−0.29, −0.05] (not significant after multiplicity adjustment). The estimated covariance therefore adds nothing; what helps is the choice of attributes and light shrinkage. A prompt-group × user two-way bootstrap widens TRV's interval to [+0.01, +0.97]. These are below the one-point threshold, at a different budget (20 choice events, three dependent pairs each) from Stage 8's 20 pairs, where VPL and LoRe-reg also show small positive own gains. **Frozen evaluation on new prompts (Stage 12).** TRV, unchanged, on the same users' second turns (83,238 never-analysed choices; 1,702 test users at k = 20 events): **+0.38 [+0.13, +0.64] choice points and +0.0046 [+0.0031, +0.0063] nats per pair** over μ; validated isotropic shrinkage +0.31 [+0.05, +0.58] and +0.0038; TRV − isotropic +0.07 [−0.07, +0.22]; the tuned rank-2 model selects no adaptation in three of five folds (−0.05). By the pre-set rules the benefit is reproducible (both lower bounds above 0) and sub-threshold (accuracy upper bound below +1), with no advantage over ordinary shrinkage; the prompt-group × user interval for accuracy covers 0 ([−0.04, +0.83]). No language reaches significance alone. The length cross-moment again reproduces across disjoint prompt halves in every fold (0.12–0.19), the list/heading one does not (negative in two folds). These are new prompts and turns of previously studied users, not new users. **Multiplicity (Am. 10, normal approximation from the reported intervals, Holm at 0.05).** In Stage 8's frozen family (six methods × two contrasts) the own − other contrasts of LoRe, LoRe-reg, VPL and PAL4 survive, and the detection is unchanged; the small own gains of VPL (+0.15), PAL4 and DFp do not. Across all 29 reported Stage-11 contrasts (one family), the length statements survive (transfer, within-cluster transfer, own − matched other, TRV and isotropic gains, WIMHF-style length), while paragraphs' transferable variance, TRV − rank-2, TRV − isotropic and the new-user length gain of S11-1 (b) (+0.45) do not; we therefore read TRV and the isotropic prior as indistinguishable rather than TRV as worse. **Status:** the original Stage 11 diagnostic failed its pre-specified calibration criterion, leaving all three primary outcomes inconclusive and the adaptation gate unmet; all subsequent analyses are exploratory; the final procedure selected attributes and shrinkage on training users only, but its candidate family was developed after inspecting test results, and the bootstrap intervals are nominal and do not account for this adaptation. Ĉ is an uncentred cross-moment of one-step deviations, not a bounded share of the fitted random-slope variance; the simulated labels are drawn pair by pair and do not preserve the common winner of a choice event (Appendix B).
+
+
+## 7. Recommendations
+(i) Collect and keep graded labels (and ties) when individual differences matter; in these evaluations most of the demonstrated few-shot predictive gain concerns graded intensity and ties and becomes negligible under binary labels. Sample comparisons for value conflicts (for example, pairs on which aspect ratings disagree): in MultiPref only 4 % of comparisons involve one, and they are where individual trade-offs matter. (ii) Report a scale-use calibration baseline (a few text-independent offsets per rater) next to any personalised reward model. Evaluate content adaptation against population content weights with the same rater offsets retained; claims of decision-relevant personalisation should show benefits on ranking or choice outcomes. (iii) Evaluate on raters unseen in training, adapted from k of their own ratings, and on held-out items, and compare each method with itself given another rater's ratings (a permutation control): a poor unpersonalised state inflates gains measured against k = 0. (iv) Report calibration (log-likelihood, RPS) and ranking (direction accuracy) separately: they answer different questions — how strongly someone prefers, and what to show them. (v) Check what a learned user representation encodes (here unrelated to scale use, R² ≈ 0).
+
+## 8. Discussion
+**Why did published personalised models learn little about new raters here?** Published evaluations differ in user populations, label formats, representations and splits: some use synthetic users whose preferences differ in content by construction or users seen in training, while LoRe evaluates unseen PRISM users; our unresolved native-reproduction discrepancies prevent attributing the differences to evaluation design alone. On Community Alignment we re-ran a WIMHF-style one-attribute personalisation (Stage 11 S11-1): with WIMHF's design — population model on low-volume annotators, held-out high-volume annotators adapted on 16 events, prompts not separated — a list/heading coefficient (our proxy for its paragraphs-vs-lists feature, not its discovered feature) does not beat the population coefficient (AUC +0.0001 [−0.0017, +0.0017]); only length does (+0.010 AUC, +1.06 [+0.80, +1.33] choice points), and on new users with held-out prompts its gain halves (+0.45 [+0.14, +0.80]). A 2 × 2 on common users attributes the drop to the population model, not to prompt separation: with the low-volume-annotator population model the gain is +0.88 (random events) and +1.08 (held-out prompts); with a population model fitted on all other users it is +0.26 and +0.47 (Am. 9). Part of the larger gain is thus a correction of a population misfit shared by high-volume annotators, which an adapted per-user coefficient absorbs. On real raters, graded labels and unseen users, the structure that transfers from k ratings to new items is mostly how the rater uses the scale, which neither VPL's latent nor PAL-B's prototypes represent (R² ≈ 0). Adding the offsets to VPL recovers the whole gain (+0.088): the two are complementary, and a content-personalising method should be shown to beat VPL plus offsets.
+
+
+
+## 9. Limitations and analysis log
+Protocols, amendments and failed hypotheses: Appendices A, B, E. The main tables use frozen-feature text heads (a LoRA reward model only in §5.3), and compressed features make the published methods weaker detectors than full features. Our VPL, PAL and LoRe are reimplementations as heads on frozen embeddings; VPL's and PAL's published numbers were not reproduced in their native settings, and LoRe's PRISM gain is not reproduced even in its own setting with its embeddings, for reasons we could not isolate. The positive control injects low-dimensional preferences on MultiPref only, and its panels are noisier than the real data, so detection limits transfer only approximately. The aspect analyses rest on MultiPref's concurrent aspect labels. SAP selects among supplied attributes and does not discover new ones; its dictionary contains the attributes of the semantic injection, and its screening step was amended after the first runs (Appendix A). The first three datasets are English; Community Alignment spans five languages, which the phrase-based attributes cover only for English; and the per-rater calibration is not shown to change a downstream decision.
+
+## Impact Statement
+This paper evaluates personalised reward models, which are meant to let language models serve people whose preferences differ. Its main finding — that what such models learn about a new rater from few ratings is mostly how that rater uses the rating scale — bears on claims that current methods represent individual or minority values: reported personalisation gains can reflect scale use rather than content preferences, and evaluations on synthetic users, binary labels or seen users can overstate what is learned. We see no direct negative use of the protocol. The datasets are public, were collected with consent by their creators, and are used under their licences; we use rater identifiers only as anonymous indices and report no individual-level results.
+
+## Appendix A. Protocols and amendments
+All analyses were specified in timestamped internal protocols (PROTOCOL_STAGE1, PROTOCOL_STAGE2, PROTOCOL_STAGE2B, PROTOCOL_STAGE2C, PROTOCOL_STAGE3); stages 2b and 2c were written after the stage-2a results. Changes after a result were logged as numbered amendments with the reason; the main ones: the first decoding split (a = b = 2) was structurally empty (two ratings determine their distribution) and was replaced by a = 3, b = 1; hand-set penalties in the rater–item model over-fitted and were replaced by inner cross-validation (which reversed an earlier, wrong conclusion that rater shifts do not help); penalty grids were extended when selections fell on grid edges, before any hypothesis was read; the low-rank baseline lacked a constant column and was fixed in its favour; the probit group model had a scale non-identifiability and was fixed; VPL suffered posterior collapse and its KL weight was re-selected including 0; PAL-B's adaptation ridge was re-selected by k-shot validation. Every superseded full run is kept and reported in the supplementary results; two debugging smoke runs and one fold whose output was deleted unread when the penalty grids were extended are not. The real-data aspect contrast of §5.7 was revised four times: own − other; with a style-only control after a first, confounded +0.45 [+0.01, +0.94]; against θ = 0; and against the population weighting, after the reference learner turned out to shrink towards 0 rather than towards the population. The few-shot-tuned low-rank prior was selected at the top of its grid (8192) in most folds; extending the grid to 524,288 left every DL result unchanged in substance (real data: own − other +0.31 vs +0.30 at k = 20, DFs − DL +0.003 vs +0.0045; synthetic +5/+10-point panels: +0.10 / +0.09 vs −0.02 / +0.09).
+
+## Appendix B. Hypotheses and outcomes
+Stage 2a (MultiPref, k = 20): H1 DF > D — holds (+0.080); H5 (probit F1 > D, the primary probit contrast after Amendment 1) — not supported (+0.020 [−0.001, +0.041]; homoscedastic F − D −0.029), superseded by H1 in Amendment 2; H2 DF > group — holds; H3 DF ≥ low-rank − 0.005 — holds under the training-rater prior, not robust under a few-shot-tuned prior (−0.015); H4 rater scale > rater shift — holds on MultiPref only; H6 symmetric style model gains likelihood without losing direction accuracy — holds and robust. Replications: H1r, H2r hold on DICES and PRISM; H3r holds on DICES (robust) and is a tie on PRISM under the tuned prior. Stage 2b: B1, B2, B3 hold. Stage 2c: C1 holds (graded), C2 holds (binary: |DFs − D| accuracy −0.0002; all personalisation gains ≤ 0.002 nats), C3 fails (published latents do not encode style, R² ≈ 0), C4 not met as a conjunction (first part holds, +0.088 over VPL; second part a tie with DFs, lower bound −0.014); Stage 3 (positive control): τ0 control passes; power at the pre-specified strengths (+1.7, +5.2 oracle points) not established — no content-interacting method's own − other gain has a lower bound above +1 point; exploratory dose-response: VPL and PAL-B pass at +21 points, none at +10; the split-half content estimator (S3-C) has no power; with full features (exploratory, Amendment 5) the τ0 control passes and PAL-B passes at +10 points (k = 20), so the PCA bottleneck explains part of the detection limit. R1 (PRISM native pairwise choices: every method's own choice-accuracy gain at k = 20 has an upper bound < +0.01) holds (largest bound +0.0071, PAL-B K = 4).
+
+**Scale use and the shared reward model.** Training the text model jointly with rater offsets and then using the population-mean offsets (k = 0) does not give a better consensus model than ordinary training: −0.003 [−0.010, +0.003] nats on MultiPref (direction +0.3 points, n.s.), −0.022 [−0.037, −0.008] on DICES, +0.001 on PRISM, −0.009 [−0.016, −0.004] with the LoRA reward model. Ordinary training averages scale use out; it matters for predicting a person, not for learning the content preference.
+
+**What the offsets encode.** In the probit family, rater *scale* matters more than rater *shift* on MultiPref (+0.036 [+0.020, +0.057] at k = 20), but rater *shift* dominates on DICES (−0.053) and PRISM (−0.031): leniency/strictness on single-response rating scales, intensity on two-sided preference scales.
+
+**What this does and does not say about pluralism.** Our results do not show that people agree about content: the item-level disagreement that replicates across rater panels is real (split-half reliability 0.25 on MultiPref) and about a tenth of it is decodable from text. They show that, for predicting an individual new rater from few ratings, that content-level disagreement is a small part of what is predictable, and that demographic or crowd/expert groups add nothing beyond the text.
+
+**Fine-tuned and in-context reward models (§5.3, full text).** With a LoRA-fine-tuned Qwen2.5-7B reward model (D-LoRA, trained per fold on the training raters' rating distributions) as the text model, the three-number style model still adds +0.100 [+0.071, +0.130] nats per rating at k = 20 — the same as its gain on the frozen-feature head (+0.100). Fine-tuning improves the text-only model by +0.027 [+0.016, +0.039] (direction accuracy +1.4 points) and the style model by the same +0.027: the two gains add. Personalising the frozen-feature model with 20 ratings per rater gains more than fine-tuning the text model (+0.072 [+0.041, +0.106]). DFs keeps the direction accuracy of D-LoRA (+0.002 [−0.002, +0.006]). Against in-context personalisation — a separate LoRA model on the same base, trained with ten of the rater's other ratings in the prompt and evaluated with the new rater's k ratings in the prompt — the three offsets on D-LoRA are better at k = 20. The in-context model's result varies with its training seed (two of fifteen runs failed, gaining −0.078 and −0.055 over D-LoRA against +0.021 to +0.125 for the others; the two failed runs have the highest training loss), so it was trained with three seeds per fold, and we fixed in advance that "better" requires a lower bound above zero for every seed and for the seed average. Averaged over seeds — the expected result of one training run — the offsets are better by +0.041 [+0.027, +0.054] nats per rating (209 raters; per seed +0.062, +0.018 and +0.042, every lower bound at least +0.005) and more accurate on which response the rater prefers (+1.9 points [+0.9, +2.7]). The in-context model does learn from the history (+0.051 [+0.024, +0.079] over D-LoRA on average), at several thousand prompt tokens per prediction, but its direction accuracy is below D-LoRA's (−1.7 points [−2.6, −0.8] on average; −0.6 to −3.0 per seed).
+
+**Value conflicts (§5.7, full text).** The positive control asks what the methods could detect; MultiPref also lets us ask how much there is to detect. Every MultiPref annotation carries the annotator's own helpfulness, truthfulness and harmlessness preferences next to the overall one, so a rater's way of trading these values off is observable. We fit an ordinal model of the overall preference from the annotator's own aspect labels (their values and absolute values) with rater-specific cut-points (scale use) and either a pooled trade-off or a rater-specific trade-off, adapted on k of the rater's training-item annotations and evaluated on held-out items **with the rater's own aspect labels as inputs** — an oracle for the content side. The pooled trade-off weights harmlessness most (6.1, five-fold mean), then helpfulness (4.0) and truthfulness (2.0). With the rater's own aspect labels as inputs the pooled model already gets 97.5 % of directions right (74 % on conflict items): aspect and overall labels are produced together by the same annotator, so this ceiling concerns a small residual and is a property of MultiPref's concurrent labelling.
+
+| rater ratings used | rater − pooled trade-off, direction accuracy (points) | log-likelihood per rating | on conflict items (points) |
+|---|---|---|---|
+| k = 20 | +0.03 [−0.05, +0.12] | +0.011 [+0.003, +0.020] | +0.6 [−1.1, +2.4] |
+| k = 50 | +0.06 [−0.09, +0.21] | +0.023 [+0.011, +0.037] | +0.3 [−2.7, +3.8] |
+| all training items | +0.10 [−0.24, +0.43] | +0.046 [+0.028, +0.068] | +2.0 [−5.0, +9.2] |
+| in-sample (fitted on the test items) | +0.44 [+0.27, +0.64] | +0.094 [+0.079, +0.112] | +9.7 [+5.6, +14.5] |
+
+Even with the rater's own aspect judgements and all of their training ratings, a rater-specific trade-off predicts which response they prefer only 0.1 points better than the population's trade-off, and even fitted in-sample only 0.4 points better. The reason is that the aspects point in opposite directions in only 4.0 % of the held-out non-tie comparisons (3.5 % of all annotations); there individual trade-offs matter a great deal (in-sample +9.7 points; among the 20 raters with at least ten helpfulness–harmlessness conflicts, the share of conflicts resolved in favour of helpfulness ranges from 0.00 to 0.94), but they are too rare to move overall accuracy. Individual trade-offs do change how strongly raters prefer (up to +0.046 nats with all their ratings), in line with the calibration-not-ranking pattern. We fixed in advance that an aspect-weight personalised reward model would be built only if the lower bound of this ceiling exceeded half a point with all training ratings; it does not, so we did not build one. The learned personalisers cannot be tested on the conflict items either: the 243 held-out non-tie ratings on them give own − other intervals wider than the achievable ceiling (k = 20: low-rank latent +0.1 [−2.2, +2.4]). **A calibrated test on the real data.** The ceiling above gives each rater's own aspect labels; a deployable personaliser would know only the item's aspects. We therefore ran the reference learner of §5.6 on the real labels with the item's consensus aspect differences from its *other* annotators as content features (3-d), with a hierarchical prior centred at the population weighting (estimated on the training raters) and compared each rater's own weights with that population weighting (style offsets kept). Individual weights transfer *worse* than the population's: −0.28 [−0.56, −0.06] points at k = 20 and −0.63 [−1.01, −0.25] at k = 50. With injected aspect-weight heterogeneity it gives +0.46 [−0.00, +0.96] at k = 50 when an oracle would gain +1.4 points and +3.4 [+2.6, +4.3] at +5.0. The real data lie well below the +5-point panel and, at k = 50, just below the +1.4-point panel: for this injection family, the real data lie below panels of one to two oracle points (sensitivity evidence, not a validated upper bound). This test is exploratory and post hoc, and its contrast was revised four times (Appendix A; no version shows a positive transferable aspect part), the calibration strengths were chosen after seeing the real bound, it uses one synthetic draw on panels noisier than the real data, and it uses other annotators' aspect labels of the test items (an aspect oracle, not a deployable model). Three caveats: the ceiling bounds personalisation of the *weighting* only — disagreement about which response is more helpful or harmless is absorbed into the inputs; it covers content preferences expressible through these three aspects only; MultiPref's prompt sampling determines how often values conflict; and annotators may have aligned their aspect labels with their overall label, which would understate conflicts.
+
+**Code readability (Stage 10).** Pre-set rules: SE-1 (offsets transfer) holds on both panels; SE-2 with the low-rank latent: Buse–Weimer inconclusive (own gain in concordance +1.75 [+0.68, +2.78], own − other +0.53 [−0.63, +1.72]; the text-only model orders snippets at chance, 51.6 %), Dorn degenerate (validation selects the largest penalties, the latent equals the text-only model). SAP-code, own − population / own − other: Buse–Weimer k = 20 +0.40 [−0.25, +1.06] / +1.57 [+0.89, +2.25], k = 50 +1.30 [+0.46, +2.18] / +2.98 [+2.00, +3.91]; Dorn k = 10 −0.19 [−0.81, +0.42] / +2.06 [+1.49, +2.62] — the rule as worded is met on Dorn through own − other, which Stage 5 Am. 4 showed is not on the oracle scale, so content personalisation is not claimed. One within-snippet permutation control gives own − population −0.38 (Buse–Weimer) and −2.09 (Dorn).
+
+**Untuned rank-2 comparator (Stage 9 Am. 4).** With only its map ridge chosen on training raters' held-out ratings and z ~ N(0, I) for new raters, the rank-2 attribute model gave −2.67 [−3.30, −2.07] (null), +2.20 / +7.36 (semantic), −0.42 (out-of-dictionary) and −2.13 [−2.73, −1.52] (real); tuning its adaptation strength on pseudo-new raters (Am. 8) removes the losses.
+
+**SAP with the pre-registered EM update (Stage 9, before Amendment 7).** own − μ at k = 20: null draws −0.28 … +0.05 (k = 50: down to −0.50 [−0.92, −0.09]); semantic panels +2.26 … +2.79 and +7.30 … +8.04; out-of-dictionary +0.41 and +0.81; real MultiPref +0.17 [−0.19, +0.55], LL +0.0022 [+0.0003, +0.0041] nats; PRISM native choices −0.25 [−1.30, +0.83] (EM variances stayed near their initial value there; with the fixed-point update +0.08 [−0.86, +1.02]).
+
+**Positive control on full features (Stage 3, Amendment 5).** Because the compressed features might be what limits the content-interacting methods, we re-ran VPL and PAL-B on the full features (exploratory). The text-only fits improve (k = 0 log-likelihood: PAL-B −1.533 vs −1.558, VPL −1.495 vs −1.574), but VPL's latent then collapses and is unused at every strength (own − other exactly 0), so this check rests on PAL-B. Its detection limit drops: it passes the threshold at +10 points; at +5 points its k = 50 gain is positive (+1.05 [+0.37, +1.72]; real data +0.19 [−0.12, +0.48]) but meets the +1-point criterion in only one of four synthetic draws. The real data stay at the null level (+0.11 [−0.16, +0.37] at k = 20). With this stronger detector, the real data lie below the +10-point panels of the injected form at k = 20; at k = 50 they lie below the +5-point panel but the intervals overlap (comparisons with synthetic panels, not formal exclusion bounds); the compressed features used for the main tables make the published methods weaker detectors than they need to be.
+
+**Positive control (§5.6, full text).** No method has power at the pre-specified strengths. In the exploratory dose-response, VPL and PAL-B detect content preferences worth +21 points but recover less than half a point of +10; the low-rank latent, whose user term interacts with a joint embedding of the comparison, has a signal at +21 points that stays below the threshold, and with the untuned prior it shows nothing up to +5 points either. On the real data VPL and PAL-B are at the null-control level, and the low-rank latent's marginal +0.30 [−0.00, +0.60] is matched by the text-independent offsets (+0.32 [+0.06, +0.58] on the same contrast), so it reflects scale use (which can tip a few near-tie predictions), not content. Read together: on MultiPref, the real data lie far below the +20-point panels for these methods, while preferences worth up to about 10 points cannot be seen by them from 20 ratings, so the ranking null of §6 says nothing about those. These are comparisons with synthetic panels of one injected form, not formal exclusion bounds. On the full features (exploratory) VPL's latent collapses (own − other exactly 0), while PAL-B passes the threshold at +10 points but not at +5, and the real data stay at the null level (+0.11 [−0.16, +0.37]): the real data lie below the +10-point panels of the injected form at k = 20 but not below the +5-point panels (Appendix B). **How far are these methods from what the data allow?** A well-specified reference learner — the injection's two features known, a per-rater weight vector with an empirical-Bayes prior, style offsets re-fitted, the same permutation contrast — recovers the injected preference from 20 ratings at every strength. On the oracle's scale (the rater's own weights against the population state, θ = 0 here, with the rater's style offsets kept) it gains +0.89 [+0.40, +1.37] points at +1.7 oracle points, +3.1 [+2.3, +4.0] at +5.2 and +8.0 at +10.1, i.e. 52–79 % of the oracle; own − other roughly doubles these numbers, because another rater's weights are anti-informative, and is therefore not used for this learner. Among the tested strengths, the reference learner crosses the detection criterion between +1.7 and +5.2 points, well below the methods'. Is the gap in the methods' inputs or in the learners? Linear probes (exploratory, Appendix B) show the injected direction is available to VPL and PAL-B (out-of-fold R² 0.65 compressed, 1.00 full) but not to the low-rank latent's joint embedding (0.02); re-injected inside that embedding, the latent detects +10 points (+1.97 [+1.31, +2.65]; originally +0.09; 3 of 4 draws) but not +5 (+0.08; 0 of 4). With the dimension available, the best learners thus detect between +5 and +10 oracle points, the reference learner below +5: what fails is finding the dimension, not the number of ratings. With semantic axes (formatting, hedging/refusal) no method detects even +9.7 points; the reference learner recovers +7.4 (Appendix B). Results are stable over four synthetic draws, and the synthetic panels are noisier than the real data, so the calibrations transfer only approximately (Appendix B).
+
+**Positive control: seed variability and realism (Stage 5).** Over four synthetic draws (θ and labels) the reference learner is stable (+2.4 to +3.1 at +5 points, +6.4 to +8.0 at +10), PAL-B on full features detects the +10-point panels in all four (lower bounds +1.16 to +3.23) and the +5-point panels in none (+0.26 to +1.40), and the low-rank latent detects neither in any draw (−0.31 to +0.15). A limitation of all synthetic panels: they are noisier than the real data (rater-pair direction agreement 0.59 at τ = 0 against 0.673 [0.666, 0.680]; Krippendorff's α 0.11 against 0.28), and adding item fixed effects to the generator did not close the gap (0.60), nor does it reproduce the small effect of style offsets on direction (+0.32 real vs −0.07 at τ = 0); the calibrations transfer to the real data only approximately, with no claimed direction of bias.
+
+**LoRe on all panels (Stage 6).** Across PRISM pairs and MultiPref, binary and graded labels and k ∈ {5, 20, 50}, LoRe never improves direction or choice accuracy over its own k = 0 version or over the text-only model (own gain −6.2 to +0.1 points; the regularised version −1.1 to −0.0), and its log-likelihood is below the text-only model's everywhere. Its own − other is positive in some cells (MultiPref binary, k = 20: +1.3 [+0.5, +2.0]) while its own gain is negative there (−1.2 [−1.9, −0.5]): another rater's over-fitted weights are anti-informative, the scale problem discussed for the reference learner, so own − other alone is not evidence of personalisation for methods whose few-shot fit over-fits.
+
+**Stage 7 (after the seventh review; PROTOCOL_STAGE7.md).** S7-1, cross-fitted ridge probes (prompt-group folds, out-of-fold R²) of the two injected features from each learner's inputs: log length ratio 0.88 (VPL/PAL-B PCA-256 x_B − x_A), 0.93 (full features), 0.73 (D/DL joint PCA-256); random direction 0.65, 1.00, 0.02. By the rule fixed beforehand, S7-2 was run for the low-rank latent only: the random direction re-drawn inside its joint embedding (orthogonal to the consensus direction), τ calibrated to oracle gains of +5.1 and +10.4. Own − other at k = 20 / 50: +0.08 [−0.18, +0.33] / +0.03 [−0.29, +0.34] at +5.1; +1.97 [+1.31, +2.65] / +7.02 [+5.84, +8.16] at +10.4; the reference learner is unchanged (own − population +2.67 and +8.33). S7-3, seen-rater ceiling on real MultiPref (training raters × test items, 904 rater-folds, trained parameters; derangement of training raters): direction accuracy minus the text-only model −0.51 [−0.88, −0.11] (five offsets), −0.00 [−0.20, +0.18] (symmetric), −0.42 [−0.81, −0.02] (low-rank); own − other −0.23, +0.10, −0.11 [−0.57, +0.36]; log-likelihood over the text-only model +0.13 nats for all three. By the rule fixed beforehand, the ranking null also holds for seen raters. S7-4 (Amendment 3), semantic axes — (s1) log(1 + markdown list/heading lines) of B minus A, (s2) the same for a fixed list of hedging/refusal phrases — calibrated to +4.6 and +9.7 oracle points: probes R² 0.37–0.66 (formatting) and 0.09–0.24 (hedging); own − other at k = 20 / 50 for the low-rank latent +0.09 / +0.05 and −0.18 / −0.08, VPL −0.05 / +0.04 and +0.03 / +0.03, PAL-B (compressed features) −0.24 / −0.12 and +0.27 / +0.40 [−0.02, +0.85]; reference learner own − population +2.57 [+1.61, +3.57] and +7.44 [+5.96, +8.91]. No method detects either panel. S7-5 (Amendment 4), the in-span panels over four draws (θ and label seeds 1, 11, 12, 13): the low-rank latent's own − other at k = 20 is +1.97, +2.83, +3.14, +1.44 [+0.92, +1.96] at +9.3 to +10.9 oracle points (detected in 3 of 4; k = 50 +5.0 to +7.3) and +0.00 to +0.14 at +4.7 to +5.5 (0 of 4); the reference learner +7.4 to +8.3 and +2.6 to +2.9. Both statements are kept under the rule fixed beforehand.
+
+**Confirmatory and exploratory results.** Confirmatory (rule fixed before the result): the stage-2a hypotheses H1–H5 and their replications (H6, on the symmetric offsets, was added after the first results and is exploratory; its later replications were evaluated prospectively); B1–B3; C1–C4; R1 (PRISM native choices); the Stage-3 positive control at +1.7 and +5.2 oracle points (no power); the Stage-4 ceiling rule (not met); the Stage-6 LoRe rule (PRISM null not withdrawn). Exploratory (added or changed after a result, labelled in the text): the symmetric offsets DFs and their hypothesis; the few-shot-tuned prior; the +10 and +21 panels and the full-feature runs; the reference learner and its oracle-scale contrast; the calibrated real-data aspect test; the regularised LoRe; the two-way bootstrap re-estimates.
+
+**Reproducing LoRe's PRISM result (Stage 6, Amendments 2–3).** Unseen-user binary accuracy, mean ± sd over five random user splits, LoRe's native setting (users with at least six dialogues split 50/50, half of each user's conversations for few-shot and half for test, one chosen-vs-other pair per conversation; 1,267 users, about three few-shot pairs per unseen user):
+
+| embeddings | monolithic BT | LoRe, no adaptation | LoRe, few-shot fit |
+|---|---|---|---|
+| Skywork-Reward-Llama-3.1-8B-v0.2 (LoRe's) | 67.4 ± 1.1 | 67.3 ± 1.8 | 63.6 ± 3.7 |
+| Qwen2.5-7B-Instruct (ours) | 67.7 ± 1.5 | 68.7 ± 1.7 | 61.0 ± 2.5 |
+| published (Bose et al., 2025) | 61.0 ± 1.2 | — | 71.0 ± 1.0 |
+
+Taking one pair per interaction instead (every turn; 20 pairs per user) gives 58.8 / 59.2 / 57.0 with our features. The remaining differences — a stronger monolithic baseline here and a few-shot fit that helps there but hurts here — could not be traced to any setting the LoRe paper reports. Under our protocol (user- and conversation-disjoint folds) the Skywork embeddings leave the conclusion unchanged: LoRe's own gain at k = 20 is −1.3 [−2.5, −0.2] points (regularised −0.5 [−1.3, +0.2]) and own − other +0.2 [−0.9, +1.2], as with our features.
+
+## Appendix C. Implementation
+**Rater identities.** All four panels carry persistent rater identifiers (MultiPref pseudonyms, 227 evaluators, median 166 ratings, never twice on one item; DICES rater IDs, 123 raters × 350 items; PRISM user IDs, one survey record each; Community Alignment annotator IDs). Demographics never vary within an ID on DICES and in fewer than 0.3 % of IDs on Community Alignment. On MultiPref, which has no demographics, an evaluator's tie rate and extreme-rating rate in the first and second half of their ratings (by timestamp) correlate at 0.82 and 0.78 across evaluators, against −0.03 and 0.00 (largest 0.17) with evaluator labels shuffled (`check_rater_ids.py`). Shared accounts cannot be ruled out but would weaken, not create, the rater-level effects we report.
+
+Text features: last-token final-layer states of Qwen2.5-7B-Instruct under a 5-point judge prompt (MultiPref, PRISM) or a 3-level safety prompt (DICES), label-free PCA to 256 dimensions. Folds: 5 rater folds (stratified by group) × 5 prompt-group folds; validation: 15 % of training prompt groups. k-shot draws: 5 per k, identical across all models (RC-LoRA: draw 0 only). PRISM item folds are by conversation. Bootstrap: rater clusters, B = 2,000. LoRA: r = 16 on all attention and MLP projections, lr $10^{-4}$, one epoch, accumulation 8. VPL / PAL-B: official architectures (latent 512, hidden 512; d_pref 512, mlp2-gelu projectors, angle learner) with an ordered-logistic link for graded labels; VPL's KL weight selected from {0.01 (official), 0.001, 0} and PAL-B's adaptation ridge by k-shot validation (non-official choices made to prevent collapse and over-fitting).
+
+## Appendix D. Where is the predictable structure? Estimators and results
+**Estimators.** For an item with ratings on $K$ ordered levels, let $h$ be the empirical rating distribution and $C$ the cumulative operator. Split the item's raters at random into disjoint panels $P_1$ ($a$ raters) and $P_2$, and let $q$ be a cross-fitted *location-only* forecast with exactly the mode and mean of $P_1$ (built from other items in the same mode-and-mean cell). With $r_1 = C(h_1 - q)$, $r_2 = C(h_2 - q)$, $M = \|r_1\|^2/n$ and $X = \langle r_1, r_2\rangle/n$, the forecasting value of the raw distribution over its own location obeys the identity $S(h_1) - S(q) = M - 2X$ under the ranked probability score, so $\rho = X/M$ is a split-half reliability of the distribution's *shape* and the raw distribution beats its location exactly when $\rho > 1/2$. Text decodability is the proper-score gain $G = (2\langle \hat r, r_2\rangle - \|\hat r\|^2)/n$ of a residual $\hat r$ decoded from frozen text features, cross-fitted over prompt groups, reported as the fraction $G/X$ of the reproducible shape. The rater–item decomposition fits ordered-probit models $Y^*_{ir} = \theta_i + \delta_r + \sigma_i\sigma_r\varepsilon$ with item locations $\theta_i$, rater shifts $\delta_r$, rater scales $\sigma_r$ and item dispersions $\sigma_i$, compares held-out likelihood over random cells (every held-out rater and item appears in training), and chooses all penalties by inner cross-validation.
+
+**Reproducibility.** With the split-half estimator defined above, the reliability of the rating distribution's shape beyond its exact mode and mean is ρ = 0.25 [0.22, 0.29] on MultiPref overall preference with three raters (helpful 0.29, harmless 0.21): the raw few-rater distribution forecasts a new rater worse than its own location (ρ < ½).
+**Text decodability.** A cross-fitted ridge decoder on frozen Qwen2.5-7B-Instruct features, scored on an independent rater panel, recovers G/X = 10.5 % [5.7 %, 11.9 %] of the reproducible shape (within-cell permutation control ≤ 0; positive control 0.35) — comparable to the upper end for ordinal quality ratings (upper bounds 0.4–10 %) and below NLI (17–26 %).
+**Rater vs item.** A long-format ordered-probit decomposition with real rater identities and penalties tuned by inner cross-validation: rater-specific thresholds improve held-out likelihood by +0.036 nats per rating over item location alone, item-specific dispersion by a further +0.0014 (ratio 25; 19–36 across the five folds); of the rater part, rater scale contributes +0.031 and rater shift +0.005.
+
+## Appendix E. Protocols and what did not hold
+All analyses are documented in an analysis log: timestamped internal protocols written before each stage (not public registrations, so they document rather than certify the order of decisions); changes after results are logged as amendments with reasons, and the symmetric style model DFs and its hypothesis were added after the first full result. Not supported or not robust: (i) the stage-1 decision rule returned "mixed" (text decodability not ≤ 10 %); (ii) non-inferiority of the 5-parameter DF to the low-rank latent (DF − DL ≥ −0.005) holds with the training-rater prior but not with a few-shot-tuned prior on MultiPref (−0.015) and is formally not met on PRISM (bound −0.006); (iii) "scale beats shift"  holds only on MultiPref; (iv) the originally registered probit-family hypothesis is not supported (F1 − D = +0.020 [−0.001, +0.041], the primary probit contrast after Amendment 1; homoscedastic F − D = −0.029 [−0.049, −0.008]; superseded when the primary family was moved to the distributional head); (v) the prediction that published user latents encode style  failed (R² ≈ 0); (vi) the hybrid's non-inferiority to DFs  is formally not met (bound −0.014). Four baseline problems found during the study were fixed in favour of the baselines — a missing constant column in the low-rank latent, a scale non-identifiability in the probit group model, VPL's posterior collapse, and PAL-B's near-unregularised adaptation — and the runs before each fix are reported.
