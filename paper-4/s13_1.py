@@ -10,7 +10,17 @@ ITEM = np.array([ITEM_OF.get(e, -1) for e in EVT]); LET = np.array([s.split("|")
 nu_item = collections.Counter(); seen = set()
 for j in range(n):
     if ITEM[j] >= 0 and (ITEM[j], R[j]) not in seen: seen.add((ITEM[j], R[j])); nu_item[ITEM[j]] += 1
-SH = np.array([ITEM[j] >= 0 and nu_item[ITEM[j]] >= 2 for j in range(n)]); An = A.numpy(); Yn = YB.numpy(); G_ = (2 * Yn - 1)[:, None] * An   # G_ = x_chosen - x_other
+SH = np.array([ITEM[j] >= 0 and nu_item[ITEM[j]] >= 2 for j in range(n)])
+POSRUN = os.environ.get("S13POS") == "1"
+if POSRUN:                                                                 # Am. 2: position-difference columns (B minus A; positions b, c, d one-hot, a = reference)
+    chosen = {}
+    for e_, l_ in zip(EVT, LET): chosen.setdefault(e_, set("abcd")).discard(l_)
+    CH = np.array([next(iter(chosen[e_])) for e_ in EVT]); Yb = np.asarray(PAN["yb"]); posB = np.where(Yb == 1, CH, LET); posA = np.where(Yb == 1, LET, CH)
+    oh = lambda P_: np.stack([(P_ == x).astype(float) for x in "bcd"], 1); A = torch.cat([A, torch.tensor(oh(posB) - oh(posA))], 1); J = A.shape[1]
+    POS = [J - 3, J - 2, J - 1]; SETS = (("pos", POS), ("lenpos", L1 + POS), ("prim3pos", PRIM + POS)); ISO_SETS = SETS; TRV_SETS = ()
+else: ISO_SETS = SETS; TRV_SETS = SETS
+An = A.numpy(); Yn = YB.numpy(); G_ = (2 * Yn - 1)[:, None] * An   # G_ = x_chosen - x_other
+ATTRC = np.arange(J - 3) if POSRUN else None
 print(f"identical items with >= 2 users: {sum(1 for v in nu_item.values() if v >= 2)}; shared pairs {SH.sum()}", flush=True)
 recs, A_rows, gate = [], [], {}
 for f in range(5):
@@ -31,13 +41,17 @@ for f in range(5):
         if len(evs) < KEV + 1: continue
         o = rng.permutation(len(evs)); kp.append(r); adp += [j for e in o[:KEV] for j in evs[e]]; scp += [j for e in o[KEV:] for j in evs[e]]
     adp, scp = np.array(adp, int), np.array(scp, int); vt, vi = {}, {}
-    for nm, cols in SETS:
+    for nm, cols in TRV_SETS:
         Cs = est_C(lg_s, a_all, cols)
         for c in GRID: vt[(nm, c)] = float(scores(base_s, scp, adapt(lg_s, adp, kp, c * Cs, cols, MUs))[1].mean())
+    for nm, cols in ISO_SETS:
         for t in TAU: vi[(nm, t)] = float(scores(base_s, scp, adapt(lg_s, adp, kp, t * np.eye(len(cols)), cols, MUs))[1].mean())
-    st, si = max(vt, key=vt.get), max(vi, key=vi.get); print(f"fold {f}: TRV {st}; iso {si}", flush=True)
+    if POSRUN:
+        vj = {k_: v for k_, v in vi.items() if k_[0] != "pos"}; vp = {k_: v for k_, v in vi.items() if k_[0] == "pos"}; si, st = max(vj, key=vj.get), max(vp, key=vp.get)   # "trv" slot = position-only learner
+    else: st, si = max(vt, key=vt.get), max(vi, key=vi.get)
+    print(f"fold {f}: TRV/pos-only {st}; iso {si}", flush=True)
     base, lam = fit_base(idx_tr, idx_va); mu = fit_mu(base, idx_all); MU = mu[torch.tensor(ulang)]; lg_pop = (base + (MU[Rt] * A).sum(1)).numpy()
-    colsT = dict(SETS)[st[0]]; CT = st[1] * est_C(lg_pop, idx_all, colsT); colsI = dict(SETS)[si[0]]; CI = si[1] * np.eye(len(colsI))
+    colsI = dict(SETS)[si[0]]; CI = si[1] * np.eye(len(colsI)); colsT = dict(SETS)[st[0]]; CT = st[1] * (np.eye(len(colsT)) if POSRUN else est_C(lg_pop, idx_all, colsT))
     te_by = collections.defaultdict(dict); first_conv = {}                 # item -> user -> {other letter: row}; a user who saw an item twice: first conversation only
     for j in idx_te:
         if R[j] not in set(test_users): continue
@@ -64,8 +78,9 @@ for f in range(5):
                 if cu == cv: continue
                 g = G_[rows_u[cv]]                                         # x_{a} - x_{b}, a = u's choice, b = v's choice
                 out = {"item": int(it), "u": int(u), "v": int(v), "fold": f}
-                for m_ in ("iso", "trv"):
-                    S = np.array([((D_[u] - D_[v]) * g).sum() for D_ in DEL[m_]]); out[f"{m_}_ls"] = float(np.mean(-np.logaddexp(0, -S) + np.log(2))); out[f"{m_}_acc"] = float(np.mean((S > 0) + 0.5 * (S == 0)))
+                parts = [("iso", "iso", None), ("trv", "trv", None)] + ([("iso_attr", "iso", ATTRC), ("iso_pos", "iso", POS)] if POSRUN else [])
+                for nm_, m_, cc in parts:
+                    S = np.array([((D_[u] - D_[v]) * g)[cc].sum() if cc is not None else ((D_[u] - D_[v]) * g).sum() for D_ in DEL[m_]]); out[f"{nm_}_ls"] = float(np.mean(-np.logaddexp(0, -S) + np.log(2))); out[f"{nm_}_acc"] = float(np.mean((S > 0) + 0.5 * (S == 0)))
                 A_rows.append(out)
     print(f"fold {f}: {len(A_rows)} disagreeing pairs so far", flush=True)
 # ---- inference
@@ -94,7 +109,7 @@ def boot2(a_, b_, mt, B=1000):
     for _ in range(B):
         w = np.bincount(rng.randint(0, len(uq), len(uq)), minlength=len(uq))[ui] * np.bincount(rng.randint(0, len(iq), len(iq)), minlength=len(iq))[ii]; bs.append((w * dp).sum() / max(w.sum(), 1))
     return [sc_ * dp.mean(), sc_ * np.percentile(bs, 2.5), sc_ * np.percentile(bs, 97.5)]
-out = {"gate_items_by_fold": gate, "A": {m_: {"logscore": twoway_A(f"{m_}_ls"), "acc": twoway_A(f"{m_}_acc")} for m_ in ("iso", "trv")}}
+out = {"gate_items_by_fold": gate, "A": {m_: {"logscore": twoway_A(f"{m_}_ls"), "acc": twoway_A(f"{m_}_acc")} for m_ in (("iso", "trv", "iso_attr", "iso_pos") if POSRUN else ("iso", "trv"))}}
 dA = [x["trv_ls"] - x["iso_ls"] for x in A_rows]
 for x, v in zip(A_rows, dA): x["d_ls"] = v
 out["A"]["trv-iso_logscore"] = twoway_A("d_ls")
@@ -103,4 +118,6 @@ for mt in ("acc", "ll"):
 A1 = out["A"]["iso"]["logscore"]; Bacc, Bll = out["B_iso-pop_acc"], out["B_iso-pop_ll"]
 out["decisions"] = {"identity_on_identical_items": bool(A1[1] > 0), "beneficial_on_shared_panel": bool(A1[1] > 0 and Bacc[1] > 0 and Bll[1] > 0), "sub_threshold": bool(Bacc[2] < 1.0),
                     "trv_advantage_A": bool(out["A"]["trv-iso_logscore"][1] > 0), "trv_advantage_B": bool(out["B_trv-iso_acc"][1] > 0)}
-json.dump(out, open(f"{HERE}/results/stage13_s1.json", "w"), indent=1); json.dump(A_rows, open(f"{HERE}/results/stage13_s1_pairs.json", "w")); print(json.dumps(out), flush=True)
+TAG = "_pos" if POSRUN else ""
+if POSRUN: out["decisions"]["identity_not_position"] = bool(out["A"]["iso_attr"]["logscore"][1] > 0)
+json.dump(out, open(f"{HERE}/results/stage13_s1{TAG}.json", "w"), indent=1); json.dump(A_rows, open(f"{HERE}/results/stage13_s1{TAG}_pairs.json", "w")); print(json.dumps(out), flush=True)
