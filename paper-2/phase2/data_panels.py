@@ -487,8 +487,11 @@ def load_ca_pairs(seed=0, turn="first"):
     H is a placeholder (binary evaluation only, E2); groups = first-turn prompt text; rater_group = annotator country; resp_A / resp_B / texts = response and prompt texts."""
     T = f"{turn}_turn_"                                                     # paper 4 Stage 12: turn="second" (prompt = the second-turn prompt alone)
     c = ["conversation_id", "annotator_id", "assigned_lang", "is_pregenerated_first_prompt", "annotator_country", T + "prompt", T + "preferred_response"] + [f"{T}response_{x}" for x in "abcd"]
-    d = pd.read_csv(CA_CSV, usecols=c).sort_values("conversation_id").reset_index(drop=True)
+    H_ = ["first_turn_prompt", "second_turn_prompt", "first_turn_preferred_response", "second_turn_preferred_response"] if turn == "third" else []
+    d = pd.read_csv(CA_CSV, usecols=c + H_).sort_values("conversation_id").reset_index(drop=True)
     ok = d[T + "preferred_response"].isin([f"response_{x}" for x in "abcd"]) & d[[f"{T}response_{x}" for x in "abcd"]].notna().all(1) & d[T + "prompt"].notna()
+    if turn == "third":   # Stage 13 Am. 5: the history (p1, preferred r1, p2, preferred r2) must be defined, as in embed_ca3.py (no third-turn label used)
+        ok &= d["first_turn_prompt"].notna() & d["second_turn_prompt"].notna() & d["first_turn_preferred_response"].isin([f"response_{x}" for x in "abcd"]) & d["second_turn_preferred_response"].isin([f"response_{x}" for x in "abcd"])
     d = d[ok].reset_index(drop=True); rng = np.random.RandomState(seed); rows = []
     for r in d.itertuples(index=False):
         rr = r._asdict(); ch = rr[T + "preferred_response"][-1]; tc = str(rr[f"{T}response_{ch}"])
