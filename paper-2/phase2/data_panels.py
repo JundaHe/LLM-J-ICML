@@ -500,7 +500,7 @@ def load_ca_pairs(seed=0, turn="first"):
     return dict(name="ca_pairs" if turn == "first" else f"ca_pairs_{turn}", texts=df.prompt.tolist(), H=np.where(df.yb.to_numpy() == 1, 4, 0)[:, None], K=5, item_ids=df.pid.to_numpy(), groups=df.prompt.to_numpy(), rater_ids=np.array(["user"]),
                 evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in country.items()}, yb=df.yb.to_numpy(), resp_A=df.A.to_numpy(), resp_B=df.B.to_numpy(),
                 lang=df.lang.to_numpy(), pregen=df.pregen.to_numpy(), model="Qwen/Qwen2.5-7B-Instruct")
-LOADERS.update({"ca_pairs": load_ca_pairs, "ca_pairs_second": lambda: load_ca_pairs(turn="second")})
+LOADERS.update({"ca_pairs": load_ca_pairs, "ca_pairs_second": lambda: load_ca_pairs(turn="second"), "ca_pairs_third": lambda: load_ca_pairs(turn="third")})   # third: Stage 13 S13-3
 
 def load_bw_raters():
     """paper 4 Stage 10: Buse–Weimer with persistent rater IDs as columns (crossed), no rater groups"""
