@@ -1173,3 +1173,6 @@ Am. 2 (position control): identical-item identity survives — attribute part +0
 
 ### 2026-11-04 11:35 — paper 4: abstract updated; Codex round 7 sent
 Embedding 12578 still waiting (both GPUs held by other users' jobs, up to ~13 h remaining). Abstract rewritten with the Stage 13 results (identical-item 62.2 %, +0.70 / +0.38 points, MultiPref null, population-model sensitivity; 217 words). Round-7 review (gpt-6.1-sol, max) sent with PROTOCOL_STAGE13, CLAIMS.md, the draft and the endpoint-A code.
+
+### 2026-11-04 12:15 — paper 4: round 7 + Am. 4 audit
+Round 7 (gpt-6.1-sol): 6/10, 50–60 %; S13-1 assignment score sound (σ(S) derivation, no factor 2); Am. 2 reading logically invalid (joint fit of correlated predictors) → corrected wording; bootstrap/integrity audit requested. Audit: all integrity assertions pass; uncentred differences immaterial (+0.0658 vs +0.0657); bootstrap centred (mean = estimate) despite sparse-item dropout; Exp(1) multipliers [+0.046, +0.083], prompt-clustered [+0.036, +0.093]; every fold positive; 1,336 users / 1,116 items in endpoint A. Joint − position-only +0.026 [−0.000, +0.046] → attribute value beyond positions not established; draft no longer attributes the identity to content. Draft/abstract/CLAIMS wording repaired per round 7. Third-turn embedding still waiting for a GPU.
