@@ -1210,3 +1210,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-04 18:31 — paper 4: embedding at 47 %
 - Job 12578 checkpoint 41,625/202,190 texts = 47.1 % of tokens after 5.6 h (~3.7 % per 30 min); projected finish ≈ 01:30 on 11-05. No new results, no bug signs.
+
+## 2026-11-04 19:31 — paper 4: embedding at 55 %
+- The 18:30 push failed during a GitHub outage (status page: minor service outage; "Permission denied (publickey)" / "Internal Server Error"); retried now and succeeded, no key changes.
+- Job 12578 checkpoint 53,555/202,190 texts = 54.5 % of tokens after 6.6 h (~3.7 % per 30 min); projected finish ≈ 01:30 on 11-05. No new results, no bug signs.
