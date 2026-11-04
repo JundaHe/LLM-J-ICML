@@ -1,5 +1,5 @@
 """Stage 13 S13-1 (PROTOCOL_STAGE13.md): identity on identical CA first-turn items (endpoint A) and benefit on the same panel (endpoint B); learners frozen from Stage 12 (isotropic primary, TRV secondary)."""
-import os, json, collections, numpy as np, torch, pandas as pd
+import os, json, collections, zlib, numpy as np, torch, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); os.environ["CA_PANEL"] = "ca_pairs"
 exec(open(f"{HERE}/s12.py").read().split("recs, info, PAIR = ")[0])  # s12.py: sap_ca.py's data and fits, halves_z / est_C / adapt, SETS, GRID, TAU (unchanged)
 # ---- identical items (label-blind: prompt and the four ordered responses only)
@@ -21,6 +21,8 @@ if POSRUN:                                                                 # Am.
 else: ISO_SETS = SETS; TRV_SETS = SETS
 An = A.numpy(); Yn = YB.numpy(); G_ = (2 * Yn - 1)[:, None] * An   # G_ = x_chosen - x_other
 ATTRC = np.arange(J - 3) if POSRUN else None
+D1 = json.load(open(f"{HERE}/results/stage13_delta1.json")); OFF = np.zeros(J); OFF[:len(D1["mean1"])] = np.array(D1["mean1"]) / np.array(D1["sd1"])   # Am. 4: undo attr_G's centring
+GU = (2 * Yn - 1)[:, None] * (An + OFF)                                     # uncentred x_chosen - x_other
 print(f"identical items with >= 2 users: {sum(1 for v in nu_item.values() if v >= 2)}; shared pairs {SH.sum()}", flush=True)
 recs, A_rows, gate = [], [], {}
 for f in range(5):
@@ -73,14 +75,18 @@ for f in range(5):
         for i in range(len(us)):
             for k in range(i + 1, len(us)):
                 u, v = us[i], us[k]; rows_u, rows_v = te_by[it][u], te_by[it][v]
-                if len(rows_u) < 3 or len(rows_v) < 3: continue
-                cu = ({"a", "b", "c", "d"} - set(rows_u)).pop(); cv = ({"a", "b", "c", "d"} - set(rows_v)).pop()   # chosen = the letter without an "other" row
+                assert len(rows_u) == 3 and len(rows_v) == 3, "incomplete choice event"
+                mu_, mv_ = {"a", "b", "c", "d"} - set(rows_u), {"a", "b", "c", "d"} - set(rows_v); assert len(mu_) == 1 and len(mv_) == 1; cu, cv = mu_.pop(), mv_.pop()   # chosen = the missing letter
                 if cu == cv: continue
-                g = G_[rows_u[cv]]                                         # x_{a} - x_{b}, a = u's choice, b = v's choice
-                out = {"item": int(it), "u": int(u), "v": int(v), "fold": f}
+                g = G_[rows_u[cv]]; gu = GU[rows_u[cv]]                    # x_{a} - x_{b}, a = u's choice, b = v's choice (centred as frozen / uncentred)
+                assert np.allclose(GU[rows_v[cu]], -gu, atol=1e-6), "antisymmetry of response differences"
+                out = {"item": int(it), "u": int(u), "v": int(v), "fold": f, "prompt": int(zlib.crc32(str(Gp[rows_u[cv]]).encode()))}
                 parts = [("iso", "iso", None), ("trv", "trv", None)] + ([("iso_attr", "iso", ATTRC), ("iso_pos", "iso", POS)] if POSRUN else [])
                 for nm_, m_, cc in parts:
-                    S = np.array([((D_[u] - D_[v]) * g)[cc].sum() if cc is not None else ((D_[u] - D_[v]) * g).sum() for D_ in DEL[m_]]); out[f"{nm_}_ls"] = float(np.mean(-np.logaddexp(0, -S) + np.log(2))); out[f"{nm_}_acc"] = float(np.mean((S > 0) + 0.5 * (S == 0)))
+                    for tag, gg in (("", g), ("_unc", gu)):
+                        S = np.array([((D_[u] - D_[v]) * gg)[cc].sum() if cc is not None else ((D_[u] - D_[v]) * gg).sum() for D_ in DEL[m_]]); out[f"{nm_}{tag}_ls"] = float(np.mean(-np.logaddexp(0, -S) + np.log(2))); out[f"{nm_}{tag}_acc"] = float(np.mean((S > 0) + 0.5 * (S == 0)))
+                        if tag == "_unc" and cc is None:
+                            S_sw = np.array([((D_[v] - D_[u]) * gg).sum() for D_ in DEL[m_]]); S_rev = np.array([((D_[v] - D_[u]) * GU[rows_v[cu]]).sum() for D_ in DEL[m_]]); assert np.allclose(S_sw, -S) and np.allclose(S_rev, S)
                 A_rows.append(out)
     print(f"fold {f}: {len(A_rows)} disagreeing pairs so far", flush=True)
 # ---- inference
@@ -118,6 +124,10 @@ for mt in ("acc", "ll"):
 A1 = out["A"]["iso"]["logscore"]; Bacc, Bll = out["B_iso-pop_acc"], out["B_iso-pop_ll"]
 out["decisions"] = {"identity_on_identical_items": bool(A1[1] > 0), "beneficial_on_shared_panel": bool(A1[1] > 0 and Bacc[1] > 0 and Bll[1] > 0), "sub_threshold": bool(Bacc[2] < 1.0),
                     "trv_advantage_A": bool(out["A"]["trv-iso_logscore"][1] > 0), "trv_advantage_B": bool(out["B_trv-iso_acc"][1] > 0)}
-TAG = "_pos" if POSRUN else ""
+TAG = ("_pos" if POSRUN else "") + "_am4"
+for k_ in [k_ for k_ in A_rows[0] if k_.endswith("_unc_ls") or k_.endswith("_unc_acc")]: out["A"][k_] = twoway_A(k_)
+te_all = np.concatenate([np.where((rfold[R] == f) & (ifold == f) & SH)[0] for f in range(5)]); out["counts"] = {"A_pairs": len(A_rows), "A_items": len({x["item"] for x in A_rows}), "A_users": len({x["u"] for x in A_rows} | {x["v"] for x in A_rows}),
+    "B_users": len({(x["fold"], x["rater"]) for x in recs}), "B_items": len({i for x in recs if x["draw"] == 0 for i in x["items"]}), "B_pairs_per_draw": int(np.mean([sum(x["n"] for x in recs if x["draw"] == d_) for d_ in range(5)])),
+    "B_pop_acc": float(np.mean(np.concatenate([x["pop_acc_rows"] for x in recs]))), "gate_items": gate}
 if POSRUN: out["decisions"]["identity_not_position"] = bool(out["A"]["iso_attr"]["logscore"][1] > 0)
 json.dump(out, open(f"{HERE}/results/stage13_s1{TAG}.json", "w"), indent=1); json.dump(A_rows, open(f"{HERE}/results/stage13_s1{TAG}_pairs.json", "w")); print(json.dumps(out), flush=True)
