@@ -1275,3 +1275,27 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - No Slurm jobs running; no experiments pending (turn 4 stays closed).
 - Codex round 9 (gpt-6.1-sol, max) on the pdftotext of latex/main.pdf: cross-checks numbers between the main text, tables and appendices; looks for overclaims and typesetting defects; ranks remaining reviewer asks.
 - The PDF has no undefined references (no "??").
+
+## 2026-11-05 04:51 paper 4 — round-9 review applied (text only, no new analysis)
+- Codex round 9 (reviews/codex_round09_gpt-6.1-sol.md): main results consistent across the abstract, §6 and the results table; S13-3 and TRV-vs-isotropic wording judged correct. Every flagged item was checked against the draft and code before editing:
+  - Labels: Dorn content result is at k = 10, not k = 20 (budgets now stated per study); 4.0 % refers to non-tie comparisons, and +0.10 is the all-training-ratings fit (+0.03 at k = 20); the +1.9 simulation benchmark is attached to the c = 1 learner (+0.13 realised); "56 %" changed to "about 55 %".
+  - Fold design: the code (factorised_rm.py, s12.py) uses 5 paired splits (split f holds out rater fold f and prompt-group fold f). The "5 × 5" wording in Appendix C and the PRISM section was corrected.
+  - Overclaims softened:
+    - offsets "cannot carry ranking" / "not which side" → they act mainly on intensity and ties;
+    - VPL + offsets "tie" / "whole gain" → most of the point estimate, non-inferiority not established;
+    - "no method has power" → no evaluated method met the criterion;
+    - PCA-256 qualifier added to the VPL/PAL-B dose-response;
+    - the full-feature limitation applies to PAL-B only;
+    - the appendix mechanism claims (scale use, finding the dimension, locates the failure) are limited to the tested settings;
+    - the decomposition is scoped "within this decomposition";
+    - LoRe "fails it" → meets the ranking-null criterion.
+  - Presentation:
+    - Figure 1/2 references swapped to match the PDF;
+    - R^K typeset as math;
+    - captions added to the four §5 tables (the results table is now Table 5);
+    - §5.2 pointer sentence added;
+    - SAP table (Appendix G) compacted and captioned, so it is no longer clipped;
+    - WIMHF (Movva et al., 2025), Buse & Weimer (2010) and Dorn (2012) cited;
+    - TRV expanded in Table 5;
+    - Stage-13 methods block added to Appendix F.
+- Build: 0 errors, 0 undefined citations, 20 pages; main text ends on page 8 (Impact Statement starts page 9).
