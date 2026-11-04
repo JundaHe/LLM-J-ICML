@@ -1236,3 +1236,9 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-05 02:31 — paper 4: third-turn embedding done; S13-3b resubmitted
 - Job 12578 finished 02:12: features/ca_third_hist/hist_Qwen2.5-7B-Instruct.npz, (40,438 conversations, 5, 3584).
 - S13-3b (12582) failed at load in 21 s: conversation_id is stored as an object array, so np.load needs allow_pickle=True (our own file). Loader-only fix in s13_3b.py, no change to the analysis; resubmitted as job 12615, which failed because the edit commented out the `ci` map on the same line; corrected and resubmitted as job 12616.
+
+## 2026-11-05 02:37 — paper 4: S13-3 result (frozen reading)
+- First rerun 12616 hit the integrity assert: 987 pairs (329 conversations) lack history because their turn-1/2 preferred response is missing. Am. 3 already excludes these conversations, but the loader did not apply the rule. Am. 5 implements it in data_panels (label-blind) and the job was rerun as 12617.
+- Result: 953 users (≥ 500 gate holds on the realised count). Transported δ̂^(1): accuracy +0.43 [+0.13, +0.74] points, LL +0.0015 [−0.0006, +0.0035] nats; two-way accuracy [−0.08, +0.92]. The LL lower bound is not > 0, so the decision is "coefficient transport unsupported for this procedure and panel".
+- Recorded in PROTOCOL_STAGE13 (result section), CLAIMS row 12, draft §6 (new transport paragraph), abstract and limitations.
+- Story impact: no new positive claim; the identical-item identity result remains the user-signal evidence; the benefit picture is unchanged (small and fragile). Next: Codex round 8 on the final draft.
