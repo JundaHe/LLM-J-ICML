@@ -1242,3 +1242,18 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - Result: 953 users (≥ 500 gate holds on the realised count). Transported δ̂^(1): accuracy +0.43 [+0.13, +0.74] points, LL +0.0015 [−0.0006, +0.0035] nats; two-way accuracy [−0.08, +0.92]. The LL lower bound is not > 0, so the decision is "coefficient transport unsupported for this procedure and panel".
 - Recorded in PROTOCOL_STAGE13 (result section), CLAIMS row 12, draft §6 (new transport paragraph), abstract and limitations.
 - Story impact: no new positive claim; the identical-item identity result remains the user-signal evidence; the benefit picture is unchanged (small and fragile). Next: Codex round 8 on the final draft.
+
+## 2026-11-05 02:48 — paper 4: Codex round 8 and claim-cleanup pass
+- Round 8 (reviews/codex_round08_gpt-6.1-sol.md): weak accept, 4/6 on ICML's scale, ~60 %; S13-3 reading and placement correct; no further experimental stage needed; LaTeX after a bounded claim cleanup.
+- Applied:
+  - offset generalisations restricted to symmetric offsets (introduction, contributions, §6 headings);
+  - §6 status sentence split into exploratory, frozen-on-reused and new-outcome analyses;
+  - identical-item coverage stated as 2,928 items / 49,616 conversations, and endpoint-B panel distinguished from endpoint A's 1,116 items;
+  - joint − position-only printed as −0.0002, and "beyond position unresolved" added;
+  - MultiPref covariance comparator restated (TRV > isotropic under rater bootstrap, no improvement over μ established, two-way includes 0);
+  - S13-3: "accuracy-positive under user clustering, likelihood-inconclusive", with eligibility flow 1,901 → 1,808 → 953;
+  - abstract: compressed-feature reimplementations, content-vs-position unresolved, S13-3 sentence;
+  - §7 "population-training procedure"; §8 probe R² wording;
+  - CLAIMS #1, #2, #4, #5, #10, #12.
+- Added: Table 6 (choice-level results with comparator, support unit, primary/secondary intervals, status; two-way values read from stage12_*.json / stage13_s1.json) and an Appendix-A chronology. Appendix F.2 marked archive-only.
+- Next: remove remaining duplicate prose, compress SAP/covariance appendices, then convert to LaTeX (ICML 2026 template provisionally; ICML 2027 instructions not yet posted).
