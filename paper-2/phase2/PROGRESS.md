@@ -1469,3 +1469,6 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - −0.0000 printed at more digits; draft date updated.
 - **Structural-zero claim corrected (issue 8):** with three raters, the two-rating split halves are determined by their exact mode and mean (support 0 %). The three-rating histograms are not: 15–75 % of items share a cell with another histogram (support_three.py → results/support_three.json). The draft no longer says "no shape to learn".
 - Protocol rounding fix: Dorn Java ρ_own is 0.12, not 0.13.
+
+## 2026-11-06 03:00 — R20-2 queued
+- 24 Slurm jobs: SummEval and POPQUORN, γ ∈ {0, 0.3, 0.6}, plant seeds 1–4, decode_decomp.py with R = 10, B = 200. They start as CPUs free up.
