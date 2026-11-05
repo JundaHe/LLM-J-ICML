@@ -1485,4 +1485,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - DICES-350, DICES-990 and POPQUORN: X_own CIs cover 0 → no detectable shape-to-shape reproducibility; G_own absolute ≈ 0.
 - (i) ΔGP passes. POPQUORN γ0 G_own upper is −1.9e−8 (a negligible, conservative miss), recorded as a strict failure.
 - Post-hoc: X_own has a negative null bias of ≈ −1e−4, and the G_own percentile bootstrap is shifted down (duplicates + fixed α). Both are written up in ROUND20_PROTOCOL.md.
-- Pending: Dorn (pt 0.10), MNLI (pt 0.28), EmoBank / HS2 (X_own ≈ 0), SNLI. R20-2 is queued. LoRA R19-9 has 11/27 cells (2 GPU running).
+- Pending: Dorn (pt 0.10), MNLI (pt 0.28), EmoBank / HS2 (X_own ≈ 0), SNLI. R20-2 is queued. LoRA R19-9 has 18/27 runs (seeds 2003 and 2004 complete; 2005 queued on the CPU quota).
