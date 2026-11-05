@@ -41,3 +41,19 @@ Descriptive: at a = 10 the location-only model M0 reproduces most of the observe
 
 ## Note (2026-11-05, R19-2 runs): Gc is not a shape-only gain
 At γ = 0 the clipped gain Gc is positive (+0.00004 / +0.00005) while G ≈ 0. `clip_gain` clips the cumulative forecast to [0, 1] and renormalises, which does not preserve the mean, so Gc mixes a location change into the score. Gc is therefore not used for any shape claim (the draft never used it); review issue 2 (validity of q_T + C⁻¹ r̂) is answered in text: G is the quadratic-score gain of the additive correction on the cumulative vector, which need not be a valid distribution; a location-preserving projection onto valid distributions is not implemented, and this is stated as a limitation.
+
+## Result R19-2 (2026-11-05 21:45; frozen readings, no revision)
+| panel | γ | G [95 %] | G_perm | planted X | G/X [95 %] |
+|---|---|---|---|---|---|
+| SummEval coh. | 0 | −0.00000 [−0.00001, +0.00000] | +0.00000 | −0.00008 | — |
+| | 0.15 | +0.00000 [−0.00003, +0.00002] | −0.00002 | 0.00010 | — |
+| | 0.3 | +0.00007 [+0.00003, +0.00013] | −0.00007 | 0.00067 | 0.11 [0.04, 0.19] |
+| | 0.6 | +0.00020 [+0.00017, +0.00028] | −0.00010 | 0.00166 | 0.12 [0.11, 0.17] |
+| POPQUORN off. | 0 | −0.00000 [−0.00001, +0.00000] | −0.00000 | 0.00010 | — |
+| | 0.15 | −0.00000 [−0.00001, +0.00001] | −0.00000 | 0.00047 | — |
+| | 0.3 | +0.00000 [−0.00003, +0.00004] | −0.00003 | 0.00063 | — |
+| | 0.6 | +0.00010 [+0.00005, +0.00014] | −0.00006 | 0.00148 | 0.07 [0.03, 0.09] |
+(i) Null calibration: **met** on both panels. (ii) γ*: SummEval 0.3, POPQUORN 0.6. (iii) SummEval: planted X at γ* (0.00067) ≤ observed X (0.00198) → **the real-data null is informative at the observed scale**. POPQUORN: planted X at γ* (0.00148) > observed X (0.00036) → **the real-data null is uninformative below that magnitude**. (iv) Where detected, the pipeline recovers G/X ≈ 0.07–0.12 of a linearly planted shape; real-data G/X bounds are to be read against this ceiling, not against 1. One simulation draw per γ.
+
+## R19-5 amendment (2026-11-05 21:45, after one smoke point (SummEval γ = 0.6, R = 1, B = 2: G/X 0.114) and before any full RFF run)
+Compute: the smoke run took 14 min on a loaded node; full runs use **R = 5, B = 100** (D = 2,048 unchanged). Readings unchanged.
