@@ -1418,3 +1418,15 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-06 00:25 — R19-6 crossed bootstrap; CPU moved to Slurm
 - Login sessions are capped at 4 CPUs (cgroup), so the 8 RFF runs had ~0.5 core each. The 4 POPQUORN RFF runs were restarted as Slurm jobs 12647–12650 (-c 2) at 23:50; the SummEval runs stay on the login cores.
 - R19-6 (protocol written before any run): crossed item × rater bootstrap on BW, DICES-350 and DICES-990. ρ upper bounds are < 0.5 on all three, so the population claim stands. ρ_own intervals include 0 on BW and DICES-350 at a = 40 once raters are resampled. Results in ROUND19_PROTOCOL.md; draft §1 and §2.1 updated; pooled estimates labelled descriptive (review issue 6).
+
+## 2026-11-06 00:40 — R19-5 RFF point estimates (all 8; bootstrap running)
+G under RFF vs ridge, both at a = 4, d = 64, E_last:
+
+| condition | SummEval RFF | SummEval ridge | POPQUORN RFF | POPQUORN ridge |
+|---|---|---|---|---|
+| γ 0.6 | +0.00018 | +0.00020 | +0.00012 | +0.00010 |
+| γ 0.3 | +0.00010 | +0.00007 | +0.00003 | +0.00000 |
+| γ 0 | +0.00000 | −0.00000 | −0.00000 | −0.00000 |
+| real | −0.00001 | −0.00000 | +0.00000 | −0.00001 |
+
+Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF ≈ ridge on every condition. On SummEval the RFF point at γ 0.6 is already below the ridge point, so reading (ii) "decoder bottleneck" cannot hold there. Formal readings wait for the intervals.
