@@ -1350,3 +1350,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
   - paper-3 was last committed 2026-10-26.
   - Paper 4 is waiting only for the ICML 2027 template.
 - No new analysis started: any new direction needs a new protocol and is the user's scope decision.
+
+## 2026-11-05 11:30 status check
+- No Slurm jobs or project processes running; repository in sync; nothing pending. Waiting for the ICML 2027 template or a user scope decision (paper 2 or 3).
