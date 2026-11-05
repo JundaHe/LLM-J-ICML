@@ -1342,3 +1342,11 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 09:30 status check
 - No Slurm jobs and no project processes running; repository in sync; nothing pending (waiting for the ICML 2027 template).
+
+## 2026-11-05 10:31 status check
+- No Slurm jobs and no project processes running; repository in sync.
+- Reviewed open items:
+  - HANDOFF.md §4 (paper 2: decoding experiment and reliability shrinkage) was finished on 2026-10-26 (Gates A/D/H). Paper 2 has had no new work since.
+  - paper-3 was last committed 2026-10-26.
+  - Paper 4 is waiting only for the ICML 2027 template.
+- No new analysis started: any new direction needs a new protocol and is the user's scope decision.
