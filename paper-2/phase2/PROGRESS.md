@@ -1356,3 +1356,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 12:30 status check
 - No Slurm jobs or project processes running; repository in sync; nothing pending (ICML 2027 template / user scope decision).
+
+## 2026-11-05 13:31 status check + correction
+- No Slurm jobs or project processes running; repository in sync.
+- Correction to the 10:30 entry: paper 2 work continued until 2026-10-27 15:24, not 10-26. The last items were LoRA v2 (Amendment 6), Gate A _bfix and the POPQUORN same-batch LoRA budget block (Amendment 7, 36/36 cells). All of them are reflected in PAPER_DRAFT_v2.md. Paper 2 has no unfinished computation.
