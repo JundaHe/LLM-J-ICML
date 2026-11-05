@@ -1335,3 +1335,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
   - No official deadline or style files yet.
   - Third-party projection: abstract 16 Jan 2027, paper 22 Jan 2027 AoE (planning estimate only).
 - Paper 4 stays on the ICML 2025 style as a stand-in until the 2027 template is released.
+
+## 2026-11-05 08:31 status check
+- No Slurm jobs running; no project processes running. The only processes are unrelated ProgramBench proxies, left untouched. Repository in sync.
+- Nothing pending: paper 4 is submission-ready apart from the ICML 2027 template swap; the CFP is not yet posted. No new analysis started.
