@@ -1397,3 +1397,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - SummEval coh.: γ=0.15 G 0.0000 (X 0.0001); γ=0.3 G +0.00008 [+0.00003, +0.00013] (planted X 0.00067); γ=0.6 G +0.00023 [+0.00017, +0.00028] (X 0.00166, G/X ≈ 0.12). γ*=0.3 with planted X 0.00067 < observed real X 0.00198 → real-data null informative at the observed scale (interim).
 - POPQUORN off.: γ=0.3 G 0.0000 (X 0.00063); γ=0.6 G +0.00009 [+0.00004, +0.00014] (X 0.00148, G/X ≈ 0.07). γ*=0.6 with planted X 0.00148 > observed real X 0.00036 → real-data null NOT informative below that magnitude (interim).
 - Story consequence: even a known, linearly planted shape is recovered at only ~7–12% G/X by this ridge pipeline, so "few percent" upper bounds on real data must be read against that ceiling, not against 100%. Plan: after FINAL, record per frozen rule; consider a stronger (nonlinear) decoder on planted + real data (needs a protocol amendment first). CPU fully used by 8 runs (~4 h to go).
+
+## 2026-11-05 20:51 — paper 2: R19-5 RFF smoke test timed out
+- RFF decoder smoke (SummEval γ=0.6, R=2, B=3) hit the 20-min timeout while the 8 R19-2 runs occupy all 32 cores; no output, no bug evidence. Will re-time once R19-2 finishes; if the full-run cost is prohibitive, D will be reduced by a logged amendment before any RFF result is read.
