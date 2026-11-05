@@ -1386,3 +1386,8 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - R19-3: thresholds explain X_own beyond location on DICES-350 only; BW reproduced by location-only M0; Dorn Java needs dispersion M2. §4 and §1(iv) scoped accordingly (e475105, 6e5d69e).
 - R19-4: certificate audit shows all LoRA budget arms trained for identical optimiser steps (240 SummEval / 205 POPQUORN, accum 8, same schedule); confound absent; stated in draft (0bc698b). No GPU rerun needed.
 - R19-2 planted-shape calibration frozen (ce220c5) and launched: SummEval coherence and POPQUORN off8, γ ∈ {0, .15, .3, .6}. Smoke (γ=.6, B=5): planted X 0.0017 (≈ observed SummEval X 0.0018), G/X 0.13 [0.11, 0.17] — the pipeline does detect a linearly planted shape at the observed scale.
+
+## 2026-11-05 18:32 — paper 2: Table 1 ρ_own column; definitions; R19-2 still running
+- Table 1 generator now prints ρ_own [95%] for the dense panels and a forecasting-reliability caption with A1^x defined (73522fe); draft Dorn range corrected to 0.12–0.22.
+- Draft: A1^x, mode prototype, CSC, and the 30 head configurations (5 seeds × 3 item splits × 2 position splits) defined (978346f); R19-1/R19-3 result JSONs committed (small).
+- R19-2 planted runs (8, CPU, B=500) still running; no FINAL lines yet. No GPU work pending (R19-4 needs no rerun).
