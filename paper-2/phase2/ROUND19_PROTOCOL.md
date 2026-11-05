@@ -153,7 +153,7 @@ The draft reports (i)–(iii) as they come out. "Not distinguishable" is upgrade
 | 144 × 7 − full | +0.0166 | [+0.0126, +0.0209] | [+0.0119, +0.0217] |
 | 144 × 7 − 960 × 1 | +0.0102 | — | [+0.0052, +0.0157] |
 
-**Readings (as frozen).** (i) Equivalence **fails**. The 90 % interval lies wholly above +0.005's lower neighbour and is not inside (−0.005, +0.005); it also excludes 0. (ii) Non-inferiority **fails** (95 % upper 0.0085 > 0.005), and the point estimate itself exceeds δ. One rating per item is worse than the full data on this block. (iii) Items-first **holds**.
+**Readings (as frozen).** (i) Equivalence **fails**: the 90 % interval is not inside (−0.005, +0.005), and it excludes 0. (ii) Non-inferiority **fails** (95 % upper 0.0085 > 0.005), and the point estimate itself exceeds δ. One rating per item is worse than the full data on this block. (iii) Items-first **holds**.
 The draft must drop "not distinguishable" / "match" for SummEval and state the inferiority.
 
 **Descriptive (not frozen).** The per-cell 960 × 1 − full differences are bimodal: six cells give −0.0009 to +0.0043, three give +0.0144 to +0.0184 (s2003 f1, s2004 f2, s2005 f2). One of them, s2003 f1, is a near-collapsed run: the SD of its predicted means is 0.068, against 0.23–0.38 in every other run. Excluding it gives a mean of +0.0052; the median over the nine cells is +0.0030. This sensitivity check is not a reading.

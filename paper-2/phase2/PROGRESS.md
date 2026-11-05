@@ -1500,3 +1500,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - The per-cell differences are bimodal. One a1 run (s2003f1) is near-collapsed (sd of predicted means 0.068). Excluding it gives +0.0052 (descriptive only).
 - The v2 "not distinguishable" claim (shared assignment) is superseded. Draft §1(v), §5 and the abstract are to be revised next.
 - HS2 R20-1 resubmit (12740) is still pending; the old log is from the first crash.
+- 06:55 Draft: abstract, §1(v) and §5 revised per the R19-9 frozen readings: one rating per item < full (+0.0064, TOST/NI fail); items-first holds; the shared-assignment null is described as a favourable draw. Guidance paragraph updated. check_consistency is clean.
