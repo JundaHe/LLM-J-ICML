@@ -22,3 +22,11 @@ Score normalisation stated (all inner products divided by NRM = K − 1 for ordi
 ## R19-4 Budget comparison with documented optimisation exposure (GPU via Slurm; issue 7) — to be specified before running
 
 ## Amendments
+
+## Result R19-1 (2026-11-05 17:31; read by the frozen rule, no revision)
+Cross-term negligible at every a: **not met** on 6 of 8 dense panels (fails at a ≤ 15–20 on BW and the three Dorn panels, at every a on both ChaosNLI panels); met on DICES-350 and DICES-990 only through the ±0.0005 absolute leg, which is uninformative there (|X| ≤ 0.0002). **Reading: ρ is described as a new-rater forecasting quantity; X_own is reported as the shape-to-shape reproducibility.**
+At a = 40, X_own [95 %] and ρ_own = X_own / M: BW 0.00017 [0.00005, 0.00031], 0.13 [0.04, 0.24]; DICES-350 0.00005 [0.00001, 0.00009], 0.10 [0.02, 0.19]; DICES-990 0.00002 [−0.00000, 0.00005], 0.06 [−0.00, 0.14]; Dorn CUDA 0.22 [0.11, 0.29]; Java 0.13 [0.07, 0.26]; Python 0.13 [0.09, 0.26]; ChaosNLI MNLI 0.61 [0.58, 0.63]; SNLI 0.67 [0.64, 0.69]. At a ≤ 8 the X_own intervals of BW and all Dorn panels include 0 while X does not.
+
+## Result R19-3 (2026-11-05 17:31; frozen rule)
+At a = 40, observed X_own within the 20-simulation 95 % range of: BW — M0 yes, M1 yes, M2 no; DICES-350 — M0 no, M1 yes, M2 yes; Dorn Java (no rater identities) — M0 no, M2 yes. **"Thresholds explain something location alone cannot": met on DICES-350, not met on BW (location-only M0 already reproduces X_own); not testable on Dorn (M2, item dispersion, is needed there).** The removal clause (neither M1 nor M2 reproduces) is not triggered on any panel.
+Descriptive: at a = 10 the location-only model M0 reproduces most of the observed X through X_cross (BW 0.00037 of 0.00052 observed; Dorn Java 0.00056 of 0.00068), i.e. the small-a positive X is largely produced by location noise interacting with the exact comparator.
