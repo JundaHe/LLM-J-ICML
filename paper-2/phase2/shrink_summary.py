@@ -15,5 +15,5 @@ def pooled(key, ref="vs_raw"):
 lines += ["", "## Inverse-variance pooled contrasts over the small ordinal panels (not independent: SummEval criteria share documents; POPQUORN attributes share annotators)", ""]
 for ref in ("vs_raw", "vs_qT"):
     for key in ("shr", "shr2", "dir_in", "lsm_in", "qs"):
-        m, lo, hi, n = pooled(key, ref); lines.append(f"- {key} {ref.replace('_', ' ')}: {m:+.4f} [{lo:+.4f}, {hi:+.4f}] over {n} panels")
+        m, lo, hi, n = pooled(key, ref); lines.append(f"- {key} {ref.replace('_', ' ')}: {m:+.6f} [{lo:+.6f}, {hi:+.6f}] over {n} panels (descriptive; panels share documents/annotators)")
 txt = "\n".join(lines) + "\n"; open(f"{HERE}/results/shrinkage/SUMMARY.md", "w").write(txt); print(txt)

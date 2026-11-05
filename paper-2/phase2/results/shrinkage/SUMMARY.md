@@ -13,13 +13,13 @@
 
 ## Inverse-variance pooled contrasts over the small ordinal panels (not independent: SummEval criteria share documents; POPQUORN attributes share annotators)
 
-- shr vs raw: -0.0020 [-0.0022, -0.0019] over 8 panels
-- shr2 vs raw: -0.0048 [-0.0052, -0.0045] over 8 panels
-- dir_in vs raw: -0.0038 [-0.0042, -0.0034] over 8 panels
-- lsm_in vs raw: -0.0087 [-0.0090, -0.0084] over 8 panels
-- qs vs raw: -0.0117 [-0.0123, -0.0112] over 8 panels
-- shr vs qT: -0.0000 [-0.0000, +0.0000] over 8 panels
-- shr2 vs qT: -0.0028 [-0.0031, -0.0025] over 8 panels
-- dir_in vs qT: -0.0021 [-0.0024, -0.0017] over 8 panels
-- lsm_in vs qT: -0.0066 [-0.0070, -0.0063] over 8 panels
-- qs vs qT: -0.0088 [-0.0093, -0.0083] over 8 panels
+- shr vs raw: -0.002007 [-0.002161, -0.001853] over 8 panels (descriptive; panels share documents/annotators)
+- shr2 vs raw: -0.004814 [-0.005168, -0.004460] over 8 panels (descriptive; panels share documents/annotators)
+- dir_in vs raw: -0.003803 [-0.004178, -0.003427] over 8 panels (descriptive; panels share documents/annotators)
+- lsm_in vs raw: -0.008660 [-0.008956, -0.008363] over 8 panels (descriptive; panels share documents/annotators)
+- qs vs raw: -0.011715 [-0.012263, -0.011167] over 8 panels (descriptive; panels share documents/annotators)
+- shr vs qT: -0.000019 [-0.000039, +0.000000] over 8 panels (descriptive; panels share documents/annotators)
+- shr2 vs qT: -0.002813 [-0.003111, -0.002516] over 8 panels (descriptive; panels share documents/annotators)
+- dir_in vs qT: -0.002059 [-0.002408, -0.001710] over 8 panels (descriptive; panels share documents/annotators)
+- lsm_in vs qT: -0.006622 [-0.006966, -0.006277] over 8 panels (descriptive; panels share documents/annotators)
+- qs vs qT: -0.008819 [-0.009319, -0.008319] over 8 panels (descriptive; panels share documents/annotators)
