@@ -11,17 +11,21 @@ NAME = {"summeval_coherence8": "SummEval coh.", "summeval_relevance8": "SummEval
 sup = {}
 for f in glob.glob(f"{HERE}/results/finite_rater/*_loo.json"):
     r = json.load(open(f)); row = r["rows"][-1]; sup[r["panel"]] = row.get("A2", {}).get("changed_fraction")
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\\rho=X/M$: split-half reliability of the shape beyond mode and mean at $a$ raters, 95\\% item-cluster interval; the raw histogram forecasts a new rater better than its own mode and mean only if $\\rho>\\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SE = software engineering.}\\label{tab:cards}",
-     "\\begin{tabular}{lrrlrr}\\toprule panel & raters & $a$ & $\\rho$ [95\\% CI] & $A1^x$ & support \\\\\\midrule"]
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\\rho=X/M$: split-half new-rater forecasting reliability of the shape beyond mode and mean at $a$ raters, 95\\% item-cluster interval. $\\rho_{\\rm own}=X_{\\rm own}/M$ (dense panels, $a=40$ vs 20 raters): agreement of the two panels' shapes, each beyond its own mode and mean (\\S2.1); on small panels the held-out panel is one rating and $X_{\\rm own}\\equiv0$. $A1^x=M-2X$: score change of the raw histogram over the exact comparator when forecasting a held-out rating (negative = raw histogram better). The raw histogram forecasts a new rater better than its own mode and mean only if $\\rho>\\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SE = software engineering.}\\label{tab:cards}",
+     "\\begin{tabular}{lrrllrr}\\toprule panel & raters & $a$ & $\\rho$ [95\\% CI] & $\\rho_{\\rm own}$ [95\\% CI] & $A1^x$ & support \\\\\\midrule"]
 order = []
 for f in glob.glob(f"{HERE}/results/rho_exact/*.json"):
     r = json.load(open(f)); k = r["panel"]
     if k not in NAME: continue
     row = [x for x in r["rows"] if x["a"] == (40 if r["m"] > 12 else r["m"] - 1)][0]; order.append((k.startswith("chaosnli"), r["m"] > 12, NAME[k], k, r["m"], row))
+OWN = {}   # ROUND19 R19-1: shape-to-shape reproducibility ρ_own = X_own / M on the dense panels (results/rho_own); identically 0 on the leave-one-out small panels
+for f in glob.glob(f"{HERE}/results/rho_own/*.json"):
+    r = json.load(open(f)); OWN[r["panel"]] = [x for x in r["rows"] if x["a"] == 40][0]
+def own(k): o = OWN.get(k); return f"{o['rho_own']:.2f} [{o['rho_own_ci'][0]:.2f}, {o['rho_own_ci'][1]:.2f}]" if o else "--"
 for _, _, nm, k, m_, row in sorted(order):
-    t.append(f"{nm} & {m_} & {row['a']} & {row['rho']:.2f} [{row['rho_ci'][0]:.2f}, {row['rho_ci'][1]:.2f}] & {f4(row['A1x'])} & {('%.2f' % sup[k]) if sup.get(k) is not None else '--'} \\\\")
+    t.append(f"{nm} & {m_} & {row['a']} & {row['rho']:.2f} [{row['rho_ci'][0]:.2f}, {row['rho_ci'][1]:.2f}] & {own(k)} & {f4(row['A1x'])} & {('%.2f' % sup[k]) if sup.get(k) is not None else '--'} \\\\")
 for k in ("crupi_ca", "crupi_conc", "crupi_flu", "mlcq3", "roy_ca"):
-    if k in sup: t.append(f"{NAME[k]} & 3 & 2 & -- (no shape) & -- & {sup[k]:.2f} \\\\")
+    if k in sup: t.append(f"{NAME[k]} & 3 & 2 & -- (no shape) & -- & -- & {sup[k]:.2f} \\\\")
 t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_cards.tex", "w").write("\n".join(t))
 NAME.update({"dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$"})
 # Table 2: cross-family decoding
