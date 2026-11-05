@@ -42,9 +42,9 @@ for name, cs in cells.items():
         seeds_b = tuple(rng.choice(SEEDS, len(SEEDS), replace=True)); dw = {}
         for g in rng.choice(docs, len(docs), replace=True): dw[g] = dw.get(g, 0.0) + 1.0
         bs.append(mean_rps(cs, seeds_b, dw) - mean_rps(cells[args.ref], seeds_b, dw))
-    ci = [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]
-    md = meta.get(name, {}); n_full = int(json.load(open(f"{HERE}/results/lora/{args.panel}/{FULL[2000]}/f0/chen/meta.json" if args.root == "lora_budget" else f"{HERE}/results/{args.root}/{args.panel}/a7_F1.0/s2000/f0/chen/meta.json"))["parts"]["train"])
-    out[name] = dict(rps=pt, diff_vs_full=diff, ci95=ci, n_cells=len(cs), folds=folds_present, rating_budget=md.get("rating_budget", n_full * (H.shape[1] - 1)), n_train=md.get("n_train_used", n_full))
+    ci = [float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))]; ci90 = [float(np.percentile(bs, 5)), float(np.percentile(bs, 95))]   # R19-9 TOST
+    md = meta.get(name, {}); n_full = int(json.load(open(f"{HERE}/results/lora/{args.panel}/{FULL[2000]}/f0/chen/meta.json" if args.root == "lora_budget" else f"{HERE}/results/{args.root}/{args.panel}/a7_F1.0/s{SEEDS[0]}/f0/chen/meta.json"))["parts"]["train"])
+    out[name] = dict(rps=pt, diff_vs_full=diff, ci95=ci, ci90=ci90, n_cells=len(cs), folds=folds_present, rating_budget=md.get("rating_budget", n_full * (H.shape[1] - 1)), n_train=md.get("n_train_used", n_full))
     lines.append(f"| {name} | {out[name]['rating_budget']} | {out[name]['n_train']} | {len(cs)} | {pt:.4f} | {diff:+.4f} [{ci[0]:+.4f}, {ci[1]:+.4f}] |")
 lines += ["", "Raw RPS against the held-out evaluator on the test items/groups; seeds %s × folds 0–2; bootstrap resamples the seed clusters and the test groups (B = %d). Full-data reference = %s." % ("/".join(map(str, SEEDS)), args.B, "the T3b/T3c runs restricted to the same seeds" if args.root == "lora_budget" else "the a7_F1.0 design of the same batch")]
 os.makedirs(f"{HERE}/results/lora_budget", exist_ok=True); sfx = ("" if args.panel == "summeval_coherence8" else "_" + args.panel) + ("" if args.ref == "full_a7_F1" else "_vs_" + args.ref); os.makedirs(f"{HERE}/results/{args.root}", exist_ok=True); json.dump(out, open(f"{HERE}/results/{args.root}/summary{sfx}.json", "w"), indent=1); open(f"{HERE}/results/{args.root}/summary{sfx}.md", "w").write("\n".join(lines) + "\n"); print("\n".join(lines))

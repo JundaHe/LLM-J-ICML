@@ -135,3 +135,13 @@ Mean violations: 0 everywhere.
 (iii) ΔG_proj/X exceeds the published three-family upper bound on SummEval relevance (0.5 % vs 0.4 %), DICES-350 (4.0 % vs 2 %), DICES-990 (7.3 % vs 4.6 %) and HS2 (10.3 % vs 10.2 %). Those bounds are replaced by the maximum, with the reason given. The summary becomes "below 5 % on five of the eight informative ordinal panels and at most 10.3 % on all eight". These are point estimates without an interval and computed on Qwen2.5 only; stated.
 (iv) ChaosNLI ΔG_proj/X is 0.35 / 0.44, ≥ 0.10. The contrast stands, and the projected NLI shape-only gain is about twice G.
 Planted: the projected decoder recovers 0.17–0.20 of the known shape (G: 0.07–0.12).
+
+## R19-9 Prospective replication of the SummEval budget comparison with independent rating assignments and a declared margin (review change 3) — specified 2026-11-06 02:35, before any run
+**Why.** An audit of `train_judge_v3.py` shows that the budget subsample seed defaults to 3000 + 100·split + fold. It does not depend on the optimiser seed, so the three seeds of results/lora_budget_v2 share one rating assignment per fold. Their crossed bootstrap therefore resamples optimiser variation, not assignment variation (stated in the draft).
+**Margin (declared now, with full knowledge of the earlier blocks — so it is tested only on the new block).** δ = 0.005 RPS. That is 3 % of the full-data RPS (0.169), about half of the smallest established design penalty (144 × 7 − 960 × 1: +0.0095 on OLMo-2), and smaller than the one-hot penalty of the frozen-feature heads.
+**Design.** SummEval coherence, Qwen2.5-7B-Instruct, the Chen objective, identical code and settings to lora_budget_v2 (240 optimiser steps, three held-out-expert folds, split 0). Designs: full (7 × 960), 960 × 1, 144 × 7 (train_frac 1/7). New optimiser seeds 2003, 2004, 2005. **Independent assignments:** `--budget_seed 6000 + 100·(seed − 2003) + fold`, so every seed × fold cell draws its own items and ratings. Output results/lora_budget_r19/summeval_coherence8/ (adapter weights git-ignored). One GPU job per seed.
+**Readings (fixed now).** Crossed bootstrap over seed clusters and test documents, B = 2000, `analysis_budget_lora.py --root lora_budget_r19 --seeds 2003,2004,2005`.
+(i) *Equivalence* (TOST, α = 0.05): 960 × 1 − full has a 90 % interval inside (−0.005, +0.005).
+(ii) *Non-inferiority*: its 95 % upper bound < +0.005.
+(iii) *Items first*: 144 × 7 − 960 × 1 has a 95 % lower bound > 0.
+The draft reports (i)–(iii) as they come out. "Not distinguishable" is upgraded to "equivalent within 0.005 RPS" only if (i) holds. If (ii) fails, the draft states that one rating per item may be inferior by more than the margin.

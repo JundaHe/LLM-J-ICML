@@ -43,3 +43,5 @@ features/multipref_overall/Qwen2.5-7B-Instruct.npz
 features/prism/
 features/multipref_overall/pairs_*.npz
 features/prism_pairs/
+
+results/lora_budget_r19/**/lora/
