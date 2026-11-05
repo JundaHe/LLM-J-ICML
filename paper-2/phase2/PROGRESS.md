@@ -1502,3 +1502,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - HS2 R20-1 resubmit (12740) is still pending; the old log is from the first crash.
 - 06:55 Draft: abstract, §1(v) and §5 revised per the R19-9 frozen readings: one rating per item < full (+0.0064, TOST/NI fail); items-first holds; the shared-assignment null is described as a favourable draw. Guidance paragraph updated. check_consistency is clean.
 - 07:00 R20-3 registered (OLMo-2 replication of R19-9 using the same budget seeds) and submitted as 3 GPU jobs.
+- 07:10 R20-2 interim (SummEval).
+  - γ0: in 5/5 draws the G_own lower bound is ≤ 0 (no false detection) and dGP covers 0.
+  - γ0.3: 2/2 draws so far detected, at X_own 0.00012–0.00016, below the observed 0.00038.
+  - γ0.6: 2/2 detected, G_own/X_own 0.51–0.56.
+  - The γ0 X_own is negative in all five draws (−0.00005 to −0.00014), confirming the post-hoc null-bias note.
+  - The CPU queue (10 R20-2 jobs) is held until the R20-3 GPU jobs start; a watcher releases them (logs/release_watch.log).
