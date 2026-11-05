@@ -1493,3 +1493,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - HS2 crashed in ci() because every ratio was NaN (X_own = 0 in all resamples). fr_lib.ci now returns NaN; HS2 resubmitted as job 12740.
 - Corrected post-hoc note 2: the G_own bootstrap is off-centre in both directions.
 - 05:55 Draft v2.4: the abstract, §1 contributions/(ii), §2.2 (own-shape decomposition and planted control on G_own/X_own) and §6 Dorn now use R20-1 quantities. The R19-8a max rule is removed. G/X is renamed the normalised forecasting gain. check_consistency is clean.
+
+## 2026-11-06 06:45 R19-9 LoRA block complete (27/27) — frozen readings
+- 960×1 − full = +0.0064 [+0.0045, +0.0085] (90 % [+0.0048, +0.0082]). TOST fails, non-inferiority fails, and one rating per item is worse than the full data.
+- Items-first holds: 144×7 − 960×1 = +0.0102 [+0.0052, +0.0157].
+- The per-cell differences are bimodal. One a1 run (s2003f1) is near-collapsed (sd of predicted means 0.068). Excluding it gives +0.0052 (descriptive only).
+- The v2 "not distinguishable" claim (shared assignment) is superseded. Draft §1(v), §5 and the abstract are to be revised next.
+- HS2 R20-1 resubmit (12740) is still pending; the old log is from the first crash.
