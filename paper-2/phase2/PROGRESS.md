@@ -1486,3 +1486,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - (i) ΔGP passes. POPQUORN γ0 G_own upper is −1.9e−8 (a negligible, conservative miss), recorded as a strict failure.
 - Post-hoc: X_own has a negative null bias of ≈ −1e−4, and the G_own percentile bootstrap is shifted down (duplicates + fixed α). Both are written up in ROUND20_PROTOCOL.md.
 - Pending: Dorn (pt 0.10), MNLI (pt 0.28), EmoBank / HS2 (X_own ≈ 0), SNLI. R20-2 is queued. LoRA R19-9 has 18/27 runs (seeds 2003 and 2004 complete; 2005 queued on the CPU quota).
+
+## 2026-11-06 05:40 R20-1 readings applied (13/14)
+- (iii) holds: NLI G_own/X_own 0.28 [0.20, 0.30] / 0.38 [0.30, 0.40] vs ordinal SummEval 0.009 / 0.013 and Dorn 0.10 (upper 0.18). The Dorn margin is narrow.
+- ΔGP/X_own upper bounds: ordinal 0.05 / 0.13 / 0.27, NLI 0.65 / 0.70.
+- HS2 crashed in ci() because every ratio was NaN (X_own = 0 in all resamples). fr_lib.ci now returns NaN; HS2 resubmitted as job 12740.
+- Corrected post-hoc note 2: the G_own bootstrap is off-centre in both directions.

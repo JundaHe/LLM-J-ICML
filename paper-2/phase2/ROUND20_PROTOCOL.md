@@ -60,4 +60,22 @@ Reading (ii): only SummEval coherence and relevance qualify so far. DICES-350, D
 1. *Null bias of X_own.* At γ 0, X_own is −0.00011 [−0.00019, −0.00002] on SummEval and −0.00010 [−0.00020, +0.00003] on POPQUORN. Each half's residual is taken against its own cross-fitted (mode, mean) cell. With a ≠ b, the two halves' conditional-mean errors need not have the same sign, so E[X_own] is not 0 even when the shape is fully cell-determined. Consequences:
    - the real SummEval X_own (0.00038) is understated rather than inflated;
    - the "X_own covers 0" readings are, if anything, conservative about absence.
-2. *The bootstrap of G_own runs low.* Point estimates sit near or above the upper percentile (SummEval relevance 4.0e−6 vs an upper bound of 3.4e−6). Item resampling keeps duplicates in one fold, which reduces the number of distinct items while α stays fixed at its rep-0 value. The decoder's prediction variance rises, so −‖r̂‖² rises. The percentile interval therefore has a downward-shifted centre. It stays the frozen interval; for G_own and ratios built on G_own, the paper uses the point estimate and the upper bound only.
+2. *The G_own bootstrap is not centred on the point estimate* (corrected 05:40: the direction is not uniformly downward — EmoBank's point −4.3e−6 lies below its interval [−3.1e−6, −1.8e−6]). Original text: Point estimates sit near or above the upper percentile (SummEval relevance 4.0e−6 vs an upper bound of 3.4e−6). Item resampling keeps duplicates in one fold, which reduces the number of distinct items while α stays fixed at its rep-0 value. The decoder's prediction variance rises, so −‖r̂‖² rises. The percentile interval therefore has a downward-shifted centre. It stays the frozen interval; for G_own and ratios built on G_own, the paper uses the point estimate and the upper bound only.
+
+### R20-1 readings (2026-11-06 05:40; 13 of 14 runs final, HS2 re-running after a ci() crash)
+Crash: on HS2 (a = 3) X_own ≤ 1e−9 in every bootstrap resample, so all ratios were NaN and fr_lib.ci received an empty list. ci now returns NaN for an empty list. The fix does not change any other result.
+
+| panel | a | X_own [95 %] | G_own/X_own pt (upper) | ΔGP/X_own [95 %] |
+|---|---|---|---|---|
+| SummEval coherence | 4 | 0.00038 [0.00022, 0.00050] | 0.009 (0.022) | 0.012 [−0.009, 0.051] |
+| SummEval relevance | 4 | 0.00031 [0.00019, 0.00044] | 0.013 (0.011) | 0.027 [−0.042, 0.128] |
+| Dorn (all) | 20 | 0.00027 [0.00014, 0.00033] | 0.10 (0.18) | 0.11 [0.005, 0.27] |
+| ChaosNLI MNLI | 20 | 0.0111 [0.0102, 0.0122] | 0.28 [0.20, 0.30] | 0.59 [0.49, 0.65] |
+| ChaosNLI SNLI | 20 | 0.0112 [0.0100, 0.0122] | 0.38 [0.30, 0.40] | 0.65 [0.56, 0.70] |
+| EmoBank | 3 | 2.3e−6 [−5e−7, 7.8e−6] | — | G_own −4e−6, ΔGP 7.5e−6 [1.7e−6, 1.5e−5] |
+| DICES-350 / DICES-990 / POPQUORN | 20 / 20 / 4 | cover 0 | — | G_own ≤ 5e−6 in absolute terms |
+
+(ii) Headline panels: SummEval ×2, Dorn, MNLI, SNLI. The others: no detectable shape-to-shape reproducibility at that a.
+(iii) The ordinal–NLI contrast **holds**: the NLI lower bounds (0.199, 0.296) exceed every ordinal upper bound (0.022, 0.011, 0.181). The margin is narrow on Dorn (0.199 vs 0.181). With the bootstrap-centring caveat (post-hoc note 2), this is reported as a frozen-rule pass, not as a robust separation.
+(iv) The text quantities are the G_own/X_own points and upper bounds above, plus ΔGP/X_own upper bounds of 0.05 / 0.13 / 0.27 (ordinal) vs 0.65 / 0.70 (NLI). Dorn's ΔGP lower bound is > 0, a small detectable valid-forecast gain. The R19-8a max rule is withdrawn from the text.
+Panels not run in R20-1 (BW, CSC, Scalabrino, HS2 until it finishes) keep only their R19 G values, labelled as G/X with the cross-term caveat.

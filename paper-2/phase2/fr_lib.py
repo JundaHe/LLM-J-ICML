@@ -82,4 +82,4 @@ def boot_items(groups, rng):
     for k, d in enumerate(draw): idx.extend(gi[ug[d]]); newg.extend([d] * len(gi[ug[d]]))   # copies of the same group keep ONE id → same cross-fitting fold (fix 2026-10-26: distinct ids let copies of a test item sit in training folds)
     return np.array(idx), np.array(newg)
 
-def ci(v): v = [x for x in v if x == x]; return [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))]
+def ci(v): v = [x for x in v if x == x]; return [float(np.percentile(v, 2.5)), float(np.percentile(v, 97.5))] if v else [float("nan"), float("nan")]
