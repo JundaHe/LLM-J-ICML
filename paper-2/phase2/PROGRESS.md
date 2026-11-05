@@ -1447,3 +1447,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - γ 0.6: G +0.00012 [+0.00008, +0.00015]. The lower bound 0.00008 does not exceed the ridge point 0.00010, so there is no decoder bottleneck.
   - real: G/X 0.003 [−0.048, +0.004].
   - SummEval RFF bootstrap at 50/100.
+
+## 2026-11-06 02:34 — R19-9 launched (GPU)
+- Audit: the lora_budget_v2 seeds share one rating assignment per fold, because the budget seed depends only on split and fold. The draft §5 now says so.
+- R19-9 (protocol first): a prospective SummEval block with seeds 2003–2005. Budget seed 6000 + 100·(seed − 2003) + fold. Designs full, 960 × 1 and 144 × 7. Declared margin δ = 0.005 RPS (TOST, non-inferiority, items-first). Jobs 12698–12700, about 18 min per run, 9 runs per seed.
+- check_consistency.py: all OK after this session's draft edits.
