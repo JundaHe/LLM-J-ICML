@@ -1431,6 +1431,6 @@ G under RFF vs ridge, both at a = 4, d = 64, E_last:
 
 Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF ≈ ridge on every condition. On SummEval the RFF point at γ 0.6 is already below the ridge point, so reading (ii) "decoder bottleneck" cannot hold there. Formal readings wait for the intervals.
 
-## 2026-11-06 01:52 — R19-7 (review issue 9) done; R19-8 (issue 2) launched
+## 2026-11-06 01:45 — R19-7 (review issue 9) done; R19-8 (issue 2) launched
 - R19-7: frozen-feature nominal heads were re-run with Brier added (GPU job 12653, 12 runs in 11 min). The KL reproduces the published tables exactly. The ChaosNLI donor-replacement cost in Brier is MNLI +0.005–0.012 and SNLI +0.008–0.017, positive at every m. That is 0.29–1.31 of the oracle shape gap. Draft §1 and §3 now state the cost in Brier.
 - R19-8: protocol and decode_validity.py, which reports constraint violations of q_T + C⁻¹r̂ and the gain after projection onto the exact mode-and-mean cell. The first local smoke test failed: my `project` overwrote decode_residual's function of the same name. After renaming, the smoke test is running as Slurm job 12654.
