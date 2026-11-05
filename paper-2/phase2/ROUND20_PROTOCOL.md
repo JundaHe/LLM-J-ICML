@@ -97,3 +97,8 @@ Observed: X = 0.00198, X_own = 0.00038.
 **Reading as frozen (on X): not met.** No γ has planted X at or above the observed X, because the strongest plant reaches 0.00166. The frozen rule therefore cannot certify the SummEval null as informative.
 **Post hoc, on the X_own scale used by the R20-1 headline:** the γ0.6 draws bracket the observed X_own (0.00033–0.00047 vs 0.00038) and are detected 5 of 5. γ0.3, at about half the observed X_own, is detected 3 of 4.
 The draft states the frozen outcome first, then the X_own reading labelled post hoc. The monotonicity argument (a stronger plant would be detected at least as often) is reasoning, not a test. POPQUORN plant draws are still running.
+
+### R20-2a Stronger plant so the frozen X-scale rule can be evaluated (amendment, specified 2026-11-06 07:50 after seeing R20-2's SummEval results)
+**Why.** The R20-2 rule requires a γ whose planted X is at or above the observed X (0.00198). The γ grid {0, 0.3, 0.6} tops out at X = 0.00166.
+**Design.** Add γ = 0.8 on SummEval coherence, draws s0–s4, a = 4, with otherwise identical settings (R = 10, B = 200, R_boot = 3).
+**Reading.** The R20-2 rule is applied unchanged to the grid {0.3, 0.6, 0.8}. If γ 0.8 still falls short of the observed X, the rule is reported as not evaluable. This is an amendment written after the results it addresses and is labelled as such in the draft.
