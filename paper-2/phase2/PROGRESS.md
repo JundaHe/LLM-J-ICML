@@ -1513,3 +1513,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Detection: γ0 0/5, γ0.3 3/4, γ0.6 5/5 (G_own/X_own 0.38–0.56).
 - The frozen informativeness rule (on X) is not met: the max planted X is 0.00166 against the observed 0.00198. Post hoc, on X_own, γ0.6 brackets the observed value and is detected 5/5.
 - Ops: the release watcher was killed and the held CPU jobs released (12743 waits for a GPU, not CPUs). R20-3 is at 6/27 OLMo runs.
+- 07:45 Draft: planted-control statements (abstract, §1(ii), §2.2) now use the R20-2 counts and disclose that the frozen X-scale rule was not met.
