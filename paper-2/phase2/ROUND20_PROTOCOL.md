@@ -41,3 +41,23 @@ The R19-2 construction plants log-dispersion linear in one feature direction. It
 ### R20-T note on the αNLI sham (2026-11-06; descriptive)
 With K = 2 the donor replacement cannot change any target, so pzc − soft on αNLI is a pure sham contrast. Its mean over the 9 configurations is +0.0001 / −0.0033 / +0.0015 / +0.0005 Brier at m = 5 / 10 / 20 / 50, i.e. within about one SEM of 0. The per-configuration SD is 0.005–0.014.
 The reason: every arm draws its own initialisation and minibatch order from the run's RNG stream, so optimisation noise is not matched across arms. The sham shows the size of that unmatched noise. The MNLI / SNLI contrasts (+0.005 to +0.017, SEM 0.0006–0.0014) are averages over the same 9 configurations and exceed their SEMs by 4–15×, but single configurations should not be compared.
+
+### R20-1 interim results (2026-11-06 04:45; 9 of 14 runs final, B = 200)
+| run | a | X_own [95 %] | G_own/X_own [95 %] | ΔGP/X_own upper |
+|---|---|---|---|---|
+| SummEval coherence | 4 | 0.00038 [0.00022, 0.00050] | 0.009 [−0.026, 0.022] | 0.051 |
+| SummEval relevance | 4 | 0.00031 [0.00019, 0.00044] | 0.013 [−0.098, 0.011] | 0.128 |
+| DICES-350 | 20 | 0.00004 [−0.00002, 0.00011] | — (X_own covers 0) | — |
+| DICES-990 | 20 | 0.00002 [−0.00001, 0.00005] | — | — |
+| POPQUORN off. | 4 | −0.00001 [−0.00017, 0.00009] | — | — |
+| plant γ0.6 SummEval | 4 | 0.00040 [0.00030, 0.00058] | 0.56 [0.39, 0.72] | — |
+| plant γ0.6 POPQUORN | 4 | 0.00033 [0.00021, 0.00048] | 0.36 [0.15, 0.47] | — |
+
+Reading (i): ΔGP covers 0 at γ 0 on both panels. G_own covers 0 on SummEval [−8.2e−6, +2.1e−8], but on POPQUORN its interval [−9.4e−6, −1.9e−8] misses 0 by 2e−8, on the conservative (negative) side. Strictly, (i) fails for POPQUORN G_own. The failure is negligible in size and in the direction that cannot manufacture a positive decoding gain.
+Reading (ii): only SummEval coherence and relevance qualify so far. DICES-350, DICES-990 and POPQUORN are reported as G_own in absolute units, each "no detectable shape-to-shape reproducibility at that a". Dorn, EmoBank, HS2, MNLI and SNLI are pending (point estimates: Dorn 0.10, MNLI 0.28, EmoBank and HS2 X_own ≈ 0).
+
+**Post-hoc observations (not frozen; reported as such).**
+1. *Null bias of X_own.* At γ 0, X_own is −0.00011 [−0.00019, −0.00002] on SummEval and −0.00010 [−0.00020, +0.00003] on POPQUORN. Each half's residual is taken against its own cross-fitted (mode, mean) cell. With a ≠ b, the two halves' conditional-mean errors need not have the same sign, so E[X_own] is not 0 even when the shape is fully cell-determined. Consequences:
+   - the real SummEval X_own (0.00038) is understated rather than inflated;
+   - the "X_own covers 0" readings are, if anything, conservative about absence.
+2. *The bootstrap of G_own runs low.* Point estimates sit near or above the upper percentile (SummEval relevance 4.0e−6 vs an upper bound of 3.4e−6). Item resampling keeps duplicates in one fold, which reduces the number of distinct items while α stays fixed at its rep-0 value. The decoder's prediction variance rises, so −‖r̂‖² rises. The percentile interval therefore has a downward-shifted centre. It stays the frozen interval; for G_own and ratios built on G_own, the paper uses the point estimate and the upper bound only.

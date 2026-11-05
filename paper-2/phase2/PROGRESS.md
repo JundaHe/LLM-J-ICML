@@ -1479,3 +1479,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - POPQUORN offensiveness and EmoBank at a = 4 have X_own ≈ 0 (−0.00001 / +0.00000): their X is cross-term, and there is no detectable shape-to-shape reproducibility to decode.
 - The null passes at the point level: γ 0 G_own and ΔGP are ≈ 0.
 - Formal readings wait for the intervals. LoRA R19-9: 8/27 cells done.
+
+## 2026-11-06 04:45 R20-1 interim readings (9/14 final)
+- SummEval coh/rel: X_own CIs exclude 0, so per (ii) G_own/X_own is the headline: 0.009 [−0.026, 0.022] / 0.013 [−0.098, 0.011], vs planted γ0.6 0.56 [0.39, 0.72] (SummEval) and 0.36 [0.15, 0.47] (POPQUORN).
+- DICES-350, DICES-990 and POPQUORN: X_own CIs cover 0 → no detectable shape-to-shape reproducibility; G_own absolute ≈ 0.
+- (i) ΔGP passes. POPQUORN γ0 G_own upper is −1.9e−8 (a negligible, conservative miss), recorded as a strict failure.
+- Post-hoc: X_own has a negative null bias of ≈ −1e−4, and the G_own percentile bootstrap is shifted down (duplicates + fixed α). Both are written up in ROUND20_PROTOCOL.md.
+- Pending: Dorn (pt 0.10), MNLI (pt 0.28), EmoBank / HS2 (X_own ≈ 0), SNLI. R20-2 is queued. LoRA R19-9 has 11/27 cells (2 GPU running).
