@@ -1410,3 +1410,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - R19-2 final (ROUND19_PROTOCOL.md, 877d15e): null calibrated; γ* = 0.3 SummEval (planted X 0.00067 ≤ observed 0.00198 → real null informative), 0.6 POPQUORN (1.48e-3 > 3.6e-4 → uninformative). Ridge ceiling G/X 0.07–0.12.
 - Draft (21908e3): abstract, §1(ii), §2.2 report the power control and the POPQUORN caveat.
 - R19-5 (RFF kernel ridge): smoke γ=0.6 G/X 0.114 vs ridge 0.118 (no sign of a decoder bottleneck yet). Compute amendment R=5, B=100 logged before full runs; 8 runs launched (2 panels × real, γ 0/0.3/0.6).
+
+## 2026-11-05 22:33 — paper 2: panel inventory; R19-5 running
+- panel_inventory.py → results/panel_inventory.md (33 panels × 8 analyses, read from result dirs); draft §2 points to it as Appendix B (b2650f9 and the following draft commit).
+- R19-5 RFF runs (8) still in the point-estimate phase; no output yet.
