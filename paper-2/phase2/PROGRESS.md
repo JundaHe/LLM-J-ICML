@@ -1414,3 +1414,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 ## 2026-11-05 22:33 — paper 2: panel inventory; R19-5 running
 - panel_inventory.py → results/panel_inventory.md (33 panels × 8 analyses, read from result dirs); draft §2 points to it as Appendix B (b2650f9 and the following draft commit).
 - R19-5 RFF runs (8) still in the point-estimate phase; no output yet.
+
+## 2026-11-06 00:25 — R19-6 crossed bootstrap; CPU moved to Slurm
+- Login sessions are capped at 4 CPUs (cgroup), so the 8 RFF runs had ~0.5 core each. The 4 POPQUORN RFF runs were restarted as Slurm jobs 12647–12650 (-c 2) at 23:50; the SummEval runs stay on the login cores.
+- R19-6 (protocol written before any run): crossed item × rater bootstrap on BW, DICES-350 and DICES-990. ρ upper bounds are < 0.5 on all three, so the population claim stands. ρ_own intervals include 0 on BW and DICES-350 at a = 40 once raters are resampled. Results in ROUND19_PROTOCOL.md; draft §1 and §2.1 updated; pooled estimates labelled descriptive (review issue 6).
