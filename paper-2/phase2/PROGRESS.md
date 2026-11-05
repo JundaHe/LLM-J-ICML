@@ -1434,3 +1434,16 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 01:45 — R19-7 (review issue 9) done; R19-8 (issue 2) launched
 - R19-7: frozen-feature nominal heads were re-run with Brier added (GPU job 12653, 12 runs in 11 min). The KL reproduces the published tables exactly. The ChaosNLI donor-replacement cost in Brier is MNLI +0.005–0.012 and SNLI +0.008–0.017, positive at every m. That is 0.29–1.31 of the oracle shape gap. Draft §1 and §3 now state the cost in Brier.
 - R19-8: protocol and decode_validity.py, which reports constraint violations of q_T + C⁻¹r̂ and the gain after projection onto the exact mode-and-mean cell. The first local smoke test failed: my `project` overwrote decode_residual's function of the same name. After renaming, the smoke test is running as Slurm job 12654.
+
+## 2026-11-06 02:35 — R19-8 / R19-8a (review issue 2) done; POPQUORN RFF done
+- R19-8: the raw cell-projected gain is biased under the null (+0.00002 / +0.00003 at γ = 0), so reading (i) failed. Amendment R19-8a, introduced after seeing this: subtract the projected gain of the within-cell-permuted forecast. ΔG_proj passes the null on both panels.
+- R19-8a against the published bounds:
+  - ΔG_proj/X exceeds the published bound on four ordinal panels: SummEval relevance 0.5 %, DICES-350 4.0 %, DICES-990 7.3 %, HS2 10.3 %. Per the frozen rule the draft now says "below 5 % on five of eight, at most 10.3 %".
+  - ChaosNLI rises to 0.35 / 0.44. The unconstrained nominal decoder also moves the modal mass, and the projection removes that.
+  - Planted recovery is 0.17–0.20 after projection.
+  - Draft abstract, §1 and §2.2 updated.
+- R19-5 POPQUORN (RFF, B = 100):
+  - γ 0: G [−0.00001, +0.00000], null passes.
+  - γ 0.6: G +0.00012 [+0.00008, +0.00015]. The lower bound 0.00008 does not exceed the ridge point 0.00010, so there is no decoder bottleneck.
+  - real: G/X 0.003 [−0.048, +0.004].
+  - SummEval RFF bootstrap at 50/100.

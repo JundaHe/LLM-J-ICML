@@ -105,3 +105,33 @@ Reproducibility: the re-run reproduces the published KL of every arm exactly (ma
 **Reason.** The cell-preserving projection is itself a form of smoothing. Wherever q_T is zero or extreme, mapping a noisy forecast back onto the valid cell moves it toward the interior, which is where the true distribution sits. That gains score with no text information. G_proj therefore mixes text shape with a projection artefact (the same kind of problem as Gc), so readings (ii)–(iv) cannot be applied to raw G_proj.
 **Violation rates (unprojected forecast, real panels).** Negative mass on 3–82 % of items: DICES 3 %, DICES-990 4 %, BW 14 %, SummEval 61 %, POPQUORN 62 %, CSC 82 %. Weak-mode violations 0–6 % on ordinal panels. Mean violations 0 at 1e-6. On nominal panels the mode check used tolerance 1e-9 on the modal mass, which flagged numerical noise; it is now 1e-6.
 **Amendment R19-8a (new; not prespecified).** decode_validity also computes G_proj_perm. This applies the same projection to the within-exact-T-cell permuted forecast, i.e. the same permutation as G_perm. The shape gain of the projected forecast is reported as ΔG_proj = G_proj − G_proj_perm. Readings (i)–(iv) are re-applied to ΔG_proj in place of G_proj, with the same tolerances. Point estimates only, as before.
+
+### R19-8a results (2026-11-06 02:35; results/decode_validity/, Qwen2.5 E_last, R = 10 point estimates)
+| panel | a | G/X (published, Qwen2.5) | ΔG_proj/X | G_proj_perm | negative mass | weak-mode violated |
+|---|---|---|---|---|---|---|
+| SummEval coh. | 4 | −0.001 | +0.002 | +0.00001 | 61 % | 4 % |
+| SummEval rel. | 4 | −0.001 | +0.005 | +0.00002 | 62 % | 6 % |
+| POPQUORN off. | 4 | −0.016 | +0.003 | +0.00003 | 62 % | 1 % |
+| POPQUORN pol. | 3 | +0.085 | +0.182 | +0.00003 | 35 % | 0 |
+| EmoBank | 3 | +0.009 | +0.016 | +0.00001 | 64 % | 1 % |
+| DICES-350 | 20 | −0.024 | +0.040 | −0.00001 | 3 % | 0 |
+| DICES-990 | 20 | −0.001 | +0.073 | −0.00000 | 4 % | 0 |
+| Dorn | 20 | +0.032 | +0.040 | −0.00001 | 7 % | 2 % |
+| HS2 | 3 | +0.025 | +0.103 | +0.00005 | 39 % | 0 |
+| BW | 20 | +0.066 | +0.059 | −0.00001 | 14 % | 3 % |
+| CSC | 3 | −0.049 | +0.023 | +0.00006 | 82 % | 0 |
+| Scalabrino | 5 | −0.118 | −0.015 | +0.00001 | 51 % | 6 % |
+| JB naming | 6 | +0.011 | +0.070 | −0.00011 | 17 % | 3 % |
+| MultiPref | 3 | +0.105 | +0.246 | +0.00005 | 35 % | 0 |
+| ChaosNLI MNLI | 20 | +0.169 | +0.350 | −0.00045 | 15 % | (modal mass changed on every item) |
+| ChaosNLI SNLI | 20 | +0.260 | +0.441 | −0.00043 | 34 % | (modal mass changed on every item) |
+| planted SummEval γ 0 / 0.6 | 4 | — / +0.118 | ΔG_proj −0.00000 / +0.195 | | | |
+| planted POPQUORN γ 0 / 0.6 | 4 | −0.014 / +0.069 | +0.004 / +0.174 | | | |
+
+Mean violations: 0 everywhere.
+**Nominal.** The modal class differs across items, so the multi-output ridge's prediction at an item's modal class is not zero (median |r̂_z| ≈ 0.019 on MNLI). The unconstrained NLI forecast therefore also changes the modal mass, i.e. a location component. The projection removes it.
+**Readings (as frozen, applied to ΔG_proj).**
+(i) Null: ΔG_proj at γ = 0 is −0.00000 (SummEval) and +0.00000 (POPQUORN). Pass.
+(iii) ΔG_proj/X exceeds the published three-family upper bound on SummEval relevance (0.5 % vs 0.4 %), DICES-350 (4.0 % vs 2 %), DICES-990 (7.3 % vs 4.6 %) and HS2 (10.3 % vs 10.2 %). Those bounds are replaced by the maximum, with the reason given. The summary becomes "below 5 % on five of the eight informative ordinal panels and at most 10.3 % on all eight". These are point estimates without an interval and computed on Qwen2.5 only; stated.
+(iv) ChaosNLI ΔG_proj/X is 0.35 / 0.44, ≥ 0.10. The contrast stands, and the projected NLI shape-only gain is about twice G.
+Planted: the projected decoder recovers 0.17–0.20 of the known shape (G: 0.07–0.12).
