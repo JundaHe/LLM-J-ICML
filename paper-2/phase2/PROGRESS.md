@@ -1405,3 +1405,8 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - FINAL so far: SummEval γ=0.6 G +0.00020 [+0.00017, +0.00028], G/X 0.118 [0.105, 0.169]; POPQUORN γ=0.6 G +0.00010 [+0.00005, +0.00014], G/X 0.069 [0.031, 0.088]; POPQUORN γ=0.3 G 0.00000 [−0.00003, +0.00004] (not detected). Consistent with interim.
 - Clipped gain Gc is positive under the planted null (clip+renormalise shifts the mean) → not shape-only; never used in the draft; noted in ROUND19_PROTOCOL.md (4d3dfb8, 3e7ea30).
 - RFF smoke re-timing running with the cores freed.
+
+## 2026-11-05 21:46 — paper 2: R19-2 final; draft updated; R19-5 launched
+- R19-2 final (ROUND19_PROTOCOL.md, 877d15e): null calibrated; γ* = 0.3 SummEval (planted X 0.00067 ≤ observed 0.00198 → real null informative), 0.6 POPQUORN (1.48e-3 > 3.6e-4 → uninformative). Ridge ceiling G/X 0.07–0.12.
+- Draft (21908e3): abstract, §1(ii), §2.2 report the power control and the POPQUORN caveat.
+- R19-5 (RFF kernel ridge): smoke γ=0.6 G/X 0.114 vs ridge 0.118 (no sign of a decoder bottleneck yet). Compute amendment R=5, B=100 logged before full runs; 8 runs launched (2 panels × real, γ 0/0.3/0.6).
