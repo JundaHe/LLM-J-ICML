@@ -29,7 +29,10 @@ ap.add_argument("--d", type=int, default=64); ap.add_argument("--d_pre", type=in
 ap.add_argument("--reselect_alpha", action="store_true", help="re-select α inside every bootstrap replicate (sensitivity)")
 ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default="")
 ap.add_argument("--plant", type=float, default=None, help="ROUND19 R19-2: replace H by a planted-shape simulation with log-dispersion slope gamma on a feature direction")
-ap.add_argument("--plant_seed", type=int, default=0); args = ap.parse_args()
+ap.add_argument("--plant_seed", type=int, default=0)
+ap.add_argument("--decoder", default="ridge", choices=["ridge", "rff"], help="ROUND19 R19-5: rff = ridge on 2048 random Fourier features (Gaussian kernel, median-heuristic bandwidth) of the fold-wise PCA scores")
+args = ap.parse_args()
+if args.decoder != "ridge": args.tag = (args.tag or "") + f"_{args.decoder}"
 
 PAN = data_panels.load(args.panel); H = PAN["H"].astype(int); K = PAN["K"]; NI, M = H.shape; G0 = np.asarray(PAN.get("groups", np.arange(NI)))
 NOMINAL = args.panel.startswith("chaosnli"); P = Panel(K, NOMINAL); C = P.C; NRM = P.NRM
@@ -62,7 +65,14 @@ def project(Xtr, Xte, d):
         sd = Xtr.std(0) + 1e-6; return (Xtr - mu) / sd, (Xte - mu) / sd
     Ztr = Xtr - mu; Zte = Xte - mu
     dd = min(d, len(Ztr) // 4); U, S, Vt = np.linalg.svd(Ztr, full_matrices=False); Wp = Vt[:dd].T / (S[:dd] / np.sqrt(len(Ztr)) + 1e-6)
+    if args.decoder == "rff": return rff(Ztr @ Wp, Zte @ Wp)
     return Ztr @ Wp, Zte @ Wp
+def rff(Ztr, Zte, D=2048):
+    """random Fourier features of a Gaussian kernel; bandwidth = median pairwise distance of (up to 500) training rows; fixed seed (R19-5)"""
+    rng = np.random.RandomState(7); sub = Ztr[rng.choice(len(Ztr), min(500, len(Ztr)), replace=False)]
+    dist = np.sqrt(((sub[:, None, :] - sub[None, :, :]) ** 2).sum(-1)); bw = np.median(dist[dist > 0])
+    Wr = rng.randn(Ztr.shape[1], D) / bw; br = rng.uniform(0, 2 * np.pi, D); f = lambda Z: np.sqrt(2.0 / D) * np.cos(Z @ Wr + br)
+    return f(Ztr), f(Zte)
 def select_alpha(X, Y, groups):
     fi = folds_for(groups, 4242, 4); best = None
     for al in ALPHAS:
