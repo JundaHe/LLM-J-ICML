@@ -1366,3 +1366,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 15:31 — paper 2: Codex round 19 launched
 - No jobs running. Decided (per standing authorisation) to use idle time on paper 2: launched a gpt-6.1-sol review of PAPER_DRAFT_v2.md (first Codex review since the 10-26 internal Claude review), checking the 10-26 issues (incl. the critical comparator inconsistency) and asking which fixes need new experiments. Prompt: paper-2/phase2/reviews/codex_round19_prompt_2026-11-05.md.
+
+## 2026-11-05 15:52 — paper 2: Codex round 19 received; R19-1 running
+- Codex verdict on draft v2: reject in current form. Prior fixes confirmed for decoding CIs, G/X, LoRA same-batch, related work, double-blind. Open: (critical) X uses panel-1 comparator for r2, so ρ includes a cross-term; (high) no planted-shape power control; rater model does not reproduce dense-panel X; budget text re-derives from mechanism and says "always" despite HS2/OLMo exception; "matches" without margin; clustering of intervals; approximate budgets / optimisation exposure.
+- ROUND19_PROTOCOL.md frozen (R19-1 cross-term diagnostic; R19-T text fixes; R19-2/3/4 placeholders). rho_own.py launched on 8 dense panels (CPU). Smoke test (DICES, B=3) shows X_cross about half of X in absolute terms <0.0002; the frozen rule (|X_cross| within max(25%|X|, 0.0005)) will pass on the absolute leg, which is uninformative at this scale — will be reported descriptively alongside the frozen reading, no rule change.
