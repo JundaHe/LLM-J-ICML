@@ -1472,3 +1472,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 
 ## 2026-11-06 03:00 — R20-2 queued
 - 24 Slurm jobs: SummEval and POPQUORN, γ ∈ {0, 0.3, 0.6}, plant seeds 1–4, decode_decomp.py with R = 10, B = 200. They start as CPUs free up.
+
+## 2026-11-06 03:31 — R20-1 interim point estimates (bootstrap at 50–125/200)
+- Planted γ 0.6: G_own/X_own is 0.56 on SummEval and 0.36 on POPQUORN. The low planted recovery under G/X (0.07–0.12) came from the cross-term in the denominator.
+- Real SummEval coherence / relevance: G_own/X_own is 0.009 / 0.013. The planted X_own (0.00040) is about the real X_own (0.00038), so the SummEval null looks informative at the observed magnitude in the own-shape estimand.
+- POPQUORN offensiveness and EmoBank at a = 4 have X_own ≈ 0 (−0.00001 / +0.00000): their X is cross-term, and there is no detectable shape-to-shape reproducibility to decode.
+- The null passes at the point level: γ 0 G_own and ΔGP are ≈ 0.
+- Formal readings wait for the intervals. LoRA R19-9: 8/27 cells done.
