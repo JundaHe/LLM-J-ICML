@@ -27,7 +27,9 @@ ap.add_argument("--panel", required=True); ap.add_argument("--a", type=int, defa
 ap.add_argument("--R", type=int, default=10); ap.add_argument("--B", type=int, default=500); ap.add_argument("--R_boot", type=int, default=3)
 ap.add_argument("--d", type=int, default=64); ap.add_argument("--d_pre", type=int, default=256); ap.add_argument("--feat_key", default="E_last")
 ap.add_argument("--reselect_alpha", action="store_true", help="re-select α inside every bootstrap replicate (sensitivity)")
-ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default=""); args = ap.parse_args()
+ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default="")
+ap.add_argument("--plant", type=float, default=None, help="ROUND19 R19-2: replace H by a planted-shape simulation with log-dispersion slope gamma on a feature direction")
+ap.add_argument("--plant_seed", type=int, default=0); args = ap.parse_args()
 
 PAN = data_panels.load(args.panel); H = PAN["H"].astype(int); K = PAN["K"]; NI, M = H.shape; G0 = np.asarray(PAN.get("groups", np.arange(NI)))
 NOMINAL = args.panel.startswith("chaosnli"); P = Panel(K, NOMINAL); C = P.C; NRM = P.NRM
@@ -37,6 +39,12 @@ E = F[args.feat_key].astype(np.float64)
 # label-free pre-reduction (uses features only, never ratings)
 if args.d_pre > 0 and args.d_pre < E.shape[1]:
     mu0 = E.mean(0); U, S, Vt = np.linalg.svd(E - mu0, full_matrices=False); E = (E - mu0) @ Vt[: args.d_pre].T
+if args.plant is not None:   # ROUND19_PROTOCOL.md R19-2: planted text-predictable shape, location/thresholds from the fitted M2 model
+    prm = np.load(f"{HERE}/results/rater_item/{args.panel}_M2_params.npz"); prng = np.random.RandomState(args.plant_seed)
+    u = np.zeros(E.shape[1]); u[:64] = prng.randn(64); u /= np.linalg.norm(u); sdir = (E - E.mean(0)) @ u; sdir = (sdir - sdir.mean()) / sdir.std()
+    sig = np.median(prm["sigma"]) * np.exp(args.plant * sdir); cu = prm["cuts"][prm["rater_group"]]          # M × (K−1)
+    ystar = prm["theta"][:, None] + sig[:, None] * prng.randn(NI, M); H = (ystar[:, :, None] > cu[None, :, :]).sum(2).astype(int)
+    args.tag = (args.tag or "") + f"_plant{args.plant:g}_s{args.plant_seed}"; print(f"planted shape: gamma {args.plant}, sigma range {sig.min():.2f}-{sig.max():.2f}", flush=True)
 ALPHAS = [1e-2, 1e-1, 1, 10, 100, 1000, 1e4, 1e5] if args.d > 0 else [1e-1, 1, 10, 100, 1000, 1e4, 1e5, 1e6]   # Amendment 1: top extended so that "no signal" (r̂ → 0) is representable
 if args.a is None: args.a = (M + 1) // 2 if M <= 12 else 20
 if args.b is None: args.b = (M - args.a) if M <= 12 else min(20, M - args.a)
