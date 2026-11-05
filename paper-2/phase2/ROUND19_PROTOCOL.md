@@ -14,7 +14,11 @@ Either way, the draft adopts the narrower "forecasting" wording for the small pa
 Score normalisation stated (all inner products divided by NRM = K − 1 for ordinal, 1 for nominal, as implemented); ties in "exact mode" defined as in `z_label`; abstract bound qualified by clustering; "matches" → "no difference detected (interval)"; "always" → counts; "do not use the shape" / "unlearnable" narrowed to the probes run; mechanistic budget explanation removed from §5; approximate budgets and the rounding rule stated; panel inventory table; definitions of A1^x, mode prototype, reliability-shrunk targets, CSC, the thirty configurations; "−0.0000 [−0.0000, +0.0000]" printed at more digits.
 
 ## R19-2 Planted-shape calibration of the decoding pipeline (CPU; issue 3) — to be specified in an amendment before running
-## R19-3 Rater-model reproduction of dense-panel X (CPU; issue 4) — to be specified in an amendment before running
+## R19-3 Rater-model reproduction of dense-panel X (CPU; issue 4) — specified 2026-11-05, after R19-1 rows were visible on 4 of 8 panels but before any simulation at dense splits
+**Panels.** Dense panels with persistent rater identities: Buse–Weimer (121 raters) and DICES-350 (104); additionally Dorn Java (no rater identities: M0 and M2 only).
+**Procedure.** Refit M0, M1, M2 on the full matrix exactly as `rater_item_model.py` (same grids, λ_σ selected there; values read from `results/rater_item/<panel>.json`). Draw 20 simulated matrices per model (seed 200 + model). On each simulated and on the observed matrix compute X, X_own, X_cross (R19-1 definitions) at a ∈ {10, 20, 40} (a + 20 ≤ m), b = 20, R = 5 split repetitions, fold seed 1.
+**Readings (fixed now).** At a = 40 (else the largest a), a model *reproduces* a statistic if the observed point estimate lies within the 2.5–97.5 % range of its 20 simulated values. "Thresholds explain something location alone cannot" requires M1 to reproduce observed X_own and M0 not to. If neither M1 nor M2 reproduces X_own, the draft states that the measurement models do not account for the dense-panel residual and removes the rater-side mechanism language from §4 except as a description of the likelihood gains.
+
 ## R19-4 Budget comparison with documented optimisation exposure (GPU via Slurm; issue 7) — to be specified before running
 
 ## Amendments
