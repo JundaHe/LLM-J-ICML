@@ -1492,3 +1492,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - ΔGP/X_own upper bounds: ordinal 0.05 / 0.13 / 0.27, NLI 0.65 / 0.70.
 - HS2 crashed in ci() because every ratio was NaN (X_own = 0 in all resamples). fr_lib.ci now returns NaN; HS2 resubmitted as job 12740.
 - Corrected post-hoc note 2: the G_own bootstrap is off-centre in both directions.
+- 05:55 Draft v2.4: the abstract, §1 contributions/(ii), §2.2 (own-shape decomposition and planted control on G_own/X_own) and §6 Dorn now use R20-1 quantities. The R19-8a max rule is removed. G/X is renamed the normalised forecasting gain. check_consistency is clean.
