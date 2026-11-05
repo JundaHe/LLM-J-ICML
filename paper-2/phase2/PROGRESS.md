@@ -1391,3 +1391,9 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - Table 1 generator now prints ρ_own [95%] for the dense panels and a forecasting-reliability caption with A1^x defined (73522fe); draft Dorn range corrected to 0.12–0.22.
 - Draft: A1^x, mode prototype, CSC, and the 30 head configurations (5 seeds × 3 item splits × 2 position splits) defined (978346f); R19-1/R19-3 result JSONs committed (small).
 - R19-2 planted runs (8, CPU, B=500) still running; no FINAL lines yet. No GPU work pending (R19-4 needs no rerun).
+
+## 2026-11-05 19:31 — paper 2: R19-2 interim (bootstrap 150–200/500; point estimates final)
+- Null (γ=0): G −0.00001 [−0.00001, 0.00000] on both panels, G_perm ≤ 0 → calibrated.
+- SummEval coh.: γ=0.15 G 0.0000 (X 0.0001); γ=0.3 G +0.00008 [+0.00003, +0.00013] (planted X 0.00067); γ=0.6 G +0.00023 [+0.00017, +0.00028] (X 0.00166, G/X ≈ 0.12). γ*=0.3 with planted X 0.00067 < observed real X 0.00198 → real-data null informative at the observed scale (interim).
+- POPQUORN off.: γ=0.3 G 0.0000 (X 0.00063); γ=0.6 G +0.00009 [+0.00004, +0.00014] (X 0.00148, G/X ≈ 0.07). γ*=0.6 with planted X 0.00148 > observed real X 0.00036 → real-data null NOT informative below that magnitude (interim).
+- Story consequence: even a known, linearly planted shape is recovered at only ~7–12% G/X by this ridge pipeline, so "few percent" upper bounds on real data must be read against that ceiling, not against 100%. Plan: after FINAL, record per frozen rule; consider a stronger (nonlinear) decoder on planted + real data (needs a protocol amendment first). CPU fully used by 8 runs (~4 h to go).
