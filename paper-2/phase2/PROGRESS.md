@@ -1400,3 +1400,8 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 20:51 — paper 2: R19-5 RFF smoke test timed out
 - RFF decoder smoke (SummEval γ=0.6, R=2, B=3) hit the 20-min timeout while the 8 R19-2 runs occupy all 32 cores; no output, no bug evidence. Will re-time once R19-2 finishes; if the full-run cost is prohibitive, D will be reduced by a logged amendment before any RFF result is read.
+
+## 2026-11-05 21:31 — paper 2: R19-2 3/8 FINAL; Gc note; RFF re-timing
+- FINAL so far: SummEval γ=0.6 G +0.00020 [+0.00017, +0.00028], G/X 0.118 [0.105, 0.169]; POPQUORN γ=0.6 G +0.00010 [+0.00005, +0.00014], G/X 0.069 [0.031, 0.088]; POPQUORN γ=0.3 G 0.00000 [−0.00003, +0.00004] (not detected). Consistent with interim.
+- Clipped gain Gc is positive under the planted null (clip+renormalise shifts the mean) → not shape-only; never used in the draft; noted in ROUND19_PROTOCOL.md (4d3dfb8, 3e7ea30).
+- RFF smoke re-timing running with the cores freed.
