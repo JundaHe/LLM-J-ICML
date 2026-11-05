@@ -163,3 +163,6 @@ Controls: G_perm ≤ 0 everywhere; positive controls 0.22–0.64.
 (i) The null passes on both panels.
 (ii) No decoder bottleneck. The RFF lower bound at γ 0.6 (0.00015 / 0.00008) does not exceed the ridge point (0.00020 / 0.00010).
 (iii) Real data: the RFF G/X lower bound is < 0 on both panels, so the nonlinear decoder recovers no reproducible shape that ridge misses. Its upper bounds are 0.2 % (SummEval) and 0.4 % (POPQUORN), the same as ridge.
+
+### Correction (2026-11-06, Codex round 20 issue 7)
+In the R19-1 results line, Dorn Java ρ_own at a = 40 is 0.1246, which rounds to 0.12, not 0.13 (results/rho_own/dorn_java.json). The draft's range 0.12–0.22 is correct.

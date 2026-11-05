@@ -1456,3 +1456,16 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 02:39 — R19-5 complete (RFF decoder)
 - SummEval RFF: null passes. γ 0.6 G [+0.00015, +0.00025] lies below the ridge point, so there is no bottleneck. Real G/X −0.004 [−0.014, +0.002].
 - With POPQUORN (done earlier), every reading is negative for a nonlinear advantage. Draft §2.2 now carries one sentence on this. Review issue 3 / change 2 is answered.
+
+## 2026-11-06 02:59 — Codex round 20 (weak reject) → ROUND20 protocol; R20-1 running; R20-T text fixes
+- Review: CRITICAL — G/X inherits the cross-term, so it is not "the fraction of reproducible shape". HIGH — the R19-8a max-combination is not a confidence bound. HIGH — the population statement is inconsistent. HIGH — the planted control is not a ceiling.
+- R20-1 (protocol first): decode_decomp.py computes G = G_own + G_cross and X_own, plus the valid-forecast GP and ΔGP, all with a paired item bootstrap (B = 200). 10 panels + 4 planted. Running as Slurm jobs 12702–12711 plus 4 local processes. The smoke test confirms that on SummEval X_own is only ≈ 17 % of X.
+- R20-T text fixes in the draft:
+  - "matches / equally good / tie / never / mostly not in the text / learn location and calibration / small but non-zero" removed or qualified;
+  - §7 now states the nonlinear probe's scope and the replication scope;
+  - population statement: SummEval is mixed, Scalabrino is a persistent pool, and the independence assumption is stated;
+  - R19-6 is said to support only "below ½";
+  - "known linear shape" and "ceiling" withdrawn;
+  - −0.0000 printed at more digits; draft date updated.
+- **Structural-zero claim corrected (issue 8):** with three raters, the two-rating split halves are determined by their exact mode and mean (support 0 %). The three-rating histograms are not: 15–75 % of items share a cell with another histogram (support_three.py → results/support_three.json). The draft no longer says "no shape to learn".
+- Protocol rounding fix: Dorn Java ρ_own is 0.12, not 0.13.

@@ -1,0 +1,51 @@
+{
+ "crupi_ca": {
+  "K": 5,
+  "items": 1163,
+  "support_3": 0.3276010318142734,
+  "support_2": 0.0,
+  "all_distinct_3": 0.07824591573516768
+ },
+ "crupi_conc": {
+  "K": 5,
+  "items": 1163,
+  "support_3": 0.1530524505588994,
+  "support_2": 0.0,
+  "all_distinct_3": 0.04299226139294927
+ },
+ "crupi_flu": {
+  "K": 5,
+  "items": 1163,
+  "support_3": 0.15133276010318142,
+  "support_2": 0.0,
+  "all_distinct_3": 0.07566638005159071
+ },
+ "mlcq3": {
+  "K": 4,
+  "items": 2041,
+  "support_3": 0.20578147966683,
+  "support_2": 0.0,
+  "all_distinct_3": 0.08525232729054386
+ },
+ "roy_ca": {
+  "K": 11,
+  "items": 1419,
+  "support_3": 0.7455954897815363,
+  "support_2": 0.0,
+  "all_distinct_3": 0.33051444679351655
+ },
+ "roy_conc": {
+  "K": 11,
+  "items": 1419,
+  "support_3": 0.6300211416490487,
+  "support_2": 0.0,
+  "all_distinct_3": 0.37279774489076817
+ },
+ "roy_flu": {
+  "K": 11,
+  "items": 1419,
+  "support_3": 0.55461592670895,
+  "support_2": 0.0,
+  "all_distinct_3": 0.346723044397463
+ }
+}
