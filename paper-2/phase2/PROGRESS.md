@@ -1363,3 +1363,6 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 
 ## 2026-11-05 14:31 — status check
 - No Slurm jobs or experiment processes. Paper 2 and paper 4 have no pending computation. ICML 2027 CFP/template still "will be posted here soon"; paper 4 awaits the template swap. Holding.
+
+## 2026-11-05 15:31 — paper 2: Codex round 19 launched
+- No jobs running. Decided (per standing authorisation) to use idle time on paper 2: launched a gpt-6.1-sol review of PAPER_DRAFT_v2.md (first Codex review since the 10-26 internal Claude review), checking the 10-26 issues (incl. the critical comparator inconsistency) and asking which fixes need new experiments. Prompt: paper-2/phase2/reviews/codex_round19_prompt_2026-11-05.md.
