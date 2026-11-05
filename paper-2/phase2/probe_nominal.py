@@ -91,7 +91,7 @@ def run(seed, isplit):
                                                           **(assert_valid_nominal(T, z, c, name) if kind == "zc" else {}))
     rows = []
     def score(name, P, extra=None):
-        row = dict(seed=seed, isplit=isplit, m=args.m, arm=name, kl_ref=float(np.mean(np.sum(ref_hist * (np.log(ref_hist + 1e-9) - np.log(P + 1e-9)), 1))),
+        row = dict(seed=seed, isplit=isplit, m=args.m, arm=name, kl_ref=float(np.mean(np.sum(ref_hist * (np.log(ref_hist + 1e-9) - np.log(P + 1e-9)), 1))), brier_ref=float(np.mean(np.sum((P - ref_hist) ** 2, 1))),   # R19-7: arm differences = expected Brier differences for a new reference rater
                    acc_mode=float((P.argmax(1) == z_ref).mean()), ent_spearman=float(spearmanr(ent(P), ent_ref).correlation),
                    resid_spearman=float(spearmanr(resid_share(P, z_ref), rs_ref).correlation), modal_mass_spearman=float(spearmanr(P[np.arange(len(te)), z_ref], ref_hist.max(1)).correlation))
         if extra: row.update(extra)
@@ -116,6 +116,6 @@ if __name__ == "__main__":
     rows = []
     for seed, isplit in itertools.product(range(args.seeds), range(args.item_splits)):
         rows += run(seed, isplit); pd.DataFrame(rows).to_json(f"{OUT}/runs.jsonl", orient="records", lines=True)
-    df = pd.DataFrame(rows); cols = ["kl_ref", "acc_mode", "ent_spearman", "resid_spearman", "modal_mass_spearman"]
+    df = pd.DataFrame(rows); cols = ["kl_ref", "brier_ref", "acc_mode", "ent_spearman", "resid_spearman", "modal_mass_spearman"]
     g = df.groupby("arm")[cols].agg(["mean", "sem"]).reindex(["hard", "smooth", "proto", "zc", "cond", "shrunk", "soft", "soft_pmode", "soft_pzc", "fidelity_zc", "fidelity_soft"]).round(4)
     open(f"{OUT}/summary.md", "w").write(f"# probe_nominal — {args.panel}, m={args.m} training positions, {args.n_ref} reference positions\n\n```\n{g.to_string()}\n```\n"); print(g.to_string())
