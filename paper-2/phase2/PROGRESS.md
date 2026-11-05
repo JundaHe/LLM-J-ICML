@@ -1452,3 +1452,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Audit: the lora_budget_v2 seeds share one rating assignment per fold, because the budget seed depends only on split and fold. The draft §5 now says so.
 - R19-9 (protocol first): a prospective SummEval block with seeds 2003–2005. Budget seed 6000 + 100·(seed − 2003) + fold. Designs full, 960 × 1 and 144 × 7. Declared margin δ = 0.005 RPS (TOST, non-inferiority, items-first). Jobs 12698–12700, about 18 min per run, 9 runs per seed.
 - check_consistency.py: all OK after this session's draft edits.
+
+## 2026-11-06 02:39 — R19-5 complete (RFF decoder)
+- SummEval RFF: null passes. γ 0.6 G [+0.00015, +0.00025] lies below the ridge point, so there is no bottleneck. Real G/X −0.004 [−0.014, +0.002].
+- With POPQUORN (done earlier), every reading is negative for a nonlinear advantage. Draft §2.2 now carries one sentence on this. Review issue 3 / change 2 is answered.

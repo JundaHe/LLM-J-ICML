@@ -145,3 +145,21 @@ Planted: the projected decoder recovers 0.17–0.20 of the known shape (G: 0.07�
 (ii) *Non-inferiority*: its 95 % upper bound < +0.005.
 (iii) *Items first*: 144 × 7 − 960 × 1 has a 95 % lower bound > 0.
 The draft reports (i)–(iii) as they come out. "Not distinguishable" is upgraded to "equivalent within 0.005 RPS" only if (i) holds. If (ii) fails, the draft states that one rating per item may be inferior by more than the margin.
+
+### R19-5 results (2026-11-06 02:40; RFF D = 2,048, R = 5, B = 100; results/decoding_v2/*_rff.json)
+| panel | condition | RFF G [95 %] | RFF G/X [95 %] | ridge G (point) |
+|---|---|---|---|---|
+| SummEval | γ 0 | +0.00000 [−0.00001, +0.00000] | — | −0.00000 |
+| SummEval | γ 0.3 | +0.00010 [+0.00005, +0.00012] | 0.143 [0.081, 0.174] | +0.00007 |
+| SummEval | γ 0.6 | +0.00018 [+0.00015, +0.00025] | 0.111 [0.095, 0.149] | +0.00020 |
+| SummEval | real | −0.00001 [−0.00003, +0.00000] | −0.004 [−0.014, +0.002] | −0.00000 |
+| POPQUORN off. | γ 0 | −0.00000 [−0.00001, +0.00000] | — | −0.00000 |
+| POPQUORN off. | γ 0.3 | +0.00003 [−0.00001, +0.00006] | 0.057 [−0.008, 0.099] | +0.00000 |
+| POPQUORN off. | γ 0.6 | +0.00012 [+0.00008, +0.00015] | 0.084 [0.052, 0.096] | +0.00010 |
+| POPQUORN off. | real | +0.00000 [−0.00001, +0.00000] | 0.003 [−0.048, +0.004] | −0.00001 |
+
+Controls: G_perm ≤ 0 everywhere; positive controls 0.22–0.64.
+**Readings (as frozen).**
+(i) The null passes on both panels.
+(ii) No decoder bottleneck. The RFF lower bound at γ 0.6 (0.00015 / 0.00008) does not exceed the ridge point (0.00020 / 0.00010).
+(iii) Real data: the RFF G/X lower bound is < 0 on both panels, so the nonlinear decoder recovers no reproducible shape that ridge misses. Its upper bounds are 0.2 % (SummEval) and 0.4 % (POPQUORN), the same as ridge.
