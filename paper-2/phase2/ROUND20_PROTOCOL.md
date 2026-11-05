@@ -85,3 +85,15 @@ Panels not run in R20-1 (BW, CSC, Scalabrino, HS2 until it finishes) keep only t
 **Design.** As R19-9 (SummEval coherence, Chen objective, 240 steps, folds 0–2, split 0, designs full / 960 × 1 / 144 × 7, seeds 2003–2005), but with base allenai/OLMo-2-1124-7B-Instruct. The budget seeds are the **same** as R19-9 (6000 + 100·(seed − 2003) + fold), so every cell sees R19-9's items and ratings. Output: results/lora_budget_r20_olmo/summeval_coherence8/.
 **Readings (fixed now).** (i)–(iii) as R19-9 with δ = 0.005, via `analysis_budget_lora.py --root lora_budget_r20_olmo --seeds 2003,2004,2005 --B 2000` (and `--ref a1_F1.0`). (iv) Descriptive only: the per-cell 960 × 1 − full penalties are compared across bases (Pearson r over the nine cells). If the three R19-9 outlier cells are also the three largest here, the outliers are attributed to the assignment, not to optimisation.
 The draft reports both bases. No claim is upgraded on one base alone.
+
+### R20-2 results, SummEval coherence (2026-11-06 07:40; draws s0 from R20-1 plus s1–s4)
+| γ | draws | detected (G_own lower bound > 0) | planted X | planted X_own | G_own/X_own |
+|---|---|---|---|---|---|
+| 0 | 5 | 0 of 5 (ΔGP covers 0 in 5 of 5) | −0.00017 to +0.00006 | −0.00014 to −0.00005 | — |
+| 0.3 | 4 (s1–s4; no s0) | 3 of 4 | 0.00040–0.00064 | 0.00012–0.00022 | 0.16–0.55 |
+| 0.6 | 5 | 5 of 5 | 0.00133–0.00166 | 0.00033–0.00047 | 0.38–0.56 |
+Observed: X = 0.00198, X_own = 0.00038.
+
+**Reading as frozen (on X): not met.** No γ has planted X at or above the observed X, because the strongest plant reaches 0.00166. The frozen rule therefore cannot certify the SummEval null as informative.
+**Post hoc, on the X_own scale used by the R20-1 headline:** the γ0.6 draws bracket the observed X_own (0.00033–0.00047 vs 0.00038) and are detected 5 of 5. γ0.3, at about half the observed X_own, is detected 3 of 4.
+The draft states the frozen outcome first, then the X_own reading labelled post hoc. The monotonicity argument (a stronger plant would be detected at least as often) is reasoning, not a test. POPQUORN plant draws are still running.

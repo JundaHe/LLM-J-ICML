@@ -1508,3 +1508,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - γ0.6: 2/2 detected, G_own/X_own 0.51–0.56.
   - The γ0 X_own is negative in all five draws (−0.00005 to −0.00014), confirming the post-hoc null-bias note.
   - The CPU queue (10 R20-2 jobs) is held until the R20-3 GPU jobs start; a watcher releases them (logs/release_watch.log).
+
+## 2026-11-06 07:40 R20-2 SummEval complete
+- Detection: γ0 0/5, γ0.3 3/4, γ0.6 5/5 (G_own/X_own 0.38–0.56).
+- The frozen informativeness rule (on X) is not met: the max planted X is 0.00166 against the observed 0.00198. Post hoc, on X_own, γ0.6 brackets the observed value and is detected 5/5.
+- Ops: the release watcher was killed and the held CPU jobs released (12743 waits for a GPU, not CPUs). R20-3 is at 6/27 OLMo runs.
