@@ -82,3 +82,20 @@ Compute: the smoke run took 14 min on a loaded node; full runs use **R = 5, B = 
 **Violation rates** of the unprojected forecast: fraction of items with any negative mass, with the mode of q_T no longer a (weak) mode, and with |Δmean| > 1e-6 (ordinal; per-output α makes Σr̂ ≠ 0 possible).
 **Runs.** Point estimates only (R = 10, the stored ridge α are re-selected exactly as in the point estimate; no bootstrap — stated), ridge decoder, Qwen2.5 E_last, d = 64, each panel's Table 2 a: all 16 decoding_v2 panels, plus SummEval and POPQUORN planted γ ∈ {0, 0.6}. Script `decode_validity.py`, output results/decode_validity/<panel>[tag].json.
 **Readings (fixed now).** (i) Null: at γ = 0, |G_proj| ≤ 0.00002 on both panels. (ii) Report violation rates and G_proj/X beside G/X. (iii) If on any ordinal panel G_proj/X exceeds that panel's published G/X upper bound, the draft's bound for that panel is replaced by max(upper bound, G_proj/X) with the reason. (iv) If on ChaosNLI G_proj/X < 0.10 (published 0.17–0.26), the ordinal–NLI contrast in decoding is restated with G_proj.
+
+### R19-7 results (2026-11-06 01:50; results/probe_nominal/*_v7b)
+Reproducibility: the re-run reproduces the published KL of every arm exactly (max |ΔKL| over arm means 0.0000 on all 12 panel × m cells), so the published `_v6`/`_v7` tables stand.
+
+| panel | m | Brier pzc − soft (± SEM, 9 cfgs) | oracle shape gap (fidelity_zc − fidelity_soft, Brier) | normalised dose | KL pzc − soft |
+|---|---|---|---|---|---|
+| MNLI | 5 | +0.0120 ± 0.0007 | 0.0156 | 0.77 | +0.0285 |
+| MNLI | 10 | +0.0055 ± 0.0006 | 0.0160 | 0.35 | +0.0177 |
+| MNLI | 20 | +0.0053 ± 0.0009 | 0.0180 | 0.30 | +0.0173 |
+| MNLI | 50 | +0.0058 ± 0.0014 | 0.0200 | 0.29 | +0.0160 |
+| SNLI | 5 | +0.0168 ± 0.0011 | 0.0128 | 1.31 | +0.0525 |
+| SNLI | 10 | +0.0111 ± 0.0013 | 0.0122 | 0.91 | +0.0413 |
+| SNLI | 20 | +0.0103 ± 0.0010 | 0.0135 | 0.77 | +0.0355 |
+| SNLI | 50 | +0.0084 ± 0.0010 | 0.0156 | 0.54 | +0.0318 |
+
+αNLI (K = 2): the modal mass fixes the histogram, the oracle shape gap is 0 and pzc − soft is ±0.003 (no shape exists to scramble; not part of the claim).
+**Reading (as frozen):** (i) Brier pzc − soft is positive at every m on MNLI and SNLI, so the draft sentence stands in Brier, unrestricted. (ii) The scramble costs 0.29–1.31 of the oracle shape gap. A ratio above 1 is possible because the oracle uses the noisy m-rating histogram of the item itself, while the head pools across items.
