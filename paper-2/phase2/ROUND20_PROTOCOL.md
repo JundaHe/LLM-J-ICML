@@ -37,3 +37,7 @@ The R19-2 construction plants log-dispersion linear in one feature direction. It
 - Inventory: MultiPref status, Dorn's ρ_own lower endpoint, outward rounding of upper bounds, "−0.0000", draft date.
 - The αNLI sham contrast: report the optimisation variation it reveals.
 - Disclose R19-8's failed control and R19-8a's post-hoc status in §2.2.
+
+### R20-T note on the αNLI sham (2026-11-06; descriptive)
+With K = 2 the donor replacement cannot change any target, so pzc − soft on αNLI is a pure sham contrast. Its mean over the 9 configurations is +0.0001 / −0.0033 / +0.0015 / +0.0005 Brier at m = 5 / 10 / 20 / 50, i.e. within about one SEM of 0. The per-configuration SD is 0.005–0.014.
+The reason: every arm draws its own initialisation and minibatch order from the run's RNG stream, so optimisation noise is not matched across arms. The sham shows the size of that unmatched noise. The MNLI / SNLI contrasts (+0.005 to +0.017, SEM 0.0006–0.0014) are averages over the same 9 configurations and exceed their SEMs by 4–15×, but single configurations should not be compared.
