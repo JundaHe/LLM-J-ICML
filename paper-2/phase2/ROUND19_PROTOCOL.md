@@ -106,7 +106,7 @@ Reproducibility: the re-run reproduces the published KL of every arm exactly (ma
 **Violation rates (unprojected forecast, real panels).** Negative mass on 3–82 % of items: DICES 3 %, DICES-990 4 %, BW 14 %, SummEval 61 %, POPQUORN 62 %, CSC 82 %. Weak-mode violations 0–6 % on ordinal panels. Mean violations 0 at 1e-6. On nominal panels the mode check used tolerance 1e-9 on the modal mass, which flagged numerical noise; it is now 1e-6.
 **Amendment R19-8a (new; not prespecified).** decode_validity also computes G_proj_perm. This applies the same projection to the within-exact-T-cell permuted forecast, i.e. the same permutation as G_perm. The shape gain of the projected forecast is reported as ΔG_proj = G_proj − G_proj_perm. Readings (i)–(iv) are re-applied to ΔG_proj in place of G_proj, with the same tolerances. Point estimates only, as before.
 
-### R19-8a results (2026-11-06 02:35; results/decode_validity/, Qwen2.5 E_last, R = 10 point estimates)
+### R19-8a results (2026-11-06 02:15; results/decode_validity/, Qwen2.5 E_last, R = 10 point estimates)
 | panel | a | G/X (published, Qwen2.5) | ΔG_proj/X | G_proj_perm | negative mass | weak-mode violated |
 |---|---|---|---|---|---|---|
 | SummEval coh. | 4 | −0.001 | +0.002 | +0.00001 | 61 % | 4 % |

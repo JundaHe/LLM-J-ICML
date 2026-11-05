@@ -1435,7 +1435,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R19-7: frozen-feature nominal heads were re-run with Brier added (GPU job 12653, 12 runs in 11 min). The KL reproduces the published tables exactly. The ChaosNLI donor-replacement cost in Brier is MNLI +0.005–0.012 and SNLI +0.008–0.017, positive at every m. That is 0.29–1.31 of the oracle shape gap. Draft §1 and §3 now state the cost in Brier.
 - R19-8: protocol and decode_validity.py, which reports constraint violations of q_T + C⁻¹r̂ and the gain after projection onto the exact mode-and-mean cell. The first local smoke test failed: my `project` overwrote decode_residual's function of the same name. After renaming, the smoke test is running as Slurm job 12654.
 
-## 2026-11-06 02:35 — R19-8 / R19-8a (review issue 2) done; POPQUORN RFF done
+## 2026-11-06 02:15 — R19-8 / R19-8a (review issue 2) done; POPQUORN RFF done
 - R19-8: the raw cell-projected gain is biased under the null (+0.00002 / +0.00003 at γ = 0), so reading (i) failed. Amendment R19-8a, introduced after seeing this: subtract the projected gain of the within-cell-permuted forecast. ΔG_proj passes the null on both panels.
 - R19-8a against the published bounds:
   - ΔG_proj/X exceeds the published bound on four ordinal panels: SummEval relevance 0.5 %, DICES-350 4.0 %, DICES-990 7.3 %, HS2 10.3 %. Per the frozen rule the draft now says "below 5 % on five of eight, at most 10.3 %".
