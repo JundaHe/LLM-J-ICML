@@ -1679,3 +1679,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-07 00:39 — R22-T5: LoRA budget table rebuilt
 - tab_budget now leads with POPQUORN prospective (R20-4), then the SummEval prospective blocks and reruns (labelled expert dilution), then the shared-assignment blocks. The caption carries the batch rule and the dilution note.
 - The guidance is precise now: POPQUORN items-first is "not significantly better" (+0.0027 [−0.0024, +0.0074]); before, it said "not better".
+
+## 2026-11-07 00:50 — R22-3 done; draft updated
+- DICES-350 a = 40 plants: the reference γ is 0.4 (mean X_own 5.5e−5 ≥ observed 4.9e−5). It is detected in 5/5 and recovered at 15–33 %.
+- So DICES-350's 1 % is informative at its own magnitude. The location-only simulation gives X_own −1.3e−5, i.e. no own-shape from location alone.
+- DICES-350 at 40 raters becomes the clean ordinal case: a reproducible shape (within the rater pool) that is power-calibrated and not decoded.
+- Abstract, §1 (ii) and §7 plant scope are updated. 0 tracebacks; check_consistency 11/11.
