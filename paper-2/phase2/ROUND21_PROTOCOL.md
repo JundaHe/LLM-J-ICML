@@ -115,3 +115,13 @@ Per-evaluator-fold breakdown of the existing SummEval LoRA blocks: R19-9 (result
 - 960 × 2 − full: f0 +0.0005, f1 −0.0012, **f2 −0.0114** (all three seeds −0.0106 to −0.0121). The R20-5 "two ratings beat seven" result is a fold-2 (expert 2, the lowest-rating expert) effect. It reproduces in the seed-2003 rerun (−0.0103).
 - 144 × 7 − full is positive on every fold.
 - **Reading:** the SummEval budget contrasts are evaluator-dependent. §5 now states them as conditional on the expert/crowd mixture (draft updated). Nothing is re-tested.
+
+## R21-7 (specified 2026-11-06 17:31, before running): X_own-matched plant at a = 20, plus the location-only baseline (N3 follow-up)
+R21-4's γ 0.6 plant on dorn_java has X_own about 8 times the observed 0.00027, so it calibrates nothing about the observed magnitude.
+- **Runs.** decode_decomp.py on dorn_java, a = 20, R = 10, B = 0, tag _r21. Plants γ ∈ {0, 0.1, 0.2, 0.3, 0.4}, draws s0–s4 (γ0 s0 exists).
+- **Reference plant (rule on the X_own scale, as R21 adopted).** The smallest γ whose mean planted X_own ≥ the observed 0.00027.
+- **Reported.** At the reference γ: detections (CLT lower bound of G_own > 0) out of 5, and the range of G_own/X_own.
+- **Reading:**
+  - 4–5 of 5 detected: the dorn_java estimate (G_own/X_own 0.003 [−0.15, 0.15]) is informative at its own magnitude.
+  - Fewer than 4 of 5: it is not, and is reported as such.
+- **Location-only baseline (descriptive).** Over the five γ0 draws, report the mean X_own and V_own as fractions of dorn_java's observed X_own (0.00027) and V_own (4.5e−5). The draft's location-driven caveat for Dorn is then quantified from these fractions.
