@@ -1719,3 +1719,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - **First real check of v2.** Before registering the sources: 12 unmatched 4-decimal numbers. Every one traced to an existing result file that was not registered (R19-9, R20-3/4/5, the shared-assignment blocks, the earlier lora_budget block, shrinkage SUMMARY). No wrong number was found. After the fix: 96 numbers, 0 unmatched; named claims 11/11 OK.
 - **Scope.** The script checks only 4-decimal contrast numbers and named claims. Two-decimal values and percentages are not machine-checked; the round-22 subagent spot-checked about 30 of them.
 - **Gap found.** v2 refers to an appendix 3 times, but v2 has no appendix. v3 must supply it (COMPRESSION_PLAN.md).
+
+## 2026-11-07 05:31 — v3 (ICML 8-page) step 1: abstract + §1
+- New PAPER_ICML_v3.md: abstract 250 words (target ≤ 250); §1 is 1,133 words (target 900, to be cut in the final pass). Numbers copied verbatim from v2.5. §1 points forward to §3–§6 and Appendix C (SummEval dilution).
+- check_consistency.py PAPER_ICML_v3.md: 10 four-decimal numbers, 0 unmatched. 3 named-claim FAILs (perm_mode−chen interval, POPQUORN perm_mode interval, pmmx range) are expected at this stage: those claims belong to §5 / the appendix, which are not yet written. They must pass before v3 is called complete.
+- No Slurm jobs; no new experiments queued (none motivated).
