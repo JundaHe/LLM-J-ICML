@@ -176,3 +176,9 @@ Pipeline check: the point estimates (X, X_own, G, G_own) match the earlier B = 2
 - CLT detects slightly more often than the percentile bootstrap. That is consistent with R21-1, where the percentile intervals were off-centre.
 - Frozen readings: SummEval stays "informative at the full-panel magnitude", which is moot under ROUND22. The POPQUORN reference plant (γ 0.3) is detected in 2 of 5, which is below 4, so the POPQUORN null **stays uninformative**. No reading changes.
 - Draft: the counts are replaced with the CLT counts (4→5, 4→5, 0→2 on POPQUORN γ 0.3).
+
+## R22-5 (specified 2026-11-07 02:31, before running): DICES-350 at a = 40 on the other two feature families
+DICES-350 at a = 40 is now the power-calibrated ordinal case (R22-3), but only Qwen2.5 features were decoded there; at a = 20, all three families were.
+- **Runs.** decode_decomp.py, dices, a = 40, R = 10, B = 0, with --feat_model Qwen3-8B (tag _a40_qwen3_r22) and --feat_model OLMo-2-1124-7B-Instruct (tag _a40_olmo_r22). One CPU job.
+- **Reported.** G_own/X_own and the net fraction, each with CLT 95 % intervals. X_own is the same across families, because it is learner-free.
+- **Reading (descriptive).** The draft's "three LLM families recover 1 %" is kept only if both upper bounds stay below the plant recovery range (15–33 %). If either upper bound reaches 15 %, the abstract names the family-specific values instead.
