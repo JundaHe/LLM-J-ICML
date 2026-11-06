@@ -1561,3 +1561,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - the X_own-bias note corrected (anti-conservative for absence claims), percentile upper bounds removed from the abstract pending R21-1.
 - 14:35 R21-1: the login smoke test timed out (load ~18). Validation job 12777 was submitted to Slurm, and the 36 R21 decode jobs (12778–12813: R21-1/3/4/5) were submitted held; a watcher releases them once the validation prints CLT output. R21-2 partial: SummEval pool −0.000099±0.00001, DICES pool −0.000015±0.000003 vs common/iid ≈ 0.
 - 14:50 R21-2 complete: the X_own null bias is a finite-rater-pool effect (supported on SummEval and DICES; absent where M2 has one rater group). Protocol and draft §2.2 updated.
+- 14:55 R21 validation passed (CLT output OK). The 36 decode jobs were released: 8 running, 28 queued.
