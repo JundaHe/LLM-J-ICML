@@ -1532,3 +1532,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Items-first on OLMo: +0.0060 [−0.0007, +0.0128], i.e. it does not hold (it holds on Qwen).
 - Per-cell r = 0.56; the top-3 cells overlap 2/3, so the outliers are not attributed to the assignment.
 - R20-4 POPQUORN: 12/36 runs. R20-2a γ0.8: 3/5.
+- 10:50 Draft: abstract, §1(v) and §5 revised for R20-3 (penalty on both bases; items-first Qwen-only). The old OLMo block is described as shared-assignment.
