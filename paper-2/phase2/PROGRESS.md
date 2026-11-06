@@ -1656,3 +1656,17 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - No Slurm jobs and no project processes. The repository is in sync (a497a20).
 - A Claude subagent pre-review of the draft after ROUND22 is running in the background, because Codex is out of quota until 11-11 21:45. Focus: status of round-21 N1–N19, how consistently the ROUND22 changes carry through, and number spot checks. Its output goes to reviews/claude_round22_2026-11-07.md.
 - No GPU job is motivated yet. The decision waits for the review.
+
+## 2026-11-07 00:38 — round-22 pre-review → R22-T3 applied; R22-3 running
+- Pre-review (reviews/claude_round22_2026-11-07.md) verdict: weak reject. Main point: ROUND22 removed SummEval as the ordinal example, but the draft still leaned on it.
+- R22-T3 changes:
+  - (ii) and the abstract are reframed: no ordinal panel has a robustly reproducible shape beyond location.
+  - SummEval relevance leaves the decoding list, and the no-dup ratios are shown.
+  - The a = 4 contrast is relabelled.
+  - The plant "informative" claim is now conditional.
+  - The SummEval residual sentence is replaced.
+  - SummEval is purged from the budget guidance and from contribution (4).
+  - The R20-7 cross-batch arms are disclosed.
+  - The duplication limitation is added to §2.1 and §7.
+- check_consistency: 11/11.
+- R22-3 (DICES-350 a = 40 plant, CPU job 13110) is running.

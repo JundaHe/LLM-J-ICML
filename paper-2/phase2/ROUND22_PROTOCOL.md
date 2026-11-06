@@ -101,3 +101,8 @@ Text and tables only. All numbers come from existing result files.
 8. **§2.1 population (l. 45), §7 (l. 83).** Add the duplication / r ≈ 0.04 / unverified-provenance limitation. Replace "SummEval's small unexplained residual".
 9. **Abstract.** "Prospective LoRA blocks on POPQUORN" becomes "a prospective LoRA block". Header line 3 is updated.
 10. **Deferred to R22-T4 (next step).** Table 2 rebuilt on CLT G_own/X_own with no-dup rows. Table 6 rebuilt with the prospective blocks. Plant detection recomputed with CLT, if the plant JSONs store it. Duplication notes in the Table 1/2 captions.
+
+### R22-T3 applied (2026-11-07 00:38)
+All 22 replacements are applied, covering items 1–9; item 10 is deferred to R22-T4. check_consistency: 11/11 OK, 0 unmatched. The abstract is 379 words.
+Correction found while editing: §5 said experts2 was "0.040 better than full" on expert 1. compare.md gives −0.0415 against a7 (−0.0395 against a2). Changed to 0.042.
+Not changed: the motivating example (l. 10, SummEval coherence). It is illustrative, not evidence. It will be replaced in the next draft pass.
