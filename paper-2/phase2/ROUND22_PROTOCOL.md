@@ -139,3 +139,13 @@ No numbers change. The rows are read from the existing summary JSONs. The §5 pa
   - X_own is −1.3e−5, i.e. −27 % of the observed value. Location and thresholds alone do *not* produce DICES-350's own-shape, unlike Dorn (R21-7: about 95 % of V_own).
   - V_own is 4.7e−7, about 10 % of the observed 4.9e−6.
 - Implication: DICES-350 at 40 raters is the one ordinal panel where a reproducible own-shape beyond location is detected (within the observed rater pool), power-calibrated, and *not* decoded. It now serves as the clean ordinal partner of the NLI contrast, at a = 40.
+
+## R22-4 (specified 2026-11-07 01:31, before running): plant detections recounted with CLT intervals (review N1 / round-22 MEDIUM)
+The SummEval and POPQUORN plant counts in the draft (R20-2/R20-2a) use the percentile bootstrap of G_own, which R21-1 abandoned for the headline. The JSONs of those runs (B = 200) store no CLT.
+- **Runs.** decode_decomp.py, a = 4, R = 10, B = 0 (CLT only), tag _r22c, same plant seeds s0–s4.
+  - summeval_coherence8 at γ ∈ {0.3, 0.6, 0.8, 1.0};
+  - popquorn_off8 at γ ∈ {0.3, 0.6}.
+  - γ 0 is already available with CLT (_r21, 0/5 detected on both).
+  - Two sequential CPU jobs.
+- **Reported.** Detections per γ under the CLT rule (lower bound of G_own > 0) next to the percentile counts. The point estimates (X_own, G_own/X_own) must match the earlier runs exactly; this is the pipeline check.
+- **Frozen reading.** The CLT counts replace the percentile counts in the draft, whichever way they go. The reference-γ rule is unchanged (X_own scale; SummEval's full-panel reference is moot under ROUND22 and is reported for completeness).
