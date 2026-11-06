@@ -1547,3 +1547,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - POPQUORN: reference γ0.3 detected 0/5, so the null is uninformative.
 - Planted X_own saturates at 0.0004–0.0005 for γ ≥ 0.6.
 - R20-5 (SummEval 960×2): 4/9 runs.
+- 12:45 Draft: planted-control text uses the final R20-2 readings (amendments disclosed).
