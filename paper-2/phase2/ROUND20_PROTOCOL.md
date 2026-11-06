@@ -231,3 +231,13 @@ R20-5a addendum (13:35, before running): the a2 arm for seed 2003 is also rerun 
 
 - Evaluator expert 0 (mean 2.81, equal to the crowd mean) sees no budget effect. Experts 1 and 2 see a single-rating penalty that a second rating more than removes.
 - Final R20-5 statement, as reported: on SummEval/Qwen2.5 a second rating helps, and two ratings are not worse than seven. Both are carried by the two experts whose location differs from the crowd's. The cross-batch R20-5 values (−0.0105, −0.0040) agree with the single-batch values to within 0.0007.
+
+## R20-6 (specified 2026-11-06 16:59, before running): OLMo-2 second-rating block, single batch
+Question: does R20-5c's second-rating result replicate on the second base?
+- **Design.** OLMo-2-7B-Instruct, SummEval coherence, seeds 2003–2005 × folds 0–2. Arms: full, 960 × 1 and 960 × 2, all trained in this batch (results/lora_budget_r206_olmo/). Budget seeds as in R19-9 and R20-3, so the assignments match the Qwen2.5 block.
+- **Analysis.** analysis_budget_lora.py --root lora_budget_r206_olmo --seeds 2003,2004,2005, with the reference set to full and then to a1_F1.0. B = 2000, crossed bootstrap.
+- **Readings (as in R20-5):**
+  - (i) a second rating helps if the 95 % upper bound of a2 − a1 is < 0;
+  - (ii) two ratings suffice within the margin if the 95 % upper bound of a2 − full is < δ = 0.005.
+- **Descriptive.** Per-fold contrasts, and a1 − full against R20-3's +0.0066, as a within-base batch check.
+- No pooling with Qwen2.5.
