@@ -188,3 +188,4 @@ SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule
 - experts and crowd differ in location (mean rating 2.41 vs 2.81) and in within-group SD (0.60 vs 0.39);
 - the evaluator is a held-out expert, and every design has the same expected expert share, so the mixture alone does not explain a2 < full in expectation.
 **R20-5a (specified now, before running): batch reproducibility.** Rerun the full arm for seed 2003, folds 0–2, now, into results/lora_budget_r20_rerun/. If P_test matches R19-9 to within 1e−4 RPS per cell, batch effects are excluded and the result stands as observed. Otherwise the cross-batch comparison is reported as unreliable, and full and a2 are rerun in one batch before any claim.
+R20-5a addendum (13:35, before running): the a2 arm for seed 2003 is also rerun on the second GPU (same rule, same output root).
