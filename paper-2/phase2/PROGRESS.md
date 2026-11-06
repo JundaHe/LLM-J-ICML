@@ -1712,3 +1712,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-07 03:32 — LaTeX resynced from PAPER_DRAFT_v2.md
 - build_latex_v2.py now maps "Table 2b" to tab:own (it is replaced before "Table 2"), inputs tab_own, and maps γ, δ and ⁴.
 - main.tex and main.pdf are rebuilt: 15 pages, 8,937 words, pdflatex exit 0, 0 undefined citations or references, 2 overfull boxes. The LaTeX was last built on Oct 27.
+
+## 2026-11-07 04:32 — BUG in the verification step: check_consistency.py was checking v1, not v2
+- **Finding.** check_consistency.py hard-coded PAPER_DRAFT.md (v1, unchanged since 10-25). Every "check_consistency 11/11 / 0 unmatched" reported for PAPER_DRAFT_v2.md in rounds 20–22 was in fact a check of v1. Those reports were wrong.
+- **Fix.** The draft is now an argument (`python check_consistency.py PAPER_DRAFT_v2.md`; the default is still v1). The v2-era sources are registered as canonical values: all results/lora_budget*/summary*.json, lora_by_fold.json, lora_budget_r207/compare.json, shrinkage *_bfix.json and SUMMARY.md. Two v1-specific named claims (appendix dose details) are scoped so that on v2+ only their stale-value half is checked.
+- **First real check of v2.** Before registering the sources: 12 unmatched 4-decimal numbers. Every one traced to an existing result file that was not registered (R19-9, R20-3/4/5, the shared-assignment blocks, the earlier lora_budget block, shrinkage SUMMARY). No wrong number was found. After the fix: 96 numbers, 0 unmatched; named claims 11/11 OK.
+- **Scope.** The script checks only 4-decimal contrast numbers and named claims. Two-decimal values and percentages are not machine-checked; the round-22 subagent spot-checked about 30 of them.
+- **Gap found.** v2 refers to "Appendix A" six times, but v2 has no appendix. v3 must supply it (COMPRESSION_PLAN.md).

@@ -4,7 +4,8 @@ Exit code 1 if any mismatch. Usage: python check_consistency.py"""
 import json, re, os, sys, numpy as np, pandas as pd
 from paths import LLMJ
 P = os.path.dirname(os.path.abspath(__file__)); PILOT = LLMJ + "/paper-2/idea-stage/pilot"
-draft = open(f"{P}/PAPER_DRAFT.md").read(); tables = open(f"{P}/RESULTS_TABLES.md").read()
+DRAFT = sys.argv[1] if len(sys.argv) > 1 else "PAPER_DRAFT.md"   # 2026-11-07: draft is an argument; before, v2 checks silently read v1
+draft = open(f"{P}/{DRAFT}").read(); print("checking", DRAFT); tables = open(f"{P}/RESULTS_TABLES.md").read()
 canon = {}   # value string -> source
 def add(v, src, nd=4):
     for s in (f"{v:+.{nd}f}", f"{v:.{nd}f}", f"{abs(v):.{nd}f}"): canon.setdefault(s, src)
@@ -65,6 +66,15 @@ if os.path.exists(f0):
 da = pd.read_csv(f"{P}/results/dose_audit_summary.csv")
 for _, r in da.iterrows():
     for col in ("support", "changed", "tv_chg", "tv_all"): add(float(r[col]), f"dose_audit {r.panel} {r.arm} {col}", 3); add(float(r[col]), f"dose_audit {r.panel} {r.arm} {col}", 2)
+# v2-era sources (2026-11-07): LoRA budget blocks (all rounds), per-fold contrasts, R20-7 compare, shrinkage (bfix + SUMMARY.md)
+import glob as _glob
+def walk(o, src):
+    if isinstance(o, dict): [walk(v, src) for v in o.values()]
+    elif isinstance(o, list): [walk(v, src) for v in o]
+    elif isinstance(o, (int, float)) and not isinstance(o, bool) and np.isfinite(o) and abs(o) < 1: add(float(o), src)
+for f in sorted(_glob.glob(f"{P}/results/lora_budget*/summary*.json") + [f"{P}/results/lora_by_fold.json", f"{P}/results/lora_budget_r207/compare.json"] + _glob.glob(f"{P}/results/shrinkage/*_bfix.json")):
+    if os.path.exists(f): walk(json.load(open(f)), os.path.relpath(f, P))
+for v in re.findall(r"[−+-]?\d\.\d{4}", open(f"{P}/results/shrinkage/SUMMARY.md").read()): add(float(v.replace("−", "-")), "shrinkage/SUMMARY.md")
 # ---- scan the draft for 4-decimal signed numbers and interval endpoints (the contrast-shaped numbers)
 nums = re.findall(r"(?<![\d.])[−+-]?\d\.\d{4}(?!\d)", draft); bad = []   # exclude arXiv ids like 2609.01073
 for s in sorted(set(nums)):
@@ -90,9 +100,9 @@ claims.append(("mode-only positive in all seed/fold marginals", allpos))
 # ---- structural assertions (Codex round 15 §D.7)
 tab = tables
 claims.append(("T2b lists exactly ten primary ordinal panels", tab.count("(`_v7`,") + tab.count("(`_v6`,") == 10))
-claims.append(("DICES-990 pmmx dose 0.985 (TV>1e-9 rule) in draft", "0.985" in draft and "0.995 on Buse" not in draft))
+claims.append(("DICES-990 pmmx dose 0.985 (TV>1e-9 rule) in draft" + ("" if DRAFT == "PAPER_DRAFT.md" else " [v2+: dose details live in the appendix; only the stale value is checked]"), ("0.985" in draft or not DRAFT == "PAPER_DRAFT.md") and "0.995 on Buse" not in draft))
 claims.append(("pmmx range −0.0024…+0.0006 in draft (no stale +0.0005 range)", "−0.0024 to +0.0006" in draft and "−0.0024 to +0.0005" not in draft))
-claims.append(("zero-TV wording is pre-projection only", "no zero-TV donor pairs before projection" in draft and "Zero-TV pairs were 0 in every configuration" not in draft))
+claims.append(("zero-TV wording is pre-projection only" + ("" if DRAFT == "PAPER_DRAFT.md" else " [v2+: only the stale wording is checked]"), ("no zero-TV donor pairs before projection" in draft or not DRAFT == "PAPER_DRAFT.md") and "Zero-TV pairs were 0 in every configuration" not in draft))
 claims.append(("no commit / bridge / VERIFY / arXiv-id residue in draft", all(s not in draft for s in ("commit What", "commit Why", "bridge", "[VERIFY]")) and not re.search(r"arXiv \d{4}\.\d{5}", draft)))
 req = [f"{P}/results/MANIFEST.json", f"{P}/results/nominal_final_dose.json", f"{P}/results/nominal_final_dose_chaosnli_snli.json", f"{P}/results/nominal_final_dose_chaosnli_alphanli.json", f"{P}/results/probe_mean/bw_inject_v8/runs.jsonl", f"{P}/results/probe_mean/scalabrino_inject_v8/runs.jsonl", f"{P}/results/probe_mean/popquorn_off8_inject_v8/runs.jsonl", f"{P}/results/probe_mean/csc6_inject_v8/runs.jsonl"] + [f"{P}/results/probe_nominal/chaosnli_{k}_m{m}{t}/runs.jsonl" for k, t in (("mnli", "_v6"), ("snli", "_v7"), ("alphanli", "_v7")) for m in (5, 10, 20, 50)]
 claims.append(("required artefacts present", all(os.path.exists(p) for p in req)))
