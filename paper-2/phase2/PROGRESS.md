@@ -1559,3 +1559,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - contribution (4), the §5 threshold, ChaosNLI cross share, §4 X_own residual, DICES conditional on the pool, §6 SE reading and ΔGP denoising, 480×2, R20-5 hold;
   - EmoBank unmeasurable, absence wording, POPQUORN plant 4/5 6–38 %, null-check sentence, penalty wording, two assignment sets, 819×2 − full;
   - the X_own-bias note corrected (anti-conservative for absence claims), percentile upper bounds removed from the abstract pending R21-1.
+- 14:35 R21-1: the login smoke test timed out (load ~18). Validation job 12777 was submitted to Slurm, and the 36 R21 decode jobs (12778–12813: R21-1/3/4/5) were submitted held; a watcher releases them once the validation prints CLT output. R21-2 partial: SummEval pool −0.000099±0.00001, DICES pool −0.000015±0.000003 vs common/iid ≈ 0.

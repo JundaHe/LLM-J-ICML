@@ -1,0 +1,36 @@
+summeval_coherence8 --a 4
+summeval_relevance8 --a 4
+dorn_all --a 20
+chaosnli_mnli --a 20
+chaosnli_snli --a 20
+dices --a 20
+dices990 --a 20
+popquorn_off8 --a 4
+emobank_reader_v5 --a 3
+hs2_help5 --a 3
+summeval_coherence8 --a 4 --plant 0 --plant_seed 0
+summeval_coherence8 --a 4 --plant 0 --plant_seed 1
+summeval_coherence8 --a 4 --plant 0 --plant_seed 2
+summeval_coherence8 --a 4 --plant 0 --plant_seed 3
+summeval_coherence8 --a 4 --plant 0 --plant_seed 4
+popquorn_off8 --a 4 --plant 0 --plant_seed 0
+popquorn_off8 --a 4 --plant 0 --plant_seed 1
+popquorn_off8 --a 4 --plant 0 --plant_seed 2
+popquorn_off8 --a 4 --plant 0 --plant_seed 3
+popquorn_off8 --a 4 --plant 0 --plant_seed 4
+summeval_coherence8 --a 4 --plant 0.6 --plant_seed 0
+popquorn_off8 --a 4 --plant 0.6 --plant_seed 0
+chaosnli_mnli --a 4 --b 4 --tag _a4
+chaosnli_snli --a 4 --b 4 --tag _a4
+dices --a 40 --b 20 --tag _a40
+dorn_java --a 20
+dorn_java --a 20 --plant 0 --plant_seed 0
+dorn_java --a 20 --plant 0.6 --plant_seed 0
+dorn_java --a 20 --plant 0.6 --plant_seed 1
+dorn_java --a 20 --plant 0.6 --plant_seed 2
+summeval_coherence8 --a 4 --feat_model Qwen3-8B --tag _qwen3
+summeval_coherence8 --a 4 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo
+chaosnli_mnli --a 20 --feat_model Qwen3-8B --tag _qwen3
+chaosnli_mnli --a 20 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo
+dices --a 20 --feat_model Qwen3-8B --tag _qwen3
+dices --a 20 --feat_model OLMo-2-1124-7B-Instruct --tag _olmo
