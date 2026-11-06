@@ -79,3 +79,25 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 ## R22-T2 (specified 23:33, before editing): carry the ROUND22 reading into §1 (iii)/(v) and §3
 - §1 (v): add one sentence after the SummEval LoRA budget result. SummEval's crowd ratings are nearly uncorrelated with the held-out experts, so these contrasts measure dilution of the expert ratings (R20-7, §5). This matches the abstract and §5, which were already changed.
 - §3, donor-replacement audit: add one sentence. On SummEval and POPQUORN no own-shape is detectable (R22-1, R21), so the shape-replacement null is the expected outcome there and not independent evidence that judges ignore a learnable shape. The audit's discriminating case is ChaosNLI, where the same intervention costs Brier. Text only; no new numbers.
+
+## R22-3 (specified 2026-11-07 00:36, before running): X_own-matched plant on DICES-350 at a = 40 (round-22 review, change 3)
+DICES-350 at a = 40 is the only ordinal panel whose own-shape is detectable (item-cluster CLT) and not location-sized by construction. Its G_own/X_own 1 % [−9, 12] has no power calibration.
+- **Runs.** decode_decomp.py on dices, a = 40, R = 10, B = 0, tag _r22. Plants γ ∈ {0, 0.1, 0.2, 0.3, 0.4}, draws s0–s4, on the fitted dices M2 model (as R21-7). One sequential CPU Slurm job.
+- **Reference plant (as R21-7).** The smallest γ whose mean planted X_own ≥ the observed 4.9·10⁻⁵. If no γ in the grid reaches it, add γ 0.6 and 0.8 and label them as an extension.
+- **Reading:**
+  - 4–5 of 5 detected at the reference γ: DICES-350's 1 % is informative at its own magnitude.
+  - Fewer than 4: it is not, and is reported as such.
+- **Location-only baseline (descriptive, as R21-7).** Mean X_own and V_own over the γ0 draws, as fractions of the observed values (X_own 4.9·10⁻⁵, V_own 4.9·10⁻⁶).
+
+## R22-T3 (specified 2026-11-07 00:36, before editing): carry ROUND22 through the draft (round-22 review)
+Text and tables only. All numbers come from existing result files.
+1. **§1 (ii) list (l. 18).** Apply R22-1's frozen reading: SummEval relevance leaves the ordinal list. Coherence stays, with its no-dup ratio 0.5 % [−4.6, 5.6] beside it and the note that the no-dup X_own is not detectable.
+2. **l. 21.** Relabel the a = 4 ChaosNLI result as a check that the NLI fractions do not depend on a = 20. Say that no ordinal partner at a = 4 has a detectable own-shape. The net-fraction bound "at least 32 % on NLI" becomes "at a = 20".
+3. **(ii) heading and abstract.** Reframe: no ordinal panel shows a robustly reproducible own-shape. It is undetectable on most; on DICES-350 it is detectable only within the observed rater pool; on Dorn it is location-sized. Where detectable, ≤ 16 % is decoded.
+4. **l. 23/49.** "So the SummEval null is informative" becomes conditional on the full-panel magnitude, which ROUND22 attributes to duplication. The corrected-X_own sentence for SummEval is marked as not applicable to duplicated annotations.
+5. **l. 61, l. 63, l. 65.** Small-panel count "half" becomes "four of eight (two on SummEval's non-duplicated items)". The SummEval residual sentence is replaced. λ̂ is attributed to the duplicates.
+6. **Contribution (4) and guidance (l. 25, l. 75).** Remove the SummEval budget contrasts as budget evidence. Fix the frozen-head threshold to match Table 5: SummEval prefers 480×2, POPQUORN has 819 items, and HelpSteer2/OLMo-2 is the exception.
+7. **§5 (l. 73).** "+0.020 on every fold" becomes "+0.014 to +0.025". Disclose that the R20-7 arms are compared across batches: the effects are 0.01–0.04, against rerun variation ≤ 0.0012. l. 83 is fixed accordingly.
+8. **§2.1 population (l. 45), §7 (l. 83).** Add the duplication / r ≈ 0.04 / unverified-provenance limitation. Replace "SummEval's small unexplained residual".
+9. **Abstract.** "Prospective LoRA blocks on POPQUORN" becomes "a prospective LoRA block". Header line 3 is updated.
+10. **Deferred to R22-T4 (next step).** Table 2 rebuilt on CLT G_own/X_own with no-dup rows. Table 6 rebuilt with the prospective blocks. Plant detection recomputed with CLT, if the plant JSONs store it. Duplication notes in the Table 1/2 captions.
