@@ -1515,3 +1515,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Ops: the release watcher was killed and the held CPU jobs released (12743 waits for a GPU, not CPUs). R20-3 is at 6/27 OLMo runs.
 - 07:45 Draft: planted-control statements (abstract, §1(ii), §2.2) now use the R20-2 counts and disclose that the frozen X-scale rule was not met.
 - 07:50 R20-2a (γ 0.8, 5 draws, SummEval) registered and submitted.
+
+## 2026-11-06 08:40 R20-1 complete (14/14); R20-2 POPQUORN interim
+- HS2 (b = 2): X_own ≡ 0, structurally unmeasurable (two ratings are determined by their cell).
+- HS2 and EmoBank have ΔGP > 0 with X_own ≈ 0, so ΔGP contains the cross part. ΔGP/X_own is relabelled as a valid-forecast gain on the X_own scale; contrast (iii) uses G_own/X_own only.
+- POPQUORN plants: γ0 0/5, ΔGP null 5/5. γ0.3 1 draw so far, not detected on G_own.
+- R20-3 OLMo: 16/27 runs, 0 tracebacks.
