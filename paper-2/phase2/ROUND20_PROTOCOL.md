@@ -189,3 +189,19 @@ SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule
 - the evaluator is a held-out expert, and every design has the same expected expert share, so the mixture alone does not explain a2 < full in expectation.
 **R20-5a (specified now, before running): batch reproducibility.** Rerun the full arm for seed 2003, folds 0–2, now, into results/lora_budget_r20_rerun/. If P_test matches R19-9 to within 1e−4 RPS per cell, batch effects are excluded and the result stands as observed. Otherwise the cross-batch comparison is reported as unreliable, and full and a2 are rerun in one batch before any claim.
 R20-5a addendum (13:35, before running): the a2 arm for seed 2003 is also rerun on the second GPU (same rule, same output root).
+
+### R20-5a results (2026-11-06 14:33; seed 2003, both arms rerun, 6/6 cells)
+- **Frozen criterion: fails.** Items are identical, but P_test differs from the R19-9/R20-5 cells by up to 0.05–0.11 in probability per item. Training on this GPU is not bit-reproducible (nondeterministic kernels), so the 1e−4 threshold was unattainable. *Post hoc:* that threshold was mis-set. A tolerance at the scale of run-to-run noise should have been specified.
+- Descriptive (not a frozen reading):
+  - Per-cell mean RPS moves by −0.0011 to +0.0002 (full) and −0.0012 to 0.0000 (a2) between batches.
+  - Within one batch, a2 − full per fold:
+
+    | | f0 | f1 | f2 |
+    |---|---|---|---|
+    | original | +0.0047 | +0.0059 | −0.0106 |
+    | rerun | +0.0048 | +0.0045 | −0.0103 |
+
+  - So the seed-2003 contrast reproduces to ≤ 0.0014 per cell, and its sign pattern is fold-specific. Fold 2 (evaluator expert 2) is where two ratings beat seven.
+- Per the frozen rule, the cross-batch comparison is reported as unreliable, and the claim waits for a single-batch rerun.
+
+**R20-5b (specified now, before running): single-batch rerun.** Rerun the full and a2 arms for seeds 2004 and 2005, folds 0–2, into results/lora_budget_r20_rerun/ (one GPU per arm, both submitted together). Analysis: analysis_budget_lora.py --root lora_budget_r20_rerun --seeds 2003,2004,2005 (reference = the in-root full arm), B = 2000. Readings: the frozen R20-5 readings (i) and (ii), unchanged. R20-5 is reported only from this single-batch set. Descriptive add-on: the a2 − full contrast per evaluator fold, because fold 2 drives the sign (relevant to N11, expert heterogeneity).
