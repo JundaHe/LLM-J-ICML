@@ -1651,3 +1651,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 23:33 — ROUND22 provenance retry + R22-T2 text
 - Upstream check: GitHub issues report no duplication. Issue #41 confirms crowd position i is the same person only within a summary. The HF mirrors carry expert scores only. Still unverified.
 - R22-T2: §1 (v) gains the dilution sentence. §3 audit: the SummEval/POPQUORN null is the expected outcome, and ChaosNLI is the discriminating case. check_consistency 11/11.
+
+## 2026-11-07 00:31 — tick: idle cluster; round-22 subagent pre-review launched
+- No Slurm jobs and no project processes. The repository is in sync (a497a20).
+- A Claude subagent pre-review of the draft after ROUND22 is running in the background, because Codex is out of quota until 11-11 21:45. Focus: status of round-21 N1–N19, how consistently the ROUND22 changes carry through, and number spot checks. Its output goes to reviews/claude_round22_2026-11-07.md.
+- No GPU job is motivated yet. The decision waits for the review.
