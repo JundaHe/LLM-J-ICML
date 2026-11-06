@@ -541,3 +541,13 @@ def load_multipref_pairs(crit="overall"):
                 evaluators=[[x] for x in df.user], rater_group={str(k): str(v) for k, v in pool.items()}, yb=df.yb.to_numpy(), resp_A=df.A.to_numpy(), resp_B=df.B.to_numpy(),
                 lang=np.array(["en"] * len(df)), src=df.src.to_numpy(), model="Qwen/Qwen2.5-7B-Instruct")
 LOADERS.update({"multipref_pairs": load_multipref_pairs})
+
+# ROUND22 R22-1: SummEval without items whose five turker annotations are identical dicts (50.4 % of items); item_ids keep the original row indices
+def _summeval_nodup(dim):
+    import json
+    P = _load_summeval(dim)
+    rows = [r for r in (json.loads(l) for l in open(SUMMEVAL)) if len(r.get("turker_annotations", [])) >= 5 and len(r.get("expert_annotations", [])) == 3]
+    keep = np.array([len({json.dumps(a, sort_keys=True) for a in r["turker_annotations"][:5]}) > 1 for r in rows])
+    P = dict(P, name=P["name"] + "_nodup", texts=[t for t, k in zip(P["texts"], keep) if k], H=P["H"][keep], item_ids=P["item_ids"][keep], groups=P["groups"][keep])
+    return P
+LOADERS.update({"summeval_coherence8_nodup": lambda: _summeval_nodup("coherence"), "summeval_relevance8_nodup": lambda: _summeval_nodup("relevance")})
