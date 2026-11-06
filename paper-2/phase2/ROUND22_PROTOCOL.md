@@ -182,3 +182,14 @@ DICES-350 at a = 40 is now the power-calibrated ordinal case (R22-3), but only Q
 - **Runs.** decode_decomp.py, dices, a = 40, R = 10, B = 0, with --feat_model Qwen3-8B (tag _a40_qwen3_r22) and --feat_model OLMo-2-1124-7B-Instruct (tag _a40_olmo_r22). One CPU job.
 - **Reported.** G_own/X_own and the net fraction, each with CLT 95 % intervals. X_own is the same across families, because it is learner-free.
 - **Reading (descriptive).** The draft's "three LLM families recover 1 %" is kept only if both upper bounds stay below the plant recovery range (15–33 %). If either upper bound reaches 15 %, the abstract names the family-specific values instead.
+
+### R22-5 results (2026-11-07 02:33; 2 runs, 0 tracebacks)
+X_own is 4.90e−5 on all three families (learner-free, identical as expected).
+
+| features | G_own/X_own [CLT 95 %] | net [CLT 95 %] |
+|---|---|---|
+| Qwen2.5 (R21) | +1.3 % [−8.8, +11.4] | +15.0 % [+2.6, +27.4] |
+| Qwen3-8B | −0.6 % [−8.0, +6.8] | +9.5 % [−0.3, +19.3] |
+| OLMo-2-7B | −0.0 % [−7.2, +7.2] | +6.8 % [−1.9, +15.6] |
+
+- Reading: all three upper bounds (≤ 11.4 %) are below the plant recovery range of 15–33 %. The abstract keeps the three-family statement, with the range −1 to 1 % and upper bounds ≤ 12 % (rounded outward).
