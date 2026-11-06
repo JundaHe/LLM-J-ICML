@@ -1533,3 +1533,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Per-cell r = 0.56; the top-3 cells overlap 2/3, so the outliers are not attributed to the assignment.
 - R20-4 POPQUORN: 12/36 runs. R20-2a γ0.8: 3/5.
 - 10:50 Draft: abstract, §1(v) and §5 revised for R20-3 (penalty on both bases; items-first Qwen-only). The old OLMo block is described as shared-assignment.
+- 10:55 R20-2b: γ0.3 s0 draws submitted on both panels (completing 5 draws). CPUs are now full.
