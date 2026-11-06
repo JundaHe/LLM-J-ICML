@@ -125,3 +125,13 @@ Observed X = 0.00036. The reference γ under the rule is 0.3, and it is detected
 (ii) a second rating helps: 819 × 2 − 819 × 1 has a 95 % upper bound < 0;
 (iii) items first: 117 × 7 − 819 × 1 has a 95 % lower bound > 0.
 Each reading is reported as it comes out. Where it differs from Amendment 7, the prospective block is the one the draft states, and the shared-assignment block is described as such.
+
+### R20-3 results (2026-11-06 10:40; 27/27; results/lora_budget_r20_olmo/summary*.json)
+| contrast (OLMo-2) | point | 90 % | 95 % | Qwen2.5 (R19-9) |
+|---|---|---|---|---|
+| 960 × 1 − full | **+0.0066** | [+0.0049, +0.0084] | [+0.0044, +0.0089] | +0.0064 [+0.0045, +0.0085] |
+| 144 × 7 − full | +0.0126 | — | [+0.0058, +0.0197] | +0.0166 |
+| 144 × 7 − 960 × 1 | +0.0060 | — | [−0.0007, +0.0128] | +0.0102 [+0.0052, +0.0157] |
+(i) Equivalence fails. (ii) Non-inferiority fails, so the single-rating penalty replicates on a second base at almost the same size. (iii) Items-first **does not hold** on OLMo-2 (the interval covers 0, with the point favouring items). It holds on Qwen2.5.
+(iv) Per-cell 960 × 1 − full across bases: Pearson r = 0.56 over 9 cells. The three largest cells overlap in 2 of 3 (s2003 f1 and s2004 f2 are shared), so per the rule the outliers are **not** attributed to the assignment alone. On OLMo-2 the penalty is positive in all 9 cells (+0.0003 to +0.0121), so the result does not rest on the collapsed Qwen run.
+Draft consequence: "one rating per item is worse than the full data by about 0.006 RPS on both bases". The items-first statement at matched budget is restricted to "on Qwen2.5; on OLMo-2 the direction agrees but the interval covers 0". The earlier shared-assignment OLMo block (+0.0095 [+0.0022, +0.0160]) is described as such.

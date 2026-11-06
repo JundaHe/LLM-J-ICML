@@ -1526,3 +1526,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 09:45 R20-2 POPQUORN readings; R20-4 registered
 - POPQUORN γ0.3 (the reference γ): 0/4 detected, so the null is uninformative (as frozen). Defect recorded: γ0.3 has 4 draws, not 5.
 - R20-3 OLMo: seeds 2003 and 2004 done, 2005 at 5/9. One GPU was idle, so R20-4 (POPQUORN prospective LoRA block, independent assignments) was registered and 3 GPU jobs submitted.
+
+## 2026-11-06 10:40 R20-3 complete (OLMo-2 prospective block)
+- 960×1 − full = +0.0066 [+0.0044, +0.0089], so the single-rating penalty replicates (Qwen +0.0064). It is positive in all 9 OLMo cells.
+- Items-first on OLMo: +0.0060 [−0.0007, +0.0128], i.e. it does not hold (it holds on Qwen).
+- Per-cell r = 0.56; the top-3 cells overlap 2/3, so the outliers are not attributed to the assignment.
+- R20-4 POPQUORN: 12/36 runs. R20-2a γ0.8: 3/5.

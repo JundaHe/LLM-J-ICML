@@ -1,0 +1,9 @@
+# Fixed-budget LoRA block — summeval_coherence8 (analysis_budget_lora.py)
+
+| design | rating budget | train items | cells | RPS | RPS − full_a7_F1 [95 % crossed bootstrap] |
+|---|---|---|---|---|---|
+| full_a7_F1 | 6720 | 960 | 9 | 0.1796 | +0.0000 [+0.0000, +0.0000] |
+| a1_F1.0 | 960 | 960 | 9 | 0.1862 | +0.0066 [+0.0044, +0.0089] |
+| a7_F0.142857 | 1008 | 144 | 9 | 0.1922 | +0.0126 [+0.0058, +0.0197] |
+
+Raw RPS against the held-out evaluator on the test items/groups; seeds 2003/2004/2005 × folds 0–2; bootstrap resamples the seed clusters and the test groups (B = 2000). Full-data reference = the a7_F1.0 design of the same batch.
