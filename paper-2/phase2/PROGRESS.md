@@ -1548,3 +1548,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Planted X_own saturates at 0.0004–0.0005 for γ ≥ 0.6.
 - R20-5 (SummEval 960×2): 4/9 runs.
 - 12:45 Draft: planted-control text uses the final R20-2 readings (amendments disclosed).
+- 12:55 Codex round 21 launched (prompt: reviews/codex_round21_prompt_2026-11-06.md; draft v2.4 + ROUND20 + R19-9 section). Draft counts fixed (γ0.3 4/5; POPQUORN γ0.6 two draws).
