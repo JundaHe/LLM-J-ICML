@@ -46,3 +46,16 @@ Rerun decode_decomp.py (R = 10, B = 0) with `--feat_model Qwen3-8B` and `--feat_
 - **Abstract.** "On none" is backed by upper bounds or softened. The abstract is shortened.
 - **§6.** "Three to five raters fix its location and nothing else" is replaced.
 - **LOW.** The header, the "35–70 % of X on ChaosNLI" figure, the (iii) caveat restored, and the null-check sentence (GP > 0 at γ 0; only ΔGP is 0).
+
+### R21-2 results (2026-11-06 14:45; 20 simulations × R = 10; results/x_own_null/*.json)
+| panel (a, b) | rater groups (cut-point SD) | pool | common | iid |
+|---|---|---|---|---|
+| SummEval coh. (4, 4) | 4 (0.50) | **−0.000099 ± 0.000010** | +0.000007 ± 0.000011 | +0.000018 ± 0.000010 |
+| DICES-350 (20, 20) | 104 (0.73) | **−0.000015 ± 0.000003** | +0.000004 ± 0.000003 | +0.000003 ± 0.000004 |
+| POPQUORN (4, 4) | 1 (0) | −0.000002 ± 0.000013 | +0.000007 ± 0.000010 | +0.000007 ± 0.000009 |
+| DICES-990 (20, 20) | 1 (0) | +0.000001 ± 0.000002 | +0.000002 ± 0.000002 | +0.000003 ± 0.000002 |
+**Reading (as frozen): the hypothesis is supported** on SummEval and DICES-350. There the pool mean is < 0 by 10 and 5 SE, while common and iid lie within 2 SE of 0 (SummEval iid +1.8 SE). On POPQUORN and DICES-990 the M2 fit has a single rater group, so pool and common coincide and no bias is expected; none is found. This is consistent with the hypothesis.
+**Consequences.**
+- (a) The negative null mean of X_own is a finite-rater-pool effect. Splitting one fixed pool of heterogeneous raters without replacement makes the two halves' rater mixes anti-correlated, and the exact cell absorbs only part of that.
+- (b) On real panels with persistent heterogeneous raters, X_own is shape-to-shape reproducibility *within the pool*, biased downward relative to new raters drawn from the same population.
+- (c) Sensitivity (model-based correction): SummEval coherence X_own 0.00038 → about 0.00048, and DICES-350 (a = 20) 0.000044 [−0.000018, 0.000109] → about 0.000059 [−0.000003, 0.000124], whose interval still covers 0, by a margin smaller than the correction's own uncertainty. The draft says DICES-350 at a = 20 is "not detectable, and borderline after the pool correction".
