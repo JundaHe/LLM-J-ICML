@@ -1685,3 +1685,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - So DICES-350's 1 % is informative at its own magnitude. The location-only simulation gives X_own −1.3e−5, i.e. no own-shape from location alone.
 - DICES-350 at 40 raters becomes the clean ordinal case: a reproducible shape (within the rater pool) that is power-calibrated and not decoded.
 - Abstract, §1 (ii) and §7 plant scope are updated. 0 tracebacks; check_consistency 11/11.
+
+## 2026-11-07 01:32 — abstract compressed; R22-4 running
+- The abstract goes from 400 to 354 words. The ordinal decoding sentence now leads with DICES-350 as the power-calibrated case, and the generic "at most 16 %" is dropped from the abstract; it stays in §1. The motivating example changes from summary coherence to code readability.
+- R22-4 (jobs 13289/13290, CPU) is running.
