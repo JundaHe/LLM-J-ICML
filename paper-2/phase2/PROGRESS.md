@@ -1724,3 +1724,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - New PAPER_ICML_v3.md: abstract 250 words (target ≤ 250); §1 is 1,133 words (target 900, to be cut in the final pass). Numbers copied verbatim from v2.5. §1 points forward to §3–§6 and Appendix C (SummEval dilution).
 - check_consistency.py PAPER_ICML_v3.md: 10 four-decimal numbers, 0 unmatched. 3 named-claim FAILs (perm_mode−chen interval, POPQUORN perm_mode interval, pmmx range) are expected at this stage: those claims belong to §5 / the appendix, which are not yet written. They must pass before v3 is called complete.
 - No Slurm jobs; no new experiments queued (none motivated).
+
+## 2026-11-07 06:31 — v3 step 2: §2 related work, §3 across raters, §4 across text
+- §2 306 words (target 300), §3 651 (850), §4 826 (950). §1–§4 so far ≈ 2,900 words. Numbers copied verbatim from v2.5 §1/§2. In v3, "Table 2" is the own-shape table (v2 Table 2b); the cross-term-inclusive G/X table goes to Appendix B. The v3 LaTeX build must map these labels accordingly.
+- check_consistency on v3: 12 four-decimal numbers, 0 unmatched; the same 3 named claims are still pending §5 and the appendix.
+- No Slurm jobs.
