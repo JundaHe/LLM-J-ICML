@@ -64,3 +64,8 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - The file name model_annotations.aligned.paired.scored.jsonl matches the official SummEval release naming: the aligned, paired file, plus metric scores (see the 04/19/2020 update in data/summeval/README.md). It was imported unchanged on 2026-10-25 (commit 73d6323).
 - Upstream verification failed from this server: the Google Drive link returns 404 and the HF datasets-server timed out. **Still unverified.**
 - Until verified, the text says "in the released file as distributed with the SummEval repository's annotation link". It does not say the duplication is a defect of the original crowd collection.
+
+## R22-T (specified 23:31, before editing): SummEval non-duplicated rows in Table 1
+- Table 1 (make_tables_v2.py) gains the rows "SummEval coh./rel. (non-dup.)", from results/rho_exact/summeval_*8_nodup.json (R22-2). The full-panel rows stay. Support is "--", because no donor-replacement run exists for nodup.
+- In §1 (i), the range "0.04–0.41 … (intervals include 0 on four)" is re-checked. The minimum is CSC 0.038 / POPQUORN pol. 0.037 and the maximum is EmoBank 0.412. The nodup values (0.10, 0.05) fall inside the range, so the endpoints do not change. One parenthetical is added: on SummEval's non-duplicated items, ρ is 0.10 / 0.05 and both intervals include 0. The count "four" refers to the eight released panels and stays.
+- No new computation.

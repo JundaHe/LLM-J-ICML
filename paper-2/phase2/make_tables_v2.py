@@ -6,7 +6,8 @@ def f5(x): return ("$-$" if x < 0 else "$+$") + f"{abs(x):.5f}"
 NAME = {"summeval_coherence8": "SummEval coh.", "summeval_relevance8": "SummEval rel.", "popquorn_off8": "POPQUORN off.", "popquorn_pol5": "POPQUORN pol.", "hs2_help5": "HelpSteer2", "emobank_reader_v5": "EmoBank",
         "csc6": "CSC sarcasm", "scalabrino": "Scalabrino$^{SE}$", "bw": "Buse--Weimer$^{SE}$", "dices": "DICES-350", "dices990": "DICES-990", "dorn_java": "Dorn Java$^{SE}$", "dorn_all": "Dorn (all)$^{SE}$",
         "crupi_ca": "Crupi CA$^{SE}$", "crupi_conc": "Crupi conc.$^{SE}$", "crupi_flu": "Crupi flu.$^{SE}$", "mlcq3": "MLCQ$^{SE}$", "roy_ca": "Roy CA$^{SE}$", "jb_naming": "JetBrains naming$^{SE}$",
-        "chaosnli_mnli": "ChaosNLI MNLI", "chaosnli_snli": "ChaosNLI SNLI", "dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$"}
+        "chaosnli_mnli": "ChaosNLI MNLI", "chaosnli_snli": "ChaosNLI SNLI", "dorn_python": "Dorn Python$^{SE}$", "dorn_cuda": "Dorn CUDA$^{SE}$",
+        "summeval_coherence8_nodup": "SummEval coh.\\ (non-dup.)", "summeval_relevance8_nodup": "SummEval rel.\\ (non-dup.)"}   # ROUND22 R22-T: 793 items without identical crowd annotations
 # Table 1: reliability cards on the EXACT mode+mean comparator (results/rho_exact): small panels at a = m−1 (one held-out rating), dense panels at a = 40 (20 held-out ratings); support from the T9 donor-replacement runs
 sup = {}
 for f in glob.glob(f"{HERE}/results/finite_rater/*_loo.json"):

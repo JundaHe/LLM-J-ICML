@@ -1642,3 +1642,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - A §5 reading note on expert dilution (R20-7, ROUND22) has been added.
 - Abstract budget sentence: POPQUORN is now the clean case, and SummEval is described as dilution.
 - Contribution (4) and the guidance (who rates matters) are updated to match.
+
+## 2026-11-06 23:31 — R22-T: SummEval non-duplicated rows in Table 1
+- tab_cards gains two SummEval (non-dup.) rows: ρ 0.10 [−0.13, 0.23] and 0.05 [−0.19, 0.25]. Support is "--".
+- §1 (i) gets one parenthetical. The 0.04–0.41 endpoints were re-checked and do not change (CSC/POPQUORN pol. 0.04, EmoBank 0.41).
+- check_consistency passes.
