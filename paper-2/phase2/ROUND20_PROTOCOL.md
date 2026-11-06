@@ -1,7 +1,7 @@
 # ROUND20 protocol — response to Codex round 20 (reviews/codex_round20_2026-11-06.md)
 Every analysis below is specified before it is run. Amendments made after seeing results are labelled as such. Post-hoc changes of an estimand are called amendments that *change the estimand*, never "readings as frozen" (review §2 on R19-8a).
 
-## R20-1 Decoding against the other panel's own shape (review issue 1, CRITICAL) — specified 2026-11-06 02:55, before any run
+## R20-1 Decoding against the other panel's own shape (review issue 1, CRITICAL) — specified 2026-11-06 02:54, before any run
 **Estimands.** In each direction, q1 is panel 1's exact comparator (as now), q2 is panel 2's own exact comparator (same folds), s2 = C(h2 − q2) and d = C(q2 − q1). The decoded residual r̂ (unchanged ridge pipeline) gives:
 - G = G_own + G_cross,
 - G_own = (2⟨r̂, s2⟩ − ‖r̂‖²)/n, the gain against the other panel's own shape,
@@ -23,7 +23,7 @@ The draft's "bounds" become the 95 % upper bounds of one named estimand. No maxi
 (iv) Abstract and §1 numbers are replaced by the (ii)/(iii) quantities and the 95 % upper bounds of ΔGP/X_own (labelled as valid-forecast contrasts). The R19-8a maximum rule is withdrawn.
 Script `decode_decomp.py`; output results/decode_decomp/<panel>[tag].json.
 
-## R20-2 Planted control: more draws and directions (review issue 4) — specified 2026-11-06 02:55, before any run
+## R20-2 Planted control: more draws and directions (review issue 4) — specified 2026-11-06 02:54, before any run
 The R19-2 construction plants log-dispersion linear in one feature direction. It is renamed a *dispersion plant* everywhere; "known linear shape" and "ceiling" are withdrawn.
 **Runs.** SummEval and POPQUORN, γ ∈ {0, 0.3, 0.6}, plant seeds 1–4, each giving an independent direction and simulation, ridge decoder, R = 10, B = 200. Seed 0 already exists. A run uses decode_decomp.py so that G_own is available.
 **Readings (fixed now).** Across the five seeds, report the range of G_own/X_own at γ 0.6 and the number of seeds with G_own lower bound > 0 at each γ. The detection threshold is stated as "detected in k of 5 draws". The real-data null on a panel is called informative at its observed X only if, at the γ whose planted X is closest to (and not below) the observed X, ≥ 4 of 5 draws detect.
@@ -42,7 +42,7 @@ The R19-2 construction plants log-dispersion linear in one feature direction. It
 With K = 2 the donor replacement cannot change any target, so pzc − soft on αNLI is a pure sham contrast. Its mean over the 9 configurations is +0.0001 / −0.0033 / +0.0015 / +0.0005 Brier at m = 5 / 10 / 20 / 50, i.e. within about one SEM of 0. The per-configuration SD is 0.005–0.014.
 The reason: every arm draws its own initialisation and minibatch order from the run's RNG stream, so optimisation noise is not matched across arms. The sham shows the size of that unmatched noise. The MNLI / SNLI contrasts (+0.005 to +0.017, SEM 0.0006–0.0014) are averages over the same 9 configurations and exceed their SEMs by 4–15×, but single configurations should not be compared.
 
-### R20-1 interim results (2026-11-06 04:45; 9 of 14 runs final, B = 200)
+### R20-1 interim results (2026-11-06 04:32; 9 of 14 runs final, B = 200)
 | run | a | X_own [95 %] | G_own/X_own [95 %] | ΔGP/X_own upper |
 |---|---|---|---|---|
 | SummEval coherence | 4 | 0.00038 [0.00022, 0.00050] | 0.009 [−0.026, 0.022] | 0.051 |
@@ -62,7 +62,7 @@ Reading (ii): only SummEval coherence and relevance qualify so far. DICES-350, D
    - the "X_own covers 0" readings are, if anything, conservative about absence.
 2. *The G_own bootstrap is not centred on the point estimate* (corrected 05:40: the direction is not uniformly downward — EmoBank's point −4.3e−6 lies below its interval [−3.1e−6, −1.8e−6]). Original text: Point estimates sit near or above the upper percentile (SummEval relevance 4.0e−6 vs an upper bound of 3.4e−6). Item resampling keeps duplicates in one fold, which reduces the number of distinct items while α stays fixed at its rep-0 value. The decoder's prediction variance rises, so −‖r̂‖² rises. The percentile interval therefore has a downward-shifted centre. It stays the frozen interval; for G_own and ratios built on G_own, the paper uses the point estimate and the upper bound only.
 
-### R20-1 readings (2026-11-06 05:40; 13 of 14 runs final, HS2 re-running after a ci() crash)
+### R20-1 readings (2026-11-06 05:32; 13 of 14 runs final, HS2 re-running after a ci() crash)
 Crash: on HS2 (a = 3) X_own ≤ 1e−9 in every bootstrap resample, so all ratios were NaN and fr_lib.ci received an empty list. ci now returns NaN for an empty list. The fix does not change any other result.
 
 | panel | a | X_own [95 %] | G_own/X_own pt (upper) | ΔGP/X_own [95 %] |
@@ -80,13 +80,13 @@ Crash: on HS2 (a = 3) X_own ≤ 1e−9 in every bootstrap resample, so all ratio
 (iv) The text quantities are the G_own/X_own points and upper bounds above, plus ΔGP/X_own upper bounds of 0.05 / 0.13 / 0.27 (ordinal) vs 0.65 / 0.70 (NLI). Dorn's ΔGP lower bound is > 0, a small detectable valid-forecast gain. The R19-8a max rule is withdrawn from the text.
 Panels not run in R20-1 (BW, CSC, Scalabrino, HS2 until it finishes) keep only their R19 G values, labelled as G/X with the cross-term caveat.
 
-## R20-3 OLMo-2 replication of the prospective LoRA block (specified 2026-11-06 07:00, after R19-9's results, before any run)
+## R20-3 OLMo-2 replication of the prospective LoRA block (specified 2026-11-06 06:34, after R19-9's results, before any run)
 **Why.** R19-9 overturned the shared-assignment null: 960 × 1 − full = +0.0064 [+0.0045, +0.0085] on Qwen2.5, carried by three of nine cells. We need to know whether the penalty is base-specific and whether the bad cells come from the *rating assignment* (shared across bases) or from optimisation.
 **Design.** As R19-9 (SummEval coherence, Chen objective, 240 steps, folds 0–2, split 0, designs full / 960 × 1 / 144 × 7, seeds 2003–2005), but with base allenai/OLMo-2-1124-7B-Instruct. The budget seeds are the **same** as R19-9 (6000 + 100·(seed − 2003) + fold), so every cell sees R19-9's items and ratings. Output: results/lora_budget_r20_olmo/summeval_coherence8/.
 **Readings (fixed now).** (i)–(iii) as R19-9 with δ = 0.005, via `analysis_budget_lora.py --root lora_budget_r20_olmo --seeds 2003,2004,2005 --B 2000` (and `--ref a1_F1.0`). (iv) Descriptive only: the per-cell 960 × 1 − full penalties are compared across bases (Pearson r over the nine cells). If the three R19-9 outlier cells are also the three largest here, the outliers are attributed to the assignment, not to optimisation.
 The draft reports both bases. No claim is upgraded on one base alone.
 
-### R20-2 results, SummEval coherence (2026-11-06 07:40; draws s0 from R20-1 plus s1–s4)
+### R20-2 results, SummEval coherence (2026-11-06 07:31; draws s0 from R20-1 plus s1–s4)
 | γ | draws | detected (G_own lower bound > 0) | planted X | planted X_own | G_own/X_own |
 |---|---|---|---|---|---|
 | 0 | 5 | 0 of 5 (ΔGP covers 0 in 5 of 5) | −0.00017 to +0.00006 | −0.00014 to −0.00005 | — |
@@ -98,17 +98,17 @@ Observed: X = 0.00198, X_own = 0.00038.
 **Post hoc, on the X_own scale used by the R20-1 headline:** the γ0.6 draws bracket the observed X_own (0.00033–0.00047 vs 0.00038) and are detected 5 of 5. γ0.3, at about half the observed X_own, is detected 3 of 4.
 The draft states the frozen outcome first, then the X_own reading labelled post hoc. The monotonicity argument (a stronger plant would be detected at least as often) is reasoning, not a test. POPQUORN plant draws are still running.
 
-### R20-2a Stronger plant so the frozen X-scale rule can be evaluated (amendment, specified 2026-11-06 07:50 after seeing R20-2's SummEval results)
+### R20-2a Stronger plant so the frozen X-scale rule can be evaluated (amendment, specified 2026-11-06 07:32 after seeing R20-2's SummEval results)
 **Why.** The R20-2 rule requires a γ whose planted X is at or above the observed X (0.00198). The γ grid {0, 0.3, 0.6} tops out at X = 0.00166.
 **Design.** Add γ = 0.8 on SummEval coherence, draws s0–s4, a = 4, with otherwise identical settings (R = 10, B = 200, R_boot = 3).
 **Reading.** The R20-2 rule is applied unchanged to the grid {0.3, 0.6, 0.8}. If γ 0.8 still falls short of the observed X, the rule is reported as not evaluable. This is an amendment written after the results it addresses and is labelled as such in the draft.
 
-### R20-1 final panel (HS2) and a note on ΔGP (2026-11-06 08:40)
+### R20-1 final panel (HS2) and a note on ΔGP (2026-11-06 08:31)
 **HS2 (a = 3, b = 2):** X_own = 0 exactly in the point estimate and in all 200 resamples. Two ratings are determined by their exact (mode, mean) cell (z_label tie rule), so s2 ≡ 0. HS2's own-shape is therefore *structurally unmeasurable* at b = 2, not "not detected". G_own = −‖r̂‖²/n = −4.6e−6 is the decoder's variance penalty. Under (ii), HS2 is reported as unmeasurable.
 **ΔGP is not an own-shape quantity (post hoc).** HS2 has ΔGP = +1.5e−5 [+1.2e−5, +3.1e−5], and EmoBank has +7.5e−6 [+1.7e−6, +1.5e−5], both with X_own ≈ 0. The projected-forecast gain is scored against h2 itself, so it includes the cross part: panel 2's within-cell location shift predicted from text. ΔGP/X_own is therefore a valid-forecast gain on the X_own scale, not a fraction of the own-shape, and can exceed 1. The draft labels it that way. The ordinal–NLI contrast (iii) rests on G_own/X_own alone.
 **R20-2 POPQUORN (interim).** γ0: 0 of 5 detected, ΔGP covers 0 in 5 of 5. Observed X = 0.00036, so the rule's reference is γ0.3 (planted X 0.00073). So far 1 draw, not detected on G_own (lower bound −1.1e−5), ΔGP > 0.
 
-### R20-2 POPQUORN readings (2026-11-06 09:40)
+### R20-2 POPQUORN readings (2026-11-06 09:31)
 | γ | draws | detected | planted X | G_own/X_own |
 |---|---|---|---|---|
 | 0 | 5 | 0 of 5 (ΔGP covers 0 in 5 of 5) | 0.00010–0.00030 | — |
@@ -117,7 +117,7 @@ The draft states the frozen outcome first, then the X_own reading labelled post 
 Observed X = 0.00036. The reference γ under the rule is 0.3, and it is detected 0 of 4, so **the POPQUORN null is uninformative** (as frozen).
 *Protocol defect (recorded):* R20-2 specified seeds 1–4, plus the R20-1 s0 draws, which exist only at γ 0 and 0.6. γ 0.3 therefore has 4 draws, and "≥ 4 of 5" is read as "≥ 4 of the available draws". This changes nothing here (0 of 4; SummEval 3 of 4 at γ 0.3, where γ 0.3 is not the reference).
 
-## R20-4 POPQUORN prospective LoRA block with independent assignments (specified 2026-11-06 09:40, before any run)
+## R20-4 POPQUORN prospective LoRA block with independent assignments (specified 2026-11-06 09:31, before any run)
 **Why.** R19-9 showed that SummEval's shared-assignment block understated the single-rating penalty. POPQUORN's three budget readings (SHRINKAGE Amendment 7) also come from a block whose seeds share one assignment per fold.
 **Design.** As Amendment 7 (popquorn_off8, Qwen2.5-7B-Instruct, Chen objective, 2 epochs / 205 steps, folds 0–2, split 0). Designs: full, 819 × 1, 819 × 2, 117 × 7. Seeds 2003–2005, `--budget_seed 7000 + 100·(seed − 2003) + fold`. Output: results/lora_budget_r20_pq/popquorn_off8/.
 **Readings (fixed now).** Crossed bootstrap B = 2000 (`analysis_budget_lora.py --panel popquorn_off8 --root lora_budget_r20_pq --seeds 2003,2004,2005`, plus `--ref a1_F1.0`):
@@ -126,7 +126,7 @@ Observed X = 0.00036. The reference γ under the rule is 0.3, and it is detected
 (iii) items first: 117 × 7 − 819 × 1 has a 95 % lower bound > 0.
 Each reading is reported as it comes out. Where it differs from Amendment 7, the prospective block is the one the draft states, and the shared-assignment block is described as such.
 
-### R20-3 results (2026-11-06 10:40; 27/27; results/lora_budget_r20_olmo/summary*.json)
+### R20-3 results (2026-11-06 10:31; 27/27; results/lora_budget_r20_olmo/summary*.json)
 | contrast (OLMo-2) | point | 90 % | 95 % | Qwen2.5 (R19-9) |
 |---|---|---|---|---|
 | 960 × 1 − full | **+0.0066** | [+0.0049, +0.0084] | [+0.0044, +0.0089] | +0.0064 [+0.0045, +0.0085] |
@@ -136,10 +136,10 @@ Each reading is reported as it comes out. Where it differs from Amendment 7, the
 (iv) Per-cell 960 × 1 − full across bases: Pearson r = 0.56 over 9 cells. The three largest cells overlap in 2 of 3 (s2003 f1 and s2004 f2 are shared), so per the rule the outliers are **not** attributed to the assignment alone. On OLMo-2 the penalty is positive in all 9 cells (+0.0003 to +0.0121), so the result does not rest on the collapsed Qwen run.
 Draft consequence: "one rating per item is worse than the full data by about 0.006 RPS on both bases". The items-first statement at matched budget is restricted to "on Qwen2.5; on OLMo-2 the direction agrees but the interval covers 0". The earlier shared-assignment OLMo block (+0.0095 [+0.0022, +0.0160]) is described as such.
 
-### R20-2b Completing the γ 0.3 draws (2026-11-06 10:55, amendment after R20-2 results)
+### R20-2b Completing the γ 0.3 draws (2026-11-06 10:32, amendment after R20-2 results)
 Run s0 at γ 0.3 on SummEval coherence and POPQUORN, so that every γ has the five draws R20-2 intended. The rule is unchanged. The outcome cannot reverse POPQUORN (0 of 4 already), and on SummEval γ 0.3 is not the reference γ, so this completes the record without changing any reading.
 
-### R20-4 results (2026-11-06 11:40; 36/36; results/lora_budget_r20_pq/summary*.json)
+### R20-4 results (2026-11-06 11:32; 36/36; results/lora_budget_r20_pq/summary*.json)
 | contrast (POPQUORN, Qwen2.5) | prospective [95 %] | Amendment 7 (shared assignment) |
 |---|---|---|
 | 819 × 1 − full | +0.0063 [+0.0030, +0.0099] | +0.0087 [+0.0054, +0.0122] |
@@ -148,18 +148,18 @@ Run s0 at γ 0.3 on SummEval coherence and POPQUORN, so that every γ has the fi
 (i) **Holds.** (ii) **Holds**: a second rating recovers 49 % of the single-rating gap (62 % before). (iii) **Does not hold.** All three readings agree with Amendment 7.
 Across the three prospective blocks, the single-rating penalty is +0.0063 to +0.0066 RPS (SummEval Qwen2.5 and OLMo-2, POPQUORN Qwen2.5). Items-first at matched budget holds in one of three (SummEval Qwen2.5).
 
-### R20-2a reading (γ 0.8, SummEval; 2026-11-06 11:40)
+### R20-2a reading (γ 0.8, SummEval; 2026-11-06 11:32)
 Detected in 5 of 5 draws (G_own lower bound 0.00008–0.00022, G_own/X_own 0.33–0.50). The planted X is 0.00176–0.00222, with mean 0.001976 against the observed 0.001984 (0.4 % short; 2 of 5 draws above). Strictly, the mean does not reach the observed X, so the rule is applied once more with γ 1.0 (R20-2c, below). The draft states "met in substance at γ 0.8" only together with this detail.
 
-### R20-2c γ 1.0 (amendment, 2026-11-06 11:40)
+### R20-2c γ 1.0 (amendment, 2026-11-06 11:32)
 SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule on the grid {0.3, 0.6, 0.8, 1.0}, reference = the smallest γ whose mean planted X ≥ the observed X. No further γ will be added. If γ 1.0 also falls short, the rule is reported as not met.
 
-## R20-5 SummEval prospective 960 × 2 (specified 2026-11-06 11:40, before any run)
+## R20-5 SummEval prospective 960 × 2 (specified 2026-11-06 11:32, before any run)
 **Why.** The guidance's "a second rating is worth nothing on SummEval" rests on shared-assignment blocks. The prospective blocks show a single-rating penalty of 0.006.
 **Design.** As R19-9 (Qwen2.5, the same seeds 2003–2005 and budget seeds 6000 + 100·(seed − 2003) + fold, folds 0–2), design 960 × 2 (`--train_pos 2 --train_frac 1.0`). Output goes into results/lora_budget_r19/summeval_coherence8/a2_F1.0/, so the full and 960 × 1 cells of R19-9 serve as references.
 **Readings (fixed now).** (i) A second rating helps: 960 × 2 − 960 × 1 has a 95 % upper bound < 0. (ii) Two ratings suffice within the margin: 960 × 2 − full has a 95 % upper bound < 0.005. Both are reported as they come out.
 
-### R20-2 final readings (2026-11-06 12:40; R20-2a/b/c complete)
+### R20-2 final readings (2026-11-06 12:31; R20-2a/b/c complete)
 | panel | γ | draws | detected | mean planted X | G_own/X_own |
 |---|---|---|---|---|---|
 | SummEval | 0 | 5 | 0 of 5 | −0.00008 | — |

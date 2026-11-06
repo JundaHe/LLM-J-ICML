@@ -76,7 +76,7 @@ Compute: the smoke run took 14 min on a loaded node; full runs use **R = 5, B = 
 **Runs.** ChaosNLI MNLI, SNLI, αNLI at m ∈ {5, 10, 20, 50}; 3 seeds × 3 item splits; one GPU job (`--gres=gpu:1`), tag `_v7b`. MNLI's published table used `_v6`; the re-run uses the current code, and any KL difference from the published `_v6`/`_v7` rows is reported (reproducibility check: |ΔKL| per arm mean ≤ 0.002, else the table is regenerated from `_v7b`).
 **Readings (fixed now).** (i) The donor-replacement contrast pzc − soft in Brier, with its descriptive SEM over the 9 configurations, at every m. (ii) Normalised dose: (pzc − soft) / (fidelity_zc − fidelity_soft) in Brier, i.e. the cost of scrambling the shape relative to the shape signal available to an oracle using the item's own m training ratings on the same test items. (iii) The draft's "same intervention on ChaosNLI costs …" sentence is restated in Brier (the paper's nominal score) with (ii); if pzc − soft in Brier is not positive at some m, the sentence is restricted to the m where it is.
 
-## R19-8 Validity of the decoded forecast and a cell-preserving projection (review issue 2) — specified 2026-11-06 01:35, before any run
+## R19-8 Validity of the decoded forecast and a cell-preserving projection (review issue 2) — specified 2026-11-06 01:44, before any run
 **Question.** G is the quadratic-score gain of the additive correction q_T + C⁻¹r̂, which need not be a valid distribution in the recipient's exact mode-and-mean cell. How often is it invalid, and what is the gain of the nearest valid forecast in that cell?
 **Projection.** Per item, q* = argmin ‖C(q) − (C(q_T) + r̂)‖² (the RPS metric) subject to q ≥ 0, Σq = 1, and the cell of q_T: ordinal — mean(q) = mean(q_T) and q_z ≥ q_k for the mode z of q_T (weak inequality; ties allowed); nominal — q_z = q_T,z and q_k ≤ q_T,z. Solved by SLSQP; items whose unprojected forecast already satisfies every constraint (tolerance 1e-9) are left unchanged. G_proj = score(q_T) − score(q*) on the P2 ratings (exact RPS / Brier), symmetrised and averaged over splits exactly as G.
 **Violation rates** of the unprojected forecast: fraction of items with any negative mass, with the mode of q_T no longer a (weak) mode, and with |Δmean| > 1e-6 (ordinal; per-output α makes Σr̂ ≠ 0 possible).
@@ -136,7 +136,7 @@ Mean violations: 0 everywhere.
 (iv) ChaosNLI ΔG_proj/X is 0.35 / 0.44, ≥ 0.10. The contrast stands, and the projected NLI shape-only gain is about twice G.
 Planted: the projected decoder recovers 0.17–0.20 of the known shape (G: 0.07–0.12).
 
-## R19-9 Prospective replication of the SummEval budget comparison with independent rating assignments and a declared margin (review change 3) — specified 2026-11-06 02:35, before any run
+## R19-9 Prospective replication of the SummEval budget comparison with independent rating assignments and a declared margin (review change 3) — specified 2026-11-06 02:32, before any run
 **Why.** An audit of `train_judge_v3.py` shows that the budget subsample seed defaults to 3000 + 100·split + fold. It does not depend on the optimiser seed, so the three seeds of results/lora_budget_v2 share one rating assignment per fold. Their crossed bootstrap therefore resamples optimiser variation, not assignment variation (stated in the draft).
 **Margin (declared now, with full knowledge of the earlier blocks — so it is tested only on the new block).** δ = 0.005 RPS. That is 3 % of the full-data RPS (0.169), about half of the smallest established design penalty (144 × 7 − 960 × 1: +0.0095 on OLMo-2), and smaller than the one-hot penalty of the frozen-feature heads.
 **Design.** SummEval coherence, Qwen2.5-7B-Instruct, the Chen objective, identical code and settings to lora_budget_v2 (240 optimiser steps, three held-out-expert folds, split 0). Designs: full (7 × 960), 960 × 1, 144 × 7 (train_frac 1/7). New optimiser seeds 2003, 2004, 2005. **Independent assignments:** `--budget_seed 6000 + 100·(seed − 2003) + fold`, so every seed × fold cell draws its own items and ratings. Output results/lora_budget_r19/summeval_coherence8/ (adapter weights git-ignored). One GPU job per seed.
@@ -146,7 +146,7 @@ Planted: the projected decoder recovers 0.17–0.20 of the known shape (G: 0.07�
 (iii) *Items first*: 144 × 7 − 960 × 1 has a 95 % lower bound > 0.
 The draft reports (i)–(iii) as they come out. "Not distinguishable" is upgraded to "equivalent within 0.005 RPS" only if (i) holds. If (ii) fails, the draft states that one rating per item may be inferior by more than the margin.
 
-### R19-9 results (2026-11-06 06:45; 27/27 runs; results/lora_budget_r19/summary*.json)
+### R19-9 results (2026-11-06 06:32; 27/27 runs; results/lora_budget_r19/summary*.json)
 | contrast | point | 90 % | 95 % |
 |---|---|---|---|
 | 960 × 1 − full | **+0.0064** | [+0.0048, +0.0082] | [+0.0045, +0.0085] |
@@ -159,7 +159,7 @@ The draft must drop "not distinguishable" / "match" for SummEval and state the i
 **Descriptive (not frozen).** The per-cell 960 × 1 − full differences are bimodal: six cells give −0.0009 to +0.0043, three give +0.0144 to +0.0184 (s2003 f1, s2004 f2, s2005 f2). One of them, s2003 f1, is a near-collapsed run: the SD of its predicted means is 0.068, against 0.23–0.38 in every other run. Excluding it gives a mean of +0.0052; the median over the nine cells is +0.0030. This sensitivity check is not a reading.
 The earlier v2 null (−0.0027 [−0.0061, +0.0014], three seeds sharing one assignment) is consistent with a favourable shared draw. With one rating per item, outcomes vary much more across assignments.
 
-### R19-5 results (2026-11-06 02:40; RFF D = 2,048, R = 5, B = 100; results/decoding_v2/*_rff.json)
+### R19-5 results (2026-11-06 02:39; RFF D = 2,048, R = 5, B = 100; results/decoding_v2/*_rff.json)
 | panel | condition | RFF G [95 %] | RFF G/X [95 %] | ridge G (point) |
 |---|---|---|---|---|
 | SummEval | γ 0 | +0.00000 [−0.00001, +0.00000] | — | −0.00000 |

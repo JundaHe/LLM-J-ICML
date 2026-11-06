@@ -1419,7 +1419,7 @@ GPUs still held by other users (third-turn embedding 12578 waiting; S13-3b queue
 - Login sessions are capped at 4 CPUs (cgroup), so the 8 RFF runs had ~0.5 core each. The 4 POPQUORN RFF runs were restarted as Slurm jobs 12647–12650 (-c 2) at 23:50; the SummEval runs stay on the login cores.
 - R19-6 (protocol written before any run): crossed item × rater bootstrap on BW, DICES-350 and DICES-990. ρ upper bounds are < 0.5 on all three, so the population claim stands. ρ_own intervals include 0 on BW and DICES-350 at a = 40 once raters are resampled. Results in ROUND19_PROTOCOL.md; draft §1 and §2.1 updated; pooled estimates labelled descriptive (review issue 6).
 
-## 2026-11-06 00:40 — R19-5 RFF point estimates (all 8; bootstrap running)
+## 2026-11-06 00:31 — R19-5 RFF point estimates (all 8; bootstrap running)
 G under RFF vs ridge, both at a = 4, d = 64, E_last:
 
 | condition | SummEval RFF | SummEval ridge | POPQUORN RFF | POPQUORN ridge |
@@ -1480,85 +1480,86 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - The null passes at the point level: γ 0 G_own and ΔGP are ≈ 0.
 - Formal readings wait for the intervals. LoRA R19-9: 8/27 cells done.
 
-## 2026-11-06 04:45 R20-1 interim readings (9/14 final)
+## 2026-11-06 04:32 R20-1 interim readings (9/14 final)
 - SummEval coh/rel: X_own CIs exclude 0, so per (ii) G_own/X_own is the headline: 0.009 [−0.026, 0.022] / 0.013 [−0.098, 0.011], vs planted γ0.6 0.56 [0.39, 0.72] (SummEval) and 0.36 [0.15, 0.47] (POPQUORN).
 - DICES-350, DICES-990 and POPQUORN: X_own CIs cover 0 → no detectable shape-to-shape reproducibility; G_own absolute ≈ 0.
 - (i) ΔGP passes. POPQUORN γ0 G_own upper is −1.9e−8 (a negligible, conservative miss), recorded as a strict failure.
 - Post-hoc: X_own has a negative null bias of ≈ −1e−4, and the G_own percentile bootstrap is shifted down (duplicates + fixed α). Both are written up in ROUND20_PROTOCOL.md.
 - Pending: Dorn (pt 0.10), MNLI (pt 0.28), EmoBank / HS2 (X_own ≈ 0), SNLI. R20-2 is queued. LoRA R19-9 has 18/27 runs (seeds 2003 and 2004 complete; 2005 queued on the CPU quota).
 
-## 2026-11-06 05:40 R20-1 readings applied (13/14)
+## 2026-11-06 05:32 R20-1 readings applied (13/14)
 - (iii) holds: NLI G_own/X_own 0.28 [0.20, 0.30] / 0.38 [0.30, 0.40] vs ordinal SummEval 0.009 / 0.013 and Dorn 0.10 (upper 0.18). The Dorn margin is narrow.
 - ΔGP/X_own upper bounds: ordinal 0.05 / 0.13 / 0.27, NLI 0.65 / 0.70.
 - HS2 crashed in ci() because every ratio was NaN (X_own = 0 in all resamples). fr_lib.ci now returns NaN; HS2 resubmitted as job 12740.
 - Corrected post-hoc note 2: the G_own bootstrap is off-centre in both directions.
-- 05:55 Draft v2.4: the abstract, §1 contributions/(ii), §2.2 (own-shape decomposition and planted control on G_own/X_own) and §6 Dorn now use R20-1 quantities. The R19-8a max rule is removed. G/X is renamed the normalised forecasting gain. check_consistency is clean.
+- 05:33 Draft v2.4: the abstract, §1 contributions/(ii), §2.2 (own-shape decomposition and planted control on G_own/X_own) and §6 Dorn now use R20-1 quantities. The R19-8a max rule is removed. G/X is renamed the normalised forecasting gain. check_consistency is clean.
 
-## 2026-11-06 06:45 R19-9 LoRA block complete (27/27) — frozen readings
+## 2026-11-06 06:32 R19-9 LoRA block complete (27/27) — frozen readings
 - 960×1 − full = +0.0064 [+0.0045, +0.0085] (90 % [+0.0048, +0.0082]). TOST fails, non-inferiority fails, and one rating per item is worse than the full data.
 - Items-first holds: 144×7 − 960×1 = +0.0102 [+0.0052, +0.0157].
 - The per-cell differences are bimodal. One a1 run (s2003f1) is near-collapsed (sd of predicted means 0.068). Excluding it gives +0.0052 (descriptive only).
 - The v2 "not distinguishable" claim (shared assignment) is superseded. Draft §1(v), §5 and the abstract are to be revised next.
 - HS2 R20-1 resubmit (12740) is still pending; the old log is from the first crash.
-- 06:55 Draft: abstract, §1(v) and §5 revised per the R19-9 frozen readings: one rating per item < full (+0.0064, TOST/NI fail); items-first holds; the shared-assignment null is described as a favourable draw. Guidance paragraph updated. check_consistency is clean.
-- 07:00 R20-3 registered (OLMo-2 replication of R19-9 using the same budget seeds) and submitted as 3 GPU jobs.
-- 07:10 R20-2 interim (SummEval).
+- 06:33 Draft: abstract, §1(v) and §5 revised per the R19-9 frozen readings: one rating per item < full (+0.0064, TOST/NI fail); items-first holds; the shared-assignment null is described as a favourable draw. Guidance paragraph updated. check_consistency is clean.
+- 06:34 R20-3 registered (OLMo-2 replication of R19-9 using the same budget seeds) and submitted as 3 GPU jobs.
+- 06:34 R20-2 interim (SummEval).
   - γ0: in 5/5 draws the G_own lower bound is ≤ 0 (no false detection) and dGP covers 0.
   - γ0.3: 2/2 draws so far detected, at X_own 0.00012–0.00016, below the observed 0.00038.
   - γ0.6: 2/2 detected, G_own/X_own 0.51–0.56.
   - The γ0 X_own is negative in all five draws (−0.00005 to −0.00014), confirming the post-hoc null-bias note.
   - The CPU queue (10 R20-2 jobs) is held until the R20-3 GPU jobs start; a watcher releases them (logs/release_watch.log).
 
-## 2026-11-06 07:40 R20-2 SummEval complete
+## 2026-11-06 07:31 R20-2 SummEval complete
 - Detection: γ0 0/5, γ0.3 3/4, γ0.6 5/5 (G_own/X_own 0.38–0.56).
 - The frozen informativeness rule (on X) is not met: the max planted X is 0.00166 against the observed 0.00198. Post hoc, on X_own, γ0.6 brackets the observed value and is detected 5/5.
 - Ops: the release watcher was killed and the held CPU jobs released (12743 waits for a GPU, not CPUs). R20-3 is at 6/27 OLMo runs.
-- 07:45 Draft: planted-control statements (abstract, §1(ii), §2.2) now use the R20-2 counts and disclose that the frozen X-scale rule was not met.
-- 07:50 R20-2a (γ 0.8, 5 draws, SummEval) registered and submitted.
+- 07:32 Draft: planted-control statements (abstract, §1(ii), §2.2) now use the R20-2 counts and disclose that the frozen X-scale rule was not met.
+- 07:32 R20-2a (γ 0.8, 5 draws, SummEval) registered and submitted.
 
-## 2026-11-06 08:40 R20-1 complete (14/14); R20-2 POPQUORN interim
+## 2026-11-06 08:31 R20-1 complete (14/14); R20-2 POPQUORN interim
 - HS2 (b = 2): X_own ≡ 0, structurally unmeasurable (two ratings are determined by their cell).
 - HS2 and EmoBank have ΔGP > 0 with X_own ≈ 0, so ΔGP contains the cross part. ΔGP/X_own is relabelled as a valid-forecast gain on the X_own scale; contrast (iii) uses G_own/X_own only.
 - POPQUORN plants: γ0 0/5, ΔGP null 5/5. γ0.3 1 draw so far, not detected on G_own.
 - R20-3 OLMo: 16/27 runs, 0 tracebacks.
-- 08:45 Draft: ΔGP described as containing the cross part; HS2 marked unmeasurable (b = 2).
+- 08:31 Draft: ΔGP described as containing the cross part; HS2 marked unmeasurable (b = 2).
 
-## 2026-11-06 09:45 R20-2 POPQUORN readings; R20-4 registered
+## 2026-11-06 09:31 R20-2 POPQUORN readings; R20-4 registered
 - POPQUORN γ0.3 (the reference γ): 0/4 detected, so the null is uninformative (as frozen). Defect recorded: γ0.3 has 4 draws, not 5.
 - R20-3 OLMo: seeds 2003 and 2004 done, 2005 at 5/9. One GPU was idle, so R20-4 (POPQUORN prospective LoRA block, independent assignments) was registered and 3 GPU jobs submitted.
 
-## 2026-11-06 10:40 R20-3 complete (OLMo-2 prospective block)
+## 2026-11-06 10:31 R20-3 complete (OLMo-2 prospective block)
 - 960×1 − full = +0.0066 [+0.0044, +0.0089], so the single-rating penalty replicates (Qwen +0.0064). It is positive in all 9 OLMo cells.
 - Items-first on OLMo: +0.0060 [−0.0007, +0.0128], i.e. it does not hold (it holds on Qwen).
 - Per-cell r = 0.56; the top-3 cells overlap 2/3, so the outliers are not attributed to the assignment.
 - R20-4 POPQUORN: 12/36 runs. R20-2a γ0.8: 3/5.
-- 10:50 Draft: abstract, §1(v) and §5 revised for R20-3 (penalty on both bases; items-first Qwen-only). The old OLMo block is described as shared-assignment.
-- 10:55 R20-2b: γ0.3 s0 draws submitted on both panels (completing 5 draws). CPUs are now full.
+- 10:32 Draft: abstract, §1(v) and §5 revised for R20-3 (penalty on both bases; items-first Qwen-only). The old OLMo block is described as shared-assignment.
+- 10:32 R20-2b: γ0.3 s0 draws submitted on both panels (completing 5 draws). CPUs are now full.
 
-## 2026-11-06 11:45 R20-4 complete; R20-2a read; R20-2c and R20-5 submitted
+## 2026-11-06 11:32 R20-4 complete; R20-2a read; R20-2c and R20-5 submitted
 - POPQUORN prospective: (i) single rating worse, +0.0063 [+0.0030, +0.0099]; (ii) a second rating helps, −0.0031 [−0.0062, −0.0002]; (iii) items-first not supported, +0.0027 [−0.0024, +0.0074]. All three agree with Amendment 7.
 - Single-rating penalty across 3 prospective blocks: +0.0063 to +0.0066.
 - γ0.8 plant: 5/5 detected. Its mean planted X is 0.4 % below the observed X, so the γ1.0 plant (R20-2c, 5 jobs) is submitted to apply the rule strictly.
 - R20-5 (SummEval 960×2, prospective, 3 GPU jobs) registered and submitted.
-- 11:55 Draft: POPQUORN prospective block (R20-4) added to §1(v), §5 and the guidance.
+- 11:32 Draft: POPQUORN prospective block (R20-4) added to §1(v), §5 and the guidance.
 
-## 2026-11-06 12:40 R20-2 final
+## 2026-11-06 12:31 R20-2 final
 - SummEval: γ1.0 (mean planted X 0.00225 ≥ observed 0.00198) detected 5/5, so the null is informative under the rule (after amendments 2a/2c). γ0.3 4/5.
 - POPQUORN: reference γ0.3 detected 0/5, so the null is uninformative.
 - Planted X_own saturates at 0.0004–0.0005 for γ ≥ 0.6.
 - R20-5 (SummEval 960×2): 4/9 runs.
-- 12:45 Draft: planted-control text uses the final R20-2 readings (amendments disclosed).
-- 12:55 Codex round 21 launched (prompt: reviews/codex_round21_prompt_2026-11-06.md; draft v2.4 + ROUND20 + R19-9 section). Draft counts fixed (γ0.3 4/5; POPQUORN γ0.6 two draws).
-- 13:00 Codex is unavailable (usage limit until 2026-11-11 21:45). Round 21 is run instead as an independent Claude-subagent adversarial review on the same prompt; it will be saved as reviews/claude_round21_2026-11-06.md and labelled as such.
+- 12:31 Draft: planted-control text uses the final R20-2 readings (amendments disclosed).
+- 12:32 Codex round 21 launched (prompt: reviews/codex_round21_prompt_2026-11-06.md; draft v2.4 + ROUND20 + R19-9 section). Draft counts fixed (γ0.3 4/5; POPQUORN γ0.6 two draws).
+- 12:33 Codex is unavailable (usage limit until 2026-11-11 21:45). Round 21 is run instead as an independent Claude-subagent adversarial review on the same prompt; it will be saved as reviews/claude_round21_2026-11-06.md and labelled as such.
 
-## 2026-11-06 13:10 Round-21 review received (Claude subagent; Codex unavailable): weak reject, close to borderline
+## 2026-11-06 12:40 Round-21 review received (Claude subagent; Codex unavailable): weak reject, close to borderline
 - Saved to reviews/claude_round21_2026-11-06.md. Verified: POPQUORN γ0.6 has 5 draws (4/5, 6–38 %), so the draft was stale; EmoBank b=2; a=b=4, so the X_own-bias explanation was wrong.
 - Disputed: G_own < 0 under the null is expected (−‖r̂‖² term). Reading (i) was ill-posed for G_own.
 - Plan: ROUND21_PROTOCOL (valid intervals, null-bias diagnosis, a-matched NLI, Dorn plant), then text fixes.
-- 14:00 Draft (R21-T, first pass):
+- 12:56 Draft (R21-T, first pass):
   - contribution (4), the §5 threshold, ChaosNLI cross share, §4 X_own residual, DICES conditional on the pool, §6 SE reading and ΔGP denoising, 480×2, R20-5 hold;
   - EmoBank unmeasurable, absence wording, POPQUORN plant 4/5 6–38 %, null-check sentence, penalty wording, two assignment sets, 819×2 − full;
   - the X_own-bias note corrected (anti-conservative for absence claims), percentile upper bounds removed from the abstract pending R21-1.
-- 14:35 R21-1: the login smoke test timed out (load ~18). Validation job 12777 was submitted to Slurm, and the 36 R21 decode jobs (12778–12813: R21-1/3/4/5) were submitted held; a watcher releases them once the validation prints CLT output. R21-2 partial: SummEval pool −0.000099±0.00001, DICES pool −0.000015±0.000003 vs common/iid ≈ 0.
-- 14:50 R21-2 complete: the X_own null bias is a finite-rater-pool effect (supported on SummEval and DICES; absent where M2 has one rater group). Protocol and draft §2.2 updated.
-- 14:55 R21 validation passed (CLT output OK). The 36 decode jobs were released: 8 running, 28 queued.
+- 13:08 R21-1: the login smoke test timed out (load ~18). Validation job 12777 was submitted to Slurm, and the 36 R21 decode jobs (12778–12813: R21-1/3/4/5) were submitted held; a watcher releases them once the validation prints CLT output. R21-2 partial: SummEval pool −0.000099±0.00001, DICES pool −0.000015±0.000003 vs common/iid ≈ 0.
+- 13:09 R21-2 complete: the X_own null bias is a finite-rater-pool effect (supported on SummEval and DICES; absent where M2 has one rater group). Protocol and draft §2.2 updated.
+- 13:09 R21 validation passed (CLT output OK). The 36 decode jobs were released: 8 running, 28 queued.
+- 13:32 Timestamp correction: many labels written today were 10–100 min later than the actual events. Every dated heading and entry from 2026-11-06 in PROGRESS and ROUND19–21 is now set to the commit time of the line (git blame), except R19-7, whose 01:32 label was right. The protocol-before-run order is unchanged: each protocol commit precedes its runs.
