@@ -258,3 +258,21 @@ Question: does R20-5c's second-rating result replicate on the second base?
 - crowd5 is worse than full mainly on folds 1–2.
 
 No frozen gate. Reported as observed.
+
+### R20-6 results (2026-11-06 20:43; 27/27 cells, 0 tracebacks; OLMo-2 single batch)
+| contrast | point [95 %] |
+|---|---|
+| 960 × 1 − full | +0.0063 [+0.0042, +0.0085] (R20-3, another batch: +0.0066) |
+| 960 × 2 − 960 × 1 | **−0.0086 [−0.0117, −0.0056]** |
+| 960 × 2 − full | −0.0022 [−0.0050, −0.0001] |
+- (i) A second rating helps: **holds**.
+- (ii) Two ratings suffice within the margin: **holds**. As on Qwen2.5, the interval lies just below 0.
+- Per fold:
+
+  | contrast | f0 | f1 | f2 |
+  |---|---|---|---|
+  | a1 − full | +0.0047 | +0.0049 | +0.0094 |
+  | a2 − full | +0.0027 | −0.0020 | −0.0074 |
+
+  The evaluator pattern replicates. The advantage of two ratings over seven again comes from fold 2 (expert 2).
+- The Qwen2.5 result (R20-5c) replicates on the second base.

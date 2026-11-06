@@ -1611,3 +1611,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R20-6 at 21 of 27 cells. The second GPU was idle.
 - R20-7 registered (descriptive), testing the expert/crowd mechanism. Arms: experts2 (2 non-evaluator experts, 1,920 ratings, the same budget as a2) and crowd5 (4,800 ratings), Qwen2.5, 3 seeds × 3 folds.
 - New option train_judge_v3 --train_cols (default off; existing arms unchanged; dry run OK). Jobs 13055–13057; 13055 running.
+
+## 2026-11-06 20:43 — R20-6 done
+- OLMo-2 single batch: a1 − full +0.0063; a2 − a1 −0.0086 [−0.0117, −0.0056]; a2 − full −0.0022 [−0.0050, −0.0001]. Readings (i) and (ii) both hold, and the per-fold pattern replicates (f2 −0.0074).
+- Draft updated in §5, the guidance and the abstract budget sentence.
+- R20-7 running.
