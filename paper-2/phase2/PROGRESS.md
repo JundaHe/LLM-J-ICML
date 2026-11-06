@@ -1616,3 +1616,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - OLMo-2 single batch: a1 − full +0.0063; a2 − a1 −0.0086 [−0.0117, −0.0056]; a2 − full −0.0022 [−0.0050, −0.0001]. Readings (i) and (ii) both hold, and the per-fold pattern replicates (f2 −0.0074).
 - Draft updated in §5, the guidance and the abstract budget sentence.
 - R20-7 running.
+
+## 2026-11-06 21:34 — data-integrity issue found on SummEval (ROUND22)
+- R20-7 diagnostics: the crowd5 judge collapses to a near-constant prediction.
+- In the released file, the turker mean correlates with the expert mean at r ≈ 0.04. This is documented by Fabbri et al.
+- In 50.4 % of items, all five turker annotations are identical. This is not documented anywhere we found.
+- ROUND22_PROTOCOL.md written, and R22-1 registered (decoding on the 793 non-duplicated items). Jobs 13103–13104.
+- The SummEval budget results are now read as expert dilution. Draft not yet changed; it will be after R22-1.

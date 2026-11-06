@@ -21,3 +21,10 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - **Not addressed here** (follow-ups, to be specified separately):
   - the LoRA budget and target-construction results on SummEval, which may need an experts-only or nodup re-run;
   - the reliability card for SummEval.
+
+### Addendum (21:34, literature check)
+- **Documented upstream.** Fabbri et al. (SummEval, TACL 2021; arXiv 2007.12626) report that the averaged expert and crowd scores have a Pearson correlation close to 0, and that crowd scores were similar across dimensions. The near-zero expert–crowd agreement is therefore a documented property of SummEval and must be cited.
+- **Not documented.** We found no report of the identical-annotation pattern (five identical turker dicts in 50 % of items). It stays unverified against the upstream file.
+- **Draft action (once R22-1 reports).**
+  - §2.1 and §5 must state that SummEval's crowd columns are essentially uncorrelated with its experts (citing Fabbri et al.).
+  - The budget results on SummEval must be described as diluting two expert ratings with five crowd ratings, not as "full data vs fewer ratings of one population".
