@@ -123,3 +123,19 @@ tab_budget.tex (Table 6 in the draft) is rebuilt in this order:
 3. The earlier shared-assignment blocks (lora_budget_v2, lora_budget_olmo), labelled "shared assignment".
 
 No numbers change. The rows are read from the existing summary JSONs. The §5 paragraph order (N14) is left for the next draft pass.
+
+### R22-3 results (2026-11-07 00:50; 25 runs, 0 tracebacks; results/decode_decomp/dices_r22_plant*_s*.json)
+| γ | mean X_own | mean V_own | detected (CLT lower bound of G_own > 0) | G_own/X_own per draw |
+|---|---|---|---|---|
+| 0 | −1.3e−5 | 4.7e−7 | 0/5 | 0.03, −0.56, 0.22, 0.10, 0.23 |
+| 0.1 | −0.7e−5 | 5.7e−7 | 0/5 | 0.09, −0.28, −0.71, −0.04, 0.48 |
+| 0.2 | 0.5e−5 | 2.7e−6 | 0/5 | 0.05, 0.04, 1.19, −0.07, −0.02 |
+| 0.3 | 3.0e−5 | 8.8e−6 | 2/5 | 0.47, 0.08, 0.26, 0.19, 0.11 |
+| **0.4** | **5.5e−5** | 2.2e−5 | **5/5** | 0.32, 0.28, 0.23, 0.33, 0.15 |
+
+- The reference γ is **0.4**: it is the smallest γ whose mean planted X_own (5.5e−5) is at least the observed 4.9e−5.
+- **Frozen reading: 5 of 5 detected, so DICES-350's G_own/X_own of 1 % [−9, 12] is informative at its own magnitude.** A planted text-predictable shape of the observed size is recovered at 15–33 %.
+- Location-only baseline (γ 0), descriptive:
+  - X_own is −1.3e−5, i.e. −27 % of the observed value. Location and thresholds alone do *not* produce DICES-350's own-shape, unlike Dorn (R21-7: about 95 % of V_own).
+  - V_own is 4.7e−7, about 10 % of the observed 4.9e−6.
+- Implication: DICES-350 at 40 raters is the one ordinal panel where a reproducible own-shape beyond location is detected (within the observed rater pool), power-calibrated, and *not* decoded. It now serves as the clean ordinal partner of the NLI contrast, at a = 40.
