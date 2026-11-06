@@ -1571,3 +1571,14 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R20-5a: the frozen 1e−4 criterion fails, because GPU training is non-deterministic (P_test differs by up to 0.11). Per-cell RPS moves ≤ 0.0012, and the in-batch a2 − full contrast reproduces (seed 2003: +0.0048 / +0.0045 / −0.0103). Cross-batch comparison reported as unreliable per the rule.
 - R20-5b registered and submitted: a single-batch rerun of the full and a2 arms for seeds 2004 and 2005 (jobs 12844–12847).
 - R21-6 (descriptive, N11): the budget contrasts depend on the evaluator expert. "Two ratings beat full" comes entirely from fold 2 (expert 2, mean 2.05). The single-rating penalty on Qwen2.5 is ≈ 0 on fold 0. Draft §5 now has the conditional sentence.
+
+## 2026-11-06 15:32 — R21-T text items
+- Abstract: shortened from 579 to 332 words. "On none" is restated as point estimates below ½, with crossed upper bounds ≤ 0.39. Budget sentence updated (POPQUORN included; SummEval evaluator-dependence).
+- §7 limitations, five changes:
+  - three-family own-shape coverage (R21-5) replaces "Qwen2.5 only";
+  - scope of the plant construction;
+  - location-driven own-shape at the exact cell;
+  - direction of the X_own pool bias;
+  - LoRA evaluator dependence and non-bit-reproducibility.
+- POPQUORN γ 0.3 mean planted X: 0.00062 → 0.00060.
+- R20-5b: 8 of 12 cells done.
