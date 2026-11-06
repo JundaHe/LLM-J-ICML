@@ -94,3 +94,24 @@ Change from R20-1: with the CLT interval, DICES-350's X_own at a = 20 also exclu
 - MNLI: 0.28, 0.30, 0.29;
 - DICES-350: −0.08, −0.004, −0.05.
 The qualitative readings agree across families, so "frozen LLM representations" is kept, with the three families named.
+
+## R21-6 (specified 14:34, 2026-11-06, before running; descriptive, post hoc, responds to N11)
+Per-evaluator-fold breakdown of the existing SummEval LoRA blocks: R19-9 (results/lora_budget_r19) and R20-3 (results/lora_budget_r20_olmo). Fold f evaluates against held-out expert f.
+- For each block, design and fold: mean RPS minus the full arm, averaged over seeds, plus the seed range.
+- Also reported: each expert's mean rating, its SD, and its distance (mean |difference|) to the crowd-mean of the same items.
+- **Reading (descriptive only, no gate):** if one fold carries the sign of the 960 × 1 or 960 × 2 contrasts, the budget claims are stated as conditional on the evaluator expert, and the expert/crowd confound is named in §5. Nothing is re-tested.
+
+### R21-6 results (2026-11-06 14:35; results/lora_by_fold.{json,md})
+- Experts (mean, SD): e0 2.81, 1.13; e1 2.39, 1.44; e2 2.05, 0.96. Crowd mean 2.81.
+- 960 × 1 − full, per fold (Qwen2.5, R19-9):
+
+  | fold | penalty |
+  |---|---|
+  | f0 | +0.0002 |
+  | f1 | +0.0071 |
+  | f2 | +0.0119 |
+
+  On OLMo-2 (R20-3) it is +0.0044, +0.0053, +0.0101.
+- 960 × 2 − full: f0 +0.0005, f1 −0.0012, **f2 −0.0114** (all three seeds −0.0106 to −0.0121). The R20-5 "two ratings beat seven" result is a fold-2 (expert 2, the lowest-rating expert) effect. It reproduces in the seed-2003 rerun (−0.0103).
+- 144 × 7 − full is positive on every fold.
+- **Reading:** the SummEval budget contrasts are evaluator-dependent. §5 now states them as conditional on the expert/crowd mixture (draft updated). Nothing is re-tested.

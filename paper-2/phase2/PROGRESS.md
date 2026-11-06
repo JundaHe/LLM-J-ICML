@@ -1566,3 +1566,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 13:33 R21-1/3/4/5 complete (36/36). CLT calibration 9/10 → used for the headline. The ordinal–NLI contrast holds on both estimands, and at matched a=4 by an order of magnitude. DICES-350 X_own now excludes 0 (CLT). Families agree. New: location-driven within-cell shape at a=20 (Dorn Java γ0 V_own 5.6 SE > 0), so Dorn's 0.10 is an upper bound on shape beyond location.
 - 13:35 R20-5: 960×2 − 960×1 −0.0105 (helps); 960×2 − full −0.0040 [−0.0078, −0.0003], i.e. better than full, implausible. R20-5a full-arm rerun (batch reproducibility) submitted on GPU.
 - 13:36 Draft: decoding numbers (abstract, §1(ii), §2.2) now use the R21 CLT intervals, the matched-a contrast and the family replication; the Dorn location-driven caveat added; DICES-350 moved to the detectable panels.
+
+## 2026-11-06 14:35 — R20-5a results, R20-5b submitted, R21-6 per-fold breakdown
+- R20-5a: the frozen 1e−4 criterion fails, because GPU training is non-deterministic (P_test differs by up to 0.11). Per-cell RPS moves ≤ 0.0012, and the in-batch a2 − full contrast reproduces (seed 2003: +0.0048 / +0.0045 / −0.0103). Cross-batch comparison reported as unreliable per the rule.
+- R20-5b registered and submitted: a single-batch rerun of the full and a2 arms for seeds 2004 and 2005 (jobs 12844–12847).
+- R21-6 (descriptive, N11): the budget contrasts depend on the evaluator expert. "Two ratings beat full" comes entirely from fold 2 (expert 2, mean 2.05). The single-rating penalty on Qwen2.5 is ≈ 0 on fold 0. Draft §5 now has the conditional sentence.
