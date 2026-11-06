@@ -1708,3 +1708,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - The output JSON now records feat_model, plant and plant_seed. This changes metadata only.
 - Smoke test (dices a40 Qwen3): the est dict is identical to dices_a40_qwen3_r22, and the smoke file was deleted.
 - Existing JSONs are not backfilled. Their feature family is identified by the tag (_qwen3/_olmo) and by the slurm scripts.
+
+## 2026-11-07 03:32 — LaTeX resynced from PAPER_DRAFT_v2.md
+- build_latex_v2.py now maps "Table 2b" to tab:own (it is replaced before "Table 2"), inputs tab_own, and maps γ, δ and ⁴.
+- main.tex and main.pdf are rebuilt: 15 pages, 8,937 words, pdflatex exit 0, 0 undefined citations or references, 2 overfull boxes. The LaTeX was last built on Oct 27.
