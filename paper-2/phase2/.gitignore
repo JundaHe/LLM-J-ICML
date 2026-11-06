@@ -47,3 +47,4 @@ features/prism_pairs/
 results/lora_budget_r19/**/lora/
 results/lora_budget_r20_olmo/**/lora/
 results/lora_budget_r20_pq/**/lora/
+results/lora_budget_r20_rerun/**/lora/

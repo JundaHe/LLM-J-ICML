@@ -174,3 +174,17 @@ SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule
 - **SummEval:** the reference γ (the smallest with mean planted X ≥ observed 0.00198) is 1.0, detected 5 of 5, so the SummEval null **is informative** under the rule, with the amendments R20-2a/c disclosed.
 - **POPQUORN:** the reference γ is 0.3, detected 0 of 5, so its null is **uninformative**.
 - **Descriptive:** planted X_own saturates at about 0.0004–0.0005 from γ 0.6 to 1.0, while the planted X grows through its cross part. The plant raises dispersion symmetrically and so also moves the location cells. The γ 1.0 plant's own-shape magnitude (0.00041–0.00050) is close to SummEval's observed 0.00038.
+
+### R20-5 results (2026-11-06 13:35; 9/9 runs; results/lora_budget_r19/summary*.json now include a2_F1.0)
+| contrast (SummEval, Qwen2.5, R19-9 assignments) | point [95 %] |
+|---|---|
+| 960 × 2 − 960 × 1 | −0.0105 [−0.0143, −0.0068] |
+| 960 × 2 − full | **−0.0040 [−0.0078, −0.0003]** |
+- (i) A second rating helps: **holds**.
+- (ii) Two ratings suffice within the margin: **holds**. The upper bound is −0.0003, so the point estimate *favours two ratings over seven*.
+**Caution.** This is implausible on its face, and the three blocks that have run a two-ratings arm all point this way: the earliest 960 × 2 (−0.0064, cross-batch), the shared-assignment 480 × 2 (−0.0040) and this one (−0.0040). The a2 arm ran about 6 h after the full arm, with the same code, hardware, settings and budget seeds.
+**Descriptive checks:**
+- the mean predicted SD is 0.94–0.96 in every arm, so sharpness does not explain it;
+- experts and crowd differ in location (mean rating 2.41 vs 2.81) and in within-group SD (0.60 vs 0.39);
+- the evaluator is a held-out expert, and every design has the same expected expert share, so the mixture alone does not explain a2 < full in expectation.
+**R20-5a (specified now, before running): batch reproducibility.** Rerun the full arm for seed 2003, folds 0–2, now, into results/lora_budget_r20_rerun/. If P_test matches R19-9 to within 1e−4 RPS per cell, batch effects are excluded and the result stands as observed. Otherwise the cross-batch comparison is reported as unreliable, and full and a2 are rerun in one batch before any claim.
