@@ -1606,3 +1606,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R20-6: 14 of 27 cells, 0 tracebacks; about 21:00 to finish.
 - check_consistency.py 11/11 OK (92 four-decimal numbers in the draft, 0 unmatched).
 - An NLI location-only baseline would need a nominal rater–item model, since M2 is ordered-probit. Not run; any such analysis is to be specified first.
+
+## 2026-11-06 19:32 — R20-7 submitted
+- R20-6 at 21 of 27 cells. The second GPU was idle.
+- R20-7 registered (descriptive), testing the expert/crowd mechanism. Arms: experts2 (2 non-evaluator experts, 1,920 ratings, the same budget as a2) and crowd5 (4,800 ratings), Qwen2.5, 3 seeds × 3 folds.
+- New option train_judge_v3 --train_cols (default off; existing arms unchanged; dry run OK). Jobs 13055–13057; 13055 running.
