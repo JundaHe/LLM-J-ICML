@@ -1675,3 +1675,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - New latex_v2/tab_own.tex, 22 rows: X_own, G_own/X_own and the net fraction, all with CLT intervals. SummEval appears as full-panel and non-dup. rows; the non-dup. rows read "X_own n.s.".
 - The Table 1 caption gains the duplication note. The Table 2 caption marks its intervals as percentile and points to Table 2b. §1 (ii) now cites Table 2b.
 - Read-off: DICES-350 at a = 40 has a net fraction of 15 % [3, 27], whose interval excludes 0, while its gross G_own/X_own is 1 %. Ordinal net upper bounds stay ≤ 29.4 %. The MNLI net lower bound at a = 4 is 26.8 %, so the "at least 32 %" in the draft is now scoped to a = 20.
+
+## 2026-11-07 00:39 — R22-T5: LoRA budget table rebuilt
+- tab_budget now leads with POPQUORN prospective (R20-4), then the SummEval prospective blocks and reruns (labelled expert dilution), then the shared-assignment blocks. The caption carries the batch rule and the dilution note.
+- The guidance is precise now: POPQUORN items-first is "not significantly better" (+0.0027 [−0.0024, +0.0074]); before, it said "not better".

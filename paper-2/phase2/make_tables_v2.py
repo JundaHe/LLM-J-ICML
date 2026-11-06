@@ -41,9 +41,12 @@ for k in sorted(D, key=lambda k: (k.startswith("chaosnli"), NAME[k])):
     t.append(f"{NAME[k]} & " + " & ".join(cells) + " \\\\")
 t += ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_decode.tex", "w").write("\n".join(t))
 # Table 3: LoRA fixed budget (SummEval + POPQUORN)
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\\% crossed bootstrap over optimizer seeds and test groups.}\\label{tab:budget}",
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\\% crossed bootstrap over optimizer seeds and test groups. Prospective blocks use independent rating assignments; contrasts are within one block only (LoRA training is not bit-reproducible). On SummEval the held-out evaluator is an expert and the crowd ratings are nearly uncorrelated with the experts, so its rows measure expert dilution rather than rating budget (\\S5).}\\label{tab:budget}",
      "\\begin{tabular}{llrrl}\\toprule panel & design (items $\\times$ ratings) & ratings & RPS & $-$ full data \\\\\\midrule"]
-for p, fn in (("SummEval (Qwen2.5, same batch, 3 seeds)", "lora_budget_v2/summary.json"), ("POPQUORN (Qwen2.5, same batch, 3 seeds)", "lora_budget_v2/summary_popquorn_off8.json"), ("SummEval (OLMo-2)", "lora_budget_olmo/summary.json")):
+for p, fn in (("POPQUORN, prospective (Qwen2.5, R20-4)", "lora_budget_r20_pq/summary_popquorn_off8.json"),   # ROUND22 R22-T5: prospective blocks first; SummEval = expert dilution (§5)
+              ("SummEval, prospective, expert dilution (Qwen2.5, R19-9)", "lora_budget_r19/summary.json"), ("SummEval, prospective, expert dilution (OLMo-2, R20-3)", "lora_budget_r20_olmo/summary.json"),
+              ("SummEval, single-batch rerun, expert dilution (Qwen2.5, R20-5b/c)", "lora_budget_r20_rerun/summary.json"), ("SummEval, single-batch rerun, expert dilution (OLMo-2, R20-6)", "lora_budget_r206_olmo/summary.json"),
+              ("SummEval, shared assignment (Qwen2.5)", "lora_budget_v2/summary.json"), ("POPQUORN, shared assignment (Qwen2.5)", "lora_budget_v2/summary_popquorn_off8.json"), ("SummEval, shared assignment (OLMo-2)", "lora_budget_olmo/summary.json")):
     S = json.load(open(f"{HERE}/results/{fn}"))
     for name, v in sorted(S.items(), key=lambda kv: (kv[1]["rating_budget"], -kv[1]["n_train"])):
         a = 7 if name.startswith("full") else int(re.match(r"a(\d+)", name).group(1)); des = f"{v['n_train']} $\\times$ {a}"

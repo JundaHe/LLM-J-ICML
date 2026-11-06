@@ -115,3 +115,11 @@ Not changed: the motivating example (l. 10, SummEval coherence). It is illustrat
 - **Table 2 caption.** Add: the percentile intervals are the round-20 bootstrap, and the cross-term-inclusive G/X is kept for comparison only. The SummEval rows include the duplicated annotations.
 - **Table 1 caption.** Add a sentence on the duplicated crowd annotations, pointing to the non-dup. rows.
 - **Table 6 (LoRA).** Rebuilt in a separate step (R22-T5), so that it leads with the prospective blocks.
+
+## R22-T5 (specified 2026-11-07 00:39, before editing): LoRA budget table leads with the prospective blocks
+tab_budget.tex (Table 6 in the draft) is rebuilt in this order:
+1. POPQUORN prospective (R20-4, lora_budget_r20_pq), the clean budget case.
+2. SummEval prospective, labelled "expert dilution, §5": Qwen2.5 R19-9 (lora_budget_r19), OLMo-2 R20-3 (lora_budget_r20_olmo), and the single-batch reruns R20-5b/c (lora_budget_r20_rerun) and R20-6 (lora_budget_r206_olmo).
+3. The earlier shared-assignment blocks (lora_budget_v2, lora_budget_olmo), labelled "shared assignment".
+
+No numbers change. The rows are read from the existing summary JSONs. The §5 paragraph order (N14) is left for the next draft pass.
