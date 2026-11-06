@@ -1647,3 +1647,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - tab_cards gains two SummEval (non-dup.) rows: ρ 0.10 [−0.13, 0.23] and 0.05 [−0.19, 0.25]. Support is "--".
 - §1 (i) gets one parenthetical. The 0.04–0.41 endpoints were re-checked and do not change (CSC/POPQUORN pol. 0.04, EmoBank 0.41).
 - check_consistency passes.
+
+## 2026-11-06 23:33 — ROUND22 provenance retry + R22-T2 text
+- Upstream check: GitHub issues report no duplication. Issue #41 confirms crowd position i is the same person only within a summary. The HF mirrors carry expert scores only. Still unverified.
+- R22-T2: §1 (v) gains the dilution sentence. §3 audit: the SummEval/POPQUORN null is the expected outcome, and ChaosNLI is the discriminating case. check_consistency 11/11.
