@@ -12,7 +12,7 @@ NAME = {"summeval_coherence8": "SummEval coh.", "summeval_relevance8": "SummEval
 sup = {}
 for f in glob.glob(f"{HERE}/results/finite_rater/*_loo.json"):
     r = json.load(open(f)); row = r["rows"][-1]; sup[r["panel"]] = row.get("A2", {}).get("changed_fraction")
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\\rho=X/M$: split-half new-rater forecasting reliability of the shape beyond mode and mean at $a$ raters, 95\\% item-cluster interval. $\\rho_{\\rm own}=X_{\\rm own}/M$ (dense panels, $a=40$ vs 20 raters): agreement of the two panels' shapes, each beyond its own mode and mean (\\S2.1); on small panels the held-out panel is one rating and $X_{\\rm own}\\equiv0$. $A1^x=M-2X$: score change of the raw histogram over the exact comparator when forecasting a held-out rating (negative = raw histogram better). The raw histogram forecasts a new rater better than its own mode and mean only if $\\rho>\\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SE = software engineering.}\\label{tab:cards}",
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Disagreement reliability cards (exact mode-and-mean comparator). $\\rho=X/M$: split-half new-rater forecasting reliability of the shape beyond mode and mean at $a$ raters, 95\\% item-cluster interval. $\\rho_{\\rm own}=X_{\\rm own}/M$ (dense panels, $a=40$ vs 20 raters): agreement of the two panels' shapes, each beyond its own mode and mean (\\S2.1); on small panels the held-out panel is one rating and $X_{\\rm own}\\equiv0$. $A1^x=M-2X$: score change of the raw histogram over the exact comparator when forecasting a held-out rating (negative = raw histogram better). The raw histogram forecasts a new rater better than its own mode and mean only if $\\rho>\\tfrac12$ ($A1^x<0$). Support: share of items whose histogram can be changed at all with mode and mean fixed. Three-rater panels: the mode-and-mean cell determines the histogram (support 0). SummEval: on 807 of the 1,600 released items the five crowd annotations are identical on all four dimensions; the non-dup.\\ rows use the other 793 items (\\S1). SE = software engineering.}\\label{tab:cards}",
      "\\begin{tabular}{lrrllrr}\\toprule panel & raters & $a$ & $\\rho$ [95\\% CI] & $\\rho_{\\rm own}$ [95\\% CI] & $A1^x$ & support \\\\\\midrule"]
 order = []
 for f in glob.glob(f"{HERE}/results/rho_exact/*.json"):
@@ -34,7 +34,7 @@ FAM = {"": "Qwen2.5-7B", "_qwen3": "Qwen3-8B", "_olmo": "OLMo-2-7B"}; D = {}
 for f in glob.glob(f"{HERE}/results/decoding_v2/*_d64_E_last*.json"):   # v2 = fixed cluster bootstrap (DECODING_PROTOCOL Amendment 3); results/decoding/ is superseded
     m_ = re.match(r"(.+)_d64_E_last(_qwen3|_olmo)?\.json$", os.path.basename(f))
     if m_ and m_.group(1) in NAME: r = json.load(open(f)); D.setdefault(m_.group(1), {})[m_.group(2) or ""] = (r["est"]["G_over_X"], r["ci95"]["G_over_X"], r["est"]["pos_ctrl"], r["ci95"]["X"][0] > 0)
-t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Decodability of the residual beyond exact mode and mean from frozen representations of three model families: decoded proper-score gain on an independent rater panel as a percentage of the panel's reproducible shape, $100\\,G/X$ (95\\% item-cluster bootstrap); positive control in parentheses (Spearman of the decoded vs held-out mean; point estimate). ``$X$ n.s.'': the reproducible shape itself has an interval covering 0, so no ratio is reported.}\\label{tab:decode}",
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Decodability of the residual beyond exact mode and mean from frozen representations of three model families: decoded proper-score gain on an independent rater panel as a percentage of the panel's reproducible shape, $100\\,G/X$ (95\\% item-cluster bootstrap); positive control in parentheses (Spearman of the decoded vs held-out mean; point estimate). ``$X$ n.s.'': the reproducible shape itself has an interval covering 0, so no ratio is reported. Percentile intervals and the cross-term-inclusive $G/X$ are kept for comparison; the own-shape fractions with CLT intervals are in Table~\\ref{tab:own}. SummEval rows include the duplicated crowd annotations.}\\label{tab:decode}",
      "\\begin{tabular}{l" + "l" * len(FAM) + "}\\toprule panel & " + " & ".join(FAM.values()) + " \\\\\\midrule"]
 for k in sorted(D, key=lambda k: (k.startswith("chaosnli"), NAME[k])):
     cells = [((f"{100*D[k][fm][0]:+.1f} [{100*D[k][fm][1][0]:+.1f}, {100*D[k][fm][1][1]:+.1f}] ({D[k][fm][2]:.2f})" if D[k][fm][3] else f"$X$ n.s. ({D[k][fm][2]:.2f})") if fm in D[k] else "--") for fm in FAM]   # no ratio when the denominator X has an interval covering 0 (DECODING_PROTOCOL forbidden statements)
@@ -67,3 +67,19 @@ for d in sorted(glob.glob(f"{HERE}/results/budget_heads/*")):
     cells = ", ".join((f"\\textbf{{{int(x.n)}$\\times${int(x.a)}: {x.v:.3f}}}" if i == best else f"{int(x.n)}$\\times${int(x.a)}: {x.v:.3f}") for i, x in g.iterrows())
     rows5.append((k.startswith("chaosnli"), NAME[k], f"{NAME[k]} & {int(g.n.iloc[0] * g.a.iloc[0])} & {cells} \\\\"))
 t += [x[2] for x in sorted(rows5)] + ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_heads.tex", "w").write("\n".join(t)); print("tab_heads:", len(rows5), "panels")
+
+# Table 2b (ROUND22 R22-T4): own-shape decoding G_own/X_own with item-cluster CLT intervals (results/decode_decomp, R21/R22 runs; plants excluded)
+FAMD = {"": "Qwen2.5", "_qwen3": "Qwen3", "_olmo": "OLMo-2"}
+NAME.update({"summeval_coherence8": "SummEval coh.\\ (full panel)", "summeval_relevance8": "SummEval rel.\\ (full panel)", "dices": "DICES-350"})
+def ci(c, k, sc=1, d=1): e = c[k]; return f"{sc*e['est']:+.{d}f} [{sc*e['ci95'][0]:+.{d}f}, {sc*e['ci95'][1]:+.{d}f}]".replace("-", "$-$").replace("+", "$+$")
+rows = []
+for f in glob.glob(f"{HERE}/results/decode_decomp/*_r2[12].json"):
+    if "plant" in f: continue
+    r = json.load(open(f)); c = r["clt"]; fam = re.search(r"(_qwen3|_olmo)?_r2[12]$", r["tag"]).group(1) or ""
+    if r["panel"] not in NAME: continue
+    xo = c["X_own"]; sig = xo["ci95"][0] > 0
+    rat = (ci(c, "G_own/X_own", 100), ci(c, "G_own_net/X_own", 100)) if sig else ("$X_{\\rm own}$ n.s.", "--")
+    rows.append((r["panel"].startswith("chaosnli"), NAME[r["panel"]], r["a"], fam, f"{NAME[r['panel']]} & {r['a']}/{r['b']} & {FAMD[fam]} & {ci(c, 'X_own', 1e4, 2)} & {rat[0]} & {rat[1]} \\\\"))
+t = ["\\begin{table}[t]\\centering\\footnotesize", "\\caption{Own-shape decoding: the cross-fitted decoder's gain against panel 2's residual from its own mode and mean, as a percentage of the reproducible own-shape, $100\\,G_{\\rm own}/X_{\\rm own}$, and net of the within-cell permutation (decoder variance penalty); $X_{\\rm own}$ in units of $10^{-4}$. Item-cluster CLT 95\\% intervals (\\S2.2). $a/b$: raters in panel 1 / panel 2. No ratio where $X_{\\rm own}$'s interval covers 0. SummEval full-panel rows include the duplicated crowd annotations; non-dup.\\ rows exclude them (\\S1). HelpSteer2 and EmoBank ($b=2$) cannot measure the own-shape.}\\label{tab:own}",
+     "\\begin{tabular}{lrllll}\\toprule panel & $a/b$ & features & $X_{\\rm own}$ & $G_{\\rm own}/X_{\\rm own}$ (\\%) & net (\\%) \\\\\\midrule"]
+t += [x[4] for x in sorted(rows)] + ["\\bottomrule\\end{tabular}\\end{table}"]; open(f"{L}/tab_own.tex", "w").write("\n".join(t)); print("tab_own:", len(rows), "rows")

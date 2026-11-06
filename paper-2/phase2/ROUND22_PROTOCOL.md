@@ -106,3 +106,12 @@ Text and tables only. All numbers come from existing result files.
 All 22 replacements are applied, covering items 1–9; item 10 is deferred to R22-T4. check_consistency: 11/11 OK, 0 unmatched. The abstract is 379 words.
 Correction found while editing: §5 said experts2 was "0.040 better than full" on expert 1. compare.md gives −0.0415 against a7 (−0.0395 against a2). Changed to 0.042.
 Not changed: the motivating example (l. 10, SummEval coherence). It is illustrative, not evidence. It will be replaced in the next draft pass.
+
+## R22-T4 (specified 2026-11-07 00:38, before editing): tables
+- **New table, tab_own.tex.** The own-shape decoding table, built by make_tables_v2.py from results/decode_decomp/*_r21.json and *_r22.json (plant files excluded). Each row has: panel, a/b, feature family, X_own [CLT 95 %], G_own/X_own [CLT 95 %], and the net fraction (G_own − G_own,perm)/X_own [CLT 95 %].
+  - A ratio is shown only when X_own's interval excludes 0; otherwise the row reads "X_own n.s.". This is the same forbidden-statement rule as Table 2.
+  - SummEval rows are labelled "full panel" and "non-dup."
+  - This table, not Table 2, carries the §1 (ii) headline.
+- **Table 2 caption.** Add: the percentile intervals are the round-20 bootstrap, and the cross-term-inclusive G/X is kept for comparison only. The SummEval rows include the duplicated annotations.
+- **Table 1 caption.** Add a sentence on the duplicated crowd annotations, pointing to the non-dup. rows.
+- **Table 6 (LoRA).** Rebuilt in a separate step (R22-T5), so that it leads with the prospective blocks.
