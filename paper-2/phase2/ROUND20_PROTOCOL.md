@@ -212,3 +212,22 @@ R20-5a addendum (13:35, before running): the a2 arm for seed 2003 is also rerun 
 - Reading (i), 960 × 2 vs 960 × 1, cannot be read from a single batch yet, because the a1 arm was not rerun.
 
 **R20-5c (specified now, before running): a1 arm in the same batch.** Rerun 960 × 1 (budget seeds as in R19-9) for seeds 2003–2005, folds 0–2, into results/lora_budget_r20_rerun/. Run analysis_budget_lora.py --root lora_budget_r20_rerun --seeds 2003,2004,2005 --ref a1_F1.0. Reading (i) as frozen in R20-5: a second rating helps if the 95 % upper bound of a2 − a1 is < 0. Reported per fold as well.
+
+### R20-5c results (2026-11-06 16:58; single batch, 27 cells: full, a1 and a2 × seeds 2003–2005 × folds 0–2)
+| contrast (same batch) | point [95 %] |
+|---|---|
+| 960 × 1 − full | +0.0064 [+0.0045, +0.0086] (R19-9 cross-batch: +0.0064 [+0.0045, +0.0085]) |
+| 960 × 2 − 960 × 1 | **−0.0098 [−0.0132, −0.0066]** |
+| 960 × 2 − full | −0.0034 [−0.0066, −0.0004] |
+- (i) A second rating helps: **holds**.
+- (ii) Two ratings suffice within the margin: **holds** (see R20-5b).
+- Per fold:
+
+  | contrast | f0 | f1 | f2 |
+  |---|---|---|---|
+  | a1 − full | −0.0013 | +0.0070 | +0.0135 |
+  | a2 − full | +0.0019 | −0.0020 | −0.0099 |
+  | a2 − a1 (by subtraction) | +0.0032 | −0.0090 | −0.0234 |
+
+- Evaluator expert 0 (mean 2.81, equal to the crowd mean) sees no budget effect. Experts 1 and 2 see a single-rating penalty that a second rating more than removes.
+- Final R20-5 statement, as reported: on SummEval/Qwen2.5 a second rating helps, and two ratings are not worse than seven. Both are carried by the two experts whose location differs from the crowd's. The cross-batch R20-5 values (−0.0105, −0.0040) agree with the single-batch values to within 0.0007.

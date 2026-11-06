@@ -1586,3 +1586,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 15:46 — R20-5b done, R20-5c submitted
 - R20-5b (single batch, 9+9 cells): a2 − full = −0.0034 [−0.0066, −0.0004]. Frozen reading (ii) holds. Per fold: f0 +0.0019, f1 −0.0020, f2 −0.0099 (seed range 0.0009). Two ratings beating seven is an expert-2 evaluator effect, not a batch artefact.
 - R20-5c registered: the a1 arm is rerun in the same batch to read (i). Jobs 12848–12850.
+
+## 2026-11-06 16:58 — R20-5c done; R20-5 closed
+- Single batch, 27 cells: a1 − full +0.0064 [+0.0045, +0.0086]; a2 − a1 −0.0098 [−0.0132, −0.0066]; a2 − full −0.0034 [−0.0066, −0.0004]. Frozen readings (i) and (ii) both hold.
+- Per fold, a2 − a1 is +0.003 / −0.009 / −0.023. The budget effects are carried by experts 1 and 2; expert 0, whose mean equals the crowd's, shows none.
+- Draft §5: the R20-5 hold sentence is replaced by the single-batch result with its evaluator-specific breakdown.
