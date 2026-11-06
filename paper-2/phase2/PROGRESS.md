@@ -1521,3 +1521,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - HS2 and EmoBank have ΔGP > 0 with X_own ≈ 0, so ΔGP contains the cross part. ΔGP/X_own is relabelled as a valid-forecast gain on the X_own scale; contrast (iii) uses G_own/X_own only.
 - POPQUORN plants: γ0 0/5, ΔGP null 5/5. γ0.3 1 draw so far, not detected on G_own.
 - R20-3 OLMo: 16/27 runs, 0 tracebacks.
+- 08:45 Draft: ΔGP described as containing the cross part; HS2 marked unmeasurable (b = 2).
