@@ -1549,3 +1549,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R20-5 (SummEval 960×2): 4/9 runs.
 - 12:45 Draft: planted-control text uses the final R20-2 readings (amendments disclosed).
 - 12:55 Codex round 21 launched (prompt: reviews/codex_round21_prompt_2026-11-06.md; draft v2.4 + ROUND20 + R19-9 section). Draft counts fixed (γ0.3 4/5; POPQUORN γ0.6 two draws).
+- 13:00 Codex is unavailable (usage limit until 2026-11-11 21:45). Round 21 is run instead as an independent Claude-subagent adversarial review on the same prompt; it will be saved as reviews/claude_round21_2026-11-06.md and labelled as such.
