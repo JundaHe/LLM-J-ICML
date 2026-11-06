@@ -276,3 +276,22 @@ No frozen gate. Reported as observed.
 
   The evaluator pattern replicates. The advantage of two ratings over seven again comes from fold 2 (expert 2).
 - The Qwen2.5 result (R20-5c) replicates on the second base.
+
+### R20-7 results (2026-11-06 22:31; 18/18 cells, 0 tracebacks; results/lora_budget_r207/compare.{json,md}; cross-batch against R20-5c)
+| arm − reference | f0 | f1 | f2 | mean |
+|---|---|---|---|---|
+| experts2 − a2 | −0.0043 [−0.0117, +0.0051] | **−0.0395** [−0.0442, −0.0330] | **+0.0105** [+0.0043, +0.0176] | −0.0111 |
+| experts2 − full | −0.0024 | −0.0415 | +0.0006 | −0.0144 |
+| crowd5 − full | +0.0232 | +0.0248 | +0.0135 | +0.0205 |
+
+Seed ranges are in brackets for experts2 − a2.
+- **The stated expectation fails in part:**
+  - experts2 beats a2 on fold 1 (by 0.04, about 30 × the batch noise), is mixed on fold 0, and is *worse* on fold 2;
+  - crowd5 is worse than full on every fold (+0.013 to +0.025), not mainly on folds 1–2.
+- **What the data show (descriptive):**
+  - Crowd targets alone carry essentially no signal about any expert. Judges trained on them predict an almost constant mean (SD 0.03–0.08 against 0.13–0.31 for a2 and full), consistent with the expert–crowd r ≈ 0.04 (ROUND22).
+  - The value of the training data is the expert ratings it contains.
+  - Which experts help depends on the evaluator:
+    - for expert 1, the other two experts are the best possible target;
+    - for expert 2 (the lowest-rating expert), experts 0 and 1 alone are worse than a random two positions.
+- **Interpretation for §5.** The SummEval "budget" contrasts compare different dilutions of two to three expert ratings with five crowd ratings that are nearly uninformative about experts. They are not contrasts between more and fewer ratings of one population. The SummEval budget results are therefore not evidence about rating budgets in general. The POPQUORN blocks, with homogeneous positions, carry that question.

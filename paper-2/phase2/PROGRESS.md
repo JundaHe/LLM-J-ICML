@@ -1633,3 +1633,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 21:38 — R22-2 done
 - SummEval ρ on nodup items: coherence 0.35 → 0.10 [−0.13, 0.23]; relevance 0.40 → 0.05 [−0.19, 0.25]. The duplicates inflated reliability. Draft §1 caveat extended.
 - The two rho_own tracebacks are expected (dense panels only).
+
+## 2026-11-06 22:31 — R20-7 done
+- crowd5 − full is +0.020 (every fold). experts2 − a2 is −0.040 on f1 but +0.011 on f2. The registered expectation is partly supported, with the failures as listed in the protocol.
+- SummEval budget contrasts are now read as expert-dilution contrasts. §5 to be rewritten.
