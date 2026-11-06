@@ -1629,3 +1629,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Frozen reading: coherence stays in the contrast and relevance is removed. Substantively, SummEval's reproducible shape came from the duplicates.
 - Draft: abstract decoding sentence rewritten (DICES-350 is now the ordinal example; the SummEval plant sentence is dropped from the abstract), and a SummEval caveat paragraph added to §1(ii).
 - Still to restructure: §2.2 plant and calibration text, the SummEval reliability card (ρ/ρ_own on nodup, to be specified), and the §5 budget description (expert dilution).
+
+## 2026-11-06 21:38 — R22-2 done
+- SummEval ρ on nodup items: coherence 0.35 → 0.10 [−0.13, 0.23]; relevance 0.40 → 0.05 [−0.19, 0.25]. The duplicates inflated reliability. Draft §1 caveat extended.
+- The two rho_own tracebacks are expected (dense panels only).

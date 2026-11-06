@@ -49,3 +49,13 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - **Reported.** ρ, ρ_own and A1^x next to the full-panel values, at every a computed.
 - **Descriptive, no gate.** The card shows both versions. The text uses nodup values for any claim about reproducibility of SummEval's shape.
 - **Also (descriptive).** The expert-only split-half on SummEval is impossible (3 raters, so b = 1 or 2 and X_own ≡ 0 or unmeasurable). This is stated as such.
+
+### R22-2 results (2026-11-06 21:38; results/rho_exact/summeval_*8_nodup.json; a = 7, leave-one-out)
+| panel | full: ρ [95 %] | nodup: ρ [95 %] | full A1^x | nodup A1^x |
+|---|---|---|---|---|
+| coherence | 0.35 [0.24, 0.48] | **0.10 [−0.13, 0.23]** | +0.0016 | +0.0032 |
+| relevance | 0.40 [0.30, 0.54] | **0.05 [−0.19, 0.25]** | +0.0008 | +0.0031 |
+- On non-duplicated items, the forecasting reliability of SummEval's shape is indistinguishable from 0. A1^x > 0 with an interval excluding 0 means the raw histogram forecasts a held-out rating worse than its exact mode and mean, now clearly so.
+- The duplicates inflated ρ by about 0.25–0.35.
+- rho_own.py is for dense panels only (assert m > 12). SummEval's X_own comes from R22-1, so the two tracebacks are expected and are not bugs.
+- **Card.** SummEval is reported with both versions. Claims use nodup. The draft range "0.04–0.41 on eight panels" is unchanged in its endpoints (0.04 is not SummEval; the 0.41 endpoint is to be re-checked against the table in R22-T).
