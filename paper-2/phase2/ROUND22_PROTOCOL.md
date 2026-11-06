@@ -69,3 +69,9 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - Table 1 (make_tables_v2.py) gains the rows "SummEval coh./rel. (non-dup.)", from results/rho_exact/summeval_*8_nodup.json (R22-2). The full-panel rows stay. Support is "--", because no donor-replacement run exists for nodup.
 - In §1 (i), the range "0.04–0.41 … (intervals include 0 on four)" is re-checked. The minimum is CSC 0.038 / POPQUORN pol. 0.037 and the maximum is EmoBank 0.412. The nodup values (0.10, 0.05) fall inside the range, so the endpoints do not change. One parenthetical is added: on SummEval's non-duplicated items, ρ is 0.10 / 0.05 and both intervals include 0. The count "four" refers to the eight released panels and stays.
 - No new computation.
+
+### Provenance check, second attempt (23:33)
+- GitHub Yale-LILY/SummEval issues: no issue mentions duplicated or identical crowd annotations (searched "duplicate", "identical", "turker", "crowd").
+- Issue #41 ("Identifying individual annotators", closed): the first author answered that, *within a summary*, position i is the same person across the four dimensions. They did not say whether position i is the same person across summaries. This supports the treatment of the crowd columns as positions (§2.1 Population). It does not explain the duplication: five different workers giving identical four-dimension annotations on 50 % of the items would be a strong coincidence.
+- HF mirrors: davidanugraha/SummEval (1,700 rows) and mteb/summeval carry only expert scores, not the turker lists, so they cannot verify the duplication. The remaining parquet mirrors were not read, because no parquet engine is installed in the venv.
+- Status: still **unverified upstream**. The draft keeps "undocumented". The nodup sensitivity (R22-1/R22-2) is the remedy in either case.
