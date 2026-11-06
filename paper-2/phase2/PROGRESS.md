@@ -1591,3 +1591,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Single batch, 27 cells: a1 − full +0.0064 [+0.0045, +0.0086]; a2 − a1 −0.0098 [−0.0132, −0.0066]; a2 − full −0.0034 [−0.0066, −0.0004]. Frozen readings (i) and (ii) both hold.
 - Per fold, a2 − a1 is +0.003 / −0.009 / −0.023. The budget effects are carried by experts 1 and 2; expert 0, whose mean equals the crowd's, shows none.
 - Draft §5: the R20-5 hold sentence is replaced by the single-batch result with its evaluator-specific breakdown.
+
+## 2026-11-06 16:59 — R20-6 submitted
+- Guidance updated: a second rating recovers all of the single-rating penalty on SummEval/Qwen2.5 (evaluator-dependent) and about half on POPQUORN. Two ratings is the safer default.
+- R20-6 registered and submitted (jobs 12851–12853): an OLMo-2 single batch with full, a1 and a2, 27 cells, about 3.5 h.
