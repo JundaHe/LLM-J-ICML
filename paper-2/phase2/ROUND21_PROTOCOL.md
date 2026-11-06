@@ -125,3 +125,18 @@ R21-4's γ 0.6 plant on dorn_java has X_own about 8 times the observed 0.00027, 
   - 4–5 of 5 detected: the dorn_java estimate (G_own/X_own 0.003 [−0.15, 0.15]) is informative at its own magnitude.
   - Fewer than 4 of 5: it is not, and is reported as such.
 - **Location-only baseline (descriptive).** Over the five γ0 draws, report the mean X_own and V_own as fractions of dorn_java's observed X_own (0.00027) and V_own (4.5e−5). The draft's location-driven caveat for Dorn is then quantified from these fractions.
+
+### R21-7 results (2026-11-06 17:45; 25 runs, 0 tracebacks)
+| γ | mean X_own (range) | detected / 5 | G_own/X_own range | mean V_own |
+|---|---|---|---|---|
+| 0 | 0.00009 (0.00004–0.00015) | 0 | 0.04–0.75 | 4.3e−5 |
+| **0.1** | **0.00030** (0.00024–0.00036) | **1** | 0.07–0.20 | 8.7e−5 |
+| 0.2 | 0.00072 | 4 | 0.13–0.41 | 2.9e−4 |
+| 0.3 | 0.00116 | 5 | 0.19–0.51 | 6.1e−4 |
+| 0.4 | 0.00160 | 5 | 0.16–0.51 | 8.3e−4 |
+- **Reference γ = 0.1** (mean X_own 0.00030 ≥ 0.00027). It is detected in 1 of 5, so **the dorn_java estimate is not informative at its own magnitude** (frozen reading). Detection reaches 4 of 5 only at about 2.7 × the observed X_own (γ 0.2).
+- **Location-only baseline (γ 0).** Mean V_own is 4.3e−5, about 95 % of dorn_java's observed 4.5e−5. Mean X_own is 0.00009, about a third of the observed 0.00027.
+- Reading for the paper:
+  - On Dorn at a = 20, the decodable signal is of the size that location and rater thresholds alone produce. A text-predictable shape beyond location of the observed size would usually go undetected.
+  - Dorn's 10 % (dorn_all, X_own 0.00027, the same magnitude) is therefore neither evidence of decodable shape beyond location nor of its absence.
+  - The ordinal–NLI contrast is unaffected in direction, since 10 % is used only as an upper bound.

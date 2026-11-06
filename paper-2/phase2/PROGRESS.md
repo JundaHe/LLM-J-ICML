@@ -1595,3 +1595,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 16:59 — R20-6 submitted
 - Guidance updated: a second rating recovers all of the single-rating penalty on SummEval/Qwen2.5 (evaluator-dependent) and about half on POPQUORN. Two ratings is the safer default.
 - R20-6 registered and submitted (jobs 12851–12853): an OLMo-2 single batch with full, a1 and a2, 27 cells, about 3.5 h.
+
+## 2026-11-06 17:45 — R21-7 done
+- On the Dorn Java X_own-matched plant (γ 0.1), only 1 of 5 draws is detected, so the estimate is not informative at its own magnitude (frozen reading).
+- In the location-only simulation, V_own reaches 95 % of the observed value.
+- Draft §1 Dorn caveat quantified: 10 % is used only as an upper bound.
+- R20-6 (OLMo) running: 2 jobs active, 1 pending.
