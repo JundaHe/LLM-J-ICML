@@ -1522,3 +1522,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - POPQUORN plants: γ0 0/5, ΔGP null 5/5. γ0.3 1 draw so far, not detected on G_own.
 - R20-3 OLMo: 16/27 runs, 0 tracebacks.
 - 08:45 Draft: ΔGP described as containing the cross part; HS2 marked unmeasurable (b = 2).
+
+## 2026-11-06 09:45 R20-2 POPQUORN readings; R20-4 registered
+- POPQUORN γ0.3 (the reference γ): 0/4 detected, so the null is uninformative (as frozen). Defect recorded: γ0.3 has 4 draws, not 5.
+- R20-3 OLMo: seeds 2003 and 2004 done, 2005 at 5/9. One GPU was idle, so R20-4 (POPQUORN prospective LoRA block, independent assignments) was registered and 3 GPU jobs submitted.

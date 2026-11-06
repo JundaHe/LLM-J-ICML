@@ -107,3 +107,21 @@ The draft states the frozen outcome first, then the X_own reading labelled post 
 **HS2 (a = 3, b = 2):** X_own = 0 exactly in the point estimate and in all 200 resamples. Two ratings are determined by their exact (mode, mean) cell (z_label tie rule), so s2 ≡ 0. HS2's own-shape is therefore *structurally unmeasurable* at b = 2, not "not detected". G_own = −‖r̂‖²/n = −4.6e−6 is the decoder's variance penalty. Under (ii), HS2 is reported as unmeasurable.
 **ΔGP is not an own-shape quantity (post hoc).** HS2 has ΔGP = +1.5e−5 [+1.2e−5, +3.1e−5], and EmoBank has +7.5e−6 [+1.7e−6, +1.5e−5], both with X_own ≈ 0. The projected-forecast gain is scored against h2 itself, so it includes the cross part: panel 2's within-cell location shift predicted from text. ΔGP/X_own is therefore a valid-forecast gain on the X_own scale, not a fraction of the own-shape, and can exceed 1. The draft labels it that way. The ordinal–NLI contrast (iii) rests on G_own/X_own alone.
 **R20-2 POPQUORN (interim).** γ0: 0 of 5 detected, ΔGP covers 0 in 5 of 5. Observed X = 0.00036, so the rule's reference is γ0.3 (planted X 0.00073). So far 1 draw, not detected on G_own (lower bound −1.1e−5), ΔGP > 0.
+
+### R20-2 POPQUORN readings (2026-11-06 09:40)
+| γ | draws | detected | planted X | G_own/X_own |
+|---|---|---|---|---|
+| 0 | 5 | 0 of 5 (ΔGP covers 0 in 5 of 5) | 0.00010–0.00030 | — |
+| 0.3 | 4 (s1–s4) | **0 of 4** | 0.00037–0.00074 | −0.02 to 0.30 |
+| 0.6 | 2 so far | 2 of 2 | 0.00148–0.00190 | 0.25–0.36 |
+Observed X = 0.00036. The reference γ under the rule is 0.3, and it is detected 0 of 4, so **the POPQUORN null is uninformative** (as frozen).
+*Protocol defect (recorded):* R20-2 specified seeds 1–4, plus the R20-1 s0 draws, which exist only at γ 0 and 0.6. γ 0.3 therefore has 4 draws, and "≥ 4 of 5" is read as "≥ 4 of the available draws". This changes nothing here (0 of 4; SummEval 3 of 4 at γ 0.3, where γ 0.3 is not the reference).
+
+## R20-4 POPQUORN prospective LoRA block with independent assignments (specified 2026-11-06 09:40, before any run)
+**Why.** R19-9 showed that SummEval's shared-assignment block understated the single-rating penalty. POPQUORN's three budget readings (SHRINKAGE Amendment 7) also come from a block whose seeds share one assignment per fold.
+**Design.** As Amendment 7 (popquorn_off8, Qwen2.5-7B-Instruct, Chen objective, 2 epochs / 205 steps, folds 0–2, split 0). Designs: full, 819 × 1, 819 × 2, 117 × 7. Seeds 2003–2005, `--budget_seed 7000 + 100·(seed − 2003) + fold`. Output: results/lora_budget_r20_pq/popquorn_off8/.
+**Readings (fixed now).** Crossed bootstrap B = 2000 (`analysis_budget_lora.py --panel popquorn_off8 --root lora_budget_r20_pq --seeds 2003,2004,2005`, plus `--ref a1_F1.0`):
+(i) a single rating is worse: 819 × 1 − full has a 95 % lower bound > 0;
+(ii) a second rating helps: 819 × 2 − 819 × 1 has a 95 % upper bound < 0;
+(iii) items first: 117 × 7 − 819 × 1 has a 95 % lower bound > 0.
+Each reading is reported as it comes out. Where it differs from Amendment 7, the prospective block is the one the draft states, and the shared-assignment block is described as such.
