@@ -149,3 +149,12 @@ The SummEval and POPQUORN plant counts in the draft (R20-2/R20-2a) use the perce
   - Two sequential CPU jobs.
 - **Reported.** Detections per γ under the CLT rule (lower bound of G_own > 0) next to the percentile counts. The point estimates (X_own, G_own/X_own) must match the earlier runs exactly; this is the pipeline check.
 - **Frozen reading.** The CLT counts replace the percentile counts in the draft, whichever way they go. The reference-γ rule is unchanged (X_own scale; SummEval's full-panel reference is moot under ROUND22 and is reported for completeness).
+
+## R22-T6 (specified 2026-11-07 01:32, before editing): §5 order (round-21 N14)
+The sentences of the §5 LoRA-budget paragraph are reordered, with no new numbers:
+1. POPQUORN, the clean budget case: the same-batch block, the prospective block R20-4, and "two ratings still cost".
+2. The SummEval reading note.
+3. The SummEval blocks, as before.
+4. The cross-block summary, OLMo shared-assignment, evaluator dependence, and the batch and literature notes.
+
+Only two wordings change: "re-run in the same way" becomes an explicit description, and "below" in the reading note points to the SummEval blocks that now follow it.

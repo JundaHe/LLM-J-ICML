@@ -1689,3 +1689,6 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-07 01:32 — abstract compressed; R22-4 running
 - The abstract goes from 400 to 354 words. The ordinal decoding sentence now leads with DICES-350 as the power-calibrated case, and the generic "at most 16 %" is dropped from the abstract; it stays in §1. The motivating example changes from summary coherence to code readability.
 - R22-4 (jobs 13289/13290, CPU) is running.
+
+## 2026-11-07 01:32 — R22-T6: §5 reordered (POPQUORN first)
+- The §5 LoRA paragraph now opens with POPQUORN (same-batch block, prospective R20-4, the cost of two ratings). The SummEval reading note and the SummEval blocks follow. No numbers changed; check_consistency 11/11. Round-21 N14 is closed.
