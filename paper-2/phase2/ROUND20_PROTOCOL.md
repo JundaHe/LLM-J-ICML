@@ -138,3 +138,23 @@ Draft consequence: "one rating per item is worse than the full data by about 0.0
 
 ### R20-2b Completing the γ 0.3 draws (2026-11-06 10:55, amendment after R20-2 results)
 Run s0 at γ 0.3 on SummEval coherence and POPQUORN, so that every γ has the five draws R20-2 intended. The rule is unchanged. The outcome cannot reverse POPQUORN (0 of 4 already), and on SummEval γ 0.3 is not the reference γ, so this completes the record without changing any reading.
+
+### R20-4 results (2026-11-06 11:40; 36/36; results/lora_budget_r20_pq/summary*.json)
+| contrast (POPQUORN, Qwen2.5) | prospective [95 %] | Amendment 7 (shared assignment) |
+|---|---|---|
+| 819 × 1 − full | +0.0063 [+0.0030, +0.0099] | +0.0087 [+0.0054, +0.0122] |
+| 819 × 2 − 819 × 1 | −0.0031 [−0.0062, −0.0002] | −0.0054 [−0.0084, −0.0027] |
+| 117 × 7 − 819 × 1 | +0.0027 [−0.0024, +0.0074] | +0.0022 [−0.0029, +0.0072] |
+(i) **Holds.** (ii) **Holds**: a second rating recovers 49 % of the single-rating gap (62 % before). (iii) **Does not hold.** All three readings agree with Amendment 7.
+Across the three prospective blocks, the single-rating penalty is +0.0063 to +0.0066 RPS (SummEval Qwen2.5 and OLMo-2, POPQUORN Qwen2.5). Items-first at matched budget holds in one of three (SummEval Qwen2.5).
+
+### R20-2a reading (γ 0.8, SummEval; 2026-11-06 11:40)
+Detected in 5 of 5 draws (G_own lower bound 0.00008–0.00022, G_own/X_own 0.33–0.50). The planted X is 0.00176–0.00222, with mean 0.001976 against the observed 0.001984 (0.4 % short; 2 of 5 draws above). Strictly, the mean does not reach the observed X, so the rule is applied once more with γ 1.0 (R20-2c, below). The draft states "met in substance at γ 0.8" only together with this detail.
+
+### R20-2c γ 1.0 (amendment, 2026-11-06 11:40)
+SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule on the grid {0.3, 0.6, 0.8, 1.0}, reference = the smallest γ whose mean planted X ≥ the observed X. No further γ will be added. If γ 1.0 also falls short, the rule is reported as not met.
+
+## R20-5 SummEval prospective 960 × 2 (specified 2026-11-06 11:40, before any run)
+**Why.** The guidance's "a second rating is worth nothing on SummEval" rests on shared-assignment blocks. The prospective blocks show a single-rating penalty of 0.006.
+**Design.** As R19-9 (Qwen2.5, the same seeds 2003–2005 and budget seeds 6000 + 100·(seed − 2003) + fold, folds 0–2), design 960 × 2 (`--train_pos 2 --train_frac 1.0`). Output goes into results/lora_budget_r19/summeval_coherence8/a2_F1.0/, so the full and 960 × 1 cells of R19-9 serve as references.
+**Readings (fixed now).** (i) A second rating helps: 960 × 2 − 960 × 1 has a 95 % upper bound < 0. (ii) Two ratings suffice within the margin: 960 × 2 − full has a 95 % upper bound < 0.005. Both are reported as they come out.

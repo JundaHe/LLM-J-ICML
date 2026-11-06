@@ -1534,3 +1534,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - R20-4 POPQUORN: 12/36 runs. R20-2a γ0.8: 3/5.
 - 10:50 Draft: abstract, §1(v) and §5 revised for R20-3 (penalty on both bases; items-first Qwen-only). The old OLMo block is described as shared-assignment.
 - 10:55 R20-2b: γ0.3 s0 draws submitted on both panels (completing 5 draws). CPUs are now full.
+
+## 2026-11-06 11:45 R20-4 complete; R20-2a read; R20-2c and R20-5 submitted
+- POPQUORN prospective: (i) single rating worse, +0.0063 [+0.0030, +0.0099]; (ii) a second rating helps, −0.0031 [−0.0062, −0.0002]; (iii) items-first not supported, +0.0027 [−0.0024, +0.0074]. All three agree with Amendment 7.
+- Single-rating penalty across 3 prospective blocks: +0.0063 to +0.0066.
+- γ0.8 plant: 5/5 detected. Its mean planted X is 0.4 % below the observed X, so the γ1.0 plant (R20-2c, 5 jobs) is submitted to apply the rule strictly.
+- R20-5 (SummEval 960×2, prospective, 3 GPU jobs) registered and submitted.
