@@ -1540,3 +1540,4 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Single-rating penalty across 3 prospective blocks: +0.0063 to +0.0066.
 - γ0.8 plant: 5/5 detected. Its mean planted X is 0.4 % below the observed X, so the γ1.0 plant (R20-2c, 5 jobs) is submitted to apply the rule strictly.
 - R20-5 (SummEval 960×2, prospective, 3 GPU jobs) registered and submitted.
+- 11:55 Draft: POPQUORN prospective block (R20-4) added to §1(v), §5 and the guidance.
