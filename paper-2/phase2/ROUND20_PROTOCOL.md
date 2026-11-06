@@ -205,3 +205,10 @@ R20-5a addendum (13:35, before running): the a2 arm for seed 2003 is also rerun 
 - Per the frozen rule, the cross-batch comparison is reported as unreliable, and the claim waits for a single-batch rerun.
 
 **R20-5b (specified now, before running): single-batch rerun.** Rerun the full and a2 arms for seeds 2004 and 2005, folds 0–2, into results/lora_budget_r20_rerun/ (one GPU per arm, both submitted together). Analysis: analysis_budget_lora.py --root lora_budget_r20_rerun --seeds 2003,2004,2005 (reference = the in-root full arm), B = 2000. Readings: the frozen R20-5 readings (i) and (ii), unchanged. R20-5 is reported only from this single-batch set. Descriptive add-on: the a2 − full contrast per evaluator fold, because fold 2 drives the sign (relevant to N11, expert heterogeneity).
+
+### R20-5b results (2026-11-06 15:46; 18/18 cells, results/lora_budget_r20_rerun/summary.json)
+- 960 × 2 − full (same batch) = **−0.0034 [−0.0066, −0.0004]**. Reading (ii), two ratings suffice within the margin, **holds**. As in R20-5, the interval lies below 0.
+- Per fold: f0 +0.0019, f1 −0.0020, **f2 −0.0099** (the three seeds span −0.0103 to −0.0094). The advantage of two ratings is an expert-2-evaluator effect (R21-6) and is not a batch artefact.
+- Reading (i), 960 × 2 vs 960 × 1, cannot be read from a single batch yet, because the a1 arm was not rerun.
+
+**R20-5c (specified now, before running): a1 arm in the same batch.** Rerun 960 × 1 (budget seeds as in R19-9) for seeds 2003–2005, folds 0–2, into results/lora_budget_r20_rerun/. Run analysis_budget_lora.py --root lora_budget_r20_rerun --seeds 2003,2004,2005 --ref a1_F1.0. Reading (i) as frozen in R20-5: a second rating helps if the 95 % upper bound of a2 − a1 is < 0. Reported per fold as well.
