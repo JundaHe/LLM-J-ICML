@@ -1582,3 +1582,7 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - LoRA evaluator dependence and non-bit-reproducibility.
 - POPQUORN γ 0.3 mean planted X: 0.00062 → 0.00060.
 - R20-5b: 8 of 12 cells done.
+
+## 2026-11-06 15:46 — R20-5b done, R20-5c submitted
+- R20-5b (single batch, 9+9 cells): a2 − full = −0.0034 [−0.0066, −0.0004]. Frozen reading (ii) holds. Per fold: f0 +0.0019, f1 −0.0020, f2 −0.0099 (seed range 0.0009). Two ratings beating seven is an expert-2 evaluator effect, not a batch artefact.
+- R20-5c registered: the a1 arm is rerun in the same batch to read (i). Jobs 12848–12850.
