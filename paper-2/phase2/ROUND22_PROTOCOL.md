@@ -59,3 +59,8 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - The duplicates inflated ρ by about 0.25–0.35.
 - rho_own.py is for dense panels only (assert m > 12). SummEval's X_own comes from R22-1, so the two tracebacks are expected and are not bugs.
 - **Card.** SummEval is reported with both versions. Claims use nodup. The draft range "0.04–0.41 on eight panels" is unchanged in its endpoints (0.04 is not SummEval; the 0.41 endpoint is to be re-checked against the table in R22-T).
+
+### Provenance check (21:39)
+- The file name model_annotations.aligned.paired.scored.jsonl matches the official SummEval release naming: the aligned, paired file, plus metric scores (see the 04/19/2020 update in data/summeval/README.md). It was imported unchanged on 2026-10-25 (commit 73d6323).
+- Upstream verification failed from this server: the Google Drive link returns 404 and the HF datasets-server timed out. **Still unverified.**
+- Until verified, the text says "in the released file as distributed with the SummEval repository's annotation link". It does not say the duplication is a defect of the original crowd collection.
