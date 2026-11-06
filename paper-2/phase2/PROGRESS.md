@@ -1729,3 +1729,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - §2 306 words (target 300), §3 651 (850), §4 826 (950). §1–§4 so far ≈ 2,900 words. Numbers copied verbatim from v2.5 §1/§2. In v3, "Table 2" is the own-shape table (v2 Table 2b); the cross-term-inclusive G/X table goes to Appendix B. The v3 LaTeX build must map these labels accordingly.
 - check_consistency on v3: 12 four-decimal numbers, 0 unmatched; the same 3 named claims are still pending §5 and the appendix.
 - No Slurm jobs.
+
+## 2026-11-07 07:31 — v3 step 3: §5 judges, §6 budget, §7 limitations + conclusion
+- §5 586 words (target 650), §6 524 (550), §7 366 (500); main body 4,671 words from the abstract onward (target about 5,000).
+- check_consistency on v3: 32 four-decimal numbers, 0 unmatched, and all 11 named claims now OK (the 3 pending claims are covered in §5).
+- Self-review fixes before commit: a "DICES-390" typo (should be DICES-990); the invented count "eight target constructions" (v2 gives no count); the guidance "more than a few hundred items" corrected to v2's >900 / ≤210; the §7 budget effect range limited to POPQUORN (0.006–0.009), because SummEval contrasts are dilution, not budget.
+- No Slurm jobs. Next: appendix A–F, then the v3 LaTeX build.
