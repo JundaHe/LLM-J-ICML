@@ -1703,3 +1703,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-07 02:33 — R22-5 done: DICES-350 a=40 on three feature families
 - G_own/X_own: Qwen3 −0.6 % [−8.0, 6.8], OLMo-2 −0.0 % [−7.2, 7.2], Qwen2.5 1.3 % [−8.8, 11.4]. All upper bounds are below the 15–33 % plant recovery range.
 - The abstract and §1 now say −1 to 1 %, upper bounds ≤ 12 %. Table 2b is regenerated (24 rows). check_consistency 11/11.
+
+## 2026-11-07 03:31 — decode_decomp.py provenance fields
+- The output JSON now records feat_model, plant and plant_seed. This changes metadata only.
+- Smoke test (dices a40 Qwen3): the est dict is identical to dices_a40_qwen3_r22, and the smoke file was deleted.
+- Existing JSONs are not backfilled. Their feature family is identified by the tag (_qwen3/_olmo) and by the slurm scripts.
