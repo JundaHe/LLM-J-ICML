@@ -43,3 +43,9 @@ These figures are for the released file data/summeval/model_annotations.aligned.
   2. SummEval's plant calibration (R20-2, R21) was matched to an X_own inflated by duplicates. It stays reported as a calibration at that magnitude, but it no longer establishes informativeness for SummEval's real shape.
   3. SummEval's split-half reliability card and every SummEval budget or target result must carry the duplication and expert–crowd facts. A full-panel versus nodup re-computation of ρ and ρ_own is to be specified next.
   4. The ordinal–NLI contrast survives in direction, but its ordinal side is now "not reproducible (SummEval, POPQUORN, DICES-990) or reproducible yet not decoded (DICES-350; Dorn's signal is location-sized)".
+
+## R22-2 (specified 21:36, before running): the SummEval reliability card on non-duplicated items
+- **Runs.** rho_own.py and rho_exact.py (R = 10, B = 200, defaults) on summeval_coherence8_nodup and summeval_relevance8_nodup.
+- **Reported.** ρ, ρ_own and A1^x next to the full-panel values, at every a computed.
+- **Descriptive, no gate.** The card shows both versions. The text uses nodup values for any claim about reproducibility of SummEval's shape.
+- **Also (descriptive).** The expert-only split-half on SummEval is impossible (3 raters, so b = 1 or 2 and X_own ≡ 0 or unmeasurable). This is stated as such.
