@@ -1601,3 +1601,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - In the location-only simulation, V_own reaches 95 % of the observed value.
 - Draft §1 Dorn caveat quantified: 10 % is used only as an upper bound.
 - R20-6 (OLMo) running: 2 jobs active, 1 pending.
+
+## 2026-11-06 18:31 — status
+- R20-6: 14 of 27 cells, 0 tracebacks; about 21:00 to finish.
+- check_consistency.py 11/11 OK (92 four-decimal numbers in the draft, 0 unmatched).
+- An NLI location-only baseline would need a nominal rater–item model, since M2 is ordered-probit. Not run; any such analysis is to be specified first.
