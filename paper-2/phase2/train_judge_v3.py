@@ -44,6 +44,7 @@ p.add_argument("--eval_raters", default=None, help="comma-separated rater indice
 p.add_argument("--train_pos", type=int, default=None, help="fixed-budget design: number of target positions (out of the non-evaluator raters) used per TRAINING item, drawn per item with --budget_seed; calib/test targets unchanged")
 p.add_argument("--train_frac", type=float, default=None, help="fixed-budget design: fraction of the training GROUPS kept (seeded); combined with --train_pos the rating budget is n_train × train_pos")
 p.add_argument("--budget_seed", type=int, default=None)
+p.add_argument("--train_cols", default=None, help="ROUND20 R20-7: comma-separated rater indices whose ratings form the TRAINING targets (the evaluator is dropped if listed); calib/test targets unchanged")
 p.add_argument("--dry_run", action="store_true"); p.add_argument("--out", required=True)
 args = p.parse_args(); os.makedirs(args.out, exist_ok=True)
 perm_seed = args.perm_seed if args.perm_seed is not None else 1000 + args.split
@@ -79,6 +80,11 @@ if args.train_frac is not None or args.train_pos is not None:
             z[i] = z_label(sub); P_emp[i] = np.bincount(sub, minlength=K) / len(sub); mu[i] = sub.mean()
     budget_cert = dict(train_frac=args.train_frac, train_pos=args.train_pos, budget_seed=bseed, n_train_full=int(n_tr_full), n_train_used=int(len(tr_idx)), rating_budget=int(len(tr_idx) * (args.train_pos or len(T))))
     print(f"[budget] train items {n_tr_full} -> {len(tr_idx)}, positions per item {args.train_pos or len(T)}, rating budget {budget_cert['rating_budget']}", flush=True)
+if args.train_cols is not None:                                                            # ROUND20 R20-7: rater-subset training targets (expert-only / crowd-only)
+    cidx = [T.index(c) for c in map(int, args.train_cols.split(",")) if c != E]
+    for i in tr_idx: sub = Ht[i, cidx]; z[i] = z_label(sub); P_emp[i] = np.bincount(sub, minlength=K) / len(sub); mu[i] = sub.mean()
+    budget_cert = dict(train_cols=[T[c] for c in cidx], n_train_used=int(len(tr_idx)), rating_budget=int(len(tr_idx) * len(cidx)))
+    print(f"[train_cols] targets from raters {budget_cert['train_cols']}, rating budget {budget_cert['rating_budget']}", flush=True)
 
 # ------------------------------------------------------------------ permutation G on TRAIN items: cells (z_i, floor(mean/tau)); randomised maximum matching on histogram classes within cell
 cert = dict(arm=args.arm, panel=args.panel, fold=args.fold, evaluator=int(E), evaluator_id=str(PAN["rater_ids"][E]), split=args.split, perm_seed=perm_seed, opt_seed=opt_seed,

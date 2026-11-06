@@ -241,3 +241,20 @@ Question: does R20-5c's second-rating result replicate on the second base?
   - (ii) two ratings suffice within the margin if the 95 % upper bound of a2 − full is < δ = 0.005.
 - **Descriptive.** Per-fold contrasts, and a1 − full against R20-3's +0.0066, as a within-base batch check.
 - No pooling with Qwen2.5.
+
+## R20-7 (specified 2026-11-06 19:31, before running; descriptive; mechanism of the evaluator dependence in R21-6 and R20-5c)
+**Question.** Is the SummEval budget effect a matter of who the training raters are?
+**Arms** (Qwen2.5, chen, 240 steps, seeds 2003–2005 × folds 0–2, results/lora_budget_r207/), using the new train_judge_v3 option --train_cols:
+- **experts2.** Targets are the two non-evaluator experts' ratings, 1,920 ratings. Same budget as 960 × 2.
+- **crowd5.** Targets are the five crowd ratings, 4,800 ratings.
+
+**Comparisons** (descriptive, against the R20-5c batch).
+- Cross-batch: per-cell noise between identical runs was ≤ 0.0012 RPS (R20-5a). Contrasts smaller than about 0.003 per fold are not interpreted.
+- experts2 − a2 per fold: composition at matched budget.
+- crowd5 − full per fold: removing the experts.
+
+**Expectation** (stated so it can fail): if the evaluator dependence comes from the location gap between experts and crowd, then:
+- experts2 beats a2 on folds 1–2 (experts 1 and 2 differ from the crowd), with no gain on fold 0;
+- crowd5 is worse than full mainly on folds 1–2.
+
+No frozen gate. Reported as observed.
