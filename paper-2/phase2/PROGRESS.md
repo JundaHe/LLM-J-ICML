@@ -1637,3 +1637,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 ## 2026-11-06 22:31 — R20-7 done
 - crowd5 − full is +0.020 (every fold). experts2 − a2 is −0.040 on f1 but +0.011 on f2. The registered expectation is partly supported, with the failures as listed in the protocol.
 - SummEval budget contrasts are now read as expert-dilution contrasts. §5 to be rewritten.
+
+## 2026-11-06 22:31 — draft: SummEval budget reframed
+- A §5 reading note on expert dilution (R20-7, ROUND22) has been added.
+- Abstract budget sentence: POPQUORN is now the clean case, and SummEval is described as dilution.
+- Contribution (4) and the guidance (who rates matters) are updated to match.
