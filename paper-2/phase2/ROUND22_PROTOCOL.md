@@ -28,3 +28,18 @@ These figures are for the released file data/summeval/model_annotations.aligned.
 - **Draft action (once R22-1 reports).**
   - §2.1 and §5 must state that SummEval's crowd columns are essentially uncorrelated with its experts (citing Fabbri et al.).
   - The budget results on SummEval must be described as diluting two expert ratings with five crowd ratings, not as "full data vs fewer ratings of one population".
+
+### R22-1 results (2026-11-06 21:36; results/decode_decomp/summeval_*8_nodup_r22.json; 0 tracebacks)
+| panel (793 items) | X_own [95 %] | G_own/X_own | G_own_net/X_own |
+|---|---|---|---|
+| coherence nodup | −0.00013 [−0.00030, +0.00003] | 0.005 [−0.046, 0.056] | −0.018 [−0.064, 0.029] |
+| relevance nodup | −0.00003 [−0.00016, +0.00010] | 0.32 [−1.02, 1.67] | −0.03 [−0.20, 0.15] |
+- **Frozen reading.** Coherence: the upper bound 5.6 % is < 24 %, so it stays in the contrast. Relevance: the upper bound 167 % is ≥ 24 %, so it is **removed from the contrast**.
+- **The substantive result (beyond the frozen reading).** Without the duplicated items, SummEval shows **no detectable own-shape reproducibility**: X_own's point estimates are negative and their intervals cover 0.
+  - The full-panel X_own (coherence 0.00038) comes from items whose five crowd annotations are identical. Those make the turker part of the two halves agree trivially.
+  - With X_own ≈ 0, the ratios are not interpretable, even where the frozen rule passes.
+- **Consequences for the paper:**
+  1. SummEval stops being the example of "reproducible but not decodable". It joins POPQUORN and DICES-990: no detectable own-shape at a = 4. The clean ordinal example of a detectable but undecoded own-shape is DICES-350 at a = 40: X_own > 0, recovery 1 % [−9, 12].
+  2. SummEval's plant calibration (R20-2, R21) was matched to an X_own inflated by duplicates. It stays reported as a calibration at that magnitude, but it no longer establishes informativeness for SummEval's real shape.
+  3. SummEval's split-half reliability card and every SummEval budget or target result must carry the duplication and expert–crowd facts. A full-panel versus nodup re-computation of ρ and ρ_own is to be specified next.
+  4. The ordinal–NLI contrast survives in direction, but its ordinal side is now "not reproducible (SummEval, POPQUORN, DICES-990) or reproducible yet not decoded (DICES-350; Dorn's signal is location-sized)".

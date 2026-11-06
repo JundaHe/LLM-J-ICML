@@ -1623,3 +1623,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - In 50.4 % of items, all five turker annotations are identical. This is not documented anywhere we found.
 - ROUND22_PROTOCOL.md written, and R22-1 registered (decoding on the 793 non-duplicated items). Jobs 13103–13104.
 - The SummEval budget results are now read as expert dilution. Draft not yet changed; it will be after R22-1.
+
+## 2026-11-06 21:36 — R22-1 done: SummEval own-shape not detectable without duplicated items
+- On the 793 non-duplicated items, X_own is −0.00013 [−0.00030, +0.00003] (coherence) and −0.00003 [−0.00016, +0.00010] (relevance).
+- Frozen reading: coherence stays in the contrast and relevance is removed. Substantively, SummEval's reproducible shape came from the duplicates.
+- Draft: abstract decoding sentence rewritten (DICES-350 is now the ordinal example; the SummEval plant sentence is dropped from the abstract), and a SummEval caveat paragraph added to §1(ii).
+- Still to restructure: §2.2 plant and calibration text, the SummEval reliability card (ρ/ρ_own on nodup, to be specified), and the §5 budget description (expert dilution).
