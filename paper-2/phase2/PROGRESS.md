@@ -1541,3 +1541,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - γ0.8 plant: 5/5 detected. Its mean planted X is 0.4 % below the observed X, so the γ1.0 plant (R20-2c, 5 jobs) is submitted to apply the rule strictly.
 - R20-5 (SummEval 960×2, prospective, 3 GPU jobs) registered and submitted.
 - 11:55 Draft: POPQUORN prospective block (R20-4) added to §1(v), §5 and the guidance.
+
+## 2026-11-06 12:40 R20-2 final
+- SummEval: γ1.0 (mean planted X 0.00225 ≥ observed 0.00198) detected 5/5, so the null is informative under the rule (after amendments 2a/2c). γ0.3 4/5.
+- POPQUORN: reference γ0.3 detected 0/5, so the null is uninformative.
+- Planted X_own saturates at 0.0004–0.0005 for γ ≥ 0.6.
+- R20-5 (SummEval 960×2): 4/9 runs.

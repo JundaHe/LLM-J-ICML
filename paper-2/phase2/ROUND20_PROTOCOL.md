@@ -158,3 +158,19 @@ SummEval coherence, γ 1.0, s0–s4, otherwise as R20-2. Reading: the R20-2 rule
 **Why.** The guidance's "a second rating is worth nothing on SummEval" rests on shared-assignment blocks. The prospective blocks show a single-rating penalty of 0.006.
 **Design.** As R19-9 (Qwen2.5, the same seeds 2003–2005 and budget seeds 6000 + 100·(seed − 2003) + fold, folds 0–2), design 960 × 2 (`--train_pos 2 --train_frac 1.0`). Output goes into results/lora_budget_r19/summeval_coherence8/a2_F1.0/, so the full and 960 × 1 cells of R19-9 serve as references.
 **Readings (fixed now).** (i) A second rating helps: 960 × 2 − 960 × 1 has a 95 % upper bound < 0. (ii) Two ratings suffice within the margin: 960 × 2 − full has a 95 % upper bound < 0.005. Both are reported as they come out.
+
+### R20-2 final readings (2026-11-06 12:40; R20-2a/b/c complete)
+| panel | γ | draws | detected | mean planted X | G_own/X_own |
+|---|---|---|---|---|---|
+| SummEval | 0 | 5 | 0 of 5 | −0.00008 | — |
+| SummEval | 0.3 | 5 | 4 of 5 | 0.00055 | 0.16–0.55 |
+| SummEval | 0.6 | 5 | 5 of 5 | 0.00147 | 0.38–0.56 |
+| SummEval | 0.8 | 5 | 5 of 5 | 0.00198 (−0.4 %) | 0.33–0.50 |
+| SummEval | **1.0** | 5 | **5 of 5** | **0.00225** | 0.31–0.57 |
+| POPQUORN | 0 | 5 | 0 of 5 | 0.00019 | — |
+| POPQUORN | **0.3** | 5 | **0 of 5** | 0.00062 | −0.02 to 0.34 |
+| POPQUORN | 0.6 | 2 | 2 of 2 | 0.00169 | 0.25–0.36 |
+**Readings.**
+- **SummEval:** the reference γ (the smallest with mean planted X ≥ observed 0.00198) is 1.0, detected 5 of 5, so the SummEval null **is informative** under the rule, with the amendments R20-2a/c disclosed.
+- **POPQUORN:** the reference γ is 0.3, detected 0 of 5, so its null is **uninformative**.
+- **Descriptive:** planted X_own saturates at about 0.0004–0.0005 from γ 0.6 to 1.0, while the planted X grows through its cross part. The plant raises dispersion symmetrically and so also moves the location cells. The γ 1.0 plant's own-shape magnitude (0.00041–0.00050) is close to SummEval's observed 0.00038.
