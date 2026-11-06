@@ -1692,3 +1692,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 
 ## 2026-11-07 01:32 — R22-T6: §5 reordered (POPQUORN first)
 - The §5 LoRA paragraph now opens with POPQUORN (same-batch block, prospective R20-4, the cost of two ratings). The SummEval reading note and the SummEval blocks follow. No numbers changed; check_consistency 11/11. Round-21 N14 is closed.
+
+## 2026-11-07 02:31 — R22-4 done: plant counts recomputed with CLT intervals
+- 30 runs, 0 tracebacks. The point estimates are identical to the earlier runs (≤ 3e−19).
+- With CLT intervals the plants are detected slightly more often: SummEval γ 0.3 goes 4→5/5, POPQUORN γ 0.6 4→5/5, and POPQUORN γ 0.3 (the reference plant) 0→2/5.
+- No frozen reading changes: the POPQUORN null stays uninformative (2 < 4).
+- The draft counts are replaced. check_consistency 11/11.
+- All plant counts in the draft now use CLT intervals, which closes the percentile-bootstrap part of round-21 N1.

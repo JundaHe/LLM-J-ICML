@@ -158,3 +158,21 @@ The sentences of the §5 LoRA-budget paragraph are reordered, with no new number
 4. The cross-block summary, OLMo shared-assignment, evaluator dependence, and the batch and literature notes.
 
 Only two wordings change: "re-run in the same way" becomes an explicit description, and "below" in the reading note points to the SummEval blocks that now follow it.
+
+### R22-4 results (2026-11-07 02:31; 30 runs, 0 tracebacks)
+Pipeline check: the point estimates (X, X_own, G, G_own) match the earlier B = 200 runs to ≤ 3·10⁻¹⁹.
+
+| panel | γ | mean X_own | detected, percentile (old) | detected, CLT (new) | G_own/X_own range |
+|---|---|---|---|---|---|
+| SummEval coh. | 0 | −0.00009 | 0/5 | 0/5 (_r21) | — |
+| SummEval coh. | 0.3 | 0.00017 | 4/5 | **5/5** | 0.16–0.55 |
+| SummEval coh. | 0.6 | 0.00041 | 5/5 | 5/5 | 0.38–0.56 |
+| SummEval coh. | 0.8 | 0.00049 | 5/5 | 5/5 | 0.33–0.50 |
+| SummEval coh. | 1.0 | 0.00046 | 5/5 | 5/5 | 0.31–0.57 |
+| POPQUORN off. | 0 | ≈0 | 0/5 | 0/5 (_r21) | — |
+| POPQUORN off. | 0.3 | 0.00009 | 0/5 | **2/5** | −0.02–0.34 |
+| POPQUORN off. | 0.6 | 0.00031 | 4/5 | **5/5** | 0.06–0.38 |
+
+- CLT detects slightly more often than the percentile bootstrap. That is consistent with R21-1, where the percentile intervals were off-centre.
+- Frozen readings: SummEval stays "informative at the full-panel magnitude", which is moot under ROUND22. The POPQUORN reference plant (γ 0.3) is detected in 2 of 5, which is below 4, so the POPQUORN null **stays uninformative**. No reading changes.
+- Draft: the counts are replaced with the CLT counts (4→5, 4→5, 0→2 on POPQUORN γ 0.3).
