@@ -1813,3 +1813,12 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - No post-hoc extra draws for the 3/5. The rule is frozen, and more draws after seeing 3/5 would be fishing.
 - .gitignore: latex_v3 build artefacts and the copied ICML .sty/.bst are now ignored. Regenerated figure PDFs whose diff had no content were reverted.
 - No motivated experiment is queued. GPU and CPU are idle until the Codex review (after 2026-11-11 21:45).
+
+## 2026-11-07 12:31 — commit result files the paper cites but that were never tracked
+- While tidying git status I found that many result files behind paper numbers had never been committed:
+  - decode_decomp R22-3/R22-4/R22-5 plant and decoding JSONs;
+  - the per-cell predictions of the LoRA budget blocks R19-9, R20-3, R20-4, R20-5b/c, R20-6 and R20-7 (only their summaries were tracked);
+  - the probe_nominal *_v7b runs.
+- check_consistency only reads local files, so it could not notice this.
+- Committed following the existing convention: P_test/P_calib.npy, items_*.csv (item ids and row indices only, no text), meta.json (config; checked for secrets) and train.log. The LoRA adapter weights (lora/, about 26 GB) are gitignored, as for the earlier blocks.
+- Total 1,108 files, 4.2 MB. No datasets or feature files.

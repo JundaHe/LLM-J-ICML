@@ -1,0 +1,32 @@
+[budget] train items 960 -> 960, positions per item 2, rating budget 1920
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:00<00:00,  3.50it/s]Loading checkpoint shards:  50%|█████     | 2/4 [00:00<00:00,  3.05it/s]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:01<00:00,  2.73it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.77it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:01<00:00,  2.84it/s]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/240 loss 4.0545 25s maxlen 938 mem 16.7GB
+step 20/240 loss 1.3679 52s maxlen 938 mem 16.7GB
+step 30/240 loss 1.1853 79s maxlen 986 mem 16.7GB
+step 40/240 loss 1.1541 105s maxlen 986 mem 16.7GB
+step 50/240 loss 1.1647 131s maxlen 993 mem 16.8GB
+step 60/240 loss 1.0835 157s maxlen 993 mem 16.8GB
+step 70/240 loss 1.0368 183s maxlen 993 mem 16.8GB
+step 80/240 loss 1.0964 208s maxlen 993 mem 16.8GB
+step 90/240 loss 1.0743 234s maxlen 993 mem 16.8GB
+step 100/240 loss 1.2082 260s maxlen 993 mem 16.8GB
+step 110/240 loss 1.1053 285s maxlen 993 mem 16.8GB
+step 120/240 loss 1.1098 310s maxlen 993 mem 16.8GB
+step 130/240 loss 1.1437 335s maxlen 993 mem 16.8GB
+step 140/240 loss 1.0315 361s maxlen 993 mem 16.8GB
+step 150/240 loss 1.1249 388s maxlen 993 mem 16.8GB
+step 160/240 loss 1.0129 414s maxlen 993 mem 16.8GB
+step 170/240 loss 1.0410 439s maxlen 993 mem 16.8GB
+step 180/240 loss 1.0921 465s maxlen 993 mem 16.8GB
+step 190/240 loss 1.0903 491s maxlen 993 mem 16.8GB
+step 200/240 loss 1.1944 517s maxlen 993 mem 16.8GB
+step 210/240 loss 1.0234 542s maxlen 993 mem 16.8GB
+step 220/240 loss 0.9709 567s maxlen 993 mem 16.8GB
+step 230/240 loss 1.0585 593s maxlen 993 mem 16.8GB
+step 240/240 loss 0.9982 619s maxlen 993 mem 16.8GB
+'(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /Qwen/Qwen2.5-7B-Instruct/resolve/main/config.json (Caused by NameResolutionError("HTTPSConnection(host=\'huggingface.co\', port=443): Failed to resolve \'huggingface.co\' ([Errno -3] Temporary failure in name resolution)"))'), '(Request ID: 0f84ce8f-37b5-41d8-b2a8-5b5133a9d691)')' thrown while requesting HEAD https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/resolve/main/config.json
+Retrying in 1s [Retry 1/5].
+done

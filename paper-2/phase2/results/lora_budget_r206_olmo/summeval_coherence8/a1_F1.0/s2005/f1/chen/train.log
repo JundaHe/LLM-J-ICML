@@ -1,0 +1,31 @@
+[budget] train items 960 -> 960, positions per item 1, rating budget 960
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:27<00:54, 27.14s/it]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:53<00:26, 26.88s/it]Loading checkpoint shards: 100%|██████████| 3/3 [01:21<00:00, 27.21s/it]Loading checkpoint shards: 100%|██████████| 3/3 [01:21<00:00, 27.16s/it]
+step 10/240 loss 2.3698 24s maxlen 894 mem 15.9GB
+step 20/240 loss 1.5365 50s maxlen 894 mem 15.9GB
+step 30/240 loss 1.4459 77s maxlen 916 mem 15.9GB
+step 40/240 loss 1.3438 102s maxlen 916 mem 15.9GB
+step 50/240 loss 1.4794 129s maxlen 923 mem 15.9GB
+step 60/240 loss 1.3804 154s maxlen 923 mem 15.9GB
+step 70/240 loss 1.4855 180s maxlen 923 mem 15.9GB
+step 80/240 loss 1.4536 206s maxlen 923 mem 15.9GB
+step 90/240 loss 1.4183 231s maxlen 923 mem 15.9GB
+step 100/240 loss 1.3743 258s maxlen 923 mem 15.9GB
+step 110/240 loss 1.3145 283s maxlen 923 mem 15.9GB
+step 120/240 loss 1.4213 308s maxlen 923 mem 15.9GB
+step 130/240 loss 1.3054 334s maxlen 923 mem 15.9GB
+step 140/240 loss 1.3439 359s maxlen 923 mem 15.9GB
+step 150/240 loss 1.3694 386s maxlen 923 mem 15.9GB
+step 160/240 loss 1.2215 412s maxlen 923 mem 15.9GB
+step 170/240 loss 1.5542 437s maxlen 923 mem 15.9GB
+step 180/240 loss 1.3395 462s maxlen 923 mem 15.9GB
+step 190/240 loss 1.4272 488s maxlen 923 mem 15.9GB
+step 200/240 loss 1.3247 514s maxlen 923 mem 15.9GB
+step 210/240 loss 1.4991 540s maxlen 923 mem 15.9GB
+step 220/240 loss 1.3160 565s maxlen 923 mem 15.9GB
+step 230/240 loss 1.3786 596s maxlen 923 mem 15.9GB
+step 240/240 loss 1.3612 622s maxlen 923 mem 15.9GB
+'(MaxRetryError('HTTPSConnectionPool(host=\'huggingface.co\', port=443): Max retries exceeded with url: /allenai/OLMo-2-1124-7B-Instruct/resolve/main/config.json (Caused by NameResolutionError("HTTPSConnection(host=\'huggingface.co\', port=443): Failed to resolve \'huggingface.co\' ([Errno -3] Temporary failure in name resolution)"))'), '(Request ID: b6245f9d-022c-472e-9217-b358522d40ae)')' thrown while requesting HEAD https://huggingface.co/allenai/OLMo-2-1124-7B-Instruct/resolve/main/config.json
+Retrying in 1s [Retry 1/5].
+done

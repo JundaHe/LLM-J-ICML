@@ -1,0 +1,29 @@
+[budget] train items 960 -> 960, positions per item 1, rating budget 960
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/3 [00:00<?, ?it/s]Loading checkpoint shards:  33%|███▎      | 1/3 [00:00<00:01,  1.74it/s]Loading checkpoint shards:  67%|██████▋   | 2/3 [00:01<00:00,  1.71it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.91it/s]Loading checkpoint shards: 100%|██████████| 3/3 [00:01<00:00,  1.85it/s]
+step 10/240 loss 2.4990 25s maxlen 894 mem 15.9GB
+step 20/240 loss 2.0913 51s maxlen 904 mem 15.9GB
+step 30/240 loss 1.4921 76s maxlen 923 mem 15.9GB
+step 40/240 loss 1.4312 103s maxlen 923 mem 15.9GB
+step 50/240 loss 1.4818 129s maxlen 923 mem 15.9GB
+step 60/240 loss 1.4760 155s maxlen 923 mem 15.9GB
+step 70/240 loss 1.5241 180s maxlen 923 mem 15.9GB
+step 80/240 loss 1.3937 207s maxlen 923 mem 15.9GB
+step 90/240 loss 1.3492 233s maxlen 923 mem 15.9GB
+step 100/240 loss 1.4124 259s maxlen 923 mem 15.9GB
+step 110/240 loss 1.4713 284s maxlen 923 mem 15.9GB
+step 120/240 loss 1.4523 310s maxlen 923 mem 15.9GB
+step 130/240 loss 1.3763 335s maxlen 923 mem 15.9GB
+step 140/240 loss 1.3114 361s maxlen 923 mem 15.9GB
+step 150/240 loss 1.4649 386s maxlen 923 mem 15.9GB
+step 160/240 loss 1.4282 412s maxlen 923 mem 15.9GB
+step 170/240 loss 1.3370 438s maxlen 923 mem 15.9GB
+step 180/240 loss 1.3977 463s maxlen 923 mem 15.9GB
+step 190/240 loss 1.3883 490s maxlen 923 mem 15.9GB
+step 200/240 loss 1.2714 515s maxlen 923 mem 15.9GB
+step 210/240 loss 1.2490 541s maxlen 923 mem 15.9GB
+step 220/240 loss 1.6751 567s maxlen 923 mem 15.9GB
+step 230/240 loss 1.3834 593s maxlen 923 mem 15.9GB
+step 240/240 loss 1.3224 619s maxlen 923 mem 15.9GB
+done

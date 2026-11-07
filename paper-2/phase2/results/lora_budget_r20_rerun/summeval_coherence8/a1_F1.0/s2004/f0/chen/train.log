@@ -1,0 +1,30 @@
+[budget] train items 960 -> 960, positions per item 1, rating budget 960
+/scratch/jundahe/venvs/llmj/lib/python3.12/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:17<00:53, 17.71s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:47<00:49, 24.63s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:47<00:13, 13.63s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:48<00:00,  8.45s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:48<00:00, 12.06s/it]
+`use_cache=True` is incompatible with gradient checkpointing. Setting `use_cache=False`.
+step 10/240 loss 5.3812 26s maxlen 940 mem 16.7GB
+step 20/240 loss 1.5449 51s maxlen 940 mem 16.7GB
+step 30/240 loss 1.6093 77s maxlen 944 mem 16.7GB
+step 40/240 loss 1.3656 102s maxlen 949 mem 16.7GB
+step 50/240 loss 1.5270 128s maxlen 949 mem 16.7GB
+step 60/240 loss 1.4129 155s maxlen 949 mem 16.7GB
+step 70/240 loss 1.3545 180s maxlen 949 mem 16.7GB
+step 80/240 loss 1.4465 206s maxlen 951 mem 16.7GB
+step 90/240 loss 1.3359 232s maxlen 951 mem 16.7GB
+step 100/240 loss 1.4335 258s maxlen 993 mem 16.7GB
+step 110/240 loss 1.3302 283s maxlen 993 mem 16.8GB
+step 120/240 loss 1.4018 309s maxlen 993 mem 16.8GB
+step 130/240 loss 1.3738 335s maxlen 993 mem 16.8GB
+step 140/240 loss 1.2830 361s maxlen 993 mem 16.8GB
+step 150/240 loss 1.3744 387s maxlen 993 mem 16.8GB
+step 160/240 loss 1.2551 412s maxlen 993 mem 16.8GB
+step 170/240 loss 1.2991 438s maxlen 993 mem 16.8GB
+step 180/240 loss 1.4203 463s maxlen 993 mem 16.8GB
+step 190/240 loss 1.3610 489s maxlen 993 mem 16.8GB
+step 200/240 loss 1.4354 515s maxlen 993 mem 16.8GB
+step 210/240 loss 1.2653 540s maxlen 993 mem 16.8GB
+step 220/240 loss 1.4315 566s maxlen 993 mem 16.8GB
+step 230/240 loss 1.2419 592s maxlen 993 mem 16.8GB
+step 240/240 loss 1.3833 618s maxlen 993 mem 16.8GB
+done
