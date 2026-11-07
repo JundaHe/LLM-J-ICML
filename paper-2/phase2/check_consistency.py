@@ -106,5 +106,30 @@ claims.append(("zero-TV wording is pre-projection only" + ("" if DRAFT == "PAPER
 claims.append(("no commit / bridge / VERIFY / arXiv-id residue in draft", all(s not in draft for s in ("commit What", "commit Why", "bridge", "[VERIFY]")) and not re.search(r"arXiv \d{4}\.\d{5}", draft)))
 req = [f"{P}/results/MANIFEST.json", f"{P}/results/nominal_final_dose.json", f"{P}/results/nominal_final_dose_chaosnli_snli.json", f"{P}/results/nominal_final_dose_chaosnli_alphanli.json", f"{P}/results/probe_mean/bw_inject_v8/runs.jsonl", f"{P}/results/probe_mean/scalabrino_inject_v8/runs.jsonl", f"{P}/results/probe_mean/popquorn_off8_inject_v8/runs.jsonl", f"{P}/results/probe_mean/csc6_inject_v8/runs.jsonl"] + [f"{P}/results/probe_nominal/chaosnli_{k}_m{m}{t}/runs.jsonl" for k, t in (("mnli", "_v6"), ("snli", "_v7"), ("alphanli", "_v7")) for m in (5, 10, 20, 50)]
 claims.append(("required artefacts present", all(os.path.exists(p) for p in req)))
+# ---- headline percentages (2026-11-07 percentage audit, reviews/percent_audit_v3_2026-11-07.md; v2+ drafts only)
+if DRAFT != "PAPER_DRAFT.md":
+    import glob as _g, math as _m, collections as _co
+    _J = lambda p: json.load(open(f"{P}/results/{p}")); _r = lambda f: _J(f"decode_decomp/{f}.json")["clt"]["G_own/X_own"]
+    def _rng(pat):
+        v = [100 * json.load(open(x))["est"]["G_own/X_own"] for x in sorted(_g.glob(f"{P}/results/decode_decomp/{pat}"))]; return f"{round(min(v))}–{round(max(v))} %", len(v)
+    for lab, pat in (("DICES-350 dispersion plant γ0.4 recovery", "dices_r22_plant0.4_s*.json"), ("DICES-350 polarisation plant γ1.5 recovery", "dices_r22p_polar1.5_s*.json")):
+        t, n = _rng(pat); claims.append((f"{lab} {t} (n={n}) in draft", n == 5 and t in draft))
+    _det = sum(json.load(open(x))["clt"]["G_own"]["ci95"][0] > 0 for x in _g.glob(f"{P}/results/decode_decomp/dices_r22p_polar1.5_s*.json")); claims.append((f"polarisation detected {_det}/5 is 3", _det == 3))
+    _nli = [100 * _r(f"chaosnli_{k}_r21")["est"] for k in ("mnli", "snli")]; claims.append((f"NLI recovery {round(min(_nli))}–{round(max(_nli))} % in draft", f"{round(min(_nli))}–{round(max(_nli))} %" in draft))
+    _ub = max(100 * _r(f)["ci95"][1] for f in ("dices_a40_r21", "dices_a40_qwen3_r22", "dices_a40_olmo_r22")); claims.append((f"DICES-350 upper bounds ≤ {_m.ceil(_ub)} % in draft", f"≤ {_m.ceil(_ub)} %" in draft))
+    _xc = [100 * [r for r in _J(f"rho_own/chaosnli_{k}.json")["rows"] if r["a"] == 20][0]["X_cross"] / [r for r in _J(f"rho_own/chaosnli_{k}.json")["rows"] if r["a"] == 20][0]["X"] for k in ("mnli", "snli")]
+    claims.append((f"ChaosNLI cross-term share {round(min(_xc))}–{round(max(_xc))} % of X in draft", f"{round(min(_xc))}–{round(max(_xc))} % of $X$" in draft))
+    _lo = min(100 * _r(f)["ci95"][0] for f in ("chaosnli_mnli_r21", "chaosnli_snli_r21", "chaosnli_mnli_a4_r21", "chaosnli_snli_a4_r21")); _hi = 100 * _r("dorn_all_r21")["ci95"][1]
+    claims.append((f"NLI–ordinal margin {_m.floor(_lo)} % vs {_m.ceil(_hi)} % in draft", f"{_m.floor(_lo)} % vs {_m.ceil(_hi)} %" in draft and "24 % vs 16 %" not in draft))
+    claims.append((f"Dorn upper bound {_hi / 100:.2f} in draft (no stale 0.18)", f"upper bound {_hi / 100:.2f}" in draft and "upper bound 0.18" not in draft))
+    _s = _J("lora_budget_r20_pq/summary_popquorn_off8.json"); _a1, _a2 = _s["a1_F1.0"]["diff_vs_full"], _s["a2_F1.0"]["diff_vs_full"]
+    claims.append((f"POPQUORN second rating recovers {round(100 * (_a1 - _a2) / _a1)} % in draft", f"recovers {round(100 * (_a1 - _a2) / _a1)} %" in draft))
+    _mv = []
+    for k in ("mnli", "snli"):
+        rows = [json.loads(l) for l in open(f"{P}/results/budget_heads/chaosnli_{k}/runs.jsonl") if l.strip()]; rows = [x for x in rows if x["arm"] == "soft"]; n = max(x["n_items"] for x in rows); d = _co.defaultdict(list)
+        for x in rows:
+            if x["n_items"] == n: d[x["a"]].append(x["pop_rps"])
+        _mv.append(100 * (np.mean(d[2]) - np.mean(d[1])) / np.mean(d[1]))
+    _t = f"−{round(-max(_mv))} to −{round(-min(_mv))} %"; claims.append((f"ChaosNLI second-rating marginal value {_t} in draft", _t in draft))
 for name, ok in claims: print(("OK   " if ok else "FAIL ") + name)
 sys.exit(1 if bad or not all(ok for _, ok in claims) else 0)
