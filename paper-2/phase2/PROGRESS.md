@@ -1790,3 +1790,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Protocol: ROUND22_PROTOCOL.md R22-6, written before running. Reading frozen: at least 4 of 5 detected at the X_own-matched γ means power holds for both constructions.
 - Code: decode_residual.py gets --plant_kind {disp (default, unchanged), polar}; decode_decomp.py provenance records plant_kind.
 - Smoke job 13570 (CPU): checks that the disp path reproduces R22-3 γ 0.4 s0 exactly, and that polar runs.
+
+## 2026-11-07 11:33 — R22-6 smoke result, grid amendment, main job 13571
+- Smoke: the disp path reproduces R22-3 exactly, so the --plant_kind change does not alter old results. polar γ 0.4 gives no own-shape (X_own −0.8e−5); its X (+6e−5) is the cross term.
+- DICES σ_med is 0.98 on a 3-level scale, so the grid was too weak. Amended to γ ∈ {0.6, 1, 1.5, 2, 3} before the main run; the amendment is labelled post hoc in ROUND22_PROTOCOL.md.
+- Main job 13571: 25 sequential CPU runs, about 15 min.
+- The smoke files stay untracked: the disp copy is deleted, and dices_r22psmoke_polar0.4_s0.json is kept locally as evidence.

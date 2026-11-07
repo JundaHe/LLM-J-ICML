@@ -210,3 +210,12 @@ DICES-350's power calibration (R22-3) uses one construction: item log-dispersion
   - The paper then states that the clean-case power holds for two constructions, with the recovery range for each.
   - Fewer than 4 of 5: the power claim stays restricted to the dispersion construction, and the paper says the polarisation construction was not detected at the observed magnitude.
 - **Not changed.** No observed-data estimate is recomputed. The draft numbers for R22-3 and R22-5 stay as they are.
+
+### R22-6 amendment (11:33, after the smoke run, before the main run; post hoc with respect to the γ grid)
+- **What the smoke run showed.**
+  - The disp path reproduces R22-3 γ 0.4 s0 exactly: all 42 numeric fields are identical except run time.
+  - polar at γ 0.4 s0 gives X_own −0.8e−5. It does give X +6e−5, but X_cross is +7e−5: random half-splits mix the two groups unequally, so a polarisation of this size shows up as a location shift between halves rather than as own-shape.
+- **Why the grid was too weak.** The fitted DICES σ_med is 0.98 on a 3-level scale, so ±0.4 does not separate the groups.
+- **New grid.** γ ∈ {0.6, 1.0, 1.5, 2.0, 3.0} × s0–s4, replacing {0.1–0.6}. Reference rule and reading are unchanged.
+- **Additional reported quantity (descriptive).** X_cross/X at the reference γ, to show how much of the polarisation lands in the cross term.
+- **If no γ ≤ 3.0 reaches the observed X_own:** report that this construction cannot produce an own-shape of DICES-350's magnitude at plausible strengths. The power claim then stays dispersion-only.
