@@ -30,6 +30,7 @@ ap.add_argument("--reselect_alpha", action="store_true", help="re-select α insi
 ap.add_argument("--feat_model", default=None, help="feature file model tag (default: the panel model, e.g. Qwen2.5-7B-Instruct); e.g. Qwen3-8B"); ap.add_argument("--tag", default="")
 ap.add_argument("--plant", type=float, default=None, help="ROUND19 R19-2: replace H by a planted-shape simulation with log-dispersion slope gamma on a feature direction")
 ap.add_argument("--plant_seed", type=int, default=0)
+ap.add_argument("--plant_kind", default="disp", choices=["disp", "polar"], help="ROUND22 R22-6: disp = item log-dispersion (R19-2); polar = two fixed rater groups shifted by ±gamma·sdir")
 ap.add_argument("--decoder", default="ridge", choices=["ridge", "rff"], help="ROUND19 R19-5: rff = ridge on 2048 random Fourier features (Gaussian kernel, median-heuristic bandwidth) of the fold-wise PCA scores")
 args = ap.parse_args()
 if args.decoder != "ridge": args.tag = (args.tag or "") + f"_{args.decoder}"
@@ -45,9 +46,15 @@ if args.d_pre > 0 and args.d_pre < E.shape[1]:
 if args.plant is not None:   # ROUND19_PROTOCOL.md R19-2: planted text-predictable shape, location/thresholds from the fitted M2 model
     prm = np.load(f"{HERE}/results/rater_item/{args.panel}_M2_params.npz"); prng = np.random.RandomState(args.plant_seed)
     u = np.zeros(E.shape[1]); u[:64] = prng.randn(64); u /= np.linalg.norm(u); sdir = (E - E.mean(0)) @ u; sdir = (sdir - sdir.mean()) / sdir.std()
-    sig = np.median(prm["sigma"]) * np.exp(args.plant * sdir); cu = prm["cuts"][prm["rater_group"]]          # M × (K−1)
-    ystar = prm["theta"][:, None] + sig[:, None] * prng.randn(NI, M); H = (ystar[:, :, None] > cu[None, :, :]).sum(2).astype(int)
-    args.tag = (args.tag or "") + f"_plant{args.plant:g}_s{args.plant_seed}"; print(f"planted shape: gamma {args.plant}, sigma range {sig.min():.2f}-{sig.max():.2f}", flush=True)
+    cu = prm["cuts"][prm["rater_group"]]          # M × (K−1)
+    if args.plant_kind == "disp":
+        sig = np.median(prm["sigma"]) * np.exp(args.plant * sdir)
+        ystar = prm["theta"][:, None] + sig[:, None] * prng.randn(NI, M)
+    else:   # R22-6: text-predictable polarisation of two fixed, equal-sized rater groups
+        g = np.ones(M); g[prng.permutation(M)[: M // 2]] = -1; sig = np.full(NI, np.median(prm["sigma"]))
+        ystar = prm["theta"][:, None] + sig[:, None] * prng.randn(NI, M) + args.plant * sdir[:, None] * g[None, :]
+    H = (ystar[:, :, None] > cu[None, :, :]).sum(2).astype(int)
+    args.tag = (args.tag or "") + (f"_plant{args.plant:g}_s{args.plant_seed}" if args.plant_kind == "disp" else f"_polar{args.plant:g}_s{args.plant_seed}"); print(f"planted shape: gamma {args.plant}, sigma range {sig.min():.2f}-{sig.max():.2f}", flush=True)
 ALPHAS = [1e-2, 1e-1, 1, 10, 100, 1000, 1e4, 1e5] if args.d > 0 else [1e-1, 1, 10, 100, 1000, 1e4, 1e5, 1e6]   # Amendment 1: top extended so that "no signal" (r̂ → 0) is representable
 if args.a is None: args.a = (M + 1) // 2 if M <= 12 else 20
 if args.b is None: args.b = (M - args.a) if M <= 12 else min(20, M - args.a)

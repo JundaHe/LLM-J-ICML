@@ -193,3 +193,20 @@ X_own is 4.90e−5 on all three families (learner-free, identical as expected).
 | OLMo-2-7B | −0.0 % [−7.2, +7.2] | +6.8 % [−1.9, +15.6] |
 
 - Reading: all three upper bounds (≤ 11.4 %) are below the plant recovery range of 15–33 %. The abstract keeps the three-family statement, with the range −1 to 1 % and upper bounds ≤ 12 % (rounded outward).
+
+## R22-6 (specified 2026-11-07 11:31, before running): a second plant construction on DICES-350 at a = 40 (v3 self-review, limitation "one plant construction")
+DICES-350's power calibration (R22-3) uses one construction: item log-dispersion linear in one feature direction. A reviewer can object that a judge-relevant ordinal shape might take another form. The obvious alternative for DICES, a dataset built to study demographic disagreement on safety, is *text-predictable polarisation*: two fixed rater groups move in opposite directions on items whose text lies along one feature direction.
+- **Construction (--plant_kind polar).** Same fitted DICES M2 model (theta, rater cut-points, median σ), same random 64-dimensional feature direction sdir (standardised) per seed.
+  - Each of the M rater columns gets a fixed sign g_r = ±1, exactly half each, drawn per seed.
+  - Latent: y*_ir = θ_i + σ_med·ε_ir + γ·sdir_i·g_r.
+  - The plant is a rater-group × item interaction predictable from text. It leaves the item mean nearly unchanged in expectation and changes the spread and bimodality.
+  - The default construction (dispersion) is unchanged; --plant_kind defaults to disp.
+- **Runs.** decode_decomp.py, dices, a = 40, R = 10, B = 0, tag _r22p.
+  - γ ∈ {0.1, 0.2, 0.3, 0.4, 0.6}, draws s0–s4; 25 runs in one sequential CPU Slurm job.
+  - γ = 0 is identical to the R22-3 γ = 0 location-only simulation (no plant term) and is not rerun.
+- **Reference plant.** As R22-3: the smallest γ whose mean planted X_own ≥ the observed 4.9·10⁻⁵. If none reaches it, add γ 0.8 and 1.0, labelled as an extension.
+- **Reading (frozen):**
+  - Detected (CLT lower bound of G_own > 0) in 4–5 of 5 draws at the reference γ: DICES-350's −1 to 1 % is informative against this second construction too.
+  - The paper then states that the clean-case power holds for two constructions, with the recovery range for each.
+  - Fewer than 4 of 5: the power claim stays restricted to the dispersion construction, and the paper says the polarisation construction was not detected at the observed magnitude.
+- **Not changed.** No observed-data estimate is recomputed. The draft numbers for R22-3 and R22-5 stay as they are.

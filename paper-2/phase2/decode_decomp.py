@@ -96,6 +96,6 @@ for bi in range(args.B):
 cis = {k: ci([b[k] for b in bs]) for k in pt} if bs else {}
 print(f"{args.panel}{args.tag} FINAL " + "  ".join(f"{k} {pt[k]:+.5f} [{cis[k][0]:+.5f},{cis[k][1]:+.5f}]" for k in pt) if bs else "no bootstrap", flush=True)
 os.makedirs(f"{HERE}/results/decode_decomp", exist_ok=True)
-json.dump(dict(panel=args.panel, a=args.a, b=args.b, R=args.R, B=args.B, R_boot=args.R_boot, tag=args.tag, feat_model=args.feat_model or PAN["model"].split("/")[-1], plant=args.plant, plant_seed=args.plant_seed if args.plant is not None else None,   # provenance (ROUND22, 2026-11-07)
+json.dump(dict(panel=args.panel, a=args.a, b=args.b, R=args.R, B=args.B, R_boot=args.R_boot, tag=args.tag, feat_model=args.feat_model or PAN["model"].split("/")[-1], plant=args.plant, plant_seed=args.plant_seed if args.plant is not None else None, plant_kind=args.plant_kind if args.plant is not None else None,   # provenance (ROUND22, 2026-11-07; plant_kind R22-6)
            protocol="ROUND20_PROTOCOL.md R20-1", est=pt, ci95=cis, clt=CLT, boot=bs, seconds=round(time.time() - t0, 1)),
           open(f"{HERE}/results/decode_decomp/{args.panel}{args.tag}.json", "w"), indent=1)

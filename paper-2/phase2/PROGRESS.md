@@ -1784,3 +1784,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - check_consistency v3: 95 numbers, 0 unmatched, all named claims OK.
 - ICML 2025 build: 0 undefined, 0 overfull; the main text still ends at the top of page 8.
 - Lesson: number checks do not catch lost qualifiers. Compression mainly removed scope phrases ("within the observed pool", "frozen features we tested", "on SummEval", "POPQUORN").
+
+## 2026-11-07 11:32 — R22-6 registered: second plant construction (polarisation) on DICES-350
+- Motivation: v3 §7 limits the clean-case power to one plant construction (item dispersion). DICES is a demographic-disagreement dataset, so the natural judge-relevant alternative is text-predictable polarisation: two fixed rater groups shifted ±γ·sdir.
+- Protocol: ROUND22_PROTOCOL.md R22-6, written before running. Reading frozen: at least 4 of 5 detected at the X_own-matched γ means power holds for both constructions.
+- Code: decode_residual.py gets --plant_kind {disp (default, unchanged), polar}; decode_decomp.py provenance records plant_kind.
+- Smoke job 13570 (CPU): checks that the disp path reproduces R22-3 γ 0.4 s0 exactly, and that polar runs.
