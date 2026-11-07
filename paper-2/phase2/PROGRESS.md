@@ -1806,3 +1806,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - v3 §4, §1 (ii) and the abstract now say "dispersion shape" (abstract 249 words).
   - check_consistency v2/v3: 0 unmatched. ICML build: main text still ends at the top of page 8.
 - Story impact: the DICES-350 clean case is now explicitly construction-specific. That is a real limitation, and it is now visible in the main text.
+
+## 2026-11-07 12:31 — tick: no jobs; housekeeping
+- Reflection on R22-6:
+  - X_own falls at γ 3 (6.3e−5, against 7.1e−5 at γ 2). This is expected on a 3-level scale. At large shifts each group sits at an extreme, so a half's histogram is fixed by its random group mix, which is not reproducible between halves. It is not a bug sign.
+  - No post-hoc extra draws for the 3/5. The rule is frozen, and more draws after seeing 3/5 would be fishing.
+- .gitignore: latex_v3 build artefacts and the copied ICML .sty/.bst are now ignored. Regenerated figure PDFs whose diff had no content were reverted.
+- No motivated experiment is queued. GPU and CPU are idle until the Codex review (after 2026-11-11 21:45).
