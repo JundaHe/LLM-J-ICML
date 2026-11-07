@@ -1735,3 +1735,21 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - check_consistency on v3: 32 four-decimal numbers, 0 unmatched, and all 11 named claims now OK (the 3 pending claims are covered in §5).
 - Self-review fixes before commit: a "DICES-390" typo (should be DICES-990); the invented count "eight target constructions" (v2 gives no count); the guidance "more than a few hundred items" corrected to v2's >900 / ≤210; the §7 budget effect range limited to POPQUORN (0.006–0.009), because SummEval contrasts are dilution, not budget.
 - No Slurm jobs. Next: appendix A–F, then the v3 LaTeX build.
+
+## 2026-11-07 08:32 — v3 step 4: appendix A–F
+- Appendix assembled from v2.5 paragraphs, copied verbatim (about 7,000 words), so all numbers carry over unchanged:
+  - A: §2 estimators;
+  - B: the long-form findings (i)/(ii), plants and the valid-forecast gain;
+  - C: the SummEval caveat and the dilution/budget blocks;
+  - D: the audit, the POPQUORN LoRA blocks and nondeterminism;
+  - E: SE panels;
+  - F: target constructions, the rater–item model, shrinkage, frozen-feature budget heads, guidance.
+- All v2 cross-references were remapped to v3 numbering:
+  - v2 §2.1/§2.2 → v3 §3/§4;
+  - v2 §3 → §5; v2 §5 → §6 or App. C/D;
+  - v2 §1 SummEval refs → App. C;
+  - tables: v2 Table 2b → Table 2; v2 Table 2 → Table B1; Table 5 → F1; Table 6 → D1.
+  - Two stale "Appendix A/B" pointers to content that does not exist were removed.
+- Bug during assembly, caught and fixed before commit: I split v2 line 17 at the first "(ii)", which was the cross-reference "§1 (ii)" rather than finding (ii). This truncated a sentence mid-way. Repaired by hand, and the remaining references were re-listed.
+- check_consistency on v3: 95 four-decimal numbers, 0 unmatched, all named claims OK.
+- Known redundancy: App. B/D repeat some main-text sentences, to be trimmed in the final pass. Next: v3 LaTeX build with table/label mapping and a page count.
