@@ -34,11 +34,13 @@ We ask a question that work on learning from label variation (Uma et al., 2021; 
 **Findings.**
 
 *(i) The shape beyond mode and mean is poorly reproducible on ordinal scales (§3).*
+
 - With 4–8 raters per item, its split-half reliability is 0.04–0.41, and the intervals include 0 on four of eight panels. With three raters it cannot be measured at all, because a split leaves two ratings per item, which are fixed by their own mode and mean.
 - On the dense ordinal panels it stays below 0.3 up to 40 raters, so on no ordinal panel does the raw histogram forecast a new rater better than its own mode and mean. On ChaosNLI, by contrast, the forecasting reliability exceeds ½ from two to three raters.
 - The reproducibility of the shape itself at 40 raters is 0.06–0.22 on the dense ordinal panels and 0.61 / 0.67 on MNLI / SNLI.
 
 *(ii) Little of the ordinal own-shape is decodable from the text, even where it exists (§4).* Across panels, the ordinal own-shape is:
+
 - undetectable on SummEval's non-duplicated items, POPQUORN and DICES-990;
 - on Dorn's readability panel, of the size that location and rater thresholds alone produce;
 - detectable only on DICES-350, and only within its observed rater pool.
@@ -46,24 +48,28 @@ We ask a question that work on learning from label variation (Uma et al., 2021; 
 DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen features of three model families recover −1 to 1 % of the own-shape (upper bounds ≤ 12 %). A planted text-predictable shape of the observed magnitude is detected in 5 of 5 draws and recovered at 15–33 %, and a location-and-threshold simulation of the panel yields no own-shape at all. On MNLI and SNLI the decoder recovers 28 % [24, 33] and 38 % [33, 42]. Every NLI lower bound exceeds every ordinal upper bound.
 
 *(iii) The judges we trained show no detectable use of the shape (§5).*
+
 - Replacing the shape of 69–83 % of LoRA training targets while preserving each target's exact mode and mean changes held-out RPS by −0.0001 [−0.0011, +0.0011] on SummEval and +0.0000 [−0.0009, +0.0009] on POPQUORN. This null is expected, since neither panel has a detectable own-shape.
 - The discriminating case is ChaosNLI, where the same intervention costs 0.005–0.017 Brier.
 - Across eleven ordinal panels, one-hot targets are worse on 10 of 11.
 - Beyond item location, the remaining structure is mostly rater-side. Rater-specific cut-points improve held-out likelihood by 0.05–0.16 nats per rating, while item-specific dispersion adds −0.017 to +0.012.
 
 *(iv) Budget (§6).*
+
 - At a fixed number of ratings, frozen-feature heads improve with more items rather than more raters per item on four of the five ordinal panels with more than 900 items, and on both ChaosNLI panels.
 - In a prospective LoRA block on POPQUORN with independent rating assignments, one rating per item is worse than the full data by +0.0063 [+0.0030, +0.0099] RPS, and a second rating recovers about half of that gap.
 - On SummEval, the crowd ratings are nearly uncorrelated with the held-out experts, and half the items carry five identical crowd annotations. The same contrasts there measure how far expert ratings are diluted, and we report them in Appendix C rather than as budget evidence.
 - A prediction we registered was falsified on ChaosNLI: that multi-rater items would pay off at a fixed budget wherever the shape is text-predictable. We therefore report the task-dependence of the marginal value of extra ratings as an observation, not as a consequence of the mechanism.
 
 **Contributions.**
+
 1. Two reliabilities for disagreement, across raters and across text, with learner-free and cross-fitted estimators and calibrated positive controls.
 2. Disagreement reliability cards for every panel. They tell a dataset builder whether the shape of disagreement is reproducible at the number of raters they can afford.
 3. A donor-replacement audit showing that current training does not use the shape, together with a rater–item decomposition of the ordinal structure beyond location.
 4. Fixed-budget evidence for frozen-feature heads in three model families, and for end-to-end LoRA judges on POPQUORN.
 
 **What we do not claim.**
+
 - That disagreement is noise: part of it is reproducible.
 - That the text contains no residual information: we test linear decodability from three frozen model families only.
 - A theoretical rater-count threshold: a two-term 1/a model was falsified.
@@ -87,10 +93,11 @@ DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen featur
 The *location* of a histogram is its exact mode and mean; for nominal tasks it is the modal class and modal mass. To isolate the *shape beyond location* we use the exact-T comparator $q_T$: a cross-fitted forecast built from other items in the same exact mode-and-mean cell. It is KL-projected onto the cell when the cell is sparse (Appendix A). By construction $q_T$ has the same location as $h_i$ and differs from it only in shape. The residual of a histogram is $r = C(h - q_T)$.
 
 **Split-half identity.** In each repetition, every item's ratings are split at random into disjoint panels $P_1$ (size $a$) and $P_2$. Let $r_1 = C(h_1-q_T)$ and $r_2 = C(h_2-q_T)$, with $q_T$ computed from $P_1$. The value of the raw histogram over the comparator for forecasting a rating in $P_2$ then obeys the exact identity
-$$A1 = \mathbb E\big[S(h_1,y)-S(q_T,y)\big]_{y\in P_2} = M - 2X,\qquad M=\|r_1\|^2/n,\quad X=\langle r_1,r_2\rangle/n .$$
-Here $\langle u,v\rangle=\sum_k u_k v_k/(K-1)$. Hence $\rho = X/M$ is a *new-rater forecasting reliability*: the raw histogram beats the location-only forecast exactly when $\rho>\tfrac12$.
+$$A1 = \mathbb E\big[S(h_1,y)-S(q_T,y)\big]_{y\in P_2} = M - 2X,$$
+with $M=\|r_1\|^2/n$ and $X=\langle r_1,r_2\rangle/n$. Here $\langle u,v\rangle=\sum_k u_k v_k/(K-1)$. Hence $\rho = X/M$ is a *new-rater forecasting reliability*: the raw histogram beats the location-only forecast exactly when $\rho>\tfrac12$.
 
 **Own versus cross reproducibility.** Because $r_2$ is measured against panel 1's comparator, $X$ is not purely agreement between the two panels' shapes. Writing $q_j$ for the comparator built from panel $j$, it splits as $X = X_{\rm own} + X_{\rm cross}$:
+
 - $X_{\rm own}=\langle r_1, C(h_2-q_2)\rangle/n$ is the agreement of the two shapes, each measured beyond its own location;
 - $X_{\rm cross}=\langle r_1, C(q_2-q_1)\rangle/n$ is panel 1's residual predicting the other panel's location shift.
 
@@ -101,6 +108,7 @@ The cross-term is not negligible. It is 32–40 % of $X$ on ChaosNLI at $a=20$, 
 **Results.** Table 1 gives the resulting *reliability cards*, and Figure 1 traces $\rho$ against $a$ on the dense panels.
 
 *Ordinal panels.*
+
 - With 4–8 raters per item, ρ is 0.04–0.41 on eight panels, and the intervals include 0 on four.
 - On SummEval's non-duplicated items it falls to 0.10 and 0.05, with intervals including 0 (Appendix C).
 - With three raters, ρ cannot be measured. A split leaves two ratings per item, and two ratings are determined by their exact mode and mean under our tie rule, although 15–75 % of the three-rating histograms share their exact cell with a different histogram.
@@ -124,6 +132,7 @@ This gain measures the shape alone. It excludes the part of the full gain that c
 Intervals are item-cluster CLT intervals on per-item contributions, averaged over ten cross-fitting repetitions with the predictions held fixed. Ratios get delta-method intervals. As a check fixed in advance, the interval for $\langle\hat r,s_2\rangle/n$ covers 0 in 9 of 10 null draws (Appendix A).
 
 **Controls.** Every estimate has three controls:
+
 1. A *within-cell permutation* of the features among items with the same exact mode and mean. Under this control $G_{\rm own}$ must be at or below zero; its null expectation is $-E\|\hat r\|^2/n$, the decoder's variance penalty.
 2. A *positive control* that predicts the panel-1 mean with the same pipeline.
 3. A *planted shape* used to calibrate power. Item dispersion is made log-linear in a random feature direction, with γ setting the strength, and is simulated with the panel's fitted rater cut-points. We call the plant detected when the CLT lower bound of $G_{\rm own}$ exceeds 0. The reference strength is the smallest γ whose mean planted $X_{\rm own}$ reaches the observed one.
@@ -133,6 +142,7 @@ Intervals are item-cluster CLT intervals on per-item contributions, averaged ove
 **Results (Table 2).**
 
 *Where an own-shape is detectable at all.* The ordinal own-shape is undetectable on SummEval's non-duplicated items, POPQUORN ($a=4$) and DICES-990 ($a=20$); on these panels $G_{\rm own}$ ≈ 0. Two ordinal panels have a detectable own-shape:
+
 - On Dorn's readability panel the decoder recovers 10 % [4, 16]. However, a pure location-and-threshold simulation of Dorn's Java panel already yields a text-decodable own-shape: over five draws its $\langle\hat r, s_2\rangle$ averages about 95 % of the value observed on the real panel. A plant matching the observed magnitude is detected in only 1 of 5 draws. Dorn's 10 % is therefore an upper bound, of the size location alone produces.
 - On DICES-350 the decoder recovers −8 % [−23, 8] at 20 raters per half and 1 % [−9, 12] at 40.
 
@@ -141,6 +151,7 @@ Intervals are item-cluster CLT intervals on per-item contributions, averaged ove
 *The NLI–ordinal gap.* Every NLI lower bound exceeds every ordinal upper bound; the smallest margin is 24 % vs 16 %. The gap also holds net of the variance penalty, $(G_{\rm own}-G_{\rm own,perm})/X_{\rm own}$, at 20 raters per half: at most 30 % on the ordinal panels against at least 32 % on NLI.
 
 *DICES-350 at 40 raters, the clean ordinal case.*
+
 - A location-and-threshold simulation of the panel yields no own-shape at all: mean $X_{\rm own}$ is −1.3·10⁻⁵, against the observed 4.9·10⁻⁵. A reproducible ordinal shape beyond location therefore exists here within the observed rater pool.
 - A planted text-predictable shape of matching magnitude is detected in 5 of 5 draws and recovered at 15–33 %.
 - Against this, the observed recovery is −1 to 1 % across the three feature families, with upper bounds ≤ 12 %.
@@ -156,6 +167,7 @@ On DICES-350, then, the shape exists, the decoder has the power to find a shape 
 **Donor-replacement audit.** If a judge learned the shape beyond location, destroying that shape in its training targets would hurt it. The audit replaces the histogram of 69–83 % of training items by another item's histogram, projected onto the recipient's exact mode and mean. Among changed items the mean total-variation distance is 0.30–0.35. We run it under two learners (Appendix D gives the full design).
 
 *LoRA judges.* These are end-to-end judges on Qwen2.5-7B-Instruct with the distributional objective of Chen et al. (2025), trained with three optimizer–assignment realisations × three held-out-rater folds.
+
 - Shape replacement changes held-out RPS by −0.0001 [−0.0011, +0.0011] on SummEval coherence and +0.0000 [−0.0009, +0.0009] on POPQUORN offensiveness.
 - Destroying the location as well (mode-only replacement) costs +0.0120 [+0.0086, +0.0155] and +0.0029 [+0.0009, +0.0050], with every seed-by-fold cell positive.
 - On POPQUORN, resampling users instead of rating positions widens these intervals to [−0.0014, +0.0015] and [−0.0004, +0.0065].
@@ -163,12 +175,14 @@ On DICES-350, then, the shape exists, the decoder has the power to find a shape 
 *Frozen-feature heads.* On ten ordinal panels, heads move by −0.0024 to +0.0006.
 
 **ChaosNLI, the discriminating case.** On SummEval's non-duplicated items and on POPQUORN no own-shape is detectable (§4), so a null there is the expected outcome rather than independent evidence. On the nominal ChaosNLI panels, the shape is both reproducible and decodable. There, the same kind of intervention scrambles the allocation of mass beyond the modal class while preserving the modal mass. It raises the test Brier score at every annotation count:
+
 - by 0.005–0.012 on MNLI and 0.008–0.017 on SNLI (KL 0.016–0.052);
 - equivalently, by 0.29–1.31 of the Brier gap between an oracle that uses the item's own training histogram and the exact comparator.
 
 On binary αNLI, where the replacement cannot change any target, the same contrast is a sham and averages −0.003 to +0.002.
 
 **Any target construction.** We also trained heads on eleven ordinal panels with each of the following target constructions, thirty configurations each:
+
 - the raw histogram;
 - the location-only comparator;
 - reliability-shrunk shapes and locations;
@@ -177,6 +191,7 @@ On binary αNLI, where the replacement cannot change any target, the same contra
 - one-hot labels.
 
 The results:
+
 - The location-only comparator and the reliability-shrunk shapes change held-out RPS by at most 0.0012, with mixed signs.
 - The other smoothing constructions move it by −0.005 to +0.009, in directions that differ across panels.
 - One-hot targets are worse on 10 of 11 panels.
@@ -184,6 +199,7 @@ The results:
 The learner pools location across items on its own and shows no sensitivity to the per-item shape. That is what §4 predicts for a shape that is not decodable from its features.
 
 **Where the ordinal structure beyond location lives.** We fit ordered-probit models $Y^*_{ir} = \theta_i + \sigma_i\varepsilon_{ir}$ with cut-points $c_r$ to the panels with persistent rater identities:
+
 - M0 has item location and common cut-points;
 - M1 adds rater-specific cut-points;
 - M2 adds item-specific dispersion.
@@ -191,6 +207,7 @@ The learner pools location across items on its own and shows no sensitivity to t
 Rater thresholds carry the structure. M1 improves held-out likelihood by 0.05–0.16 nats per rating, whereas item dispersion adds −0.017 to +0.012.
 
 Simulating from the fitted models and re-running the split-half analysis at 40 + 20 raters gives a panel-dependent answer:
+
 - On DICES-350, thresholds reproduce the observed $X_{\rm own}$ where location alone does not.
 - On Buse–Weimer, location alone suffices.
 - On Dorn's Java panel, only the dispersion model does.
@@ -201,15 +218,12 @@ At smaller splits, the location-only model reproduces most of the observed $X$ t
 
 We test the budget question directly, as an observation in its own right: hold the total number of ratings fixed and trade items for raters. We do not derive the answer from §§3–5. A registered mechanism-based prediction failed on ChaosNLI (§1).
 
-**Frozen-feature heads** (eight ordinal and two nominal panels, thirty configurations each; Appendix F). On four of the five panels with more than 900 training items, more items with fewer ratings each wins monotonically. On DICES-990 at a budget of 594 ratings, for example, RPS rises steadily as ratings are concentrated on fewer items:
-
-| items × ratings | 594 × 1 | 297 × 2 | 148 × 4 | 74 × 8 | 40 × 15 |
-|---|---|---|---|---|---|
-| RPS | 0.203 | 0.205 | 0.207 | 0.213 | 0.219 |
+**Frozen-feature heads** (eight ordinal and two nominal panels, thirty configurations each; Appendix F). On four of the five panels with more than 900 training items, more items with fewer ratings each wins monotonically. On DICES-990 at a budget of 594 ratings, for example, RPS rises steadily as ratings are concentrated on fewer items: 594 items × 1 rating gives 0.203, 297 × 2 gives 0.205, 148 × 4 gives 0.207, 74 × 8 gives 0.213 and 40 × 15 gives 0.219.
 
 SummEval is flat. The direction reverses only on small item sets (60 and 210 training items), where a single rating per item is too noisy a target. The items-first order also holds on ChaosNLI (959 × 1: KL 0.226; 30 × 32: 0.323). What differs between tasks is the *marginal* value of a second rating on items already covered: −15 % on ChaosNLI against −1 to −3 % for the ordinal heads.
 
 **LoRA judges on POPQUORN** (Table 3). POPQUORN offensiveness has homogeneous rating positions, which makes it the clean budget case. Every arm trains for the same number of optimizer steps, and all contrasts are taken within one batch, because LoRA training on our hardware is not bit-reproducible: per-cell RPS varies by ≤ 0.0012 between identical runs. A prospective block with independent rating assignments (ROUND20 R20-4) gives:
+
 - 819 × 1 − full = +0.0063 [+0.0030, +0.0099]: one rating per item is worse than the full data.
 - 819 × 2 − 819 × 1 = −0.0031 [−0.0062, −0.0002]: a second rating recovers 49 % of that gap.
 - 117 × 7 − 819 × 1 = +0.0027 [−0.0024, +0.0074]: items-first is not supported.
@@ -219,6 +233,7 @@ An earlier same-batch block reproduces all three readings, with 819 × 1 − ful
 **SummEval measures dilution, not budget.** Each SummEval item carries three expert ratings and five crowd ratings, and the evaluator is always a held-out expert. Because the crowd mean is nearly uncorrelated with the expert mean (r = 0.04), a judge trained on the crowd ratings alone is +0.014 to +0.025 RPS worse than the full-data judge on every fold. There, "fewer ratings per item" changes how far two expert ratings are diluted by five crowd ratings. We report those blocks, including their Qwen2.5 and OLMo-2 replications, in Appendix C.
 
 **Guidance, conditional on task and learner.**
+
 - For ordinal rating tasks with more than 900 items, frozen-feature heads favour covering items first; on ≤ 210 training items the direction reverses.
 - With LoRA judges, prefer two ratings per item over one.
 - Where the rater pool mixes populations, who rates matters more than how many ratings are collected.
@@ -227,6 +242,7 @@ An earlier same-batch block reproduces all three readings, with 819 × 1 − ful
 ## 7. Limitations and conclusion
 
 **Limitations.**
+
 - *Learners and decoders.* Decoding and the frozen-feature analyses use three model families. The end-to-end budget result replicates with an OLMo-2-7B LoRA judge, but the LoRA audit uses Qwen2.5 only. We test linear decoders and one non-linear probe, not fine-tuned probes, so "not decoded" means not decoded by these.
 - *Plant scope.* The plant is one construction: item log-dispersion linear in one feature direction. A detected plant therefore calibrates power for that construction only. At $a=20$ (Dorn) the matched plant is detected in 1 of 5 draws, at $a=40$ (DICES-350) in 5 of 5, and there are no plants on NLI.
 - *Exact cells and the rater pool.* At 20 raters the exact (mode, mean) cell pools items of different latent location, so a decodable own-shape can be location-driven. The ordinal fractions are therefore upper bounds on shape beyond location, and the NLI values may contain such a component. The pool bias of §4 makes "no detectable own-shape" slightly easier to declare.
@@ -263,6 +279,7 @@ Table B1 gives the cross-term-inclusive normalised forecasting gain $G/X$ for ev
 *Reproducibility (long form).* (i) *The shape beyond mode and mean is poorly reproducible on ordinal scales.* Its split-half reliability is 0.04–0.41 on eight panels with 4–8 raters per item (intervals include 0 on four; on SummEval's non-duplicated items, Appendix C, it falls to 0.10 and 0.05 with intervals including 0), and with three raters its reproducibility cannot be measured (Crupi et al. (2025)'s code-summary benchmark, MLCQ, Roy et al.): a split leaves two ratings per item, and two ratings are determined by their exact mode and mean under our tie rule, although 15–75 % of the three-rating histograms share their exact cell with a different histogram. On the dense ordinal panels it stays below 0.3 up to 40 raters (Buse–Weimer 0.22, DICES 0.25 and 0.15, Dorn's Java panel 0.29), so on no ordinal panel does the raw histogram forecast a new rater better than its own mode and mean. ChaosNLI is the contrast: the NLI shape's forecasting reliability exceeds ½ from two to three raters and reaches 0.96–0.98 at 40. Part of this forecasting reliability is panel 1's residual predicting the other panel's location shift (§3); the reproducibility of the shape itself at 40 raters (ρ_own) is 0.06–0.22 on the dense ordinal panels (BW 0.13, DICES-350 0.10, DICES-990 0.06, Dorn 0.12–0.22; with rater resampling the BW and DICES-350 intervals include 0, upper bounds ≤ 0.26) and 0.61 / 0.67 on MNLI / SNLI, so the ordinal–NLI contrast holds on both measures. 
 
 *Decoding (long form).* (ii) *No ordinal panel shows a robustly reproducible shape beyond location, and where an own-shape is detectable little of it is linearly decodable from the frozen features we tested.* A cross-fitted linear decoder on frozen features predicts panel 1's residual; we score it against panel 2's residual from *its own* mode and mean, so that the gain $G_{\rm own}$ measures the shape alone and not panel 2's location shift (§4). As a fraction of the reproducible own-shape $X_{\rm own}$ (item-cluster CLT intervals, §4; all panels and families in Table 2), it recovers:
+
 - on the ordinal panels: 0.9 % [−0.3, 2.1] on SummEval coherence on the full panel, but on its non-duplicated items the own-shape is not detectable and the ratio (0.5 % [−4.6, 5.6]) has no reproducible shape to refer to (relevance is dropped under the prespecified rule; ROUND22); 10 % [4, 16] on Dorn; and on DICES-350, whose own-shape is now detectable, −8 % [−23, 8] at 20 raters per half and 1 % [−9, 12] at 40;
 - on NLI: 28 % [24, 33] on MNLI and 38 % [33, 42] on SNLI.
 

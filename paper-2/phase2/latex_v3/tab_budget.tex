@@ -1,0 +1,40 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{End-to-end LoRA judges (distributional objective; Qwen2.5-7B and, for SummEval, OLMo-2-7B) at fixed rating budgets: test RPS minus the full-data judge, 95\% crossed bootstrap over optimizer seeds and test groups. Prospective blocks use independent rating assignments; contrasts are within one block only (LoRA training is not bit-reproducible). On SummEval the held-out evaluator is an expert and the crowd ratings are nearly uncorrelated with the experts, so its rows measure expert dilution rather than rating budget (Appendix~C).}\label{tab:budget}
+\begin{tabular}{llrrl}\toprule panel & design (items $\times$ ratings) & ratings & RPS & $-$ full data \\\midrule
+POPQUORN, prospective (Qwen2.5, R20-4) & 819 $\times$ 1 & 819 & 0.1278 & $+$0.0063 [$+$0.0030, $+$0.0099] \\
+POPQUORN, prospective (Qwen2.5, R20-4) & 117 $\times$ 7 & 819 & 0.1305 & $+$0.0090 [$+$0.0056, $+$0.0124] \\
+POPQUORN, prospective (Qwen2.5, R20-4) & 819 $\times$ 2 & 1638 & 0.1247 & $+$0.0032 [$+$0.0016, $+$0.0048] \\
+POPQUORN, prospective (Qwen2.5, R20-4) & 819 $\times$ 7 & 5733 & 0.1215 & -- \\
+\midrule
+SummEval, prospective, expert dilution (Qwen2.5, R19-9) & 960 $\times$ 1 & 960 & 0.1782 & $+$0.0064 [$+$0.0045, $+$0.0085] \\
+SummEval, prospective, expert dilution (Qwen2.5, R19-9) & 144 $\times$ 7 & 1008 & 0.1884 & $+$0.0166 [$+$0.0118, $+$0.0216] \\
+SummEval, prospective, expert dilution (Qwen2.5, R19-9) & 960 $\times$ 2 & 1920 & 0.1677 & $-$0.0040 [$-$0.0078, $-$0.0003] \\
+SummEval, prospective, expert dilution (Qwen2.5, R19-9) & 960 $\times$ 7 & 6720 & 0.1718 & -- \\
+\midrule
+SummEval, prospective, expert dilution (OLMo-2, R20-3) & 960 $\times$ 1 & 960 & 0.1862 & $+$0.0066 [$+$0.0044, $+$0.0089] \\
+SummEval, prospective, expert dilution (OLMo-2, R20-3) & 144 $\times$ 7 & 1008 & 0.1922 & $+$0.0126 [$+$0.0058, $+$0.0197] \\
+SummEval, prospective, expert dilution (OLMo-2, R20-3) & 960 $\times$ 7 & 6720 & 0.1796 & -- \\
+\midrule
+SummEval, single-batch rerun, expert dilution (Qwen2.5, R20-5b/c) & 960 $\times$ 1 & 960 & 0.1777 & $+$0.0064 [$+$0.0045, $+$0.0086] \\
+SummEval, single-batch rerun, expert dilution (Qwen2.5, R20-5b/c) & 960 $\times$ 2 & 1920 & 0.1679 & $-$0.0034 [$-$0.0066, $-$0.0004] \\
+SummEval, single-batch rerun, expert dilution (Qwen2.5, R20-5b/c) & 960 $\times$ 7 & 6720 & 0.1713 & -- \\
+\midrule
+SummEval, single-batch rerun, expert dilution (OLMo-2, R20-6) & 960 $\times$ 1 & 960 & 0.1861 & $+$0.0063 [$+$0.0042, $+$0.0085] \\
+SummEval, single-batch rerun, expert dilution (OLMo-2, R20-6) & 960 $\times$ 2 & 1920 & 0.1775 & $-$0.0022 [$-$0.0050, $-$0.0001] \\
+SummEval, single-batch rerun, expert dilution (OLMo-2, R20-6) & 960 $\times$ 7 & 6720 & 0.1798 & -- \\
+\midrule
+SummEval, shared assignment (Qwen2.5) & 960 $\times$ 1 & 960 & 0.1664 & $-$0.0027 [$-$0.0061, $+$0.0014] \\
+SummEval, shared assignment (Qwen2.5) & 480 $\times$ 2 & 960 & 0.1651 & $-$0.0040 [$-$0.0084, $-$0.0000] \\
+SummEval, shared assignment (Qwen2.5) & 144 $\times$ 7 & 1008 & 0.1897 & $+$0.0206 [$+$0.0163, $+$0.0247] \\
+SummEval, shared assignment (Qwen2.5) & 960 $\times$ 7 & 6720 & 0.1691 & -- \\
+\midrule
+POPQUORN, shared assignment (Qwen2.5) & 819 $\times$ 1 & 819 & 0.1300 & $+$0.0087 [$+$0.0054, $+$0.0122] \\
+POPQUORN, shared assignment (Qwen2.5) & 117 $\times$ 7 & 819 & 0.1322 & $+$0.0109 [$+$0.0070, $+$0.0151] \\
+POPQUORN, shared assignment (Qwen2.5) & 819 $\times$ 2 & 1638 & 0.1246 & $+$0.0033 [$+$0.0011, $+$0.0053] \\
+POPQUORN, shared assignment (Qwen2.5) & 819 $\times$ 7 & 5733 & 0.1213 & -- \\
+\midrule
+SummEval, shared assignment (OLMo-2) & 960 $\times$ 1 & 960 & 0.1801 & $+$0.0007 [$-$0.0056, $+$0.0069] \\
+SummEval, shared assignment (OLMo-2) & 480 $\times$ 2 & 960 & 0.1778 & $-$0.0016 [$-$0.0062, $+$0.0023] \\
+SummEval, shared assignment (OLMo-2) & 144 $\times$ 7 & 1008 & 0.1896 & $+$0.0102 [$+$0.0049, $+$0.0156] \\
+SummEval, shared assignment (OLMo-2) & 960 $\times$ 7 & 6720 & 0.1794 & -- \\
+\bottomrule\end{tabular}\end{table*}

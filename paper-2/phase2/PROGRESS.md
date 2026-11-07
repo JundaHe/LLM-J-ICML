@@ -1753,3 +1753,18 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Bug during assembly, caught and fixed before commit: I split v2 line 17 at the first "(ii)", which was the cross-reference "§1 (ii)" rather than finding (ii). This truncated a sentence mid-way. Repaired by hand, and the remaining references were re-listed.
 - check_consistency on v3: 95 four-decimal numbers, 0 unmatched, all named claims OK.
 - Known redundancy: App. B/D repeat some main-text sentences, to be trimmed in the final pass. Next: v3 LaTeX build with table/label mapping and a page count.
+
+## 2026-11-07 09:34 — v3 step 5: LaTeX build and page count
+- New build_latex_v3.py. The official ICML 2027 style is unreleased and no icml*.sty is available locally, so it uses an approximate ICML layout: two columns, 6.75in × 9in text block, Times, wide tables as table*. Page counts are approximate until the official template exists.
+- Tables:
+  - main text: Table 1 (cards), Table 2 (own-shape, v2 Table 2b), Table 3 (new tab_budget_main: POPQUORN prospective R20-4 rows only, from the generated budget table);
+  - appendix: B1 (decode), D1 (all budget blocks), F1 (heads).
+- Captions from make_tables_v2.py carry v2 section numbers; the build remaps them (§2.1 → §3, §2.2 → §4, §1 → App. C, §5 → App. C).
+- Result: 18 pages, 0 undefined references or citations, 1 small overfull box (9 pt, a table).
+  - The main text with Figure 1 and Tables 1–3 ends at the top of page 8; References start on page 8. The main body is about 7.3 pages, within the 8-page limit.
+  - Appendix: pages 9–18, one column.
+- Fixes found by rendering:
+  - pandoc turned 21 bullet lists into inline "- " text because there was no blank line before them; blank lines added in PAPER_ICML_v3.md;
+  - a markdown table (longtable is not allowed in two-column layout) replaced by a sentence with the same numbers;
+  - a display equation 112 pt too wide was split.
+- check_consistency on v3: 95 numbers, 0 unmatched, all named claims OK.

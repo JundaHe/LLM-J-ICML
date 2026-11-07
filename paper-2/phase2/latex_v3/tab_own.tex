@@ -1,0 +1,28 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Own-shape decoding: the cross-fitted decoder's gain against panel 2's residual from its own mode and mean, as a percentage of the reproducible own-shape, $100\,G_{\rm own}/X_{\rm own}$, and net of the within-cell permutation (decoder variance penalty); $X_{\rm own}$ in units of $10^{-4}$. Item-cluster CLT 95\% intervals (\S4). $a/b$: raters in panel 1 / panel 2. No ratio where $X_{\rm own}$'s interval covers 0. SummEval full-panel rows include the duplicated crowd annotations; non-dup.\ rows exclude them (Appendix~C). HelpSteer2 and EmoBank ($b=2$) cannot measure the own-shape.}\label{tab:own}
+\begin{tabular}{lrllll}\toprule panel & $a/b$ & features & $X_{\rm own}$ & $G_{\rm own}/X_{\rm own}$ (\%) & net (\%) \\\midrule
+DICES-350 & 20/20 & Qwen2.5 & $+$0.44 [$+$0.05, $+$0.83] & $-$8.0 [$-$23.0, $+$7.1] & $+$11.6 [$-$6.2, $+$29.4] \\
+DICES-350 & 20/20 & OLMo-2 & $+$0.44 [$+$0.05, $+$0.83] & $-$4.7 [$-$13.2, $+$3.7] & $+$8.9 [$-$2.7, $+$20.5] \\
+DICES-350 & 20/20 & Qwen3 & $+$0.44 [$+$0.05, $+$0.83] & $-$0.4 [$-$7.5, $+$6.8] & $+$8.8 [$-$1.9, $+$19.4] \\
+DICES-350 & 40/20 & Qwen2.5 & $+$0.49 [$+$0.16, $+$0.82] & $+$1.3 [$-$8.8, $+$11.4] & $+$15.0 [$+$2.6, $+$27.4] \\
+DICES-350 & 40/20 & OLMo-2 & $+$0.49 [$+$0.16, $+$0.82] & $-$0.0 [$-$7.2, $+$7.2] & $+$6.8 [$-$1.9, $+$15.6] \\
+DICES-350 & 40/20 & Qwen3 & $+$0.49 [$+$0.16, $+$0.82] & $-$0.6 [$-$8.0, $+$6.8] & $+$9.5 [$-$0.3, $+$19.3] \\
+DICES-990 & 20/20 & Qwen2.5 & $+$0.22 [$-$0.02, $+$0.45] & $X_{\rm own}$ n.s. & -- \\
+Dorn (all)$^{SE}$ & 20/20 & Qwen2.5 & $+$2.73 [$+$2.03, $+$3.43] & $+$10.2 [$+$4.4, $+$15.9] & $+$11.4 [$+$7.1, $+$15.8] \\
+Dorn Java$^{SE}$ & 20/20 & Qwen2.5 & $+$2.69 [$+$1.55, $+$3.84] & $+$0.3 [$-$14.9, $+$15.5] & $+$11.3 [$+$2.7, $+$19.9] \\
+EmoBank & 3/2 & Qwen2.5 & $+$0.02 [$-$0.02, $+$0.06] & $X_{\rm own}$ n.s. & -- \\
+HelpSteer2 & 3/2 & Qwen2.5 & $+$0.00 [$+$0.00, $+$0.00] & $X_{\rm own}$ n.s. & -- \\
+POPQUORN off. & 4/4 & Qwen2.5 & $-$0.08 [$-$1.14, $+$0.99] & $X_{\rm own}$ n.s. & -- \\
+SummEval coh.\ (full panel) & 4/4 & Qwen2.5 & $+$3.75 [$+$2.45, $+$5.05] & $+$0.9 [$-$0.3, $+$2.0] & $+$2.2 [$+$1.0, $+$3.4] \\
+SummEval coh.\ (full panel) & 4/4 & OLMo-2 & $+$3.75 [$+$2.45, $+$5.05] & $+$0.7 [$-$0.4, $+$1.8] & $+$3.1 [$+$1.5, $+$4.7] \\
+SummEval coh.\ (full panel) & 4/4 & Qwen3 & $+$3.75 [$+$2.45, $+$5.05] & $+$1.7 [$+$0.6, $+$2.8] & $+$3.1 [$+$1.6, $+$4.6] \\
+SummEval coh.\ (non-dup.) & 4/4 & Qwen2.5 & $-$1.33 [$-$2.98, $+$0.31] & $X_{\rm own}$ n.s. & -- \\
+SummEval rel.\ (full panel) & 4/4 & Qwen2.5 & $+$3.07 [$+$1.83, $+$4.31] & $+$1.3 [$+$0.1, $+$2.5] & $+$2.9 [$+$1.4, $+$4.4] \\
+SummEval rel.\ (non-dup.) & 4/4 & Qwen2.5 & $-$0.32 [$-$1.64, $+$1.00] & $X_{\rm own}$ n.s. & -- \\
+ChaosNLI MNLI & 4/4 & Qwen2.5 & $+$41.62 [$+$36.40, $+$46.84] & $+$22.0 [$+$18.7, $+$25.4] & $+$30.7 [$+$26.8, $+$34.7] \\
+ChaosNLI MNLI & 20/20 & Qwen2.5 & $+$111.31 [$+$102.32, $+$120.31] & $+$28.3 [$+$24.6, $+$32.0] & $+$36.5 [$+$32.8, $+$40.2] \\
+ChaosNLI MNLI & 20/20 & OLMo-2 & $+$111.31 [$+$102.32, $+$120.31] & $+$28.9 [$+$25.4, $+$32.4] & $+$36.4 [$+$32.9, $+$39.9] \\
+ChaosNLI MNLI & 20/20 & Qwen3 & $+$111.31 [$+$102.32, $+$120.31] & $+$30.2 [$+$26.7, $+$33.8] & $+$38.2 [$+$34.7, $+$41.8] \\
+ChaosNLI SNLI & 4/4 & Qwen2.5 & $+$35.23 [$+$30.41, $+$40.05] & $+$28.4 [$+$24.8, $+$31.9] & $+$36.4 [$+$32.1, $+$40.6] \\
+ChaosNLI SNLI & 20/20 & Qwen2.5 & $+$111.94 [$+$102.04, $+$121.84] & $+$37.8 [$+$34.0, $+$41.6] & $+$45.2 [$+$41.2, $+$49.1] \\
+\bottomrule\end{tabular}\end{table*}
