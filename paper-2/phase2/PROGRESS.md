@@ -1796,3 +1796,13 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - DICES σ_med is 0.98 on a 3-level scale, so the grid was too weak. Amended to γ ∈ {0.6, 1, 1.5, 2, 3} before the main run; the amendment is labelled post hoc in ROUND22_PROTOCOL.md.
 - Main job 13571: 25 sequential CPU runs, about 15 min.
 - The smoke files stay untracked: the disp copy is deleted, and dices_r22psmoke_polar0.4_s0.json is kept locally as evidence.
+
+## 2026-11-07 11:48 — R22-6 result: polarisation plant 3/5 at the matched magnitude (power claim stays dispersion-only)
+- 25 runs, 0 tracebacks. Reference γ is 1.5 (mean X_own 6.3e−5 against the observed 4.9e−5). Detected in 3 of 5 draws, below the frozen threshold of 4.
+- Recovery at the reference γ is 1–22 % (point estimates). About half of the polarisation's X is the cross term (X_cross/X ≈ 0.5), and X_own saturates near 6–7e−5.
+- Reading (frozen): DICES-350's −1 to 1 % is informative against the dispersion construction (R22-3, 5/5) but not against polarisation.
+- Paper:
+  - v2 §7 and v3 §7 "Plant scope" state this.
+  - v3 §4, §1 (ii) and the abstract now say "dispersion shape" (abstract 249 words).
+  - check_consistency v2/v3: 0 unmatched. ICML build: main text still ends at the top of page 8.
+- Story impact: the DICES-350 clean case is now explicitly construction-specific. That is a real limitation, and it is now visible in the main text.

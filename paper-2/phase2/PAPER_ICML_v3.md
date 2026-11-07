@@ -7,7 +7,7 @@ Learned judges are increasingly trained on full histograms of human ratings. We 
 
 On rating panels from 14 datasets, a learner-free split-half analysis finds the ordinal shape poorly reproducible. Its forecasting reliability is 0.04–0.41 with 4–8 raters and below 0.3 at 40, under the ½ needed for the raw histogram to beat its own mode and mean; on NLI it reaches 0.96–0.98.
 
-Scored against the other half's own shape, no ordinal panel shows a robustly reproducible shape beyond location. On DICES-350, the only panel where one is detectable within the rater pool, frozen representations of three LLM families recover −1 to 1 % of it (upper bounds ≤ 12 %). A planted text-predictable shape of the same magnitude is recovered at 15–33 %. On MNLI and SNLI they recover 28–38 %.
+Scored against the other half's own shape, no ordinal panel shows a robustly reproducible shape beyond location. On DICES-350, the only panel where one is detectable within the rater pool, frozen representations of three LLM families recover −1 to 1 % of it (upper bounds ≤ 12 %). A planted text-predictable dispersion shape of the same magnitude is recovered at 15–33 %. On MNLI and SNLI they recover 28–38 %.
 
 Accordingly, replacing the shape of 69–83 % of training targets while preserving mode and mean changes LoRA judges by at most ±0.0015 RPS (95 % bounds). One-hot targets are worse on 10 of 11 panels.
 
@@ -45,7 +45,7 @@ We ask a question that work on learning from label variation (Uma et al., 2021; 
 - on Dorn's readability panel, of the size that location and rater thresholds alone produce;
 - detectable beyond location only on DICES-350, and only within its observed rater pool.
 
-DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen features of three model families recover −1 to 1 % of the own-shape (upper bounds ≤ 12 %). A planted text-predictable shape of the observed magnitude is detected in 5 of 5 draws and recovered at 15–33 %, and a location-and-threshold simulation of the panel yields no own-shape at all. On MNLI and SNLI the decoder recovers 28 % [24, 33] and 38 % [33, 42]. Every NLI lower bound exceeds every ordinal upper bound.
+DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen features of three model families recover −1 to 1 % of the own-shape (upper bounds ≤ 12 %). A planted text-predictable dispersion shape of the observed magnitude is detected in 5 of 5 draws and recovered at 15–33 % (a polarisation plant only in 3 of 5, §7), and a location-and-threshold simulation of the panel yields no own-shape at all. On MNLI and SNLI the decoder recovers 28 % [24, 33] and 38 % [33, 42]. Every NLI lower bound exceeds every ordinal upper bound.
 
 *(iii) The judges we trained show no detectable use of the shape (§5).*
 
@@ -153,7 +153,7 @@ Intervals are item-cluster CLT intervals on per-item contributions, averaged ove
 *DICES-350 at 40 raters, the clean ordinal case.*
 
 - A location-and-threshold simulation of the panel yields no own-shape at all: mean $X_{\rm own}$ is −1.3·10⁻⁵, against the observed 4.9·10⁻⁵. A reproducible ordinal shape beyond location therefore exists here within the observed rater pool.
-- A planted text-predictable shape of matching magnitude is detected in 5 of 5 draws and recovered at 15–33 %.
+- A planted text-predictable dispersion shape of matching magnitude is detected in 5 of 5 draws and recovered at 15–33 %. A polarisation plant of matching magnitude is detected in only 3 of 5 (§7).
 - Against this, the observed recovery is −1 to 1 % across the three feature families, with upper bounds ≤ 12 %.
 
 On DICES-350, then, the shape exists within the observed rater pool, the decoder has power for a planted shape of this size and construction, and the observed shape is not decoded.
@@ -244,7 +244,7 @@ The earlier same-batch block gives the same three readings, with 819 × 1 − fu
 **Limitations.**
 
 - *Learners and decoders.* The frozen-feature analyses use three model families, but own-shape decoding on all three covers only SummEval, MNLI and DICES-350; the other panels and the valid-forecast gain are Qwen2.5 only. The SummEval LoRA contrasts (Appendix C) replicate on OLMo-2-7B; the POPQUORN budget block and the LoRA audit are Qwen2.5 only. We test linear decoders and one non-linear probe (on SummEval and POPQUORN only), not fine-tuned probes, so "not decoded" means not decoded by these.
-- *Plant scope.* The plant is one construction: item log-dispersion linear in one feature direction. A detected plant therefore calibrates power for that construction only. At $a=20$ (Dorn) the matched plant is detected in 1 of 5 draws, at $a=40$ (DICES-350) in 5 of 5, and there are no plants on NLI.
+- *Plant scope.* The main plant is one construction: item log-dispersion linear in one feature direction. At $a=20$ (Dorn) the matched plant is detected in 1 of 5 draws, at $a=40$ (DICES-350) in 5 of 5, and there are no plants on NLI. A second construction on DICES-350, text-predictable polarisation of two fixed rater groups (ROUND22 R22-6, grid amended after a smoke run), reaches the observed own-shape magnitude at γ = 1.5. There it is detected in only 3 of 5 draws, with recovery of 1–22 %, so the DICES-350 null is informative against the dispersion construction but not against polarisation.
 - *Exact cells and the rater pool.* At 20 raters the exact (mode, mean) cell pools items of different latent location, so a decodable own-shape can be location-driven. The ordinal fractions are therefore upper bounds on shape beyond location, and the NLI values may contain such a component. The pool bias of §4 makes "no detectable own-shape" slightly easier to declare.
 - *SummEval data.* The released file has identical crowd annotations on 807 of 1,600 items. This is undocumented and unverified upstream. It makes SummEval's full-panel numbers artefactual and its budget contrasts dilution contrasts (Appendix C).
 - *POPQUORN position folds.* A user-held-out check with real user ids, in which no evaluator contributes to any target, confirms the audit and budget conclusions.

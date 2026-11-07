@@ -219,3 +219,22 @@ DICES-350's power calibration (R22-3) uses one construction: item log-dispersion
 - **New grid.** γ ∈ {0.6, 1.0, 1.5, 2.0, 3.0} × s0–s4, replacing {0.1–0.6}. Reference rule and reading are unchanged.
 - **Additional reported quantity (descriptive).** X_cross/X at the reference γ, to show how much of the polarisation lands in the cross term.
 - **If no γ ≤ 3.0 reaches the observed X_own:** report that this construction cannot produce an own-shape of DICES-350's magnitude at plausible strengths. The power claim then stays dispersion-only.
+
+### R22-6 results (11:48; 25 runs, 0 tracebacks; results/decode_decomp/dices_r22p_polar*_s*.json)
+| γ | mean X_own | mean X | X_cross/X | detected (CLT lower bound of G_own > 0) | G_own/X_own per draw |
+|---|---|---|---|---|---|
+| 0.6 | −0.3e−5 | 6.0e−5 | 1.05 | 0/5 | 0.30, 0.12, −0.24, −0.79, 0.43 |
+| 1.0 | 4.4e−5 | 10.5e−5 | 0.58 | 1/5 | 0.02, 0.11, 0.10, 0.22, 0.01 |
+| **1.5** | **6.3e−5** | 12.4e−5 | 0.49 | **3/5** | 0.20, 0.22, 0.11, 0.17, 0.01 |
+| 2.0 | 7.1e−5 | 13.5e−5 | 0.48 | 2/5 | 0.10, 0.18, 0.01, 0.18, −0.04 |
+| 3.0 | 6.3e−5 | 11.9e−5 | 0.47 | 1/5 | 0.19, 0.18, 0.04, 0.09, −0.01 |
+
+- **Reference γ: 1.5.** It is the smallest γ whose mean X_own (6.3e−5) is at least the observed 4.9e−5.
+- **Frozen reading: 3 of 5 detected, fewer than 4.** DICES-350's −1 to 1 % is *not* shown to be informative against the polarisation construction. The power claim stays restricted to the dispersion construction (R22-3: 5 of 5, 15–33 %).
+- **Descriptive.**
+  - At the reference γ the decoder recovers 1–22 % of the planted own-shape (point estimates). The observed −1 to 1 % lies at the bottom of that range, so it neither excludes nor matches this construction.
+  - About half of the polarisation's X lands in the cross term (X_cross/X 0.47–0.58 for γ ≥ 1), and X_own saturates near 6–7e−5 for γ ≥ 1.5.
+  - The decoder has less power for a shape whose own part is small relative to its location part.
+- **Consequence for the paper.**
+  - v3 §7 "Plant scope" and v2 §7 name the second construction and its result.
+  - The DICES-350 sentence in v3 §4 is already scoped to "a planted shape of this size and construction"; v3 §1 (ii) and the abstract say "a planted text-predictable shape of the same magnitude", which is now made specific to the dispersion construction in §4 and §7 (the abstract has no room).
