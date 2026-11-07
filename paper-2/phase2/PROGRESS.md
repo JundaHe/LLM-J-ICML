@@ -1775,3 +1775,12 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - The main text ends near the top of the right column on page 8, where References begin, so it fits the 8-page limit with about 0.6 page of margin.
   - Two wide tables (tab_own 9 pt, appendix tab_budget 63 pt) are now resized to the text width.
 - The ICML 2027 style is still unreleased. The count should be rechecked once it is out.
+
+## 2026-11-07 10:34 — v3 self-review (subagent) and fixes
+- A read-only subagent checked the v3 main text against v2.5 (reviews/claude_v3_selfreview_2026-11-07.md). It found no wrong numbers, but 4 HIGH overclaims or contradictions introduced by compression.
+  - The worst: the Conclusion said "items first is the right default", which contradicts §6 and v2.5 (POPQUORN LoRA: two ratings are safer; the budget result is not derived from the mechanism).
+  - Also 9 MED and about 8 LOW issues.
+- All verified against the v2.5 text and applied (25 replacements). The abstract was re-trimmed to 248 words.
+- check_consistency v3: 95 numbers, 0 unmatched, all named claims OK.
+- ICML 2025 build: 0 undefined, 0 overfull; the main text still ends at the top of page 8.
+- Lesson: number checks do not catch lost qualifiers. Compression mainly removed scope phrases ("within the observed pool", "frozen features we tested", "on SummEval", "POPQUORN").
