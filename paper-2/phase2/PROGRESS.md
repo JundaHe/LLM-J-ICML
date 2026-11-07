@@ -1828,3 +1828,5 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 2026-11-07 13:37 百分比审计完成（reviews/percent_audit_v3_2026-11-07.md）：76 处中 66 匹配、4 仅舍入、6 处不符（3 个错误各出现两次），另有 1 处陈旧数字。已修 v3 与 v2：ChaosNLI 交叉项占 X 32–40%→31–40%；NLI–ordinal 最小间隔 24%vs16%→18%vs16%（ChaosNLI MNLI 每半 4 人）；第二次评分边际值 ChaosNLI −15%→−12 至 −15%，ordinal −1 至 −3% 限定为 Qwen2.5 大面板 heads；Dorn 上界 0.18→0.16（dorn_all_r21 为 0.159）；序数面板交叉项 most of X→about half or more（DICES-350 a=8 为 49%）；7–12% 注明来自单次 R19-2 抽样。结论不变（NLI 下界仍全部高于 ordinal 上界，但间隔从 8 点缩到 2 点）。v3 重编：18 页，参考文献起于第 8 页，0 未定义/0 overfull；check_consistency v2/v3 均 0 unmatched。
 
 - 2026-11-07 14:31 check_consistency.py 新增 10 条百分比头条断言（仅 v2+ 稿）：植入恢复 15–33% / 1–22%（3/5 检出）、NLI 28–38%、DICES-350 上界 ≤12%、ChaosNLI 交叉项 31–40%、NLI–ordinal 间隔 18% vs 16%、Dorn 上界 0.16、POPQUORN 第二次评分 49%、ChaosNLI 边际 −12 至 −15%；均从结果文件现算。v1/v2/v3 全部通过；反向测试（植回旧值）正确报 FAIL。无作业运行。
+
+- 2026-11-07 15:30 tick：无作业、无新结果、工作区干净（仅 features/ 与无关的 paper-4 未跟踪文件）。无有动机的新实验；18% vs 16% 窄间隔的措辞留待 Codex 外审（11-11 21:45 后）决定，不做事后挑选。
