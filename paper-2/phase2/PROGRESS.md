@@ -1768,3 +1768,10 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
   - a markdown table (longtable is not allowed in two-column layout) replaced by a sentence with the same numbers;
   - a display equation 112 pt too wide was split.
 - check_consistency on v3: 95 numbers, 0 unmatched, all named claims OK.
+
+## 2026-11-07 10:09 — v3 build in the real ICML 2025 style
+- A background search found icml2025.sty in paper-4/latex/icml2025/. build_latex_v3.py now also writes latex_v3/main_icml.tex/.pdf with that style. It copies the .sty/.bst files from paper-4 at build time; they are not committed here.
+- Result: 18 pages, 0 undefined references or citations, 0 overfull boxes.
+  - The main text ends near the top of the right column on page 8, where References begin, so it fits the 8-page limit with about 0.6 page of margin.
+  - Two wide tables (tab_own 9 pt, appendix tab_budget 63 pt) are now resized to the text width.
+- The ICML 2027 style is still unreleased. The count should be rechecked once it is out.
