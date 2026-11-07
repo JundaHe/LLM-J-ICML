@@ -1822,3 +1822,5 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - check_consistency only reads local files, so it could not notice this.
 - Committed following the existing convention: P_test/P_calib.npy, items_*.csv (item ids and row indices only, no text), meta.json (config; checked for secrets) and train.log. The LoRA adapter weights (lora/, about 26 GB) are gitignored, as for the earlier blocks.
 - Total 1,108 files, 4.2 MB. No datasets or feature files.
+
+- 2026-11-07 13:31 tick：无作业运行，无新结果。启动对 PAPER_ICML_v3.md 全部百分比数字的机器审计（check_consistency 只覆盖 4 位小数对比/区间），报告写入 reviews/percent_audit_v3_2026-11-07.md；GPU 空闲直至 Codex 外审（11-11 21:45 后）。
