@@ -1830,3 +1830,5 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 2026-11-07 14:31 check_consistency.py 新增 10 条百分比头条断言（仅 v2+ 稿）：植入恢复 15–33% / 1–22%（3/5 检出）、NLI 28–38%、DICES-350 上界 ≤12%、ChaosNLI 交叉项 31–40%、NLI–ordinal 间隔 18% vs 16%、Dorn 上界 0.16、POPQUORN 第二次评分 49%、ChaosNLI 边际 −12 至 −15%；均从结果文件现算。v1/v2/v3 全部通过；反向测试（植回旧值）正确报 FAIL。无作业运行。
 
 - 2026-11-07 15:30 tick：无作业、无新结果、工作区干净（仅 features/ 与无关的 paper-4 未跟踪文件）。无有动机的新实验；18% vs 16% 窄间隔的措辞留待 Codex 外审（11-11 21:45 后）决定，不做事后挑选。
+
+- 2026-11-10 00:31 预先准备 Codex 第 22 轮外审 prompt（reviews/codex_round22_prompt_2026-11-10.md，约 2 万词：v3 全文 + ROUND21/22 protocol；专问 plant 只覆盖 dispersion 的影响、18% vs 16% 窄间隔是否保留、8 页正文是否讲清 DICES-350 vs NLI 与 POPQUORN 预算）。密钥扫描仅命中正文散文（无密钥）。Codex 额度恢复（11-11 21:45）后直接发送。
