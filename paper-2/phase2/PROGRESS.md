@@ -1856,3 +1856,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 读法 R4：管线的 DL + 适配只拿到 CF 增益的约十分之一 → Stage 2–10 的 DL 负结果目前不能读成"领域属性"，必须先查实现。
 - 另外两点（描述性）：(1) Jester 上"已知品味"在组内排序这个指标上本身就不大（k=20 +1.4 点，k=50 +2.6 点）；(2) 新笑话上三种学习器都不超过文本预测的笑话均值，文本特征预测笑话均值也弱（60.1% vs 真均值 66.3%）→ 128 个笑话 + 冻结特征下，新条目设定没有可证明的上升空间。
 - 代码上看到的三个候选原因（未验证）：L-BFGS 300 次上限 + 从 z=0、W5≈0.01 的鞍点出发；λ_rater 多次选到网格上界 512；DL 的隐变量加在 5 个类别 logit 上而 CF 加在期望分上。Amendment 1（事后、探索性）已写入协议：A1-1 在 fold 0 上诊断，A1-2 若找到修复则作为 L1-fix 跑全部 5 折并单独报告 folds 1–4。
+
+### 2026-11-11 20:55 — paper 4 Stage 14 Amendment 1: diagnosis of the weak DL gain on Jester (post hoc)
+- A1-1 (fold 0, job 15530): not optimisation (10× iterations: objective −0.5 %, gain unchanged; latent not at the saddle), not parametrisation (kind L no better), weaker penalties alone reach 0.6–0.9 of CF's +1.33 at best.
+- A1-3 (job 15532): whitened adaptation prior (z = z̄ + L u) supported in 4 of 7 fits: +0.86–1.11 points = 65–83 % of CF; no help at the DL fit chosen by validation log-likelihood (λ_rater = 512, +0.37). Two causes: isotropic prior on an unstandardised latent; likelihood selection rewards scale use and regularises the ranking signal away.
+- A1-2 written before running: rungs L1-fix-a (whitened prior, unchanged selection) and L1-fix-b (whitened prior + penalties/strength by pseudo-new-rater concordance), five folds, folds 1–4 separately. Code: factorised_rm.py --whiten_adapt / --sel_conc; job 15533 running; summary s14_fix.py.
