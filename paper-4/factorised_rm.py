@@ -186,16 +186,18 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
         tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); rs5 = np.random.RandomState(3 + f); vr = set(rs5.choice(tr_r, len(tr_r) // 5, replace=False))
         in_v = np.isin(R, list(vr)); full_tr = np.concatenate([idx_tr, idx_va]); idx_in = full_tr[~in_v[full_tr]]
         ad_pool5 = idx_tr[in_v[idx_tr]]; sc5 = idx_va[in_v[idx_va]]           # inner-val raters: adapt on non-validation training items, score on validation items
+        if args.sel_conc and not args.val_ratings: idx_in = idx_tr[~in_v[idx_tr]]   # rung b on held-out-item panels (A1-4): the inner fit does not see the validation items
         def draw5(k, dr):
             """support of k ratings per pseudo-new rater and the cell they are scored on (rung b: all their other training-item ratings)"""
             rng5 = np.random.RandomState(50_000 + 100 * k + dr); ad = []; keep = []
             for r in vr:
                 pool = ad_pool5[R[ad_pool5] == r]
                 if len(pool) >= k: keep.append(r); ad.extend(rng5.choice(pool, k, replace=False))
-            ad = np.array(ad, int); return ad, (np.setdiff1d(full_tr[np.isin(R[full_tr], keep)], ad) if args.sel_conc else sc5[np.isin(R[sc5], keep)])
+            ad = np.array(ad, int); return ad, (np.setdiff1d(full_tr[np.isin(R[full_tr], keep)], ad) if args.sel_conc and args.val_ratings else sc5[np.isin(R[sc5], keep)])
         score5 = (lambda m_, sc: pool_conc(m_, sc)) if args.sel_conc else (lambda m_, sc: m_.per_rating(sc)[0].mean())
         if args.sel_conc:                                                    # Stage 14 Am. 1, rung b: penalties of the latent models by pseudo-new-rater concordance
-            ad, sc = draw5(args.sel_conc, 0)
+            ad, sc = draw5(args.sel_conc, 0); sel_conc["n_raters"] = int(len(np.unique(R[sc]))); sel_conc["n_ratings"] = int(len(sc))
+            sel_conc["n_pairs"] = int(sum((n_ * n_ - (np.bincount(Y[sc][R[sc] == r_]) ** 2).sum()) // 2 for r_ in np.unique(R[sc]) for n_ in [(R[sc] == r_).sum()]))   # pairs with different ratings
             for kind in WK:
                 best = None
                 for lam in grid(kind):
