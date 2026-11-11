@@ -1885,3 +1885,15 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - references_p4.bib / build_latex.py：加入 Goldberg et al. 2001（Jester）。
 - 构建：errors 0，undefined citations 0，22 页；正文恰好止于第 8 页底（无余量，§5.2 PRISM 单元格更新时需复查）。
 - 未完成：§5.2 复现表（DICES DF − DL 应为 +0.011 [+0.005, +0.018]；PRISM 等 5 折）、图 1 的 DL 序列、附录 B/E 的 PRISM 表述——等作业 15557。
+
+## 2026-11-12 04:21 — paper 4 Stage 14 A1-4：PRISM 结果（作业 15557）并写入草稿（commit 28e7468）
+- 运行：10 个 PRISM 运行全部完成（rung a 的 fold 4 来自作业 15534），峰值内存 29.99 GB / 32 GB，无 Killed、无 Traceback。941 个新评分者（k = 20）。
+- 结果（rung a，k = 20）：softmax 隐变量 DL 在似然上略高于偏移量 DF：DL − DF +0.37 [+0.08, +0.65] ×100 nats（DF − DL −0.0037 [−0.0065, −0.0008]，约为偏移量自身增益 +0.079 的 5 %）。按预先写好的规则记为 “contradicted”（似然下界 > 0）。
+- 但不是排序增益：评分者内一致性 own − other −0.06 [−0.26, +0.13]，隐变量减偏移量 −0.01 [−0.10, +0.08]，相对不适应 −0.21 [−0.37, −0.05]。序数隐变量 L 低于其 probit 对照 −1.81，低于 DF −4.33。规则的 direction 条款在单响应面板上不成立（上一节已说明），“practically meaningful” 标签来自该条款。
+- rung b：PRISM 上隐变量同样低于对照（DL −3.07，L −4.20）；四个真实面板共 8 个 面板×隐变量 单元中 7 个低于量表对照（0.03–1.64 nats/评分）。仍只采用 rung a。
+- k = 50（139 人）：调优强度在多数折里很大（DF 两折 524288），DF 与 DL 都被压制（调优 DF − D +0.043，训练评分者先验 +0.107；修正后 DL − D +0.035）——首次运行已有此现象；图 2 中 PRISM 的 DL 曲线在 k = 50 下降，图注已说明。
+- 草稿：§5.2 表（DICES DF − DL +0.011 [+0.005, +0.018]；PRISM −0.004 [−0.007, −0.001]）及一句正文；图 2 的 DL 序列改用 rung a（s14_real.py 新增 fig_DL-D，make_fig_main.py 读取；k = 0 点与已发表序列一致）；附录 A 的 H3r、附录 B 的 Stage 14 段落、附录 E、CLAIMS claim 15 更新；PROTOCOL_STAGE14.md 追加 PRISM 结果节。
+- 构建：errors 0，undefined citations 0，22 页，正文止于第 8 页底。
+- 对论文故事：“隐变量在量表使用之外没有增益” 现在只对 MultiPref 和排序成立；PRISM 上有一个很小的、只体现在似然上的隐变量增益，已如实写入。
+- 说明：本条目因脚本中断未随 28e7468 一并提交，单独补交。
+- 下一步：Codex 复审 paper 4（Stage 14 改动）；question 3（重测稳定性）待用户决定。
