@@ -38,6 +38,21 @@ Written 2026-11-11 14:52, before any new computation below. Items marked POST HO
   - If M1 still reproduces it at R = 20, the sentence stays, and the R = 5 vs R = 10 discrepancy is disclosed.
   - The draft's other DICES numbers are unaffected.
 
+## R23-2 result (2026-11-11 16:17, job 15521; frozen reading, no revision)
+
+R = 20 split repetitions, 40 simulations per model, a = 40 (+ 20) raters; values ×10⁻⁵.
+
+| Panel | Observed X_own (R = 5 → R = 20) | M0 95 % range | M1 95 % range | M2 95 % range | Reproduces (R = 20) | Reproduced at R = 5 (R19-3) |
+|---|---|---|---|---|---|---|
+| DICES-350 | 1.79 → 4.83 | [−2.73, 1.69] | [−3.73, 0.03] | [−2.55, 2.24] | none | M1, M2 |
+| Buse–Weimer | 10.6 → 16.8 | [0.97, 14.7] | [−0.70, 12.9] | [15.4, 30.6] | M2 only | M0, M1 |
+| Dorn Java | 18.0 → 20.5 | [3.15, 12.0] | – | [20.9, 37.4] | none (between M0 and M2) | M2 |
+
+- **Reading (as frozen).** On DICES-350 no rater model reproduces the observed X_own; the threshold model M1 generates no own-shape (mean −1.7). The §5 sentence "thresholds reproduce the observed X_own where location alone does not" is withdrawn.
+- **Not anticipated by the protocol.** The readings on Buse–Weimer and Dorn Java also changed (BW: location alone no longer suffices, only the dispersion model reproduces; Dorn Java: the observed value is just below the dispersion model's range). The observed X_own moved with the number of split repetitions on all three panels, so the reproduce / does-not-reproduce reading is not stable at R = 5. The paper now reports the R = 20 readings as they are, discloses the R = 5 readings, and draws no conclusion about which rater model generates the residual shape.
+- **Text changes (v3 §5, Appendix F, long-form finding (iv); v2 abstract, §4, finding (iv)).** "Whether the residual shape itself is rater-side" is now "not established on any panel" (was "established only on DICES-350"). The likelihood statement (rater cut-points +0.05–0.16 nats per rating) is unaffected and is now worded as likelihood structure. The a = 10 X_cross figures are updated to this run (BW 0.00033 of 0.00045; Dorn Java 0.00054 of 0.00080). A corrupted `\text` (a tab character) in the Appendix F formulae of both drafts is fixed.
+- **Checks.** check_consistency.py passes for v3 and v2; v3 rebuilt, main text ends on page 8 (references start page 9), 0 undefined, 0 overfull.
+
 ## Deferred (need a decision; not run in this round)
 
 - **Matched-design block** (review change 2):
