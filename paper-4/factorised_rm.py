@@ -7,7 +7,7 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--feat_name", default="Qwen2.5-7B-Instruct", help="Stage 10: feature file name under features/<panel>/"); ap.add_argument("--concord", action="store_true", help="Stage 10: within-rater pairwise concordance of expected scores on test items"); ap.add_argument("--xd", type=int, default=0, help="Stage 14: PCA dimension (0 = min(256, items − 1))"); ap.add_argument("--xd_grid", default="", help="Stage 14: per-fold PCA dimension chosen by D's validation log-likelihood (snippet panels only)"); ap.add_argument("--val_ratings", action="store_true", help="Stage 14 L1: validation = 15 %% of the training raters' ratings of training items (seed 1) instead of held-out item groups"); ap.add_argument("--seen_items", action="store_true", help="Stage 14: also evaluate test raters on their non-support ratings of training items (adapted, prior-mean and deranged parameters)"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--feat_name", default="Qwen2.5-7B-Instruct", help="Stage 10: feature file name under features/<panel>/"); ap.add_argument("--concord", action="store_true", help="Stage 10: within-rater pairwise concordance of expected scores on test items"); ap.add_argument("--xd", type=int, default=0, help="Stage 14: PCA dimension (0 = min(256, items − 1))"); ap.add_argument("--xd_grid", default="", help="Stage 14: per-fold PCA dimension chosen by D's validation log-likelihood (snippet panels only)"); ap.add_argument("--val_ratings", action="store_true", help="Stage 14 L1: validation = 15 %% of the training raters' ratings of training items (seed 1) instead of held-out item groups"); ap.add_argument("--seen_items", action="store_true", help="Stage 14: also evaluate test raters on their non-support ratings of training items (adapted, prior-mean and deranged parameters)"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); ap.add_argument("--whiten_adapt", action="store_true", help="Stage 14 Am. 1 (A1-2): adapt new raters of DL / L in whitened latent coordinates (z = mean + chol(cov of the training raters' z) u, isotropic prior on u); needs --adapt_tune"); ap.add_argument("--sel_conc", type=int, default=0, help="Stage 14 Am. 1 (A1-2, rung b): rater-side penalties of DL / L and every adaptation strength chosen by the concordance of pseudo-new training raters adapted from this many ratings (0 = off)"); args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -135,6 +135,25 @@ def adapt(mdl, idx_ad, lam_r=None):
     te = torch.tensor(np.unique(R[idx_ad]))
     for k in keys: c.p[k][te] = c.center[k][te]                       # start new raters at the prior mean
     return c.fit(idx_ad, keys)
+WGRID = (0.03125, 0.125, 0.5, 2, 8, 32, 128)                               # adaptation strengths in whitened coordinates (0.5 = unit Gaussian prior)
+def whiten(m, idx):
+    """Stage 14 Am. 1: z = zbar + L u, L = Cholesky factor of the covariance of the training raters' z; the constant part moves to the text head, so predictions for the raters in idx do not change"""
+    assert m.kind in ("DL", "L") and not TEXTL
+    tr = torch.tensor(np.unique(R[idx])); d = args.d; zb = m.p["z"][tr].mean(0); Lc = torch.linalg.cholesky(torch.cov((m.p["z"][tr] - zb).T) + 1e-10 * torch.eye(d))
+    u = torch.zeros_like(m.p["z"]); u[tr] = torch.linalg.solve_triangular(Lc, (m.p["z"][tr] - zb).T, upper=False).T
+    if m.kind == "DL":
+        W5v = m.p["W5"].view(XD, d, K); w0v = m.p["w0"].view(d, K); m.p["V"] = m.p["V"] + torch.einsum("xdk,d->xk", W5v, zb); m.p["b"] = m.p["b"] + torch.einsum("dk,d->k", w0v, zb)
+        m.p["W5"] = torch.einsum("xdk,de->xek", W5v, Lc).reshape(XD, d * K); m.p["w0"] = torch.einsum("dk,de->ek", w0v, Lc).reshape(d * K)
+    else:
+        m.p["beta"] = m.p["beta"] + m.p["W"] @ zb; m.p["c0"] = m.p["c0"].clone(); m.p["c0"][0] -= m.p["wl0"] @ zb; m.p["W"] = m.p["W"] @ Lc; m.p["wl0"] = m.p["wl0"] @ Lc
+    m.p["z"] = u; return set_center(m, idx)
+def pool_conc(m, idx):
+    """pooled within-rater pairwise concordance of the expected score on idx (prediction ties count 1/2)"""
+    ey = m.per_rating(idx)[3]; c = dn = 0.0
+    for r in np.unique(R[idx]):
+        sel = R[idx] == r; yy = Y[idx][sel]; e = ey[sel]; ui, uj = np.triu_indices(len(yy), 1); ok = yy[ui] != yy[uj]; sg = (np.sign(e[ui] - e[uj]) * np.sign(yy[ui] - yy[uj]))[ok]
+        c += (sg > 0).sum() + 0.5 * (sg == 0).sum(); dn += ok.sum()
+    return c / max(dn, 1)
 
 # ---------------------------------------------------------------- folds
 rs = np.random.RandomState(0); rfold = np.zeros(NR, int)
@@ -159,28 +178,45 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
     if args.xd_grid:                                                         # Stage 14: PCA dimension by D's validation LL in this fold (no test rater, no test item)
         for xd in [int(x) for x in args.xd_grid.split(",")]: set_xd(xd); train("D", idx_tr, idx_va); xd_val[xd] = VAL["D"]
         set_xd(max(xd_val, key=xd_val.get)); print(f"fold {f} xd selected {XD} from {xd_val}", flush=True)
-    for kind in MODELS: fits[kind], lam_sel[kind] = train(kind, idx_tr, idx_va); print(f"fold {f} trained {kind} λ={lam_sel[kind]} [{time.time()-t0:.0f}s]", flush=True)
-    LAD = {}
+    for kind in MODELS:
+        if args.sel_conc and args.whiten_adapt and kind in ("DL", "L"): continue   # rung b selects and fits these below
+        fits[kind], lam_sel[kind] = train(kind, idx_tr, idx_va); print(f"fold {f} trained {kind} λ={lam_sel[kind]} [{time.time()-t0:.0f}s]", flush=True)
+    LAD = {}; WK = [k_ for k_ in ("DL", "L") if k_ in MODELS] if args.whiten_adapt else []; assert args.adapt_tune or not (args.whiten_adapt or args.sel_conc); sel_conc = {}
     if args.adapt_tune:                                                      # Amendment 5: inner split of the training raters; text side + rater params refit without them
         tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); rs5 = np.random.RandomState(3 + f); vr = set(rs5.choice(tr_r, len(tr_r) // 5, replace=False))
         in_v = np.isin(R, list(vr)); full_tr = np.concatenate([idx_tr, idx_va]); idx_in = full_tr[~in_v[full_tr]]
         ad_pool5 = idx_tr[in_v[idx_tr]]; sc5 = idx_va[in_v[idx_va]]           # inner-val raters: adapt on non-validation training items, score on validation items
-        for kind in [k_ for k_ in ("DF", "DFs", "DL", "F", "F1") if k_ in MODELS]:
+        def draw5(k, dr):
+            """support of k ratings per pseudo-new rater and the cell they are scored on (rung b: all their other training-item ratings)"""
+            rng5 = np.random.RandomState(50_000 + 100 * k + dr); ad = []; keep = []
+            for r in vr:
+                pool = ad_pool5[R[ad_pool5] == r]
+                if len(pool) >= k: keep.append(r); ad.extend(rng5.choice(pool, k, replace=False))
+            ad = np.array(ad, int); return ad, (np.setdiff1d(full_tr[np.isin(R[full_tr], keep)], ad) if args.sel_conc else sc5[np.isin(R[sc5], keep)])
+        score5 = (lambda m_, sc: pool_conc(m_, sc)) if args.sel_conc else (lambda m_, sc: m_.per_rating(sc)[0].mean())
+        if args.sel_conc:                                                    # Stage 14 Am. 1, rung b: penalties of the latent models by pseudo-new-rater concordance
+            ad, sc = draw5(args.sel_conc, 0)
+            for kind in WK:
+                best = None
+                for lam in grid(kind):
+                    m5 = whiten(Model(kind, lam).fit(idx_in, mdl_keys(kind)), idx_in); v = max(score5(adapt(m5, ad, la), sc) for la in WGRID)
+                    if best is None or v > best[0]: best = (float(v), lam)
+                sel_conc[kind] = best[0]; lam_sel[kind] = best[1]; fits[kind] = set_center(Model(kind, best[1]).fit(full_tr, mdl_keys(kind)), full_tr)
+                print(f"fold {f} rung b: {kind} λ={best[1]} (pseudo-new concordance {100 * best[0]:.2f}) [{time.time()-t0:.0f}s]", flush=True)
+        for kind in [k_ for k_ in ("DF", "DFs", "DL", "F", "F1") + (("L",) if args.whiten_adapt else ()) if k_ in MODELS]:
             m5 = set_center(Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in)
+            if kind in WK: whiten(m5, idx_in)
             for k in [k_ for k_ in KS if k_ > 0]:
                 best = None
-                for la in (0.5, 2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288):   # Stage 2 Am. 11: grid extended upward
+                for la in (WGRID if kind in WK else (0.5, 2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288)):   # Stage 2 Am. 11: grid extended upward
                     v = []
                     for dr in range(2):
-                        rng5 = np.random.RandomState(50_000 + 100 * k + dr); ad = []; keep = []
-                        for r in vr:
-                            pool = ad_pool5[R[ad_pool5] == r]
-                            if len(pool) >= k: keep.append(r); ad.extend(rng5.choice(pool, k, replace=False))
-                        sc = sc5[np.isin(R[sc5], keep)]; v.append(adapt(m5, np.array(ad, int), la).per_rating(sc)[0].mean())
+                        ad, sc = draw5(k, dr); v.append(score5(adapt(m5, ad, la), sc))
                     if best is None or np.mean(v) > best[0]: best = (float(np.mean(v)), la)
                 LAD[(kind, k)] = best[1]
             print(f"fold {f} adapt-tuned {kind}: " + ", ".join(f"k={k}:{LAD[(kind, k)]}" for k in KS if k > 0) + f" [{time.time()-t0:.0f}s]", flush=True)
-    out["folds"].append({"fold": f, "lam": lam_sel, "lam_adapt": {f"{a}_{b}": v for (a, b), v in LAD.items()}, "n_train": int(len(idx_tr) + len(idx_va)), "n_test": int(len(idx_te)), "n_test_raters": int(test_r.sum()), "xd": int(XD), "xd_val": xd_val})
+    for kind in WK: whiten(fits[kind], np.concatenate([idx_tr, idx_va]))
+    out["folds"].append({"fold": f, "sel_conc": sel_conc, "whiten": WK, "lam": lam_sel, "lam_adapt": {f"{a}_{b}": v for (a, b), v in LAD.items()}, "n_train": int(len(idx_tr) + len(idx_va)), "n_test": int(len(idx_te)), "n_test_raters": int(test_r.sum()), "xd": int(XD), "xd_val": xd_val})
     test_raters = np.unique(R[idx_te])
     ORC = {}
     for kind in [k_ for k_ in ("DF", "DFs") if k_ in MODELS]:                 # Amendment 8: oracle offsets fitted on all of the rater's held-out ratings
