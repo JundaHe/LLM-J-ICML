@@ -225,3 +225,43 @@ A1-2 (only if A1-1 identifies a fix): the fixed configuration becomes rung **L1-
 procedure and judged by the §1.5 rule. Because the fix is chosen after seeing fold 0, folds 1–4 are reported separately as the cleaner evidence, and
 the whole rung is labelled post hoc. If L1-fix detects taste, the DL rows of the paper's real panels were produced by the unfixed fit and must be
 re-run with the fix before they are interpreted; if no fix is found, those rows are reported as "not interpretable as domain evidence".
+
+### A1-1 result (2026-11-11, job 15530; fold 0, k = 20, support draw 0; CF own − μ on this draw +1.33; `results/stage14_diag_part{0,1}.json`)
+
+Gain = seen-joke concordance own − μ in points at adaptation strengths 0.5 / 8 / 128 / 2048 / 32768 (the pipeline's tuning chose 2048 in this fold).
+
+| kind | λ_rater | λ_W | iterations (cap hit) | start | objective | val LL | latent sd | gain by adaptation strength |
+|---|---|---|---|---|---|---|---|---|
+| DL | 512 | 10 | 300 (yes) | pipeline | 75058.9 | −1.1306 | 1.47 | −2.01 / −1.05 / +0.38 / +0.12 / +0.07 |
+| DL | 512 | 10 | 3000 (yes) | pipeline | 74662.0 | −1.1308 | 1.55 | −2.50 / −1.49 / +0.16 / +0.03 / +0.07 |
+| DL | 512 | 10 | 3000 (yes) | random 0.1 | 74655.2 | −1.1311 | 1.56 | −2.47 / −1.43 / +0.20 / +0.03 / +0.06 |
+| DL | 32 | 10 | 300 (yes) | pipeline | 70367.2 | −1.1461 | 1.85 | −1.80 / −0.54 / +0.67 / +0.18 / +0.03 |
+| DL | 32 | 10 | 3000 (yes) | pipeline | 70318.8 | −1.1585 | 2.90 | −1.92 / −0.64 / +0.61 / +0.21 / +0.04 |
+| DL | 2 | 1 | 3000 (yes) | random 0.1 | 66426.4 | −1.2515 | 4.61 | −2.01 / −0.84 / +0.86 / +0.29 / +0.02 |
+| L | 512 | 10 | 300 (yes) | pipeline | 84223.4 | −1.2608 | 1.09 | −5.61 / −5.09 / −1.74 / +0.75 / +0.13 |
+| L | 2 | 10 | 3000 (no, 2020) | pipeline | 78714.6 | −1.3776 | 1.67 | −5.77 / −2.92 / +0.68 / +0.15 / +0.02 |
+
+(20 configurations in the JSON; the rows above span the range.) Reading against the three candidates:
+
+- *Optimisation: not the cause.* The fit is not stuck at the saddle (latent term sd 1.5 logits). Ten times more iterations lower the objective by
+  0.5 % at the selected penalties and do not raise the gain; the random start changes nothing.
+- *Penalty grid: not sufficient.* Weaker rater penalties raise the best gain to 0.6–0.9 (optimistic: best over adaptation strengths) while making
+  validation log-likelihood worse, and stay well below CF's +1.33.
+- *Parametrisation: not the cause.* The ordinal CF-structured kind `L` does no better (best +0.75).
+- So: **unexplained by the three candidates.** One pattern is common to every row: weak adaptation priors *lose* 1–6 points and strong ones gain
+  almost nothing, with a narrow window between.
+
+### A1-3 (written before running): is the adaptation prior misspecified?
+
+Candidate 4, read off the code and the pattern above. `adapt()` shrinks a new rater's z isotropically toward the training-rater mean with one
+strength. z is not standardised: its d = 8 directions carry both scale use (category offsets enter through the constant column w0; large
+between-rater variance, strong signal per rating — DF − D is +29.5 ×100 nats) and taste (small variance, weak signal). One isotropic strength cannot
+fit both: weak shrinkage overfits the low-variance directions, strong shrinkage removes them. The CF reference does not have this problem because
+its loadings are scaled so that rater factors have unit variance and its intercept is unpenalised.
+
+Test (fold 0, same draw, `DIAG_WHITEN=1 s14_diag.py`): after fitting, re-express the latent in whitened coordinates z = z̄ + L u, with L the
+Cholesky factor of the training raters' covariance of z (the constant part moved into the text head; predictions for training raters unchanged —
+checked numerically), then adapt u with an isotropic prior at strengths 0.125 / 0.5 / 2 / 8 / 32 (0.5 is the nominal Gaussian-prior value).
+Configurations: DL (512, 10), (32, 10), (2, 10) at 300 iterations, (2, 1) at 3000; L (512, 10), (32, 10) at 300, (2, 10) at 3000.
+Reading: candidate 4 is supported if the whitened prior at a strength within the grid's interior reaches at least half of the CF gain on this draw
+(≥ +0.67) *and* exceeds the best unwhitened gain of the same fit; then "whitened adaptation prior" is the fix carried to A1-2.

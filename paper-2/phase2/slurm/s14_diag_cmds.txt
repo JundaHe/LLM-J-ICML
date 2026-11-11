@@ -1,0 +1,2 @@
+DIAG_PART=0 /scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_diag.py > logs/s14_diag_p0.log 2>&1
+DIAG_PART=1 /scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_diag.py > logs/s14_diag_p1.log 2>&1
