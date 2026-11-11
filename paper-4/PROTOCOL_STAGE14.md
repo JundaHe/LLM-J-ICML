@@ -163,3 +163,65 @@ What can be said (descriptive, replicated on first and second turns): on Communi
 ~22 % of comparisons where the population model is near chance (52–53 % → about 54 %); on the other ~78 % the accuracy gain is at most a few tenths
 of a point. What cannot be said: that individual taste is a contested-item phenomenon, or that routing personalisation to contested items gives a
 practically meaningful gain there — the gain is about +1.6 points with a lower bound below +1, and nothing on MultiPref.
+
+## 6. Results — S14-1 (2026-11-11; pipeline job 15528, `s14_cf.py`, `s14_1.py`; rules of §1.5 applied as written)
+
+The CF reference and the pipeline used identical support draws (seen-cell denominators identical for every fold, k, draw and rater). 1,000 raters;
+991 have at least one comparable pair. PCA dimension selected for L2: 8 in every fold. Selected penalties (λ_text, λ_rater, λ_W): L1 DL
+(100–300, 32–512, 10–100); L2 DL (1000–3000, 128–512, 10). Within-rater concordance in points, 95 % rater bootstrap; full tables in
+`results/stage14_1.md`.
+
+| k = 20 | estimate | rule |
+|---|---|---|
+| L0: CF own − μ (seen jokes; joke-mean level 66.3 %) | +1.39 [+1.12, +1.68] | **passes** (lower bound > +1) |
+| L1: DL own − μ (seen jokes, item-identity encoding) | +0.14 [+0.09, +0.19] | (i) fails |
+| L1: (DL own − μ) − (DF own − μ) | +0.16 [+0.13, +0.20] | (ii) met |
+| L2: DL own − μ (held-out jokes; D level 60.2 %) | −0.06 [−0.11, −0.01] | (i) fails |
+| L2: (DL own − μ) − (DF own − μ) | −0.00 [−0.04, +0.04] | (ii) fails |
+| CF-text own − μ (held-out jokes) | −0.10 [−0.34, +0.13] | does not pass |
+| ISO own − μ (held-out jokes) | −1.03 [−1.26, −0.80] | — |
+
+**Reading R4** (L0 passes, L1 does not detect): the pipeline's DL model and adaptation recover about a tenth of the gain that a linear CF reference
+obtains from the same 20 ratings on the same seen jokes (0.14 / 1.39). The DL negatives of Stages 2–10 therefore cannot be read as properties of the
+domains until the implementation has been examined (Amendment 1).
+
+Secondary (no rule): CF own − μ grows with k (+0.28, +0.73, +1.39, +2.64 at k = 5, 10, 20, 50); L1 DL own − μ +0.04, +0.08, +0.14, +0.29; L1 DL
+own − other +0.31 [+0.25, +0.36]; L1b (L2 run on seen jokes) −0.00 [−0.02, +0.02]; log-likelihood ×100: L1 DL − DF +1.56 [+1.42, +1.71], L2 DL − DF
++0.92 [+0.70, +1.14], L2 DF − D +29.5 [+27.5, +31.7] (scale use dominates the likelihood, as on the paper's graded panels).
+
+Two things the result says beyond the rule, both descriptive:
+
+- **The "known taste" is itself modest on this endpoint.** With 20 ratings a standard CF model improves a rater's pairwise ordering of seen jokes by
+  1.4 points over joke means (2.6 points with 50). Much of what makes Jester users differ is how high they rate overall, which within-rater
+  concordance removes by construction.
+- **No learner transferred taste to unseen jokes.** On held-out jokes all three learners (DL, CF-text, ISO) are at or below the text-predicted joke
+  mean, and the text features predict joke means only weakly (60.1 % against 66.3 % for the true means). With 128 jokes and these frozen features the
+  held-out-item setting has no demonstrated headroom, so L2 cannot separate domain from method here (§1.6, R3 logic), independently of the DL problem.
+
+## Amendment 1 (2026-11-11, post hoc, after §6) — examining the DL implementation
+
+Status: exploratory diagnosis, written before any diagnostic is run. Candidate causes read off the code, not yet tested:
+
+1. *Optimisation.* DL is fitted by one L-BFGS call capped at 300 iterations, started at z = 0, w0 = 0 and W5 ~ 0.01·N(0, 1) — a saddle point of the
+   low-rank term (the gradient with respect to W5 and w0 is zero at z = 0 and the gradient with respect to z is of order 0.01).
+2. *Penalty grids.* λ_rater = 512 (the grid maximum) was selected in six of ten DL fits, and the adaptation strength chosen for new raters is 512–8192.
+3. *Parametrisation.* DL puts the latent on the five category logits (softmax, 40 loadings per joke); CF puts it on the expected score.
+
+A1-1 (fold 0, L1 configuration: identity encoding, rating-level validation; `s14_diag.py`, which executes the `factorised_rm.py` definitions unchanged
+and instruments the fit):
+
+- DL at the selected penalties and at weaker rater penalties (λ_rater ∈ {512, 32, 2}, λ_W ∈ {10, 1}), with 300 and 3000 L-BFGS iterations, and with
+  a non-degenerate start (z ~ 0.1·N(0, 1), W5 ~ 0.1·N(0, 1)). Reported per fit: iterations used and whether the cap was hit, penalised training
+  objective, validation log-likelihood, standard deviation of the latent term's contribution to the logits, and seen-joke concordance own − μ at
+  k = 20 (support draw 0) over a grid of adaptation strengths (the best value over that grid is optimistic and is reported as such).
+- The existing ordinal low-rank kind `L` (probit score x·β + (x·W + w0)·z, the CF structure) in the same configurations.
+- Reference on the same fold and draw: CF own − μ.
+
+Reading (descriptive): the cause is "optimisation" if more iterations or the non-degenerate start at the *same* penalties lower the training
+objective and raise the gain materially; "grid" if only penalties outside the selected ones do; "parametrisation" if `L` recovers the gain and DL
+does not under any setting; "unexplained" otherwise.
+
+A1-2 (only if A1-1 identifies a fix): the fixed configuration becomes rung **L1-fix** and is run on all five folds through the unchanged selection
+procedure and judged by the §1.5 rule. Because the fix is chosen after seeing fold 0, folds 1–4 are reported separately as the cleaner evidence, and
+the whole rung is labelled post hoc. If L1-fix detects taste, the DL rows of the paper's real panels were produced by the unfixed fit and must be
+re-run with the fix before they are interpreted; if no fix is found, those rows are reported as "not interpretable as domain evidence".
