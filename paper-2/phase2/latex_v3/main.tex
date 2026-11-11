@@ -11,7 +11,7 @@ Learned judges are increasingly trained on full histograms of human ratings. We 
 
 On rating panels from 14 datasets, a learner-free split-half analysis finds the ordinal shape poorly reproducible. Its forecasting reliability is 0.04--0.41 with 4--8 raters and below 0.3 at 40, under the $\tfrac12$ needed for the raw histogram to beat its own mode and mean; on NLI it reaches 0.96--0.98.
 
-Scored against the other half's own shape, no ordinal panel shows a robustly reproducible shape beyond location. On DICES-350, the only panel where one is detectable within the rater pool, frozen representations of three LLM families recover $-$1 to 1 \% of it (upper bounds $\leq$ 12 \%). A planted text-predictable dispersion shape of the same magnitude is recovered at 15--33 \%. On MNLI and SNLI they recover 28--38 \%.
+Scored against the other half's own shape, no ordinal panel shows a robustly reproducible shape beyond location. On DICES-350, the only panel where one is detectable within the rater pool, frozen representations of three LLM families recover $-$1 to 1 \% of it (upper bounds $\leq$ 12 \%): a small text covariance is detectable but yields no proper-score gain. A planted text-predictable dispersion shape of the same magnitude is recovered at 15--33 \%. On MNLI and SNLI they recover 28--38 \%.
 
 Accordingly, replacing the shape of 69--83 \% of training targets while preserving mode and mean changes LoRA judges by at most $\pm$0.0015 RPS (95 \% bounds). One-hot targets are worse on 10 of 11 panels.
 
@@ -75,7 +75,7 @@ We ask a question that work on learning from label variation (\citealp{uma2021le
   detectable beyond location only on DICES-350, and only within its observed rater pool.
 \end{itemize}
 
-DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen features of three model families recover $-$1 to 1 \% of the own-shape (upper bounds $\leq$ 12 \%). A planted text-predictable dispersion shape of the observed magnitude is detected in 5 of 5 draws and recovered at 15--33 \% (a polarisation plant only in 3 of 5, \S{}7), and a location-and-threshold simulation of the panel yields no own-shape at all. On MNLI and SNLI the decoder recovers 28 \% {[}24, 33{]} and 38 \% {[}33, 42{]}. Every NLI lower bound exceeds every ordinal upper bound.
+DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen features of three model families recover $-$1 to 1 \% of the own-shape (upper bounds $\leq$ 12 \%); a small text covariance with it is detectable but yields no proper-score gain. A planted text-predictable dispersion shape of the observed magnitude is detected in 5 of 5 draws and recovered at 15--33 \% (a polarisation plant only in 3 of 5, \S{}7). On MNLI and SNLI the decoder recovers 28 \% {[}24, 33{]} and 38 \% {[}33, 42{]}. Every NLI lower bound exceeds every ordinal upper bound.
 
 \emph{(iii) The judges we trained show no detectable use of the shape (\S{}5).}
 
@@ -88,7 +88,7 @@ DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen featur
 \item
   Across eleven ordinal panels, one-hot targets are worse on 10 of 11.
 \item
-  Beyond item location, the remaining structure is mostly rater-side. On the four panels with persistent rater identities, rater-specific cut-points improve held-out likelihood by 0.05--0.16 nats per rating, while item-specific dispersion adds $-$0.017 to +0.012.
+  Beyond item location, the remaining structure is mostly rater-side: rater cut-points improve held-out likelihood by 0.05--0.16 nats per rating, item dispersion by $-$0.017 to +0.012.
 \end{itemize}
 
 \emph{(iv) Budget (\S{}6).}
@@ -100,7 +100,7 @@ DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen featur
 \item
   In a prospective LoRA block on POPQUORN with independent rating assignments, one rating per item is worse than the full data by +0.0063 {[}+0.0030, +0.0099{]} RPS, and a second rating recovers about half of that gap.
 \item
-  On SummEval, the crowd ratings are nearly uncorrelated with the held-out experts, and half the items carry five identical crowd annotations. The same contrasts there measure how far expert ratings are diluted, and we report them in Appendix C rather than as budget evidence.
+  On SummEval the crowd ratings barely track the held-out experts, so its contrasts measure expert dilution, not budget (Appendix C).
 \item
   A prediction we registered was falsified on ChaosNLI: that multi-rater items would pay off at a fixed budget wherever the shape is text-predictable. We therefore report the task-dependence of the marginal value of extra ratings as an observation, not as a consequence of the mechanism.
 \end{itemize}
@@ -115,7 +115,7 @@ DICES-350 at 40 raters is therefore the clean ordinal case. There, frozen featur
 \item
   Disagreement reliability cards for every panel. They tell a dataset builder whether the shape of disagreement is reproducible at the number of raters they can afford.
 \item
-  A donor-replacement audit showing that current training does not use the shape, together with a rater--item decomposition of the ordinal structure beyond location.
+  A donor-replacement audit showing that training on the ordinal panels does not use the shape (whereas on ChaosNLI it does), together with a rater--item decomposition of the ordinal structure beyond location.
 \item
   Fixed-budget evidence for frozen-feature heads in three model families, and for end-to-end LoRA judges on POPQUORN.
 \end{enumerate}
@@ -244,9 +244,11 @@ Intervals are item-cluster CLT intervals on per-item contributions, averaged ove
   A planted text-predictable dispersion shape of matching magnitude is detected in 5 of 5 draws and recovered at 15--33 \%. A polarisation plant of matching magnitude is detected in only 3 of 5 (\S{}7).
 \item
   Against this, the observed recovery is $-$1 to 1 \% across the three feature families, with upper bounds $\leq$ 12 \%.
+\item
+  The decoder's covariance with the other half's shape, \(V_{\rm own}=\langle\hat r,s_2\rangle/n\), is nonetheless positive in all three families (4.9, 2.8 and 2.3$\cdot$10$^{-}$$^{6}$, about ten times the simulation's 4.7$\cdot$10$^{-}$$^{7}$); the variance penalty cancels it (net of the penalty, 15 \% {[}3, 27{]} on Qwen2.5).
 \end{itemize}
 
-On DICES-350, then, the shape exists within the observed rater pool, the decoder has power for a planted shape of this size and construction, and the observed shape is not decoded.
+On DICES-350, then, the shape exists within the observed rater pool, the decoder has power for a planted shape of this size and construction, and the observed shape tracks the text only weakly: detectably, but with no proper-score gain (ROUND23 R23-1, a post-hoc reporting change).
 
 \emph{Robustness.} Qwen3-8B and OLMo-2-7B give the same readings (MNLI 30 \% and 29 \%); own-shape decoding on all three families covers SummEval, MNLI and DICES-350, the other panels are Qwen2.5 only. A nonlinear random-feature decoder (SummEval and POPQUORN only), the cross-term-inclusive ratio \(G/X\), and a valid-forecast version projected onto the exact cell all agree (Appendices A--B). Scored as a valid forecast, the permutation-corrected gain is $\leq$ 6$\cdot$10$^{-}$$^{5}$ RPS on the ordinal panels, against 0.0065 and 0.0072 on MNLI and SNLI.
 
@@ -365,7 +367,7 @@ SummEval is flat. The direction reverses only on small item sets (60 and 210 tra
 
 The earlier same-batch block gives the same three readings, with 819 $\times$ 1 $-$ full = +0.0087 {[}+0.0054, +0.0122{]} and 62 \% recovered by a second rating.
 
-\textbf{SummEval measures dilution, not budget.} Each SummEval item carries three expert ratings and five crowd ratings, and the evaluator is always a held-out expert. Because the crowd mean is nearly uncorrelated with the expert mean (r = 0.04), a judge trained on the crowd ratings alone is +0.014 to +0.025 RPS worse than the full-data judge on every fold. There, ``fewer ratings per item'' changes how far two expert ratings are diluted by five crowd ratings. We report those blocks, including their Qwen2.5 and OLMo-2 replications, in Appendix C.
+\textbf{SummEval measures dilution, not budget.} The evaluator is a held-out expert and the crowd mean barely tracks the expert mean (r = 0.04), so ``fewer ratings per item'' changes how far the expert ratings are diluted; those blocks are in Appendix C.
 
 \textbf{Guidance, conditional on task and learner.}
 
@@ -388,7 +390,7 @@ The earlier same-batch block gives the same three readings, with 819 $\times$ 1 
 \begin{itemize}
 \tightlist
 \item
-  \emph{Learners and decoders.} The frozen-feature analyses use three model families, but own-shape decoding on all three covers only SummEval, MNLI and DICES-350; the other panels and the valid-forecast gain are Qwen2.5 only. The SummEval LoRA contrasts (Appendix C) replicate on OLMo-2-7B; the POPQUORN budget block and the LoRA audit are Qwen2.5 only. We test linear decoders and one non-linear probe (on SummEval and POPQUORN only), not fine-tuned probes, so ``not decoded'' means not decoded by these.
+  \emph{Learners and decoders.} The frozen-feature analyses use three model families, but own-shape decoding on all three covers only SummEval, MNLI and DICES-350; the other panels and the valid-forecast gain are Qwen2.5 only. The SummEval LoRA contrasts (Appendix C) replicate on OLMo-2-7B; the POPQUORN budget block and the LoRA audit are Qwen2.5 only. We test linear decoders and one non-linear probe (on SummEval and POPQUORN only), not fine-tuned probes.
 \item
   \emph{Plant scope.} The main plant is one construction: item log-dispersion linear in one feature direction. At \(a=20\) (Dorn) the matched plant is detected in 1 of 5 draws, at \(a=40\) (DICES-350) in 5 of 5, and there are no plants on NLI. A second construction on DICES-350, text-predictable polarisation of two fixed rater groups (ROUND22 R22-6, grid amended after a smoke run), reaches the observed own-shape magnitude at $\gamma$ = 1.5. There it is detected in only 3 of 5 draws, with recovery of 1--22 \%, so the DICES-350 null is informative against the dispersion construction but not against polarisation.
 \item
@@ -401,9 +403,9 @@ The earlier same-batch block gives the same three readings, with 819 $\times$ 1 
   \emph{Effect sizes.} The effects lie in the third decimal of RPS. They should be read against the mode-only penalty of +0.012 and the POPQUORN budget effects of 0.006--0.009.
 \end{itemize}
 
-\textbf{Conclusion.} A few-rater histogram is a noisy location plus a shape that, on ordinal scales, is barely reproducible across raters and, where it is reproducible, is not linearly decodable from the frozen features we tested. On DICES-350 we can show both halves directly. The shape exists within the rater pool, a planted shape of its size is decoded, and the real one is not.
+\textbf{Conclusion.} A few-rater histogram is a noisy location plus a shape that, on ordinal scales, is barely reproducible across raters and, where it is reproducible, gives no proper-score gain when decoded linearly from the frozen features we tested. On DICES-350 the shape exists within the rater pool and a planted shape of its size is decoded; the real one covaries with the text only weakly.
 
-On NLI the shape is reproducible and a quarter to two-fifths of it is decodable. Learned judges follow the same split. For the budget, frozen-feature heads on ordinal panels with more than 900 items favoured covering items first, while for LoRA judges on POPQUORN two ratings per item beat one; we report this as an observation, not as a consequence of the mechanism. Reliability cards make that check possible before rating starts.
+On NLI the shape is reproducible and a quarter to two-fifths of it is decodable. Learned judges follow the same split. For the budget, frozen-feature heads on ordinal panels with more than 900 items favoured covering items first, while for LoRA judges on POPQUORN two ratings per item beat one, an observation rather than a consequence of the mechanism. Reliability cards make that check possible before rating starts.
 
 \bibliographystyle{plainnat}
 \bibliography{../references}

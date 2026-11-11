@@ -39,7 +39,7 @@ src = open(f"{P}/build_latex_v2.py").read()
 ns = {}; exec(src[src.index("src = open"):src.index("for k, v in sorted(CIT.items()")].replace('f"{P}/build_latex.py"', repr(f"{P}/build_latex.py")), ns)
 for k, v in sorted(ns["CIT"].items(), key=lambda kv: -len(kv[0])): raw = raw.replace(k, v)
 for k, v in ns["ns"]["M"].items(): raw = raw.replace(k, v)
-for k, v in {"⁵": "$^{5}$", "≫": "$\\gg$", "↔": "$\\leftrightarrow$", "ρ": "$\\rho$", "ĥ": "$\\hat h$", "§": "\\S{}", "½": "$\\tfrac12$", "≳": "$\\gtrsim$", "γ": "$\\gamma$", "δ": "$\\delta$", "⁴": "$^{4}$", "α": "$\\alpha$"}.items(): raw = raw.replace(k, v)
+for k, v in {"⁵": "$^{5}$", "≫": "$\\gg$", "↔": "$\\leftrightarrow$", "ρ": "$\\rho$", "ĥ": "$\\hat h$", "§": "\\S{}", "½": "$\\tfrac12$", "≳": "$\\gtrsim$", "γ": "$\\gamma$", "δ": "$\\delta$", "⁴": "$^{4}$", "α": "$\\alpha$", "⁷": "$^{7}$"}.items(): raw = raw.replace(k, v)
 raw = raw.replace("$\\$", "$$").replace("$$-$$", "$-$")
 left = sorted(set(ch for ch in raw if ord(ch) > 127)); assert not left, f"unmapped non-ascii: {left}"
 pre = open(f"{P}/latex/preamble.tex").read()
