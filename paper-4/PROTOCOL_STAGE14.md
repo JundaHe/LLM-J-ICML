@@ -310,3 +310,75 @@ Consequences: if a rung detects → reading R3 holds with that fix, and the DL r
 detects but b recovers at least half of the CF gain with a lower bound above zero → the paper states that the likelihood-selected pipeline
 under-recovers ranking taste, reports the recovered share as the sensitivity of the corrected pipeline, and re-runs the real panels' DL rows with
 rung b as a sensitivity analysis. Otherwise → the DL rows are "not interpretable as domain evidence".
+
+### A1-2 result (2026-11-11, job 15533; `s14_fix.py` → `results/stage14_fix.{json,md}`; post hoc)
+
+Regression check: rung a reproduces rung L1's D and DF rows exactly (max difference 0), so the code change touches only the latent models.
+Seen jokes, k = 20, concordance own − μ in points [95 % rater bootstrap]; CF reference +1.39 [+1.12, +1.68] (folds 1–4: +1.48 [+1.17, +1.80]).
+
+| rung | DL own − μ | share of CF | DL − DF | DL own − other | L own − μ | share of CF | L own − other | LL DL − DF (×100) |
+|---|---|---|---|---|---|---|---|---|
+| L1 (original) | +0.14 [+0.09, +0.19] | 10 % | +0.16 [+0.13, +0.20] | +0.31 [+0.25, +0.36] | — | — | — | +1.56 [+1.42, +1.71] |
+| L1-fix-a | +0.40 [+0.32, +0.48] | 29 % | +0.42 [+0.35, +0.50] | +0.72 [+0.63, +0.81] | +1.68 [+1.47, +1.90] | 121 % | +3.18 [+2.96, +3.42] | +2.16 [+1.94, +2.40] |
+| L1-fix-b | +1.16 [+0.98, +1.34] | 83 % | +1.14 [+0.97, +1.33] | +2.44 [+2.26, +2.64] | +1.67 [+1.41, +1.94] | 120 % | +4.21 [+3.93, +4.49] | +17.33 [+15.89, +18.96] |
+| folds 1–4, fix-a | +0.43 [+0.34, +0.53] | 29 % | +0.46 [+0.37, +0.54] | +0.79 [+0.68, +0.90] | +1.77 [+1.53, +2.00] | 119 % | +3.29 [+3.05, +3.54] | +2.10 [+1.85, +2.35] |
+| folds 1–4, fix-b | +1.20 [+0.99, +1.39] | 81 % | +1.18 [+0.98, +1.38] | +2.52 [+2.30, +2.74] | +1.78 [+1.49, +2.08] | 120 % | +4.24 [+3.93, +4.55] | +20.95 [+19.14, +22.90] |
+
+Other k (all folds): fix-b DL +0.43 / +0.75 / +2.08 and L +0.58 / +1.02 / +2.87 at k = 5 / 10 / 50, against CF +0.28 / +0.73 / +2.64.
+Selections: validation log-likelihood chose λ_rater 32–512 for DL (rungs L1, a); pseudo-new-rater concordance chose 2–32 (rung b). Whitened
+adaptation strengths 0.5–2 (interior of the grid) in every fold, against 512–2048 before.
+
+Decisions.
+- **Rule of §1.5 (DL): not met on any rung, narrowly on b** — (i) lower bound +0.98 (folds 1–4: +0.99) against the threshold +1; (ii) met on every
+  rung. As pre-specified, this is "no rung detects".
+- **Fallback criterion met**: rung b recovers 83 % of the CF gain with DL (lower bound well above zero), and the ordinal latent model L recovers
+  about 120 % on both rungs — L's lower bound (+1.47 / +1.41) is above the +1 threshold and above CF's point estimate on rung a, i.e. under the
+  *unchanged* likelihood selection. The rule was written for DL, so L is reported, not used to change the decision.
+- The expectation written in advance was right for DL (a helps little; b reaches 0.8–1.1 short of the rule) and wrong for L under rung a, which I
+  did not expect to exceed CF.
+- **Reading: the original pipeline's failure on Jester (R4) was a property of the pipeline, not evidence about the domain.** Two defects: (1) an
+  isotropic adaptation prior on an unstandardised latent — sufficient to explain L; (2) for DL, rater-side penalties chosen on *training raters'*
+  validation likelihood, which is a poor proxy for adapted new raters on either endpoint: under rung b DL's new-rater log-likelihood gain over DF
+  also rises from +2.2 to +17.3 ×100 nats.
+- **Consequence for the paper**: every "low-rank latent adds nothing" row on the real panels used the defective configuration (selected λ_rater
+  128–512 and adaptation strength 8192 = effectively switched off, on MultiPref, PRISM and DICES). Those rows are re-run with the corrected
+  pipeline (A1-4) before any wording is kept.
+- Limits: post hoc; fold 0's test raters informed the fixes (folds 1–4 agree); seen jokes only — the held-out-joke rung L2 is unchanged by this
+  amendment (the CF-text reference found no transferable signal there); CF is one reference implementation, not a ceiling.
+
+### A1-4 (written 2026-11-11 before running): the paper's held-out-item results with the corrected latent models
+
+The Jester recovery is on seen jokes. The paper's statements are about held-out items, and every latent-model row there used the defective
+configuration (tuned adaptation strength 8192 on MultiPref, PRISM, DICES and on the semi-synthetic positive-control panels t0 / t5 / t10; 512 on x10).
+A1-4 re-runs them. Two runs per panel, five folds, `--concord --adapt_tune --perm_control`, evaluation on held-out items as in the paper:
+- **a**: `--whiten_adapt` (penalties by validation log-likelihood, as in the paper);
+- **b**: `--whiten_adapt --sel_conc 20` (`10` on Dorn). Because the evaluation is on held-out items, the inner fit of rung b excludes the validation
+  items and the pseudo-new raters are scored on their validation-item ratings (new rater × new item); the adaptation strength of every adapted model
+  is then tuned on the same cell. This cell is small (MultiPref: about 36 raters × 18 ratings); its number of informative pairs is stored and
+  the rung is flagged where it is below 5,000.
+
+**Part 1 — semi-synthetic positive control (Stage 3 panels, known injected content preferences, held-out items).** Panels `multipref_synth_t0`
+(null), `_t5`, `_t10` (oracle direction gain 0 / +5.2 / +10.1 points); models D, DFs, DL, T0, F, L; k ∈ {0, 20, 50}. Endpoint as in §5.6 of the
+draft: direction accuracy, own adapted parameters minus another test rater's, k = 20, rater bootstrap (seed 17, B = 2000). Stage 3's rule is kept:
+a latent model **has power** at a strength if the lower bound exceeds +1 point; the null control is sound if its interval contains a value
+within ±0.5 points of zero (if not, that model × rung is not used). Published DL rows: −0.10 (null), −0.02 (t5), +0.09 [−0.18, +0.36] (t10);
+reference learner given the generating features: +3.1 (t5), +8.0 (t10).
+- If a corrected latent model has power at t5 or t10: §5.6's "no evaluated method met the detection criterion" is restated as a property of the
+  published configurations; the recovered share of the oracle gain is reported; and Part 2's MultiPref rows of that model × rung become the
+  paper's informative ranking test.
+- If none has power: §5.6 stands for the corrected pipeline as well, and Stage 14 is reported as "the correction recovers taste on seen items;
+  transfer to unseen text remains undetected even where it is injected".
+
+**Part 2 — real panels.** `multipref_overall` (models D, DF, DFs, DL, T0, F, L; k ∈ {0, 5, 10, 20, 50}), `prism`, `dices` (D, DF, DL, T0, F, L; same k),
+`dorn_raters` (same models; k ∈ {0, 5, 10}). Buse–Weimer is left out: its features are an item-identity encoding (§0), so held-out snippets cannot
+carry a text-mediated latent. Endpoints at k = 20 (Dorn: 10), same bootstrap: log-likelihood per rating, latent minus its scale-use comparator
+(DL − DF; DL − DFs on MultiPref; L − F); concordance and direction accuracy, own − k = 0 and own − another rater's parameters, and the same for
+the comparator.
+Reading per panel, latent model and rung (all cells reported, no multiplicity correction): the paper's statement "the latent adds nothing beyond
+scale-use offsets" **stands** if the log-likelihood difference has upper bound ≤ +0.5 ×100 nats (the H3 margin) and direction own − other has
+upper bound < +1 point; it is **contradicted** if either has a lower bound > 0 with the latent ahead, in which case the size is reported and
+"practically meaningful" requires a direction or concordance own − other lower bound > +1 point; otherwise **inconclusive**.
+
+Expectation, stated in advance: the corrected latent models detect t10 and possibly t5, well below the reference learner; on the real panels the
+log-likelihood moves by a few hundredths of a nat at most and ranking gains stay below one point. I hold this weakly — the A1-2 expectation was
+wrong for L. The original rows stay in the analysis log either way. Limits: post hoc; one synthetic draw; rung b's selection cell is small.
