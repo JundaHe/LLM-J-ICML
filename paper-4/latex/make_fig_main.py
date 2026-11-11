@@ -1,13 +1,15 @@
 """Figure 1 of paper 4: gain in held-out log-likelihood per rating over the text-only distributional RM (D) for new raters vs number of adaptation ratings k,
-three datasets as small multiples; DL uses the k-shot-tuned prior (Amendment 5); 95 % rater-cluster bootstrap bands. Palette validated (dataviz validator, light)."""
+three datasets as small multiples; DL uses the k-shot-tuned, whitened adaptation prior (Stage 14 Amendment 1, rung a; series from s14_real.py); 95 % rater-cluster
+bootstrap bands. Palette validated (dataviz validator, light)."""
 import json, os, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 HERE = os.path.dirname(os.path.abspath(__file__)); R = os.path.join(os.path.dirname(HERE), "results")
-SER = [("DFs-D", "style offsets, symmetric (DFs)", "#2a78d6", "o"), ("DF-D", "style offsets (DF)", "#eb6834", "s"), ("DL-D", "low-rank latent (DL, tuned)", "#1baf7a", "^"), ("DG-D", "group offsets (DG)", "#eda100", "D")]
+SER = [("DFs-D", "style offsets, symmetric (DFs)", "#2a78d6", "o"), ("DF-D", "style offsets (DF)", "#eb6834", "s"), ("DL-D", "low-rank latent (DL, tuned, corrected prior)", "#1baf7a", "^"), ("DG-D", "group offsets (DG)", "#eda100", "D")]
 DS = [("MultiPref (pairwise preference)", "stage2a_multipref_overall"), ("DICES-350 (safety)", "stage2a_dices"), ("PRISM (response ratings)", "stage2a_prism")]
 plt.rcParams.update({"font.size": 8, "axes.spines.top": False, "axes.spines.right": False})
+S14 = json.load(open(f"{R}/stage14_real.json"))["fig_DL-D"]
 fig, axes = plt.subplots(1, 3, figsize=(6.8, 2.2), sharey=True)
 for ax, (title, stem) in zip(axes, DS):
-    P = json.load(open(f"{R}/{stem}.json"))["summary"]; A5 = json.load(open(f"{R}/{stem}_A5.json"))["summary"]
+    P = json.load(open(f"{R}/{stem}.json"))["summary"]; A5 = {k: {"DL-D_ll": v} for k, v in S14[stem[len("stage2a_"):]].items()}
     ks = [k for k in ("0", "5", "10", "20", "50") if k in P]
     for key, lab, col, mk in SER:
         src = A5 if key == "DL-D" else P

@@ -450,3 +450,44 @@ Readings.
    likelihood selection); rung b is reported as a sensitivity analysis whose likelihood must be shown next to its ranking numbers.
 4. Sizes of rung b's selection cell: 7,000–13,000 informative pairs on MultiPref and the synthetic panels, 6,400–9,700 on DICES, 800–1,300 on Dorn
    (flagged).
+
+### A1-4 result, Part 2: PRISM (2026-11-12; job 15557; `s14_real.py` → `results/stage14_real.{json,md}`; post hoc)
+
+Run notes: job 15556 (48 GB) could not start while other users held the node's memory and was replaced by job 15557 (12 CPUs, 32 GB, four runs
+in parallel, rung a first; commands unchanged). All ten runs finished (fold 4 of rung a came from job 15534); peak memory 29.99 GB of 32 GB, no
+process killed, no traceback. 941 new raters at k = 20.
+
+| panel | rung, model | LL latent − comparator | direction own − other: latent | comparator | latent − comparator | concordance own − other: latent | latent − comparator | rule |
+|---|---|---|---|---|---|---|---|---|
+| PRISM | a DL | **+0.37 [+0.08, +0.65]** | +1.59 [+1.12, +2.06] | +1.26 | +0.33 [+0.18, +0.49] | −0.06 [−0.26, +0.13] | −0.01 [−0.10, +0.08] | contradicted, practically meaningful |
+| | a L | −1.81 [−2.52, −1.12] | +2.68 [+2.10, +3.30] | +1.55 | +1.13 [+0.75, +1.49] | +0.01 [−0.04, +0.07] | +0.01 | contradicted, practically meaningful |
+| | b DL | −3.07 [−3.93, −2.17] | +0.30 [+0.10, +0.52] | +0.53 | −0.24 [−0.54, +0.05] | +0.16 [+0.02, +0.30] | +0.21 [+0.06, +0.36] | stands |
+| | b L | −4.20 [−6.56, −1.97] | +1.31 [+0.85, +1.76] | +3.30 | −1.98 [−2.62, −1.39] | +0.35 [+0.05, +0.65] | +0.35 | inconclusive |
+
+Against the softmax offsets DF (cross-family for L), LL ×100: a DL +0.37 [+0.08, +0.65]; a L −4.33 [−5.36, −3.26]; b DL −3.07; b L −9.27.
+LL over the text-only model: a DL +8.24 [+7.16, +9.33], DF +7.87 [+6.85, +8.91]. By k (rung a, DF − DL in nats per rating, both tuned):
+k = 5 −0.0031 [−0.0058, −0.0005]; k = 10 −0.0053 [−0.0083, −0.0025]; k = 20 −0.0037 [−0.0065, −0.0008]; k = 50 +0.0087 [−0.0019, +0.0201]
+(139 raters). First run: k = 20 −0.0013 [−0.0060, +0.0034].
+
+Readings.
+1. **Rule as written: rung a DL contradicts "nothing beyond the scale-use offsets" in likelihood** (lower bound above zero). The size is 0.0037
+   nats per rating, about 5 % of the offsets' own gain over the text-only model (+0.079), at k = 5–20; not at k = 50.
+2. **It is not a ranking gain.** The "practically meaningful" labels come from the direction clause, which is ill-posed on this panel (reading 2
+   of the previous section: a rater shift alone moves good-vs-bad around the midpoint; DF alone has +1.26, F +1.55). Within-rater concordance,
+   which a shift cannot change, is at zero for both latents under rung a (DL own − other −0.06 [−0.26, +0.13], latent − comparator −0.01
+   [−0.10, +0.08]; L +0.01 [−0.04, +0.07]) and slightly negative against no adaptation for DL (−0.21 [−0.37, −0.05]). The latent's extra
+   own − other direction over its comparator (DL +0.33 [+0.18, +0.49], L +1.13 [+0.75, +1.49]) is not significant against no adaptation
+   (own − k = 0: DL +0.39 [−0.04, +0.86], L +0.47 [−0.07, +1.09]). So on PRISM the corrected softmax latent buys a small, significant
+   improvement in predicted rating distributions that does not show up as better ordering of a rater's responses. Post hoc reading.
+3. The ordinal latent stays below its own comparator (−1.81) and below DF (−4.33) in likelihood.
+4. Rung b lowers likelihood here too (DL −3.07, L −4.20 against the comparators; selection cells of 3,294–4,964 informative pairs, all under
+   the 5,000 flag). Its concordance own − other is +0.16 [+0.02, +0.30] (DL) and +0.35 [+0.05, +0.65] (L), with own − k = 0 at +0.05
+   [−0.11, +0.22] and −0.08 [−0.37, +0.21]: no gain over no adaptation. Across the four real panels rung b's latent is below its scale-use
+   comparator in seven of eight panel × latent cells (by 0.03–1.64 nats per rating; exception: MultiPref L). Rung a remains the adopted correction.
+5. Tuning at k = 50 on PRISM is unstable for every model (139 qualifying test raters): the selected strength is large in most folds (rung-a runs: DF 524288
+   in two folds and 32 in one; DL 128 in three folds, in whitened units), as it already was in the first run (tuned DF − D +0.043 against +0.107 with
+   the training-rater prior). Rung a DL − D at k = 50 is +0.035 [+0.010, +0.061] (first run +0.105); the like-for-like DF − DL is the +0.0087
+   above.
+6. Consequences for the paper: §5.2's PRISM cell becomes DF − DL = −0.004 [−0.007, −0.001] (latent ahead; H3r not non-inferior, now with an
+   interval excluding zero) and DICES +0.011 [+0.005, +0.018]; the statement that the latent adds nothing beyond scale use is restricted to
+   MultiPref and to ranking; Figure 1's DL series is redrawn from the rung-a runs.

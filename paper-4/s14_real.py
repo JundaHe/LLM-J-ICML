@@ -3,7 +3,8 @@ prior, penalties by validation log-likelihood) and b (`_wb`: whitened prior, rat
 validation items), against the published configuration where a run with the permutation control exists. Part 1: semi-synthetic positive control (direction accuracy,
 own − another rater's parameters, k = 20; power = lower bound > +1 point; null sound = interval within ±0.5 of zero). Part 2: real panels (latent minus its scale-use
 comparator in log-likelihood; direction and concordance own − other / own − k = 0). Rater bootstrap over (fold, rater), seed 17, B = 2000, draws averaged within
-rater. Post hoc. Output: results/stage14_real.json / .md (partial results are summarised with the folds that exist)"""
+rater. Post hoc. Output: results/stage14_real.json / .md (partial results are summarised with the folds that exist). `fig_DL-D`: rung a's DL − D in nats per rating
+at every k, for the DL series of Figure 1 (latex/make_fig_main.py)"""
 import json, glob, os, collections, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); R = os.path.join(HERE, "results")
 def load(panel, tag): return [json.load(open(f)) for f in sorted(glob.glob(f"{R}/stage2a_{panel}{tag}_f?.json"))]
@@ -37,7 +38,7 @@ def cells(panel, rs, k):
         for mt, den in (("dir", "n_dir"), ("conc", "conc_den")):
             c[f"{m}-{q}_{mt}_own-other"] = lin(rs, [(1, k, f"{m}_{mt}"), (-1, k, f"{m}_perm_{mt}"), (-1, k, f"{q}_{mt}"), (1, k, f"{q}_perm_{mt}")], den)
     return {a: b for a, b in c.items() if b is not None}
-out = {"part1": {}, "part2": {}, "selected": {}}
+out = {"part1": {}, "part2": {}, "selected": {}, "fig_DL-D": {}}
 RUNGS = (("published", None), ("a", "_wa"), ("b", "_wb"))
 for panel in list(SYN) + list(REAL):
     k = 20 if panel in SYN else REAL[panel][0]; blk = {}
@@ -47,6 +48,7 @@ for panel in list(SYN) + list(REAL):
         runs = load(panel, tag)
         if not runs: continue
         rs = [r for o in runs for r in o["per_rater"]]; c = cells(panel, rs, k); c["folds"] = sorted(fo["fold"] for o in runs for fo in o["folds"]); blk[nm] = c
+        if nm == "a" and panel in REAL: out["fig_DL-D"][panel] = {str(kk): lin(rs, [(1, kk, "DL_ll"), (-1, kk, "D_ll")], "n", sc=1.0) for kk in sorted({r["k"] for r in rs})}
         out["selected"][f"{panel}|{nm}"] = [{"fold": fo["fold"], "lam": {m: fo["lam"].get(m) for m in ("DL", "L", "DF", "DFs", "F")}, "lam_adapt": {a: b for a, b in fo["lam_adapt"].items() if a.endswith(f"_{k}")}, "sel_conc": fo.get("sel_conc", {})} for o in runs for fo in o["folds"]]
     out["part1" if panel in SYN else "part2"][panel] = blk
 # ---- readings
