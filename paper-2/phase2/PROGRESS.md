@@ -1877,3 +1877,11 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 我写的规则有一个缺陷（事后才看到）：单一回答面板（DICES / Dorn / PRISM）上"方向"= 高于或低于量表中点，评分者的平移就能改变它，scale-use 对照自己就有 +8.5 ~ +11.6 点 → 规则在 DICES L、Dorn L 上判了 "contradicted, practically meaningful"，如实保留在表里；事后解读用 latent − comparator 和一致率：Dorn 的 L 一致率增益恰为 0（latent 只被当作平移用）；DICES 的 L 一致率 own − other +0.50 [+0.09, +0.96]（两个 rung 都是 +0.5），但 own − k0 不显著、约二十格未做多重校正 → 只记为线索。
 - **rung b 在真实面板上不可用**：按新评分者 × 新条目的小格子选惩罚，使似然每条评分损失 0.12–1.64 nats，排序没有增益。论文采用的修正是 rung a（白化适配先验 + 似然选择）。
 - 下一步：PRISM 补齐后更新汇总；改 PAPER4_DRAFT.md §5.6（检测下限）、§5.1/5.2（修正后的 DL 行作为敏感性分析）、局限与附录，补 CLAIMS.md。
+
+## 2026-11-12 03:02 — paper 4 草稿写入 Stage 14（修正后的隐变量行；PRISM 待补）
+- PAPER4_DRAFT.md：§5.1 表的 DL − D / DFs − DL 列、§5.5 的低秩隐变量行、§5.6 表新增“ordinal latent, corrected prior”列，均换成修正先验（rung a）后的数值，并标注 post hoc；首次运行的数值移到附录 A。§5.6 正文改为：修正后序数隐变量能检出 +10 点注入（+2.82 [+2.02, +3.63]），检不出 +5，真实 MultiPref 仍为零。
+- 附录 A 新增 Stage 14 时间线条目；附录 B 新增 Stage 14 段落（S14-2 争议样本、Jester 正对照、缺陷诊断与修正、held-out-item 结果、规则方向条款的缺陷、DICES 线索、rung b 损害似然故只采用 rung a）；附录 E 相应更新。
+- CLAIMS.md：claim 4 状态加注；新增 claim 14（Jester 正对照暴露并修正缺陷）、claim 15（修正后检出 +10 不检出 +5；MultiPref 无超出量表使用的 taste；PRISM 待补）。
+- references_p4.bib / build_latex.py：加入 Goldberg et al. 2001（Jester）。
+- 构建：errors 0，undefined citations 0，22 页；正文恰好止于第 8 页底（无余量，§5.2 PRISM 单元格更新时需复查）。
+- 未完成：§5.2 复现表（DICES DF − DL 应为 +0.011 [+0.005, +0.018]；PRISM 等 5 折）、图 1 的 DL 序列、附录 B/E 的 PRISM 表述——等作业 15557。
