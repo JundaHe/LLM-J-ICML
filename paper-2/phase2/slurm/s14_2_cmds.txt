@@ -1,0 +1,3 @@
+CA_PANEL=ca_pairs /scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_2.py > logs/s14_2_ca_pairs.log 2>&1
+CA_PANEL=ca_pairs_second /scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_2.py > logs/s14_2_ca_pairs_second.log 2>&1
+CA_PANEL=multipref_pairs /scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_2.py > logs/s14_2_multipref_pairs.log 2>&1

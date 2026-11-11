@@ -551,3 +551,29 @@ def _summeval_nodup(dim):
     P = dict(P, name=P["name"] + "_nodup", texts=[t for t, k in zip(P["texts"], keep) if k], H=P["H"][keep], item_ids=P["item_ids"][keep], groups=P["groups"][keep])
     return P
 LOADERS.update({"summeval_coherence8_nodup": lambda: _summeval_nodup("coherence"), "summeval_relevance8_nodup": lambda: _summeval_nodup("relevance")})
+
+# ----------------------------------------------------------------------------------------------- Jester (paper 4 Stage 14, PROTOCOL_STAGE14.md §1.2)
+import json
+JESTER = LLMJ + "/paper-4/data/jester"
+_JESTER_TPL = ("You are rating how funny jokes are. You will read one joke. Rate how funny it is on this scale: 1 = not funny at all, 2 = slightly funny, 3 = moderately funny, 4 = funny, 5 = very funny.\n"
+               "Respond ONLY with JSON:\n{\n\"score\": \"1-5\"\n}\nPlease ensure the complete JSON format is placed between the three quotes ``` ``` for easy extraction.\n\n")
+def _jester():
+    """users with >= 120 ratings, jokes rated by >= 90 % of them (128 jokes); returns the joke texts and the ratings of those users on those jokes"""
+    txt = {int(j["item_id"]): j["text"] for j in (json.loads(l) for l in open(f"{JESTER}/jokes.jsonl"))}; z = np.load(f"{JESTER}/ratings.npz")
+    df = pd.DataFrame(dict(user=z["user"].astype(int), item=z["item"].astype(int), rating=z["rating"].astype(float))); cnt = df.user.value_counts(); dense = np.sort(cnt[cnt >= 120].index.to_numpy())
+    d = df[df.user.isin(dense)]; cov = d.item.value_counts() / len(dense); jokes = np.sort(cov[cov >= 0.9].index.to_numpy())
+    return txt, d[d.item.isin(jokes)].sort_values(["item", "user"]).reset_index(drop=True), dense, jokes
+def load_jester_items():
+    """one row per joke, for the frozen features only (H is a placeholder)"""
+    txt, _, _, jokes = _jester()
+    def prompt(text): return _JESTER_TPL + "Joke:\n\n" + text + "\n\nEnd of the joke. Please present your rating in the required JSON format."
+    return dict(name="jester_items", texts=[txt[j] for j in jokes], H=np.zeros((len(jokes), 1), int), K=5, item_ids=np.array([f"j{j}" for j in jokes]), groups=np.array([f"j{j}" for j in jokes]), rater_ids=np.array(["none"]), prompt=prompt,
+                LEVEL_STRS=[str(l) for l in range(1, 6)], PREFIX='```json\n{\n"score": "', model="Qwen/Qwen2.5-7B-Instruct")
+def load_jester_raters(n_raters=1000, seed=14):
+    """long format, one row per (joke, user) rating of a random sample of n_raters dense users; ratings −10…+10 binned at −6, −2, 2, 6 (K = 5); groups = joke;
+    features are those of jester_items (feat_panel), indexed by snippet_ids"""
+    _, d, dense, _ = _jester(); keep = np.random.RandomState(seed).choice(dense, n_raters, replace=False); d = d[d.user.isin(keep)].reset_index(drop=True)
+    assert d.rating.between(-10, 10).all(); y = np.digitize(d.rating.to_numpy(), [-6, -2, 2, 6], right=True); jid = ("j" + d.item.astype(str)).to_numpy(); uid = ("u" + d.user.astype(str)).to_numpy()
+    return dict(name="jester_raters", texts=jid.tolist(), H=y[:, None], K=5, item_ids=np.array([f"{a}|{b}" for a, b in zip(jid, uid)]), groups=jid, evaluators=[[u] for u in uid], rater_ids=np.array(["rater"]),
+                rater_group={}, snippet_ids=jid, feat_panel="jester_items", model="Qwen/Qwen2.5-7B-Instruct")
+LOADERS.update({"jester_items": load_jester_items, "jester_raters": load_jester_raters})
