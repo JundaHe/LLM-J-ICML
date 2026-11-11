@@ -1839,3 +1839,8 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 2026-11-11 14:55 R23-1 文字落实（v3）：摘要、§1、§4、结论中 DICES-350"未被解码/real one is not"改为"有小的随文本协变成分（V_own 三族均>0，约为 γ0 基线 10 倍），但无正规评分增益"；§4 加 V_own 一条；贡献 3 限定为 ordinal 面板（ChaosNLI 上训练确实利用形状，回应 H3）。为守 8 页，压缩 §1 两条、§6 SummEval 段、§7 一句与结论。正文止于第 8 页（参考文献始于第 9 页顶部），0 未定义/0 overfull，check_consistency 通过。§5"阈值重现 DICES X_own"一句待 R23-2（作业 15521）结果再改。
 - 2026-11-11 14:55 审稿 H2/H5 的摘要修订：LoRA 审计零结果限定为"on these ordinal panels"（不再用 Accordingly 当作结论推出）；加入同等预算下 117×7 不显著差于 819×1（+0.0027 [−0.0024, +0.0074]）；删去摘要中 one-hot 一句（§1、§5 保留）。参考文献回到第 8 页，check_consistency 通过。
 - 2026-11-11 16:17 R23-2 结果（作业 15521，R=20、每模型 40 次模拟；按冻结读法，不改规则）：DICES-350 观测 X_own 4.83e−5，三个评分者模型的 95% 模拟区间上端均低于它（M0 1.69e−5、M1 0.03e−5、M2 2.24e−5）→ 没有模型能重现，"阈值重现 DICES X_own" 一句撤回。协议未预料到的是：BW 与 Dorn Java 的读法也变了（BW 仅 M2 重现，原为 M0/M1；Dorn Java 观测值落在 M0 与 M2 区间之间，原为 M2 重现）；三个面板的观测 X_own 都随切分重复次数移动（DICES 1.79→4.83e−5），即 R=5 的读法不稳定。论文改为如实报告 R=20 读法、披露 R=5 读法，不再对"哪个评分者模型生成残差形状"下结论；"残差形状是否来自评分者"由"仅在 DICES-350 成立"改为"在任何面板都未成立"；似然结论（阈值 +0.05–0.16 nats/评分）不受影响。同时修正 v2/v3 附录公式里损坏的 \text（制表符）。check_consistency 通过（v2、v3），v3 重编：正文止于第 8 页，0 未定义/0 overfull。
+
+## 2026-11-11 16:22 — paper 4 Stage 14 protocol (before any outcome)
+- 用户同意做下一步问题 1、2。PROTOCOL_STAGE14.md：S14-1 Jester 真实数据 positive control（三级：L0 线性 CF 参照 / L1 管线 DL + item-identity 特征 + 已见笑话 / L2 管线 DL + 每折选 PCA 维度 + 新笑话；k=20 一致率 own−μ 下界 > +1 点且 DL 增益超过 DF；预设读法 R1–R4）；S14-2 按总体模型 |logit| 的 20% 分位把测试对分成 contested / rest，看 TRV 增益是否集中（LL 共同主指标）。
+- 设计时的 label-blind 发现：白化满秩 PCA 在 item 数 ≤ XD+1 时就是 item-identity 编码（bw_raters：Gram = n(I−11ᵀ/n)，留出 R² −0.048）。Stage 10 的 Buse–Weimer D/DF/DL 行因此不能检验"文本介导的个性化"，论文要披露；Jester 128 个笑话必须另选 PCA 维度。
+- 尚未计算任何 Jester 评分结果或 Stage 12 分层结果。
