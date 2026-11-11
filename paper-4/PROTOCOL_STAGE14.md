@@ -135,3 +135,31 @@ are unadjusted 95 % and will be reported as such.
 ## 4. Paper changes that do not depend on the outcome
 
 PAPER4_DRAFT.md will disclose §1.1 where the Stage 10 Buse–Weimer D / DF / DL rows are used.
+
+## 5. Results — S14-2 (2026-11-11; job 15526; rules of §2 applied as written)
+
+Sanity check passed on all three panels (pooled TRV − pop accuracy and log-likelihood reproduce Stage 12 to 1e-15). Intervals: user bootstrap
+(primary), then the two-way bootstrap in braces. Accuracy in points, log-likelihood ×100 per pair.
+
+| panel | share contested | pop accuracy contested / rest | TRV − pop accuracy, contested | rest | contested − rest | TRV − pop LL, contested | rest | contested − rest |
+|---|---|---|---|---|---|---|---|---|
+| CA first turns (36,963 pairs, 1,897 users) | 0.223 | 52.5 / 70.6 | +1.62 [+0.72, +2.52] {+0.08, +3.14} | +0.16 [−0.07, +0.41] | +1.46 [+0.56, +2.35] {−0.14, +2.98} | +0.34 [+0.09, +0.58] | +1.04 [+0.70, +1.38] | −0.69 [−1.09, −0.29] {−1.32, +0.05} |
+| CA second turns (33,615 pairs, 1,702 users) | 0.214 | 53.4 / 67.7 | +1.62 [+0.63, +2.53] {−0.04, +3.31} | +0.05 [−0.13, +0.23] | +1.57 [+0.59, +2.49] {−0.07, +3.27} | +0.46 [+0.29, +0.63] | +0.46 [+0.26, +0.65] | +0.00 [−0.24, +0.24] |
+| MultiPref (6,163 pairs, 202 users) | 0.193 | 55.3 / 72.0 | +0.02 [−1.38, +1.37] | −0.06 [−0.15, +0.02] | +0.08 [−1.31, +1.44] | +0.07 [−0.11, +0.23] | +0.06 [−0.04, +0.18] | +0.00 [−0.23, +0.21] |
+
+Isotropic − pop gives the same picture (CA first turns: contested +1.88 [+0.95, +2.79], rest +0.31 [+0.08, +0.55]; second turns: contested
++1.55 [+0.63, +2.42], rest −0.02 [−0.22, +0.18]; MultiPref: contested −0.74 [−2.46, +0.97]).
+
+Decisions by the frozen rules:
+
+- **Practically meaningful on contested pairs (lower bound > +1 point): not met on any panel** (lower bounds +0.72, +0.63, −1.38).
+- **Concentration (accuracy and log-likelihood both): not met on any panel.** On both Community Alignment panels the accuracy gain is concentrated on
+  the contested fifth (contested − rest lower bound > 0 under the user bootstrap; the two-way intervals reach just below 0), but the log-likelihood
+  gain is not (second turns: equal in both strata; first turns: larger on the *rest*). By the caveat fixed in §2 this is the mechanical kind of
+  concentration: the adaptation shifts logits by a similar small amount everywhere, and a small shift changes the predicted choice only where the
+  population margin is near zero.
+
+What can be said (descriptive, replicated on first and second turns): on Community Alignment essentially all of TRV's accuracy gain sits on the
+~22 % of comparisons where the population model is near chance (52–53 % → about 54 %); on the other ~78 % the accuracy gain is at most a few tenths
+of a point. What cannot be said: that individual taste is a contested-item phenomenon, or that routing personalisation to contested items gives a
+practically meaningful gain there — the gain is about +1.6 points with a lower bound below +1, and nothing on MultiPref.

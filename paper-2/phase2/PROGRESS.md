@@ -1844,3 +1844,9 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 用户同意做下一步问题 1、2。PROTOCOL_STAGE14.md：S14-1 Jester 真实数据 positive control（三级：L0 线性 CF 参照 / L1 管线 DL + item-identity 特征 + 已见笑话 / L2 管线 DL + 每折选 PCA 维度 + 新笑话；k=20 一致率 own−μ 下界 > +1 点且 DL 增益超过 DF；预设读法 R1–R4）；S14-2 按总体模型 |logit| 的 20% 分位把测试对分成 contested / rest，看 TRV 增益是否集中（LL 共同主指标）。
 - 设计时的 label-blind 发现：白化满秩 PCA 在 item 数 ≤ XD+1 时就是 item-identity 编码（bw_raters：Gram = n(I−11ᵀ/n)，留出 R² −0.048）。Stage 10 的 Buse–Weimer D/DF/DL 行因此不能检验"文本介导的个性化"，论文要披露；Jester 128 个笑话必须另选 PCA 维度。
 - 尚未计算任何 Jester 评分结果或 Stage 12 分层结果。
+
+## 2026-11-11 16:42 — paper 4 Stage 14 S14-2 结果（contested 分层；作业 15526；按冻结规则）
+- 三个面板 sanity 全过（合并的 TRV−pop 与 Stage 12 一致到 1e-15）。
+- CA 第一轮：contested（22.3% 的对，总体模型准确率 52.5%）TRV−pop +1.62 [+0.72, +2.52] 点，rest +0.16 [−0.07, +0.41]；LL×100 contested +0.34，rest +1.04，contested−rest −0.69 [−1.09, −0.29]。CA 第二轮：contested +1.62 [+0.63, +2.53]，rest +0.05 [−0.13, +0.23]；LL contested−rest +0.00 [−0.24, +0.24]。MultiPref：contested +0.02 [−1.38, +1.37]。
+- 规则判定："contested 上有实际意义（下界 > +1 点）"三个面板都不成立；"集中"（准确率和 LL 同时）都不成立。CA 上准确率增益确实集中在 contested 那五分之一，但 LL 不集中 → 按事先写好的 caveat 属于机械性集中（小的 logit 位移只在边际接近 0 处改变预测）。
+- 反思：这回答了问题 2 的一半——"增益只在少数题上"在准确率上描述性成立且两轮重复，但不是"品味只在争议题上存在"的证据，也够不上 +1 点的实用门槛。S14-1（Jester）仍在等 GPU（作业 15525）。冒烟测试：--val_ratings/--seen_items 在 bw_raters 通过；--xd_grid 只支持长格式面板（Jester 是），dorn_raters 上在跑。
