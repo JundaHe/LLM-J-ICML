@@ -120,7 +120,10 @@ if DRAFT != "PAPER_DRAFT.md":
     _xc = [100 * [r for r in _J(f"rho_own/chaosnli_{k}.json")["rows"] if r["a"] == 20][0]["X_cross"] / [r for r in _J(f"rho_own/chaosnli_{k}.json")["rows"] if r["a"] == 20][0]["X"] for k in ("mnli", "snli")]
     claims.append((f"ChaosNLI cross-term share {round(min(_xc))}–{round(max(_xc))} % of X in draft", f"{round(min(_xc))}–{round(max(_xc))} % of $X$" in draft))
     _lo = min(100 * _r(f)["ci95"][0] for f in ("chaosnli_mnli_r21", "chaosnli_snli_r21", "chaosnli_mnli_a4_r21", "chaosnli_snli_a4_r21")); _hi = 100 * _r("dorn_all_r21")["ci95"][1]
-    claims.append((f"NLI–ordinal margin {_m.floor(_lo)} % vs {_m.ceil(_hi)} % in draft", f"{_m.floor(_lo)} % vs {_m.ceil(_hi)} %" in draft and "24 % vs 16 %" not in draft))
+    claims.append((f"pooled NLI–ordinal margin {_m.floor(_lo)} % vs {_m.ceil(_hi)} % in draft", f"{_m.floor(_lo)} % vs {_m.ceil(_hi)} %" in draft))
+    for _a, _nli, _ord in ((20, ("chaosnli_mnli_r21", "chaosnli_snli_r21", "chaosnli_mnli_qwen3_r21", "chaosnli_mnli_olmo_r21"), ("dices_r21", "dices_qwen3_r21", "dices_olmo_r21", "dorn_all_r21", "dorn_java_r21")),
+                           (4, ("chaosnli_mnli_a4_r21", "chaosnli_snli_a4_r21"), ("summeval_coherence8_r21", "summeval_coherence8_qwen3_r21", "summeval_coherence8_olmo_r21", "summeval_relevance8_r21"))):   # R22-7: matched rater count
+        _t = f"{_m.floor(min(100 * _r(f)['ci95'][0] for f in _nli))} % vs {_m.ceil(max(100 * _r(f)['ci95'][1] for f in _ord))} % at {_a}"; claims.append((f"matched-a margin {_t} in draft", _t in draft))
     claims.append((f"Dorn upper bound {_hi / 100:.2f} in draft (no stale 0.18)", f"upper bound {_hi / 100:.2f}" in draft and "upper bound 0.18" not in draft))
     _s = _J("lora_budget_r20_pq/summary_popquorn_off8.json"); _a1, _a2 = _s["a1_F1.0"]["diff_vs_full"], _s["a2_F1.0"]["diff_vs_full"]
     claims.append((f"POPQUORN second rating recovers {round(100 * (_a1 - _a2) / _a1)} % in draft", f"recovers {round(100 * (_a1 - _a2) / _a1)} %" in draft))

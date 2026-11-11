@@ -238,3 +238,12 @@ DICES-350's power calibration (R22-3) uses one construction: item log-dispersion
 - **Consequence for the paper.**
   - v3 §7 "Plant scope" and v2 §7 name the second construction and its result.
   - The DICES-350 sentence in v3 §4 is already scoped to "a planted shape of this size and construction"; v3 §1 (ii) and the abstract say "a planted text-predictable shape of the same magnitude", which is now made specific to the dispersion construction in §4 and §7 (the abstract has no room).
+
+## R22-7 — Matched-rater-count reporting of the NLI–ordinal gap (POST-HOC reporting change, 2026-11-11 14:44; no new computation)
+
+- **Trigger.** The 2026-11-07 percentage audit corrected the smallest NLI–ordinal margin to 18 % vs 16 %. That margin pairs the ChaosNLI MNLI interval at 4 raters per half with Dorn's interval at 20 raters per half. Intervals at different rater counts are not comparable: both X_own and the decoder's noise depend on a.
+- **Change.** The gap is reported separately at each rater count for which both families have a detectable X_own (X_own CLT lower bound > 0). Existing R21/R22 artefacts are used, with outward rounding.
+  - **a = 20 per half:** the minimum NLI lower bound is 24 % (MNLI, Qwen2.5). The maximum ordinal upper bound is 16 % (Dorn, all languages). The ordinal set is DICES-350 in three families, plus Dorn all and Dorn Java.
+  - **a = 4 per half:** the minimum NLI lower bound is 18 % (MNLI). The maximum ordinal upper bound is 3 % (SummEval coherence, Qwen3). The ordinal set is SummEval coherence in three families, plus relevance.
+- **Scope.** At a = 4 the ordinal side is SummEval only. At a = 20 it is DICES-350 and Dorn only. The sentence says this.
+- **Not changed.** No estimate, interval or panel set changes. This is a reporting change made after the numbers were seen, and it is labelled as such. The pooled statement "every NLI lower bound exceeds every ordinal upper bound" remains true and is kept, with the per-a margins.

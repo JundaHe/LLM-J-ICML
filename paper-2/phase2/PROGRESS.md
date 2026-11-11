@@ -1832,3 +1832,5 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - 2026-11-07 15:30 tick：无作业、无新结果、工作区干净（仅 features/ 与无关的 paper-4 未跟踪文件）。无有动机的新实验；18% vs 16% 窄间隔的措辞留待 Codex 外审（11-11 21:45 后）决定，不做事后挑选。
 
 - 2026-11-10 00:31 预先准备 Codex 第 22 轮外审 prompt（reviews/codex_round22_prompt_2026-11-10.md，约 2 万词：v3 全文 + ROUND21/22 protocol；专问 plant 只覆盖 dispersion 的影响、18% vs 16% 窄间隔是否保留、8 页正文是否讲清 DICES-350 vs NLI 与 POPQUORN 预算）。密钥扫描仅命中正文散文（无密钥）。Codex 额度恢复（11-11 21:45）后直接发送。
+
+- 2026-11-11 14:44 R22-7（事后报告方式变更，已登记于 ROUND22_PROTOCOL.md，无新计算）：18% vs 16% 是把 MNLI 每半 4 人的区间和 Dorn 每半 20 人的区间混比。按相同人数报告：每半 20 人 24% vs 16%（ordinal：DICES-350、Dorn），每半 4 人 18% vs 3%（ordinal：SummEval）；混合比较的 18% vs 16% 保留并注明不可比。v3 §4、附录与 v2 已改；check_consistency 新增按人数的两条断言，v2/v3 通过；v3 重编。同时启动 Claude 子代理对抗式审稿 v3（代替暂不可用的 Codex），输出 reviews/claude_round23_v3_2026-11-11.md。
