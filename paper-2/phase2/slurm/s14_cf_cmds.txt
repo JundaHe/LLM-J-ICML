@@ -1,0 +1,1 @@
+/scratch/jundahe/venvs/llmj/bin/python /scratch/jundahe/LLM-J-ICML/paper-4/s14_cf.py > logs/s14_cf.log 2>&1
