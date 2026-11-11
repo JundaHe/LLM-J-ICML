@@ -1868,3 +1868,12 @@ Controls behave: G_perm ≤ 0, and the positive controls are 0.22–0.64. RFF �
 - Consequence: every latent-model row in the paper used the same configuration (adaptation strength 8192 on MultiPref / PRISM / DICES and on the semi-synthetic positive-control panels). **A1-4** (protocol written before running; commits e76a47f, 3893525): rungs a and b on synthetic t0 / t5 / t10 (Part 1, Stage 3 power rule) and on MultiPref, DICES, PRISM, Dorn (Part 2), held-out items; 70 runs, Slurm job 15534 (16 CPUs). Rung b's selection cell on held-out-item panels = pseudo-new raters × validation items (PRISM 4.8k and Dorn 1.3k informative pairs in the smoke test: flagged as small).
 - `s14_real.py` reproduces the published rows from the original runs (synthetic DL −0.10 / −0.02 / +0.09; MultiPref DL +0.30, offsets +0.32).
 - Next: summarise A1-4 when the job ends; then draft + CLAIMS.md.
+
+## 2026-11-12 02:52 — paper 4 Stage 14 A1-4 结果（held-out items；作业 15534；PRISM 待补）
+- 运行情况：70 个运行出了 61 个；9 个 PRISM 运行因内存被杀（16 进程 / 24G），原命令不变重交（作业 15557，4 并行 / 32G，先跑 rung a）。结果与读法已写入 PROTOCOL_STAGE14.md（commit b1cc9fd）。
+- **Part 1 半合成 positive control**（方向准确率 own − other，k=20）：null 面板全部正常；**t10（oracle +10.1 点）上修正后的 latent 模型有 power**：rung a 的 L +2.82 [+2.02, +3.63]，rung b 的 DL +2.28 [+1.48, +3.12]、L +3.35 [+2.51, +4.21]（原配置 DL +0.09）；**t5（+5.2）上没有任何模型有 power**。scale-use 对照在同一对比上为零 → 增益是内容特异的。
+- 但这个"检出"的含金量有限：相对"不做个性化"的净增益 +0.2 ~ +0.8 点、区间含零；对数似然不超过 scale-use 模型；参考学习器在同一面板上拿到 +8.0。结论：修正后的管线检测下限在 oracle +5 到 +10 点之间。
+- **Part 2 真实面板**：MultiPref（主面板）上修正后的模型仍然没有超出 scale-use 的内容品味——own − other 方向 −0.16 ~ +0.19 点，上界 ≤ +0.50；似然 DL − DFs +0.05 [−0.49, +0.52]（原 −0.45）。按规则两格是 "stands"，两格因似然上界略超 +0.5 记为 inconclusive。
+- 我写的规则有一个缺陷（事后才看到）：单一回答面板（DICES / Dorn / PRISM）上"方向"= 高于或低于量表中点，评分者的平移就能改变它，scale-use 对照自己就有 +8.5 ~ +11.6 点 → 规则在 DICES L、Dorn L 上判了 "contradicted, practically meaningful"，如实保留在表里；事后解读用 latent − comparator 和一致率：Dorn 的 L 一致率增益恰为 0（latent 只被当作平移用）；DICES 的 L 一致率 own − other +0.50 [+0.09, +0.96]（两个 rung 都是 +0.5），但 own − k0 不显著、约二十格未做多重校正 → 只记为线索。
+- **rung b 在真实面板上不可用**：按新评分者 × 新条目的小格子选惩罚，使似然每条评分损失 0.12–1.64 nats，排序没有增益。论文采用的修正是 rung a（白化适配先验 + 似然选择）。
+- 下一步：PRISM 补齐后更新汇总；改 PAPER4_DRAFT.md §5.6（检测下限）、§5.1/5.2（修正后的 DL 行作为敏感性分析）、局限与附录，补 CLAIMS.md。
