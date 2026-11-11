@@ -378,6 +378,8 @@ Reading per panel, latent model and rung (all cells reported, no multiplicity co
 scale-use offsets" **stands** if the log-likelihood difference has upper bound ≤ +0.5 ×100 nats (the H3 margin) and direction own − other has
 upper bound < +1 point; it is **contradicted** if either has a lower bound > 0 with the latent ahead, in which case the size is reported and
 "practically meaningful" requires a direction or concordance own − other lower bound > +1 point; otherwise **inconclusive**.
+(Clarification, 2026-11-11, runs started but no result seen: for direction, "the latent ahead" means its own − other lower bound > 0 *and* its
+own − other exceeds the comparator's own − other in point estimate; the published MultiPref row had +0.30 for DL against +0.32 for the offsets.)
 
 Expectation, stated in advance: the corrected latent models detect t10 and possibly t5, well below the reference learner; on the real panels the
 log-likelihood moves by a few hundredths of a nat at most and ranking gains stay below one point. I hold this weakly — the A1-2 expectation was
