@@ -9,9 +9,9 @@ On rating panels from 14 datasets, a learner-free split-half analysis finds the 
 
 Scored against the other half's own shape, no ordinal panel shows a robustly reproducible shape beyond location. On DICES-350, the only panel where one is detectable within the rater pool, frozen representations of three LLM families recover −1 to 1 % of it (upper bounds ≤ 12 %): a small text covariance is detectable but yields no proper-score gain. A planted text-predictable dispersion shape of the same magnitude is recovered at 15–33 %. On MNLI and SNLI they recover 28–38 %.
 
-Accordingly, replacing the shape of 69–83 % of training targets while preserving mode and mean changes LoRA judges by at most ±0.0015 RPS (95 % bounds). One-hot targets are worse on 10 of 11 panels.
+On these ordinal panels, replacing the shape of 69–83 % of training targets while preserving mode and mean changes LoRA judges by at most ±0.0015 RPS (95 % bounds).
 
-For the annotation budget, frozen-feature judges gain more from additional items than from additional raters on most panels. In a prospective LoRA block on POPQUORN, one rating per item costs 0.006 RPS against the full data, and a second rating recovers about half.
+For the annotation budget, frozen-feature judges gain more from additional items than from additional raters on most panels. In a prospective LoRA block on POPQUORN, one rating per item costs 0.006 RPS against the full data and a second rating recovers about half, but at an equal budget fewer items with seven ratings each are not detectably worse.
 
 We release reliability cards and estimators.
 
@@ -253,7 +253,7 @@ The earlier same-batch block gives the same three readings, with 819 × 1 − fu
 
 **Conclusion.** A few-rater histogram is a noisy location plus a shape that, on ordinal scales, is barely reproducible across raters and, where it is reproducible, gives no proper-score gain when decoded linearly from the frozen features we tested. On DICES-350 the shape exists within the rater pool and a planted shape of its size is decoded; the real one covaries with the text only weakly.
 
-On NLI the shape is reproducible and a quarter to two-fifths of it is decodable. Learned judges follow the same split. For the budget, frozen-feature heads on ordinal panels with more than 900 items favoured covering items first, while for LoRA judges on POPQUORN two ratings per item beat one, an observation rather than a consequence of the mechanism. Reliability cards make that check possible before rating starts.
+On NLI the shape is reproducible and a quarter to two-fifths of it is decodable. Learned judges follow the same split. For the budget, frozen-feature heads on ordinal panels with more than 900 items favoured covering items first, while for LoRA judges on POPQUORN two ratings per item beat one, an observation rather than a consequence of the mechanism. Reliability cards allow that check before rating starts.
 
 # Appendix
 
