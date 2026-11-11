@@ -265,3 +265,48 @@ checked numerically), then adapt u with an isotropic prior at strengths 0.125 / 
 Configurations: DL (512, 10), (32, 10), (2, 10) at 300 iterations, (2, 1) at 3000; L (512, 10), (32, 10) at 300, (2, 10) at 3000.
 Reading: candidate 4 is supported if the whitened prior at a strength within the grid's interior reaches at least half of the CF gain on this draw
 (≥ +0.67) *and* exceeds the best unwhitened gain of the same fit; then "whitened adaptation prior" is the fix carried to A1-2.
+
+### A1-3 result (2026-11-11, job 15532; `results/stage14_diag_whiten_part{0,1}.json`; training-rater predictions unchanged by the transform, max |Δ log p| < 1e-10)
+
+Gain (points) by whitened adaptation strength 0.125 / 0.5 / 2 / 8 / 32; "before" = best unwhitened gain of the same fit (A1-1, coarser grid).
+
+| kind | λ_rater | λ_W | val LL | whitened gain | before |
+|---|---|---|---|---|---|
+| DL | 512 | 10 | −1.1306 | +0.37 / +0.17 / +0.13 / +0.08 / +0.06 | +0.38 |
+| DL | 32 | 10 | −1.1461 | +0.07 / **+0.86** / +0.61 / +0.28 / +0.12 | +0.67 |
+| DL | 2 | 10 | −1.1843 | −0.64 / +0.58 / **+0.88** / +0.57 / +0.27 | +0.56 |
+| DL | 2 | 1 | −1.2322 | −1.21 / −0.02 / +0.78 / +0.68 / +0.44 | +0.79 |
+| L | 512 | 10 | −1.2608 | −0.84 / **+1.11** / +0.78 / +0.35 / +0.11 | +0.75 |
+| L | 32 | 10 | −1.3124 | −2.52 / +0.08 / **+0.99** / +0.55 / +0.21 | +0.37 |
+| L | 2 | 10 | −1.3776 | −3.77 / −1.15 / +0.72 / +0.58 / +0.27 | +0.68 |
+
+Reading by the rule above: candidate 4 is **supported in four of seven fits** (bold: ≥ +0.67 at an interior strength and above the unwhitened best), with
+gains of 0.86–1.11 points = 65–83 % of the CF gain on this draw (+1.33). It is *not* supported at the DL fit that validation log-likelihood selects
+(λ_rater = 512: +0.37, at the grid edge, same as before), and the best strength is not the nominal 0.5 in every fit. Caveats: one fold, one support
+draw, best-over-grid values (optimistic), and the whitened grid is finer than the unwhitened one, so part of the improvement may be grid resolution.
+So the shortfall has two parts: (a) the isotropic prior on an unstandardised latent, and (b) for DL, penalties chosen by validation log-likelihood —
+which rewards scale use (DL val LL −1.13 vs D −1.50) and is best at the heaviest rater penalty, where little ranking signal is left in the latent.
+
+### A1-2 (written before running): rungs L1-fix-a and L1-fix-b, all five folds
+
+Configuration as L1 (item-identity encoding, rating-level validation, seen jokes; same folds, support draws, k, bootstrap), models D, DF, DL, T0, L.
+
+- **L1-fix-a** (`--whiten_adapt`): after each fit of DL / L the latent is re-expressed in whitened coordinates (A1-3); new raters are adapted with an
+  isotropic prior on u. Selection unchanged: penalties by validation log-likelihood, adaptation strength by log-likelihood of pseudo-new training
+  raters (the `--adapt_tune` procedure, now also for L), strength grid 2^{−5, −3, …, 7}.
+- **L1-fix-b** (`--whiten_adapt --sel_conc 20`): as a, but the selection target is the endpoint. For DL / L the rater-side penalties (λ_rater, λ_W; same
+  grids) are chosen by the seen-joke concordance of the pseudo-new training raters (the same 20 % inner split, `RandomState(3 + f)`; fit without them,
+  whiten, adapt from 20 of their training-joke ratings, score their remaining training-joke ratings; best over the strength grid), and the adaptation
+  strength of every adapted model (DF included) at each k by the same concordance. No test rater is used in any selection.
+
+Rules, unchanged from §1.5 and applied to DL at k = 20: detects if (i) DL own − μ lower bound > +1 and (ii) (DL own − μ) − (DF own − μ) lower bound
+> 0. Reported besides: L own − μ and own − other; the share of the CF gain recovered (point estimate ratio); log-likelihood DL − DF on the seen cell;
+selected penalties and strengths per fold; **folds 1–4 separately** (fold 0's test raters were used in A1-1/A1-3; the choice of a criterion in b was
+motivated by them).
+
+Expectation, stated in advance: a will not move DL much in folds where validation log-likelihood picks λ_rater = 512; b should recover roughly
+0.8–1.1 points (60–80 % of CF) for DL or L, which does **not** meet rule (i) as written (CF itself is +1.39 [+1.12, +1.68]).
+Consequences: if a rung detects → reading R3 holds with that fix, and the DL rows of the paper's real panels must be re-run with it. If no rung
+detects but b recovers at least half of the CF gain with a lower bound above zero → the paper states that the likelihood-selected pipeline
+under-recovers ranking taste, reports the recovered share as the sensitivity of the corrected pipeline, and re-runs the real panels' DL rows with
+rung b as a sensitivity analysis. Otherwise → the DL rows are "not interpretable as domain evidence".
