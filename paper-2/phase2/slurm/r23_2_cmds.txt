@@ -1,0 +1,3 @@
+/scratch/jundahe/venvs/llmj/bin/python rater_item_dense.py --panel dices --R 20 --sims 40 --tag _r23 > logs/r23_2_dices.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_dense.py --panel bw --R 20 --sims 40 --tag _r23 > logs/r23_2_bw.log 2>&1
+/scratch/jundahe/venvs/llmj/bin/python rater_item_dense.py --panel dorn_java --R 20 --sims 40 --tag _r23 > logs/r23_2_dorn_java.log 2>&1

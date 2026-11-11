@@ -7,6 +7,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 panel = sys.argv[sys.argv.index("--panel") + 1]
 SIMS = int(sys.argv[sys.argv.index("--sims") + 1]) if "--sims" in sys.argv else 20
 R = int(sys.argv[sys.argv.index("--R") + 1]) if "--R" in sys.argv else 5
+TAG = sys.argv[sys.argv.index("--tag") + 1] if "--tag" in sys.argv else ""   # R23-2: write to <panel><tag>.json
 LAM = json.load(open(f"{HERE}/results/rater_item/{panel}.json"))["lam_sigma_selected"]
 src = open(f"{HERE}/rater_item_model.py").read(); src = src[:src.index("t0 = time.time(); res")]   # model definitions only
 sys.argv = ["rater_item_model.py", "--panel", panel, "--lam_sigma", str(LAM)]; exec(compile(src, "rater_item_model.py", "exec"))
@@ -35,4 +36,4 @@ amax = max(A_LIST); obs = out["observed"][amax]["X_own"]
 rep = {M: (lambda r: r[0] <= obs <= r[1])(out["sim"][M][amax]["X_own"]["range95"]) for M in out["sim"]}
 out["reading"] = dict(a=amax, X_own_obs=obs, reproduces_X_own=rep, thresholds_explain_beyond_location=bool(rep.get("M1", False) and not rep["M0"]) if "M1" in rep else None)
 print(panel, "reading", out["reading"], flush=True)
-os.makedirs(f"{HERE}/results/rater_item_dense", exist_ok=True); json.dump(out, open(f"{HERE}/results/rater_item_dense/{panel}.json", "w"), indent=1, default=float)
+os.makedirs(f"{HERE}/results/rater_item_dense", exist_ok=True); json.dump(out, open(f"{HERE}/results/rater_item_dense/{panel}{TAG}.json", "w"), indent=1, default=float)
