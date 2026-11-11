@@ -384,3 +384,69 @@ own − other exceeds the comparator's own − other in point estimate; the publ
 Expectation, stated in advance: the corrected latent models detect t10 and possibly t5, well below the reference learner; on the real panels the
 log-likelihood moves by a few hundredths of a nat at most and ranking gains stay below one point. I hold this weakly — the A1-2 expectation was
 wrong for L. The original rows stay in the analysis log either way. Limits: post hoc; one synthetic draw; rung b's selection cell is small.
+
+### A1-4 result, Part 1 and Part 2 without PRISM (2026-11-12; job 15534; `s14_real.py` → `results/stage14_real.{json,md}`; post hoc)
+
+Run notes: 61 of 70 runs finished; nine PRISM runs were killed for memory (16 processes in 24 GB) and were resubmitted unchanged with 48 GB (job
+15556); PRISM is reported separately below. `s14_real.py` reproduces the published rows from the original runs (synthetic DL −0.10 / −0.02 /
++0.09; MultiPref DL +0.30, offsets +0.32), and DF's rows are identical in the original and the rung-a runs.
+
+**Part 1 — semi-synthetic positive control** (direction accuracy in points, own − another rater's parameters, k = 20, 209 new raters):
+
+| panel (oracle gain) | published DL | rung a DL | rung a L | rung b DL | rung b L |
+|---|---|---|---|---|---|
+| null (0) | −0.10 [−0.38, +0.17] | +0.01 [−0.25, +0.27] | +0.04 [−0.11, +0.19] | +0.02 [−0.35, +0.37] | −0.22 [−0.63, +0.18] |
+| t5 (+5.2) | −0.02 [−0.28, +0.26] | −0.06 [−0.29, +0.19] | +0.10 [−0.22, +0.41] | +0.15 [−0.14, +0.46] | +0.43 [−0.03, +0.88] |
+| t10 (+10.1) | +0.09 [−0.18, +0.36] | +0.62 [+0.17, +1.06] | **+2.82 [+2.02, +3.63]** | **+2.28 [+1.48, +3.12]** | **+3.35 [+2.51, +4.21]** |
+
+- Null control sound for every model × rung. **Power (lower bound > +1) at t10**: L on both rungs, DL on rung b; **no power at t5** for any model
+  or rung. At k = 50 (180 raters), t10: rung a DL +1.19 [+0.51, +1.89], L +3.56; rung b DL +3.73, L +3.65; t5: at most +0.59 [+0.02, +1.14] (L, a).
+- The scale-use comparators stay at zero on the same contrast (DFs −0.07 / −0.15, F +0.42 / +0.53 at t10), so the gain is content-specific.
+- What the detection is worth: the reference learner given the generating features recovers +8.0 of the +10.1; the corrected latent models recover
+  about 2.3–3.4 on own − other. Against **no personalisation** (the same model at the prior mean) the gain is +0.2 to +0.8 with intervals that
+  include zero (rung a DL +0.34 [−0.11, +0.81], L +0.84 [−0.12, +1.80]; rung b DL +0.21, L +0.82), and the log-likelihood does not beat the
+  scale-use model (rung a DL − DFs +0.26 [−0.12, +0.65], L − F −0.45 [−1.90, +0.88] ×100). So the parameters adapted from 20 ratings carry the
+  rater's content preference (another rater's parameters do worse) but do not yet turn it into a net ranking gain.
+- Decision under the pre-written rule: a corrected latent model has power at t10 → §5.6's "no evaluated method met the detection criterion" holds
+  only at the pre-specified strengths (t2, t5) and for the published configuration at t10; the corrected rows replace the DL row; the detection
+  limit of the corrected pipeline lies between an oracle gain of +5 and +10 points; Part 2's MultiPref rows are the paper's informative test.
+
+**Part 2 — real panels** (k = 20; Dorn k = 10; ×100 nats per rating or points). Comparator: DFs on MultiPref, DF elsewhere (DL); F (L).
+
+| panel | rung, model | LL latent − comparator | direction own − other: latent | comparator | latent − comparator | concordance own − other: latent | latent − comparator | rule |
+|---|---|---|---|---|---|---|---|---|
+| MultiPref | published DL | −0.45 [−0.96, +0.00] | +0.30 [−0.00, +0.60] | +0.32 | −0.02 [−0.34, +0.29] | — | — | stands |
+| | a DL | +0.05 [−0.49, +0.52] | +0.19 [−0.11, +0.50] | +0.32 | −0.14 [−0.48, +0.22] | +0.13 [−0.01, +0.28] | −0.03 [−0.11, +0.06] | inconclusive (LL upper bound +0.52 against +0.5) |
+| | a L | −3.05 [−4.91, −1.55] | −0.12 [−0.45, +0.20] | −0.37 | +0.25 [−0.10, +0.62] | −0.01 [−0.04, +0.02] | −0.01 | stands |
+| | b DL | −12.27 [−16.02, −8.51] | −0.16 [−0.42, +0.10] | +0.14 | −0.30 [−0.58, −0.01] | +0.10 [−0.02, +0.21] | +0.01 | stands |
+| | b L | −0.94 [−3.72, +1.33] | −0.16 [−0.63, +0.33] | −0.17 | +0.02 [−0.51, +0.55] | −0.01 [−0.03, +0.01] | −0.01 | inconclusive (LL upper bound) |
+| DICES | a DL | −1.11 [−1.81, −0.47] | +9.44 [+7.34, +11.71] | +9.97 | −0.53 [−0.94, −0.11] | +0.06 [−0.13, +0.26] | +0.06 | inconclusive |
+| | a L | −0.19 [−0.99, +0.64] | +10.01 [+7.94, +12.23] | +8.54 | +1.47 [+0.73, +2.24] | **+0.50 [+0.09, +0.96]** | +0.50 | contradicted, practically meaningful |
+| | b DL | −19.30 [−26.64, −12.52] | +5.61 | +6.48 | −0.87 [−2.92, +1.17] | +0.04 [−0.07, +0.14] | +0.05 | inconclusive |
+| | b L | −163.97 [−219.54, −112.69] | +6.35 | +9.97 | −3.62 [−5.10, −2.18] | +0.48 [+0.07, +0.90] | +0.48 | inconclusive |
+| Dorn | published = a DL | −3.99 [−4.91, −3.06] | 0 (latent switched off by the selected penalties) | +8.70 | −8.70 | 0 | −0.09 | stands |
+| | a L | +3.74 [+2.73, +4.62] | +11.24 [+10.32, +12.14] | +10.87 | +0.37 [+0.09, +0.64] | 0.00 (exactly) | 0.00 | contradicted, practically meaningful |
+| | b DL | −15.16 [−16.67, −13.64] | +3.61 | +4.26 | −0.65 [−1.10, −0.19] | +0.23 [−0.14, +0.59] | +0.20 | inconclusive |
+| | b L | −25.68 [−29.85, −22.26] | +7.99 | +11.61 | −3.62 [−4.33, −2.97] | +0.13 [−0.35, +0.61] | +0.13 | inconclusive |
+
+Readings.
+1. **MultiPref (the paper's primary panel): no content taste beyond scale-use offsets with the corrected models.** Own − other direction is
+   between −0.16 and +0.19 points with upper bounds ≤ +0.50 for models that return +2.3 to +3.4 on the same contrast when a +10-point preference is
+   injected, and the latent is never ahead of the three-number style model in likelihood (rung a DL − DFs +0.05 [−0.49, +0.52]; published −0.45).
+   The two "inconclusive" labels come from likelihood upper bounds of +0.52 and +1.33 against the +0.5 margin, not from any signal.
+2. **The rule's direction clause is ill-posed on single-response panels** (DICES, Dorn, PRISM): direction there is "above or below the scale
+   midpoint", which a rater's shift alone moves — the scale-use comparators gain +8.5 to +11.6 points on the same contrast. This was a flaw in the
+   rule I wrote, visible only after the fact; the as-written outcomes are kept in the table, and the reading below uses the latent − comparator
+   column and concordance (within-rater ranking, which a shift cannot change). Post hoc.
+   - Dorn, rung a L: likelihood +3.74 over F and +1.15 [+0.29, +2.04] over DF, direction +0.37 [+0.09, +0.64] over F, but concordance own − other
+     is exactly zero: the selected fit uses the latent only as a rater shift. A better-regularised scale-use model, not taste.
+   - DICES, L: direction +1.47 [+0.73, +2.24] over F but equal to DF's (+10.01 against +9.97), and likelihood below DF (−4.23 [−5.56, −2.96]).
+     Concordance own − other +0.50 [+0.09, +0.96] on rung a and +0.48 [+0.07, +0.90] on rung b, with own − k = 0 at +0.30 [−0.04, +0.65] and
+     −0.31 [−0.86, +0.18]. Half a point with a lower bound just above zero, one of some twenty cells examined without correction: recorded as a
+     lead, not as a finding.
+3. **Rung b is not a usable recipe on these panels.** Choosing rater-side penalties by concordance on a small new-rater × new-item cell costs
+   0.12–1.64 nats per rating (MultiPref DL −12.3, DICES L −164, Dorn L −25.7 ×100) and returns no ranking gain. On Jester it improved both; there
+   the selection cell had the seen-joke signal to find. The correction to carry into the paper is **rung a** (whitened adaptation prior,
+   likelihood selection); rung b is reported as a sensitivity analysis whose likelihood must be shown next to its ranking numbers.
+4. Sizes of rung b's selection cell: 7,000–13,000 informative pairs on MultiPref and the synthetic panels, 6,400–9,700 on DICES, 800–1,300 on Dorn
+   (flagged).

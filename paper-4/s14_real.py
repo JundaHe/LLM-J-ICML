@@ -32,6 +32,7 @@ def cells(panel, rs, k):
     for m in ("DL", "L"):
         q = COMP(panel, m); c[f"{m}_ll-{q}"] = lin(rs, [(1, k, f"{m}_ll"), (-1, k, f"{q}_ll")], "n")
         if m == "DL" and q == "DFs": c["DL_ll-DF"] = lin(rs, [(1, k, "DL_ll"), (-1, k, "DF_ll")], "n")
+        if "DF_ll" in rs[0]: c[f"{m}_ll-DFany"] = lin(rs, [(1, k, f"{m}_ll"), (-1, k, "DF_ll")], "n")   # against the softmax offsets, whatever the latent's family
         c[f"{m}_ll-D"] = lin(rs, [(1, k, f"{m}_ll"), (-1, k, "D_ll")], "n"); c[f"{q}_ll-D"] = lin(rs, [(1, k, f"{q}_ll"), (-1, k, "D_ll")], "n")
         for mt, den in (("dir", "n_dir"), ("conc", "conc_den")):
             c[f"{m}-{q}_{mt}_own-other"] = lin(rs, [(1, k, f"{m}_{mt}"), (-1, k, f"{m}_perm_{mt}"), (-1, k, f"{q}_{mt}"), (1, k, f"{q}_perm_{mt}")], den)
@@ -72,13 +73,13 @@ for panel, blk in out["part1"].items():
         L.append(f"| {panel.split('_')[-1]} | +{SYN[panel]} | {nm} | {len(c['folds'])} | {g('DL_dir_own-other')} | {g('L_dir_own-other')} | {g('DFs_dir_own-other')} | {g('F_dir_own-other')} | {g('DL-DFs_dir_own-other')} | {g('L-F_dir_own-other')} | {pw}" + (f"; null sound: {c['null_sound']}" if "null_sound" in c else "") + " |")
 L += ["", "## Part 2 — real panels (k = 20; Dorn k = 10)", ""]
 for panel, blk in out["part2"].items():
-    L += [f"**{panel}**", "", "| rung | folds | latent | LL latent − comparator | LL latent − D | LL comparator − D | direction own − other | comparator's | direction own − k0 | concordance own − other | comparator's | concordance own − k0 | reading |", "|---" * 13 + "|"]
+    L += [f"**{panel}**", "", "| rung | folds | latent | LL latent − comparator | LL latent − D | LL comparator − D | direction own − other | comparator's | latent − comparator | direction own − k0 | concordance own − other | comparator's | latent − comparator | concordance own − k0 | reading |", "|---" * 15 + "|"]
     for nm, c in blk.items():
         for m in ("DL", "L"):
             q = COMP(panel, m); g = lambda x: fmt(c.get(x))
             if f"{m}_ll-D" not in c: continue
-            L.append(f"| {nm} | {len(c['folds'])} | {m} (vs {q}) | {g(f'{m}_ll-{q}')} | {g(f'{m}_ll-D')} | {g(f'{q}_ll-D')} | {g(f'{m}_dir_own-other')} | {g(f'{q}_dir_own-other')} | {g(f'{m}_dir_own-k0')} | {g(f'{m}_conc_own-other')} | {g(f'{q}_conc_own-other')} | {g(f'{m}_conc_own-k0')} | {c['reading'].get(m, '—')} |")
-    L.append("")
+            L.append(f"| {nm} | {len(c['folds'])} | {m} (vs {q}) | {g(f'{m}_ll-{q}')} | {g(f'{m}_ll-D')} | {g(f'{q}_ll-D')} | {g(f'{m}_dir_own-other')} | {g(f'{q}_dir_own-other')} | {g(f'{m}-{q}_dir_own-other')} | {g(f'{m}_dir_own-k0')} | {g(f'{m}_conc_own-other')} | {g(f'{q}_conc_own-other')} | {g(f'{m}-{q}_conc_own-other')} | {g(f'{m}_conc_own-k0')} | {c['reading'].get(m, '—')} |")
+    L += ["", "Latent against the softmax scale-use offsets DF (cross-family for L), log-likelihood ×100: " + "; ".join(f"{nm} {m}: {fmt(c.get(f'{m}_ll-DFany'))}" for nm, c in blk.items() for m in ("DL", "L") if f"{m}_ll-DFany" in c), ""]
 L += ["## Selected penalties (λ_text, λ_rater, λ_W), adaptation strength at the reported k, and rung b's selection cell", "", "| panel | rung | fold | DL | L | strengths | selection cell (raters / informative pairs) |", "|---" * 7 + "|"]
 for key, rows in out["selected"].items():
     for s in rows: L.append(f"| {key.split('|')[0]} | {key.split('|')[1]} | {s['fold']} | {s['lam'].get('DL')} | {s['lam'].get('L')} | {s['lam_adapt']} | {s['sel_conc'].get('n_raters', '—')} / {s['sel_conc'].get('n_pairs', '—')}{' (below 5,000: flagged)' if s['sel_conc'].get('n_pairs', 10**9) < 5000 else ''} |")
