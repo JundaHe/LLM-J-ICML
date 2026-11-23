@@ -7,7 +7,8 @@ import numpy as np, torch
 HERE = os.path.dirname(os.path.abspath(__file__)); P2 = os.path.abspath(os.path.join(HERE, "..", "paper-2", "phase2")); sys.path.insert(0, P2)
 import data_panels
 ap = argparse.ArgumentParser(); ap.add_argument("--panel", default="multipref_overall"); ap.add_argument("--folds", default="0,1,2,3,4"); ap.add_argument("--draws", type=int, default=5)
-ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--feat_name", default="Qwen2.5-7B-Instruct", help="Stage 10: feature file name under features/<panel>/"); ap.add_argument("--concord", action="store_true", help="Stage 10: within-rater pairwise concordance of expected scores on test items"); ap.add_argument("--xd", type=int, default=0, help="Stage 14: PCA dimension (0 = min(256, items − 1))"); ap.add_argument("--xd_grid", default="", help="Stage 14: per-fold PCA dimension chosen by D's validation log-likelihood (snippet panels only)"); ap.add_argument("--val_ratings", action="store_true", help="Stage 14 L1: validation = 15 %% of the training raters' ratings of training items (seed 1) instead of held-out item groups"); ap.add_argument("--seen_items", action="store_true", help="Stage 14: also evaluate test raters on their non-support ratings of training items (adapted, prior-mean and deranged parameters)"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); ap.add_argument("--whiten_adapt", action="store_true", help="Stage 14 Am. 1 (A1-2): adapt new raters of DL / L in whitened latent coordinates (z = mean + chol(cov of the training raters' z) u, isotropic prior on u); needs --adapt_tune"); ap.add_argument("--sel_conc", type=int, default=0, help="Stage 14 Am. 1 (A1-2, rung b): rater-side penalties of DL / L and every adaptation strength chosen by the concordance of pseudo-new training raters adapted from this many ratings (0 = off)"); args = ap.parse_args()
+ap.add_argument("--ks", default="0,5,10,20,50"); ap.add_argument("--d", type=int, default=8); ap.add_argument("--iters", type=int, default=300); ap.add_argument("--B", type=int, default=2000); ap.add_argument("--tag", default=""); ap.add_argument("--models", default="", help="Amendment 8: restrict the model list (e.g. D,DF,DFs,NT)"); ap.add_argument("--text_logits", default="", help="stage 2b: per-fold frozen LoRA text-head log-probs, path with {f} (e.g. results/lora_rm/multipref_overall/d_f{f}/L.npy); D-family only"); ap.add_argument("--adapt_tune", action="store_true", help="Amendment 5: adaptation prior strength per model and k chosen by k-shot validation on held-out training raters"); ap.add_argument("--perm_control", action="store_true", help="Stage 3 Am. 1: also evaluate each test rater with another test rater's adapted parameters (derangement)"); ap.add_argument("--dump_ratings", action="store_true", help="Amendment 9: save every test rating's ll/dir per model (two-way bootstrap)"); ap.add_argument("--merge", default="", help="comma-separated tags of per-fold runs to merge and summarise (no training)"); ap.add_argument("--feat_name", default="Qwen2.5-7B-Instruct", help="Stage 10: feature file name under features/<panel>/"); ap.add_argument("--concord", action="store_true", help="Stage 10: within-rater pairwise concordance of expected scores on test items"); ap.add_argument("--xd", type=int, default=0, help="Stage 14: PCA dimension (0 = min(256, items − 1))"); ap.add_argument("--xd_grid", default="", help="Stage 14: per-fold PCA dimension chosen by D's validation log-likelihood (snippet panels only)"); ap.add_argument("--val_ratings", action="store_true", help="Stage 14 L1: validation = 15 %% of the training raters' ratings of training items (seed 1) instead of held-out item groups"); ap.add_argument("--seen_items", action="store_true", help="Stage 14: also evaluate test raters on their non-support ratings of training items (adapted, prior-mean and deranged parameters)"); ap.add_argument("--seen_eval", action="store_true", help="Stage 7 S7-3: training raters on test items with their trained parameters, own vs a derangement of training raters"); ap.add_argument("--whiten_adapt", action="store_true", help="Stage 14 Am. 1 (A1-2): adapt new raters of DL / L in whitened latent coordinates (z = mean + chol(cov of the training raters' z) u, isotropic prior on u); needs --adapt_tune"); ap.add_argument("--sel_conc", type=int, default=0, help="Stage 14 Am. 1 (A1-2, rung b): rater-side penalties of DL / L and every adaptation strength chosen by the concordance of pseudo-new training raters adapted from this many ratings (0 = off)"); ap.add_argument("--decomp", action="store_true", help="Stage 15 S15-2: score the latent models with the item-independent part and the interaction taken from the own / another rater's / the prior-mean latent")
+args = ap.parse_args()
 torch.set_num_threads(int(os.environ["OMP_NUM_THREADS"])); torch.set_default_dtype(torch.float64)
 KS = [int(k) for k in args.ks.split(",")]; MODELS = ("D", "DG", "DF", "DFs", "DL", "T0", "T1", "G", "F", "F1", "F_shift", "F_scale", "L", "LS")   # T1/F1: Amendment 1; DG/DF/DL (distributional text head + group / rater category offsets / low-rank latent): Amendment 2
 
@@ -24,7 +25,9 @@ NG = int(GRP.max()) + 1
 if not (args.panel.startswith("multipref") and K == 5): MODELS = tuple(m_ for m_ in MODELS if m_ != "DFs")   # symmetric A/B style model only for 5-level two-sided preference scales
 MID = (K - 1) / 2
 MODELS = MODELS + ("NT",)                                                 # Amendment 8: no-text rater marginal (b + B_r), shrunk to the population
-if args.models: MODELS = tuple(m_ for m_ in MODELS if m_ in args.models.split(","))
+STG = {"DFL": "DF", "FL": "F"}; OFF = {"DFL": ["Br"], "FL": ["delta", "s"]}   # Stage 15 S15-2: stage-wise models (interaction on top of the frozen scale-use model) and the offsets they take from it; only on request
+if args.models: MODELS = tuple(m_ for m_ in MODELS + tuple(STG) if m_ in args.models.split(","))
+assert all(STG[m_] in MODELS and args.whiten_adapt and not args.sel_conc for m_ in MODELS if m_ in STG) and (args.perm_control or not args.decomp)
 TEXTL = bool(args.text_logits); LT = None
 if TEXTL: MODELS = tuple(m_ for m_ in MODELS if m_ in ("D", "DG", "DF", "DFs", "DL"))   # stage 2b: lg = a·ℓ_LoRA + b + rater terms
 F_ = np.load(f"{P2}/features/{PAN.get('feat_panel', args.panel)}/{args.feat_name}.npz", allow_pickle=True); assert "feat_panel" in PAN or np.array_equal(F_["item_ids"].astype(str), np.asarray(PAN["item_ids"]).astype(str))
@@ -52,29 +55,29 @@ class Model:
         s.kind, s.lam = kind, lam; d = args.d
         s.p = {"beta": torch.zeros(XD), "c0": torch.tensor([-1.0] + [0.0] * (K - 2)), "delta": torch.zeros(NR), "s": torch.zeros(NR), "z": torch.zeros(NR, d),
                "W": torch.randn(XD, d, generator=torch.Generator().manual_seed(0)) * 0.01, "V": torch.zeros(XD, K), "b": torch.zeros(K), "gd": torch.zeros(NG), "gs": torch.zeros(NG), "gam": torch.zeros(XD), "gb": torch.zeros(NG, K), "Br": torch.zeros(NR, K), "W5": torch.randn(XD, d * K, generator=torch.Generator().manual_seed(1)) * 0.01, "w0": torch.zeros(d * K), "wl0": torch.zeros(d), "Bs": torch.zeros(NR, 3), "a": torch.ones(1)}   # w0/wl0: unpenalised constant column of the low-rank map (Amendment 4: L ⊇ F_shift, DL ⊇ DF)
-        s.center = {}
+        s.center = {}; s.alt = None                                          # alt (Stage 15): latents (interaction part, item-independent part) used instead of z
     def text_keys(s):
         if TEXTL and s.kind in ("D", "DG", "DF", "DFs", "DL"): return {"D": ["a", "b"], "DG": ["a", "b", "gb"], "DF": ["a", "b"], "DFs": ["a", "b"], "DL": ["a", "b", "W5", "w0"]}[s.kind]
         if s.kind == "NT": return ["b"]
-        return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
+        return {"D": ["V", "b"], "DG": ["V", "b", "gb"], "DF": ["V", "b"], "DFs": ["V", "b"], "DL": ["V", "b", "W5", "w0"], "DFL": ["W5"], "FL": ["W"], "G": ["beta", "c0", "gd", "gs"], "L": ["beta", "c0", "W", "wl0"], "LS": ["beta", "c0", "W", "wl0"], "T1": ["beta", "c0", "gam"], "F1": ["beta", "c0", "gam"]}.get(s.kind, ["beta", "c0"])
     def rater_keys(s):
-        return {"NT": ["Br"], "DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"]}.get(s.kind, [])
+        return {"NT": ["Br"], "DF": ["Br"], "DFs": ["Bs"], "DL": ["z"], "F": ["delta", "s"], "F1": ["delta", "s"], "F_shift": ["delta"], "F_scale": ["s"], "L": ["z"], "LS": ["z", "s"], "DFL": ["z"], "FL": ["z"]}.get(s.kind, [])
     def logp(s, ii, rr):
         p = s.p; x = X[ii]
         if s.kind == "NT": return torch.log_softmax(p["b"][None, :] + p["Br"][rr], 1)
-        if s.kind in ("D", "DG", "DF", "DFs", "DL"):
+        if s.kind in ("D", "DG", "DF", "DFs", "DL", "DFL"):
             lg = (p["a"] * LT[ii] if TEXTL else x @ p["V"]) + p["b"]
             if s.kind == "DG": lg = lg + p["gb"][torch.tensor(GRP[rr])]
-            if s.kind == "DF": lg = lg + p["Br"][rr]
+            if s.kind in ("DF", "DFL"): lg = lg + p["Br"][rr]
             if s.kind == "DFs": lg = lg + p["Bs"][rr][:, [0, 1, 2, 1, 0]]   # symmetric style offsets: extreme / slight / tie (no A-vs-B position term; Amendment 4)
-            if s.kind == "DL": lg = lg + ((x @ p["W5"] + p["w0"]).view(len(ii), args.d, K) * p["z"][rr][:, :, None]).sum(1)
+            if s.kind in ("DL", "DFL"): lg = lg + (((x @ p["W5"] + p["w0"]).view(len(ii), args.d, K) * p["z"][rr][:, :, None]).sum(1) if s.alt is None else ((x @ p["W5"]).view(len(ii), args.d, K) * s.alt[0][rr][:, :, None]).sum(1) + s.alt[1][rr] @ p["w0"].view(args.d, K))
             return torch.log_softmax(lg, 1)
         mu = x @ p["beta"]; ls = torch.zeros(len(ii))
         if s.kind == "G": g = torch.tensor(GRP[rr]); mu = mu + p["gd"][g]; ls = ls + (p["gs"] - p["gs"].mean())[g]   # group log-scales centred (Amendment 7): a common scale shift would let the model escape the β penalty
         if s.kind in ("T1", "F1"): ls = ls + x @ p["gam"]
-        if s.kind in ("F", "F1", "F_shift"): mu = mu + p["delta"][rr]
-        if s.kind in ("F", "F1", "F_scale", "LS"): ls = ls + p["s"][rr]
-        if s.kind in ("L", "LS"): mu = mu + ((x @ p["W"] + p["wl0"]) * p["z"][rr]).sum(1)
+        if s.kind in ("F", "F1", "F_shift", "FL"): mu = mu + p["delta"][rr]
+        if s.kind in ("F", "F1", "F_scale", "LS", "FL"): ls = ls + p["s"][rr]
+        if s.kind in ("L", "LS", "FL"): mu = mu + (((x @ p["W"] + p["wl0"]) * p["z"][rr]).sum(1) if s.alt is None else ((x @ p["W"]) * s.alt[0][rr]).sum(1) + s.alt[1][rr] @ p["wl0"])
         return torch.log(probit_pk(mu, torch.exp(ls), p["c0"]))
     def penalty(s, keys):
         lb, lr, lw = s.lam; p = s.p; out = 0.0
@@ -108,23 +111,34 @@ def set_center(mdl, idx):
 # Amendment 3: coordinate-wise selection on extended grids. The text penalty λβ is chosen on the rater-agnostic base model of each family (D for DG/DF/DL; T0 for G/F/F_shift/F_scale/L/LS; T1 for F1)
 # and then held fixed while the rater-side penalties are chosen.
 LB, LR, LW = (10, 100, 300, 1000, 3000, 10000), (0.5, 2, 8, 32, 128, 512), (1, 10, 100, 1000, 10000)
-BASE = {"DG": "D", "DF": "D", "DFs": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1"}
+BASE = {"DG": "D", "DF": "D", "DFs": "D", "DL": "D", "G": "T0", "F": "T0", "F_shift": "T0", "F_scale": "T0", "L": "T0", "LS": "T0", "F1": "T1", "DFL": "DF", "FL": "F"}
 SEL = {}; VAL = {}
 def grid(kind):
     if kind == "NT": return [(1, lr, 0) for lr in LR]
     if kind in ("D", "T0", "T1"): return [(lb, 0, 0) for lb in LB]
     lb = SEL[BASE[kind]][0]
     if kind in ("DG", "G"): return [(lb, 0, 0)]
-    if kind in ("DL", "L", "LS"): return [(lb, lr, lw) for lr in LR for lw in LW]
+    if kind in ("DL", "L", "LS", "DFL", "FL"): return [(lb, lr, lw) for lr in LR for lw in LW]
     return [(lb, lr, 0) for lr in LR]
+TRF = {}; FUL = {}                                                         # Stage 15: each kind's selected fit on the training rows / on training + validation rows (bases of the stage-wise models)
+def fit_stage(kind, lam, mb, idx):
+    """Stage 15 S15-2: interaction map and latent fitted on top of the frozen scale-use model mb (its text head and offsets)"""
+    m_ = Model(kind, lam)
+    for k in mb.text_keys() + mb.rater_keys(): m_.p[k] = mb.p[k].clone()
+    return m_.fit(idx, mdl_keys(kind))
+def on_base(m_, mb):
+    """Stage 15 S15-2: copy of the stage-wise model m_ that carries the offsets of mb — the same rater offsets in both models"""
+    c = Model(m_.kind, m_.lam); c.p = {k: v.clone() for k, v in m_.p.items()}; c.center = dict(m_.center)
+    for k in OFF[m_.kind]: c.p[k] = mb.p[k].clone()
+    return c
 def train(kind, idx_tr, idx_va):
     best = None
     for lam in grid(kind):
-        mdl = Model(kind, lam).fit(idx_tr, mdl_keys(kind))
+        mdl = fit_stage(kind, lam, TRF[STG[kind]], idx_tr) if kind in STG else Model(kind, lam).fit(idx_tr, mdl_keys(kind))
         va = mdl.per_rating(idx_va)[0].mean()
-        if best is None or va > best[0]: best = (va, lam)
+        if best is None or va > best[0]: best = (va, lam); TRF[kind] = mdl
     SEL[kind] = best[1]; VAL[kind] = float(best[0])
-    full = np.concatenate([idx_tr, idx_va]); return set_center(Model(kind, best[1]).fit(full, mdl_keys(kind)), full), best[1]
+    full = np.concatenate([idx_tr, idx_va]); FUL[kind] = set_center(fit_stage(kind, best[1], FUL[STG[kind]], full) if kind in STG else Model(kind, best[1]).fit(full, mdl_keys(kind)), full); return FUL[kind], best[1]
 def mdl_keys(kind): m_ = Model(kind, (1, 1, 1)); return m_.text_keys() + m_.rater_keys()
 
 def adapt(mdl, idx_ad, lam_r=None):
@@ -138,10 +152,10 @@ def adapt(mdl, idx_ad, lam_r=None):
 WGRID = (0.03125, 0.125, 0.5, 2, 8, 32, 128)                               # adaptation strengths in whitened coordinates (0.5 = unit Gaussian prior)
 def whiten(m, idx):
     """Stage 14 Am. 1: z = zbar + L u, L = Cholesky factor of the covariance of the training raters' z; the constant part moves to the text head, so predictions for the raters in idx do not change"""
-    assert m.kind in ("DL", "L") and not TEXTL
+    assert m.kind in ("DL", "L", "DFL", "FL") and not TEXTL
     tr = torch.tensor(np.unique(R[idx])); d = args.d; zb = m.p["z"][tr].mean(0); Lc = torch.linalg.cholesky(torch.cov((m.p["z"][tr] - zb).T) + 1e-10 * torch.eye(d))
     u = torch.zeros_like(m.p["z"]); u[tr] = torch.linalg.solve_triangular(Lc, (m.p["z"][tr] - zb).T, upper=False).T
-    if m.kind == "DL":
+    if m.kind in ("DL", "DFL"):
         W5v = m.p["W5"].view(XD, d, K); w0v = m.p["w0"].view(d, K); m.p["V"] = m.p["V"] + torch.einsum("xdk,d->xk", W5v, zb); m.p["b"] = m.p["b"] + torch.einsum("dk,d->k", w0v, zb)
         m.p["W5"] = torch.einsum("xdk,de->xek", W5v, Lc).reshape(XD, d * K); m.p["w0"] = torch.einsum("dk,de->ek", w0v, Lc).reshape(d * K)
     else:
@@ -181,7 +195,7 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
     for kind in MODELS:
         if args.sel_conc and args.whiten_adapt and kind in ("DL", "L"): continue   # rung b selects and fits these below
         fits[kind], lam_sel[kind] = train(kind, idx_tr, idx_va); print(f"fold {f} trained {kind} λ={lam_sel[kind]} [{time.time()-t0:.0f}s]", flush=True)
-    LAD = {}; WK = [k_ for k_ in ("DL", "L") if k_ in MODELS] if args.whiten_adapt else []; assert args.adapt_tune or not (args.whiten_adapt or args.sel_conc); sel_conc = {}
+    LAD = {}; WK = [k_ for k_ in ("DL", "L", "DFL", "FL") if k_ in MODELS] if args.whiten_adapt else []; M5 = {}; assert args.adapt_tune or not (args.whiten_adapt or args.sel_conc); sel_conc = {}
     if args.adapt_tune:                                                      # Amendment 5: inner split of the training raters; text side + rater params refit without them
         tr_r = np.unique(R[np.concatenate([idx_tr, idx_va])]); rs5 = np.random.RandomState(3 + f); vr = set(rs5.choice(tr_r, len(tr_r) // 5, replace=False))
         in_v = np.isin(R, list(vr)); full_tr = np.concatenate([idx_tr, idx_va]); idx_in = full_tr[~in_v[full_tr]]
@@ -205,15 +219,15 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                     if best is None or v > best[0]: best = (float(v), lam)
                 sel_conc[kind] = best[0]; lam_sel[kind] = best[1]; fits[kind] = set_center(Model(kind, best[1]).fit(full_tr, mdl_keys(kind)), full_tr)
                 print(f"fold {f} rung b: {kind} λ={best[1]} (pseudo-new concordance {100 * best[0]:.2f}) [{time.time()-t0:.0f}s]", flush=True)
-        for kind in [k_ for k_ in ("DF", "DFs", "DL", "F", "F1") + (("L",) if args.whiten_adapt else ()) if k_ in MODELS]:
-            m5 = set_center(Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in)
+        for kind in [k_ for k_ in ("DF", "DFs", "DL", "F", "F1") + (("L", "DFL", "FL") if args.whiten_adapt else ()) if k_ in MODELS]:
+            m5 = set_center(fit_stage(kind, lam_sel[kind], M5[STG[kind]], idx_in) if kind in STG else Model(kind, lam_sel[kind]).fit(idx_in, mdl_keys(kind)), idx_in); M5[kind] = m5
             if kind in WK: whiten(m5, idx_in)
             for k in [k_ for k_ in KS if k_ > 0]:
-                best = None
+                best = None; b5 = [adapt(M5[STG[kind]], draw5(k, dr)[0], LAD[(STG[kind], k)]) for dr in range(2)] if kind in STG else None   # Stage 15: the base's adapted offsets of the pseudo-new raters
                 for la in (WGRID if kind in WK else (0.5, 2, 8, 32, 128, 512, 2048, 8192, 32768, 131072, 524288)):   # Stage 2 Am. 11: grid extended upward
                     v = []
                     for dr in range(2):
-                        ad, sc = draw5(k, dr); v.append(score5(adapt(m5, ad, la), sc))
+                        ad, sc = draw5(k, dr); v.append(score5(adapt(on_base(m5, b5[dr]) if kind in STG else m5, ad, la), sc))
                     if best is None or np.mean(v) > best[0]: best = (float(np.mean(v)), la)
                 LAD[(kind, k)] = best[1]
             print(f"fold {f} adapt-tuned {kind}: " + ", ".join(f"k={k}:{LAD[(kind, k)]}" for k in KS if k > 0) + f" [{time.time()-t0:.0f}s]", flush=True)
@@ -231,16 +245,17 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                 if len(pool) < k: continue
                 keep.append(r); ad.extend(rng.choice(pool, k, replace=False) if k > 0 else [])
             ad = np.array(ad, int); te = idx_te[np.isin(R[idx_te], keep)]
-            res = {}; resP = {}; resS = {}; resS0 = {}; resSP = {}
+            res = {}; resP = {}; resS = {}; resS0 = {}; resSP = {}; resX = {}; EV = {}
             ts = np.setdiff1d(idx_ad_pool[np.isin(R[idx_ad_pool], keep)], ad) if args.seen_items else None   # Stage 14: seen-item cell
             if args.perm_control and k > 0:                                    # Stage 3 Amendment 1: derangement of the test raters' adapted parameters
                 o_ = np.random.RandomState(777 + 10_000 * f + 100 * k + dr).permutation(len(keep)); tgt_ = torch.tensor([int(keep[o_[i]]) for i in range(len(o_))]); src_ = torch.tensor([int(keep[o_[(i + 1) % len(o_)]]) for i in range(len(o_))])
             for kind in MODELS:
-                mdl = adapt(fits[kind], ad, LAD.get((kind, k))) if k > 0 else fits[kind]
+                src = on_base(fits[kind], EV[STG[kind]]) if kind in STG else fits[kind]   # Stage 15: stage-wise models take the offsets their base has for this draw (adapted, or the prior mean at k = 0)
+                mdl = adapt(src, ad, LAD.get((kind, k))) if k > 0 else src
                 if k == 0 and mdl.rater_keys():                                    # unseen raters: prior (training-rater) mean
-                    mdl = Model(kind, mdl.lam); mdl.p = {kk: v.clone() for kk, v in fits[kind].p.items()}; mdl.center = dict(fits[kind].center)
+                    mdl = Model(kind, mdl.lam); mdl.p = {kk: v.clone() for kk, v in src.p.items()}; mdl.center = dict(src.center)
                     for kk in mdl.rater_keys(): mdl.p[kk] = mdl.center[kk].clone()
-                res[kind] = mdl.per_rating(te)
+                res[kind] = mdl.per_rating(te); EV[kind] = mdl
                 if args.seen_items:
                     resS[kind] = mdl.per_rating(ts); m0 = mdl
                     if mdl.rater_keys():                                               # the same model at the prior mean, on the same cell
@@ -254,7 +269,12 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                         resP[kind] = mp.per_rating(te)
                         if args.seen_items: resSP[kind] = mp.per_rating(ts)
                     else: resP[kind] = res[kind]
-            if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]],
+                if args.decomp and k > 0 and kind in WK:                           # Stage 15 S15-2: (interaction part, item-independent part) from the own latent, another test rater's, or the prior mean
+                    zw = mdl.p["z"]; zo = zw.clone(); zo[tgt_] = zw[src_]; z0 = mdl.center["z"]
+                    mdl.alt = (zw, zw); assert np.allclose(mdl.per_rating(te)[0], res[kind][0], atol=1e-8)
+                    for nm, alt in ((("z0", (z0, z0)),) if kind in STG else (("sh", (z0, zw)), ("ia", (zw, z0)), ("xi", (zo, zw)), ("xs", (zw, zo)))): mdl.alt = alt; resX[f"{kind}_{nm}"] = mdl.per_rating(te)
+                    mdl.alt = None
+            if args.dump_ratings: DUMP.append({"fold": np.full(len(te), f), "k": np.full(len(te), k), "draw": np.full(len(te), dr), "rater": R[te], "item": I[te], "igroup": np.asarray(Gp)[I[te]], "y": Y[te], **{f"{kind}_ey": res[kind][3] for kind in MODELS}, **{f"{kind}_perm_ey": resP[kind][3] for kind in resP}, **{f"{key}_{mt}": resX[key][j] for key in resX for j, mt in ((0, "ll"), (2, "dir"), (3, "ey"))},
                                                **{f"{kind}_{mt}": res[kind][j] for kind in MODELS for j, mt in ((0, "ll"), (2, "dir"))}, **{f"{kind}_perm_{mt}": resP[kind][j] for kind in resP for j, mt in ((0, "ll"), (2, "dir"))}})
             for r in keep:
                 sel = R[te] == r
@@ -262,11 +282,12 @@ for f in ([] if args.merge else [int(x) for x in args.folds.split(",")]):
                                          **{f"{kind}_{mt}": float(np.nansum(res[kind][j][sel])) for kind in MODELS for j, mt in enumerate(("ll", "rps", "dir"))},
                                          "n_dir": int(np.isfinite(res[MODELS[0]][2][sel]).sum()),
                                          **{f"{kind}_perm_{mt}": float(np.nansum(resP[kind][j][sel])) for kind in resP for j, mt in enumerate(("ll", "rps", "dir"))},
+                                         **{f"{key}_{mt}": float(np.nansum(resX[key][j][sel])) for key in resX for j, mt in enumerate(("ll", "rps", "dir"))},
                                          **{f"{kind}_oracle_{mt}": float(np.nansum(ORC[kind][j][np.isin(idx_te, te[sel])])) for kind in ORC for j, mt in enumerate(("ll", "rps", "dir"))}})
                 if args.concord:                                          # Stage 10: within-rater pairwise concordance (prediction ties count 1/2)
                     yy = Y[te][sel]; ui, uj = np.triu_indices(len(yy), 1); ok = yy[ui] != yy[uj]; out["per_rater"][-1]["conc_den"] = int(ok.sum())
-                    for kind in MODELS:
-                        for tagc, rr_ in (("", res), ("_perm", resP)):
+                    for kind in list(MODELS) + list(resX):
+                        for tagc, rr_ in (("", res), ("_perm", resP), ("", resX)):
                             if kind not in rr_: continue
                             e_ = rr_[kind][3][sel]; sg = np.sign(e_[ui] - e_[uj])[ok] * np.sign(yy[ui] - yy[uj])[ok]; out["per_rater"][-1][f"{kind}{tagc}_conc"] = float((sg > 0).sum() + 0.5 * (sg == 0).sum())
                 if args.seen_items:                                       # Stage 14: same statistics on the seen-item cell

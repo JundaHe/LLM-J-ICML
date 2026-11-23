@@ -2,3 +2,4 @@ data/
 logs/
 __pycache__/
 results/lora_rm/**/lora/
+results/ratings/*_s15_f*.npz
