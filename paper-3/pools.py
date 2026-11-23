@@ -6,6 +6,7 @@ pools — identity-preserving loaders for paper 3 (PROTOCOL_CALIBRATION.md). Eac
 Panels: dices (350 × 104 raters; gender/race/age/education), dices990 (990 × 172; + locale), popquorn_off / popquorn_pol (user_id; gender/race/age/education/occupation),
         summeval (1,600; experts 0–2 persistent, crowd positions anonymous; group ∈ {expert, crowd}), bw (100 × 121; group column of oracle.csv), mlcq (26 reviewers; no features),
         dorn_<lang> (sparse; experience column 1 of experience.csv assumed = years of programming, UNVERIFIED).
+        crupi_ca / crupi_conc / crupi_flu (1,163 × 3 rating columns, positions) and scalabrino (124 × 9 evaluators) for the frontier judges of Amendment 3.
 """
 import os, sys, numpy as np, pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.abspath(os.path.join(HERE, "..")); P2 = os.path.join(ROOT, "paper-2", "phase2"); sys.path.insert(0, P2)
@@ -71,8 +72,17 @@ def load_dorn(lang="java"):
     meta = pd.DataFrame({"years_programming_UNVERIFIED": e[1]}, index=e.index); meta["persistent"] = True
     return _pack(f"dorn_{lang}", [f"{lang}_{s}" for s in snips], 5, pd.DataFrame(rows, columns=["item", "rater", "y"]), meta)
 
+def _load_dense(panel, persistent):
+    """dense paper-2 panel (items × raters matrix H) in long format; `persistent` says whether a column is one person on every row"""
+    PAN = data_panels.load(panel); H = PAN["H"]; ids = [str(r) for r in PAN["rater_ids"]]
+    rows = [(i, ids[j], int(H[i, j])) for i in range(H.shape[0]) for j in range(H.shape[1])]
+    return _pack(panel, list(PAN["item_ids"]), PAN["K"], pd.DataFrame(rows, columns=["item", "rater", "y"]), pd.DataFrame({"persistent": persistent}, index=ids), texts=PAN["texts"])
+
 LOADERS = {"dices": load_dices, "dices990": load_dices990, "popquorn_off8": load_popquorn_off, "popquorn_pol5": load_popquorn_pol, "summeval_coherence8": load_summeval, "bw": load_bw, "mlcq3": load_mlcq,
-           "dorn_java": lambda: load_dorn("java"), "dorn_python": lambda: load_dorn("python"), "dorn_cuda": lambda: load_dorn("cuda")}
+           "dorn_java": lambda: load_dorn("java"), "dorn_python": lambda: load_dorn("python"), "dorn_cuda": lambda: load_dorn("cuda"),
+           # Amendment 3: Crupi rating columns are treated as positions (column identity across rows is undocumented); Scalabrino's nine evaluators are persistent
+           "crupi_ca": lambda: _load_dense("crupi_ca", False), "crupi_conc": lambda: _load_dense("crupi_conc", False), "crupi_flu": lambda: _load_dense("crupi_flu", False),
+           "scalabrino": lambda: _load_dense("scalabrino", True)}
 
 def pools_for(P, var, min_group=10, seed=0):
     """pool A = largest group of `var`; pool B = each other group with ≥ min_group raters; var == 'random' → two random halves of the persistent raters"""
