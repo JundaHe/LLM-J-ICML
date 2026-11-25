@@ -61,9 +61,22 @@ def holm(ix):
 hA = holm([i for i, r in enumerate(rows) if r["family"] == "A"]); hB = holm([i for i, r in enumerate(rows) if r["family"] == "B"]); hU = holm([i for i, r in enumerate(rows) if r["family"] in "AB"])
 for i, r in enumerate(rows): r["p_holm_family"] = float({**hA, **hB}.get(i, np.nan)); r["p_holm_union"] = float(hU.get(i, np.nan)); r["nominal_sig"] = bool(r["twoway"][0] > 0 or r["twoway"][1] < 0)
 chk = [abs(r["point"] - r["primary"]) for r in rows if r["primary"] is not None]; repro = bool(chk and max(chk) <= 1e-3)
+for r in rows: r["reproduced"] = None if r["primary"] is None else bool(abs(r["point"] - r["primary"]) <= 1e-3)
+bad = [f"{r['panel']}: {r['contrast']} ({100 * r['primary']:+.2f} → {100 * r['point']:+.2f})" for r in rows if r["reproduced"] is False]
+def reading2(panel):                                                       # the §2.4 rules with the two-way intervals (×100)
+    q = {r["contrast"]: [100 * r["twoway"][0], 100 * r["twoway"][1]] for r in rows if r["panel"] == panel}; o = {}
+    for M, S, Bm in (("DL", "DFL", "DF"), ("L", "FL", "F")):
+        if f"LL {S} − {Bm}" not in q: continue
+        ll, pl, pc = q[f"LL {S} − {Bm}"], q[f"LL {S} own − other latent"], q[f"concordance {S} own − other latent"]
+        o[S] = "interaction adds" if ll[0] > 0 and (pl[0] > 0 or pc[0] > 0) else "no interaction beyond the offsets" if ll[1] <= 0.5 and pc[1] < 1 else "inconclusive"
+        xs, xi, xc = q[f"LL {M} own − (other's shift)"], q[f"LL {M} own − (other's interaction)"], q[f"concordance {M} own − (other's interaction)"]
+        o[M] = " + ".join(t for t, ok in (("shift", xs[0] > 0 and xi[1] <= 0.5 and xc[1] < 1), ("interaction", xi[0] > 0)) if ok) or "neither rule met"
+    return o
+read2 = {p_: reading2(p_) for p_ in meta}
 sc = lambda v: 100 * v; f3 = lambda r, q: f"[{sc(r[q][0]):+.2f}, {sc(r[q][1]):+.2f}]"
 L = ["# Stage 15 S15-3 — two-way intervals and multiplicity for the corrected real-panel contrasts (post hoc; rung a; k = 20, Dorn k = 10; ×100 nats or points per rating)", "",
-     f"Reproduction of the Stage 14 rung-a points by the rerun (family A, |difference| ≤ 1e-3 per rating): {repro} (max {max(chk) if chk else float('nan'):.2e}, {len(chk)} contrasts). Panels: {meta}", "",
+     f"Reproduction of the Stage 14 rung-a points by the rerun (family A, |difference| ≤ 1e-3 per rating): {repro} (max {max(chk) if chk else float('nan'):.2e}, {len(chk)} contrasts; {len(chk) - len(bad)} within tolerance). Not reproduced: {bad if bad else 'none'}. Panels: {meta}", "",
+     f"Reading rule of §2.4 with the two-way intervals: {read2}", "",
      "| panel | family | contrast | point | Stage 14 point | rater-only 95 % | two-way 95 % | p (two-way, normal) | Holm in family | Holm over A ∪ B | nominal | after Holm (family / union) |", "|---" * 12 + "|"]
 for r in rows:
     hf, hu = r["p_holm_family"], r["p_holm_union"]
@@ -71,4 +84,4 @@ for r in rows:
 for fam in "AB":
     fr = [r for r in rows if r["family"] == fam]
     if fr: L += ["", f"Family {fam}: {len(fr)} contrasts; nominal (two-way interval excludes 0) {sum(r['nominal_sig'] for r in fr)}; Holm within family {sum(r['p_holm_family'] < 0.05 for r in fr)}; Holm over the union {sum(r['p_holm_union'] < 0.05 for r in fr)}."]
-json.dump({"rows": rows, "meta": meta, "reproduced": repro}, open(f"{R_}/stage15_twoway.json", "w"), indent=1); open(f"{R_}/stage15_twoway.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))
+json.dump({"rows": rows, "meta": meta, "reproduced": repro, "not_reproduced": bad, "reading_twoway": read2}, open(f"{R_}/stage15_twoway.json", "w"), indent=1); open(f"{R_}/stage15_twoway.md", "w").write("\n".join(L) + "\n"); print("\n".join(L))

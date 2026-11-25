@@ -1,0 +1,18 @@
+# Stage 2a — dorn_raters: new raters, k adaptation ratings (PROTOCOL_STAGE2.md)
+
+| k | raters | LL D | LL DF | LL DL | LL T0 | LL F | LL L | LL DFL | LL FL |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 751 | -1.5397 | -1.5389 | -1.5397 | -1.5312 | -1.5522 | -1.5637 | -1.5389 | -1.5523 |
+| 10 | 681 | -1.5348 | -1.4958 | -1.5348 | -1.5266 | -1.4963 | -1.4674 | -1.4957 | -1.4971 |
+
+| k | DF−D (H1) | DF−DG (H2) | DF−DL (H3) | F_scale−F_shift (H4) | DFs−D | DF−DFs | F1−T1 | DL−D |
+|---|---|---|---|---|---|---|---|---|
+| 0 | +0.0008 [-0.0002, +0.0018] | -- | +0.0008 [-0.0002, +0.0018] | -- | -- | -- | -- | -0.0000 [-0.0000, +0.0000] |
+| 10 | +0.0390 [+0.0157, +0.0619] | -- | +0.0390 [+0.0157, +0.0619] | -- | -- | -- | -- | -0.0000 [-0.0000, +0.0000] |
+
+| k | dir D | dir DF | dir DFs | dir DL | DF−D dir | DFs−D dir |
+|---|---|---|---|---|---|---|
+| 0 | 0.614 | 0.615 | -- | 0.614 | +0.0010 [-0.0045, +0.0065] | -- |
+| 10 | 0.619 | 0.676 | -- | 0.619 | +0.0570 [+0.0359, +0.0777] | -- |
+
+Held-out log-likelihood per rating of new raters' ratings of held-out items; differences with 95 % rater-cluster bootstrap (B = 2000). RPS and direction accuracy in the JSON.

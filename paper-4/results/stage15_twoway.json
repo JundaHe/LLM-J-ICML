@@ -1,0 +1,1601 @@
+{
+ "rows": [
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "LL DL \u2212 DFs",
+   "point": 0.0004917975721819075,
+   "rater": [
+    -0.004641936209352115,
+    0.005148734331290386
+   ],
+   "twoway": [
+    -0.005927590384294096,
+    0.006641443343333212
+   ],
+   "se2": 0.003209048426847325,
+   "p": 0.878198450341914,
+   "primary": 0.0004917975721819074,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "direction DL own \u2212 other",
+   "point": 0.0018808777429467085,
+   "rater": [
+    -0.00121064505913248,
+    0.00506172260915475
+   ],
+   "twoway": [
+    -0.0038440646874176566,
+    0.007454209959604406
+   ],
+   "se2": 0.0028361999480887652,
+   "p": 0.5072228064708869,
+   "primary": 0.0018808777429467076,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "concordance DL own \u2212 other",
+   "point": 0.0013231415124939562,
+   "rater": [
+    -5.7979295631806865e-05,
+    0.0028429351351555374
+   ],
+   "twoway": [
+    -0.0013074878333801374,
+    0.0041670236977083734
+   ],
+   "se2": 0.0014106545492871508,
+   "p": 0.34826351989967985,
+   "primary": 0.0013231415124939554,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "LL DFL \u2212 DF",
+   "point": -0.0010976469183992077,
+   "rater": [
+    -0.001941876727360618,
+    -0.0002844361557491555
+   ],
+   "twoway": [
+    -0.0025000914586403578,
+    0.00015639430429284176
+   ],
+   "se2": 0.0006796731123624862,
+   "p": 0.10631871093898057,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "LL DFL own \u2212 other latent",
+   "point": 0.00018038396232367718,
+   "rater": [
+    -0.0007924847421095305,
+    0.0010871651613740638
+   ],
+   "twoway": [
+    -0.0014060080921889247,
+    0.0016915319276319491
+   ],
+   "se2": 0.0007844099440015886,
+   "p": 0.8181218103926154,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "concordance DFL own \u2212 other latent",
+   "point": 0.0005507989644979466,
+   "rater": [
+    -0.0005256950409460886,
+    0.0015000771376619064
+   ],
+   "twoway": [
+    -0.0013035824684285843,
+    0.002386380526169237
+   ],
+   "se2": 0.0009220930166005584,
+   "p": 0.5502833558378697,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's interaction)",
+   "point": 0.00012399637669340807,
+   "rater": [
+    -2.553994211569321e-05,
+    0.0002671329003372485
+   ],
+   "twoway": [
+    -0.0001277983548858959,
+    0.0003909996378131684
+   ],
+   "se2": 0.00012972617504722258,
+   "p": 0.33915732352547745,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's shift)",
+   "point": 0.18095780558151028,
+   "rater": [
+    0.14657385869283052,
+    0.21824752276162393
+   ],
+   "twoway": [
+    0.14536306642080687,
+    0.22224714756004255
+   ],
+   "se2": 0.019754346902754766,
+   "p": 5.170321123650169e-20,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "concordance DL own \u2212 (other's interaction)",
+   "point": 6.11998849442163e-05,
+   "rater": [
+    -0.00012845112590205386,
+    0.00024348824603380044
+   ],
+   "twoway": [
+    -0.0003407555869721303,
+    0.00046492539384279213
+   ],
+   "se2": 0.00020412744903191234,
+   "p": 0.7643204635936542,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "LL L \u2212 F",
+   "point": -0.03046594546628292,
+   "rater": [
+    -0.04872401028163187,
+    -0.015145092954525725
+   ],
+   "twoway": [
+    -0.049837813081147146,
+    -0.013031626455107522
+   ],
+   "se2": 0.009396742755880753,
+   "p": 0.0011861845502969424,
+   "primary": -0.030465945466282906,
+   "p_holm_family": 0.020165137355048022,
+   "p_holm_union": 0.048633566562174636,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "direction L own \u2212 other",
+   "point": -0.0011549249298795573,
+   "rater": [
+    -0.004363271402291749,
+    0.0021845344877473643
+   ],
+   "twoway": [
+    -0.00725842498225605,
+    0.004463906850315956
+   ],
+   "se2": 0.002990317088383337,
+   "p": 0.6993325878446097,
+   "primary": -0.0011549249298795582,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "A",
+   "contrast": "concordance L own \u2212 other",
+   "point": -0.00010159180900739914,
+   "rater": [
+    -0.00038859322314953494,
+    0.000180972083633757
+   ],
+   "twoway": [
+    -0.0007106555089988842,
+    0.000527775002837643
+   ],
+   "se2": 0.00032272629500864876,
+   "p": 0.7529192259159224,
+   "primary": -0.00010159180900739906,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "LL FL \u2212 F",
+   "point": 0.0016978767776229496,
+   "rater": [
+    0.00022942051075884273,
+    0.003348839847811259
+   ],
+   "twoway": [
+    -0.0002605959711741014,
+    0.0038814950890826458
+   ],
+   "se2": 0.0010558961717366286,
+   "p": 0.1078360637430494,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "LL FL own \u2212 other latent",
+   "point": 0.003017327420538032,
+   "rater": [
+    0.0014226526846942982,
+    0.004783778807460961
+   ],
+   "twoway": [
+    0.0008736269003811823,
+    0.005357204229177307
+   ],
+   "se2": 0.001166795309883683,
+   "p": 0.009709819827430174,
+   "primary": null,
+   "p_holm_family": 0.223325856030894,
+   "p_holm_union": 0.3689731534423466,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "B",
+   "contrast": "concordance FL own \u2212 other latent",
+   "point": 0.00040147124523405884,
+   "rater": [
+    -0.0005686936116445136,
+    0.0013460110931210053
+   ],
+   "twoway": [
+    -0.0017334806012479541,
+    0.0025743328977550525
+   ],
+   "se2": 0.001062731117906273,
+   "p": 0.7055991471170955,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's interaction)",
+   "point": 0.0005868799902598061,
+   "rater": [
+    0.00031873112204381206,
+    0.000875129884311924
+   ],
+   "twoway": [
+    0.0002218146037523184,
+    0.0010113883070075526
+   ],
+   "se2": 0.0002006240389179392,
+   "p": 0.0034415467705394606,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's shift)",
+   "point": 0.004380183530520006,
+   "rater": [
+    0.0025748038410308752,
+    0.006495725603361913
+   ],
+   "twoway": [
+    0.0015799552526787795,
+    0.007727684032995682
+   ],
+   "se2": 0.0015235430719708644,
+   "p": 0.00404029850888546,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "multipref_overall",
+   "family": "\u2013",
+   "contrast": "concordance L own \u2212 (other's interaction)",
+   "point": -0.00010159180900739914,
+   "rater": [
+    -0.00038859322314953494,
+    0.000180972083633757
+   ],
+   "twoway": [
+    -0.0007106555089988842,
+    0.000527775002837643
+   ],
+   "se2": 0.00032272629500864876,
+   "p": 0.7529192259159224,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "LL DL \u2212 DF",
+   "point": -0.011081474796070873,
+   "rater": [
+    -0.01832603515070383,
+    -0.004412560246107398
+   ],
+   "twoway": [
+    -0.020556075195426196,
+    -0.002904924485383689
+   ],
+   "se2": 0.0045561992834303395,
+   "p": 0.015008446606588541,
+   "primary": -0.01108147479607088,
+   "p_holm_family": 0.22512669909882813,
+   "p_holm_union": 0.555312524443776,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "direction DL own \u2212 other",
+   "point": 0.09439458584669708,
+   "rater": [
+    0.07358787396930837,
+    0.11649061005098107
+   ],
+   "twoway": [
+    0.06930215748532778,
+    0.11973220339419668
+   ],
+   "se2": 0.012549114278118308,
+   "p": 5.393970921654935e-14,
+   "primary": 0.09439458584669709,
+   "p_holm_family": 1.1866736027640857e-12,
+   "p_holm_union": 2.4812266239612704e-12,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "concordance DL own \u2212 other",
+   "point": 0.0005735528412108334,
+   "rater": [
+    -0.001195225968798618,
+    0.002607400007868849
+   ],
+   "twoway": [
+    -0.0024711299499002547,
+    0.0036357882172719795
+   ],
+   "se2": 0.001511196493579186,
+   "p": 0.7042901863979509,
+   "primary": 0.0005735528412108339,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "LL DFL \u2212 DF",
+   "point": -0.0004672610077606899,
+   "rater": [
+    -0.0029960502364920704,
+    0.0021665986726270114
+   ],
+   "twoway": [
+    -0.006436984964760185,
+    0.0053909709227985695
+   ],
+   "se2": 0.002975727281051296,
+   "p": 0.8752258256240656,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "LL DFL own \u2212 other latent",
+   "point": 0.0040581134470387865,
+   "rater": [
+    0.0016141052177879578,
+    0.006779715756852287
+   ],
+   "twoway": [
+    0.0007650548132131888,
+    0.007698532632487367
+   ],
+   "se2": 0.00177202701567783,
+   "p": 0.022015704240398896,
+   "primary": null,
+   "p_holm_family": 0.4843454932887757,
+   "p_holm_union": 0.7925653526543602,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "concordance DFL own \u2212 other latent",
+   "point": 0.0068489998229775174,
+   "rater": [
+    0.002416966667123373,
+    0.011825144840847339
+   ],
+   "twoway": [
+    0.00021677472060196133,
+    0.014333013706036573
+   ],
+   "se2": 0.0035603128081136922,
+   "p": 0.05439127955212694,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's interaction)",
+   "point": 0.0012993168732346118,
+   "rater": [
+    0.0001157228353357529,
+    0.002582649716181309
+   ],
+   "twoway": [
+    -0.00033242194560032266,
+    0.00302617282101583
+   ],
+   "se2": 0.0008711574655596023,
+   "p": 0.13583463392731854,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's shift)",
+   "point": 0.2723201498006298,
+   "rater": [
+    0.22575557068412497,
+    0.32157696773109345
+   ],
+   "twoway": [
+    0.22240912859260678,
+    0.32954705472923457
+   ],
+   "se2": 0.027890634299888098,
+   "p": 1.6091708459889917e-22,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "concordance DL own \u2212 (other's interaction)",
+   "point": 0.0005027438484687553,
+   "rater": [
+    -0.0010568938732758153,
+    0.0023077992517195533
+   ],
+   "twoway": [
+    -0.0021267452499292897,
+    0.0032366129284848834
+   ],
+   "se2": 0.001361959469710324,
+   "p": 0.7120287768603624,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "LL L \u2212 F",
+   "point": -0.0019431715453498116,
+   "rater": [
+    -0.010179295339768867,
+    0.006122394362581534
+   ],
+   "twoway": [
+    -0.013755438640922284,
+    0.009741578682673807
+   ],
+   "se2": 0.006101151031775955,
+   "p": 0.75011129577781,
+   "primary": -0.0019431715453498096,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "direction L own \u2212 other",
+   "point": 0.10013241135795202,
+   "rater": [
+    0.0796486231299529,
+    0.12142250256160535
+   ],
+   "twoway": [
+    0.07537735479059844,
+    0.125176364803205
+   ],
+   "se2": 0.012385885147823204,
+   "p": 6.24725755653531e-16,
+   "primary": 0.10013241135795208,
+   "p_holm_family": 1.4368692380031212e-14,
+   "p_holm_union": 2.9362110515715954e-14,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "A",
+   "contrast": "concordance L own \u2212 other",
+   "point": 0.004981412639405204,
+   "rater": [
+    0.0009603191615810842,
+    0.009665353479677036
+   ],
+   "twoway": [
+    -0.0006097713640121926,
+    0.012138014920667286
+   ],
+   "se2": 0.003239575055560843,
+   "p": 0.12412816980066105,
+   "primary": 0.004981412639405204,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "LL FL \u2212 F",
+   "point": -0.0023179953241611834,
+   "rater": [
+    -0.005621165865450562,
+    0.0006842143279048462
+   ],
+   "twoway": [
+    -0.0066769621036733215,
+    0.0014655179574938964
+   ],
+   "se2": 0.0021041750557566365,
+   "p": 0.27062815002374463,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "LL FL own \u2212 other latent",
+   "point": 0.002912571925904046,
+   "rater": [
+    -6.499951580224105e-05,
+    0.006053492486861822
+   ],
+   "twoway": [
+    -0.0008199237508299925,
+    0.006681477603796145
+   ],
+   "se2": 0.0019973572284192253,
+   "p": 0.14478188993416524,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "B",
+   "contrast": "concordance FL own \u2212 other latent",
+   "point": 0.004722959815896619,
+   "rater": [
+    0.0015903716499227902,
+    0.008433190312213549
+   ],
+   "twoway": [
+    0.00026029399804189493,
+    0.010168381575147517
+   ],
+   "se2": 0.002520495075257478,
+   "p": 0.060954925158258115,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's interaction)",
+   "point": 0.003887557937960134,
+   "rater": [
+    0.0005873497757876099,
+    0.007834413277129533
+   ],
+   "twoway": [
+    -0.0004505944609121311,
+    0.008741446356016836
+   ],
+   "se2": 0.002376413884659997,
+   "p": 0.10186206264536632,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's shift)",
+   "point": 0.18978514642679992,
+   "rater": [
+    0.15557084494184895,
+    0.22570023890789317
+   ],
+   "twoway": [
+    0.15209220340523302,
+    0.23030347209055532
+   ],
+   "se2": 0.019907544336021692,
+   "p": 1.5232046173464642e-21,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dices",
+   "family": "\u2013",
+   "contrast": "concordance L own \u2212 (other's interaction)",
+   "point": 0.004981412639405204,
+   "rater": [
+    0.0009603191615810842,
+    0.009665353479677036
+   ],
+   "twoway": [
+    -0.0006097713640121926,
+    0.012138014920667286
+   ],
+   "se2": 0.003239575055560843,
+   "p": 0.12412816980066105,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "LL DL \u2212 DF",
+   "point": 0.003705134924610267,
+   "rater": [
+    0.000961759437299603,
+    0.00650402067403812
+   ],
+   "twoway": [
+    -0.0011256972833402516,
+    0.0082629789700903
+   ],
+   "se2": 0.002390400432023729,
+   "p": 0.12114008468140414,
+   "primary": 0.0037046290717130973,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "direction DL own \u2212 other",
+   "point": 0.015891722677469845,
+   "rater": [
+    0.01144144966992788,
+    0.02067870219352694
+   ],
+   "twoway": [
+    0.008403400133604261,
+    0.02403053864541625
+   ],
+   "se2": 0.003985446626395177,
+   "p": 6.679055549009826e-05,
+   "primary": 0.015891722677469855,
+   "p_holm_family": 0.0012022299988217688,
+   "p_holm_union": 0.002805203330584127,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "concordance DL own \u2212 other",
+   "point": -0.0006239863657604666,
+   "rater": [
+    -0.0025874847331288408,
+    0.0013251827455733212
+   ],
+   "twoway": [
+    -0.005112729847985671,
+    0.0037847019423562045
+   ],
+   "se2": 0.0021535620867094954,
+   "p": 0.7720104323504927,
+   "primary": -0.0006143654306055685,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "LL DFL \u2212 DF",
+   "point": -0.0007360779447607048,
+   "rater": [
+    -0.001313326884961401,
+    -0.00013836737478544885
+   ],
+   "twoway": [
+    -0.0017526908322184878,
+    0.0003068380256350076
+   ],
+   "se2": 0.0005252305488898522,
+   "p": 0.16108319545831562,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "LL DFL own \u2212 other latent",
+   "point": -0.00010733813108152885,
+   "rater": [
+    -0.0007394018029942738,
+    0.0005507124859148987
+   ],
+   "twoway": [
+    -0.0012103369967912975,
+    0.0010761689046576842
+   ],
+   "se2": 0.0005890203094816972,
+   "p": 0.8554009514394363,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "concordance DFL own \u2212 other latent",
+   "point": -0.0006171142692212543,
+   "rater": [
+    -0.0015186359500515554,
+    0.00025384894049212964
+   ],
+   "twoway": [
+    -0.0025199273877277756,
+    0.0010976603824614762
+   ],
+   "se2": 0.0009392378986057844,
+   "p": 0.5111569766161721,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's interaction)",
+   "point": 0.000345533933169091,
+   "rater": [
+    1.0127468022313236e-05,
+    0.000671264017855989
+   ],
+   "twoway": [
+    -0.0002169753752577917,
+    0.0009164350568163968
+   ],
+   "se2": 0.0002911670748082036,
+   "p": 0.23533789079129452,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's shift)",
+   "point": 0.17135412160563246,
+   "rater": [
+    0.15828942384446598,
+    0.18427297944363338
+   ],
+   "twoway": [
+    0.14913187520976268,
+    0.19279722137503394
+   ],
+   "se2": 0.011199846130302775,
+   "p": 7.682717139403911e-53,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "concordance DL own \u2212 (other's interaction)",
+   "point": 0.00018142334863520152,
+   "rater": [
+    -0.00038317018267488336,
+    0.0007282332345310026
+   ],
+   "twoway": [
+    -0.0011431885469691723,
+    0.00134870250552725
+   ],
+   "se2": 0.0006282783235996455,
+   "p": 0.7727629734225875,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "LL L \u2212 F",
+   "point": -0.015837594879686886,
+   "rater": [
+    -0.02264167230845316,
+    -0.009036638335315601
+   ],
+   "twoway": [
+    -0.02717952576822494,
+    -0.005053500981123671
+   ],
+   "se2": 0.005607272996083641,
+   "p": 0.004735834071669033,
+   "primary": -0.018103826895913232,
+   "p_holm_family": 0.07577334514670453,
+   "p_holm_union": 0.18943336286676132,
+   "nominal_sig": true,
+   "reproduced": false
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "direction L own \u2212 other",
+   "point": 0.024988490930853514,
+   "rater": [
+    0.01937839035480202,
+    0.030919830417970355
+   ],
+   "twoway": [
+    0.015527453375799829,
+    0.0351985478335985
+   ],
+   "se2": 0.004838582462083748,
+   "p": 2.4118056606293633e-07,
+   "primary": 0.026756283951753973,
+   "p_holm_family": 5.0647918873216625e-06,
+   "p_holm_union": 1.0853125472832134e-05,
+   "nominal_sig": true,
+   "reproduced": false
+  },
+  {
+   "panel": "prism",
+   "family": "A",
+   "contrast": "concordance L own \u2212 other",
+   "point": 0.00011270238324307964,
+   "rater": [
+    -0.0004633187573358215,
+    0.0006399482624271502
+   ],
+   "twoway": [
+    -0.001018294909777665,
+    0.0012467382760946168
+   ],
+   "se2": 0.0005739305473419357,
+   "p": 0.844321064290562,
+   "primary": 0.0001085791253195525,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "LL FL \u2212 F",
+   "point": 0.0008048683211380221,
+   "rater": [
+    -0.0008547095816253755,
+    0.0024874865619802728
+   ],
+   "twoway": [
+    -0.0022031701843521255,
+    0.0037425200705138765
+   ],
+   "se2": 0.0015089304724143794,
+   "p": 0.5937545126715158,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "LL FL own \u2212 other latent",
+   "point": 0.004704282693127364,
+   "rater": [
+    0.002661606253024771,
+    0.006683957014012243
+   ],
+   "twoway": [
+    0.001382691105619531,
+    0.007991665998143167
+   ],
+   "se2": 0.0017467895301976574,
+   "p": 0.00707905698207784,
+   "primary": null,
+   "p_holm_family": 0.16989736756986817,
+   "p_holm_union": 0.27608322230103577,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "B",
+   "contrast": "concordance FL own \u2212 other latent",
+   "point": 0.0025550454932790883,
+   "rater": [
+    0.0007680211767471124,
+    0.004241997042108927
+   ],
+   "twoway": [
+    -0.0013969056171691957,
+    0.006383416229388985
+   ],
+   "se2": 0.0019338035126348248,
+   "p": 0.18641670924477505,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's interaction)",
+   "point": 0.0008392648749478252,
+   "rater": [
+    0.0003349870299271107,
+    0.001376412271159238
+   ],
+   "twoway": [
+    2.057557985076841e-06,
+    0.0017720634880920275
+   ],
+   "se2": 0.0004408215868303288,
+   "p": 0.05692774345633959,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's shift)",
+   "point": 0.12449085649518449,
+   "rater": [
+    0.11150640739773392,
+    0.13738142402167244
+   ],
+   "twoway": [
+    0.10265803166793548,
+    0.1456847406738715
+   ],
+   "se2": 0.011135286750385526,
+   "p": 5.117532870489744e-29,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "prism",
+   "family": "\u2013",
+   "contrast": "concordance L own \u2212 (other's interaction)",
+   "point": 0.00011132796393523721,
+   "rater": [
+    -0.0004633530466553842,
+    0.0006377573126695457
+   ],
+   "twoway": [
+    -0.0010239981515455247,
+    0.0012467213044597373
+   ],
+   "se2": 0.0005740479724819697,
+   "p": 0.8462268182837439,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "LL DL \u2212 DF",
+   "point": -0.03986424492589923,
+   "rater": [
+    -0.0495854843254679,
+    -0.03105976819711953
+   ],
+   "twoway": [
+    -0.05624757336653661,
+    -0.023519589535630634
+   ],
+   "se2": 0.008190726101941015,
+   "p": 1.1330635930513062e-06,
+   "primary": -0.03986424492589922,
+   "p_holm_family": 2.2661271861026125e-05,
+   "p_holm_union": 4.985479809425747e-05,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "direction DL own \u2212 other",
+   "point": 0.0,
+   "rater": [
+    0.0,
+    0.0
+   ],
+   "twoway": [
+    0.0,
+    0.0
+   ],
+   "se2": 0.0,
+   "p": 1.0,
+   "primary": 0.0,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "concordance DL own \u2212 other",
+   "point": 0.0,
+   "rater": [
+    0.0,
+    0.0
+   ],
+   "twoway": [
+    0.0,
+    0.0
+   ],
+   "se2": 0.0,
+   "p": 1.0,
+   "primary": 0.0,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "LL DFL \u2212 DF",
+   "point": 3.881763465322672e-05,
+   "rater": [
+    -0.0003785530773964246,
+    0.00046291642796695035
+   ],
+   "twoway": [
+    -0.0006886328767053836,
+    0.0007770605738495238
+   ],
+   "se2": 0.0003684930863802066,
+   "p": 0.9161047904228256,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "LL DFL own \u2212 other latent",
+   "point": 0.00026527267765184066,
+   "rater": [
+    -0.0002070743608429073,
+    0.0007439810707374558
+   ],
+   "twoway": [
+    -0.0005375122728730042,
+    0.0011066603794255725
+   ],
+   "se2": 0.0004104661791503589,
+   "p": 0.5181034086148661,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "concordance DFL own \u2212 other latent",
+   "point": 0.0022295235860126726,
+   "rater": [
+    0.000691595467613906,
+    0.0037128986821387
+   ],
+   "twoway": [
+    -0.0014286656615152668,
+    0.006945581306949788
+   ],
+   "se2": 0.0020694083733796657,
+   "p": 0.28131390337025497,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's interaction)",
+   "point": -3.3612565080991722e-21,
+   "rater": [
+    -1.016458924697524e-20,
+    0.0
+   ],
+   "twoway": [
+    -2.022517628981346e-20,
+    0.0
+   ],
+   "se2": 6.171134830377966e-21,
+   "p": 0.9999999973181053,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "LL DL own \u2212 (other's shift)",
+   "point": 1.546177993725619e-19,
+   "rater": [
+    2.9784211601701377e-20,
+    2.8365359023977895e-19
+   ],
+   "twoway": [
+    -1.3549865347194026e-20,
+    4.184265499066115e-19
+   ],
+   "se2": 1.0897766767249048e-19,
+   "p": 0.9999998766328451,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "concordance DL own \u2212 (other's interaction)",
+   "point": 0.0,
+   "rater": [
+    0.0,
+    0.0
+   ],
+   "twoway": [
+    0.0,
+    0.0
+   ],
+   "se2": 0.0,
+   "p": 1.0,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "LL L \u2212 F",
+   "point": 0.03742172599593401,
+   "rater": [
+    0.027812983971377398,
+    0.046542599313054975
+   ],
+   "twoway": [
+    0.020350362569892297,
+    0.05485790129180119
+   ],
+   "se2": 0.009008450968878085,
+   "p": 3.2661475903871755e-05,
+   "primary": 0.03742172599593401,
+   "p_holm_family": 0.0006205680421735633,
+   "p_holm_union": 0.0014044434638664854,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "direction L own \u2212 other",
+   "point": 0.11235100698725854,
+   "rater": [
+    0.10349517658507065,
+    0.12157212673414937
+   ],
+   "twoway": [
+    0.09659800670556573,
+    0.12813407153804895
+   ],
+   "se2": 0.008055963107191342,
+   "p": 3.3128066764662945e-44,
+   "primary": 0.11235100698725863,
+   "p_holm_family": 7.950736023519106e-43,
+   "p_holm_union": 1.5901472047038213e-42,
+   "nominal_sig": true,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "A",
+   "contrast": "concordance L own \u2212 other",
+   "point": 0.0,
+   "rater": [
+    0.0,
+    0.0
+   ],
+   "twoway": [
+    0.0,
+    0.0
+   ],
+   "se2": 0.0,
+   "p": 1.0,
+   "primary": 0.0,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": true
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "LL FL \u2212 F",
+   "point": -0.000266906103583218,
+   "rater": [
+    -0.001005922283690034,
+    0.0004850488412579754
+   ],
+   "twoway": [
+    -0.0017901659370076742,
+    0.0013395434407750802
+   ],
+   "se2": 0.0007952374322466896,
+   "p": 0.7371493632090327,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "LL FL own \u2212 other latent",
+   "point": -0.00014912697482801981,
+   "rater": [
+    -0.000944877975548421,
+    0.0006857920532418342
+   ],
+   "twoway": [
+    -0.001664600823635975,
+    0.0014547923593074047
+   ],
+   "se2": 0.0007963946913440057,
+   "p": 0.8514625870064544,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "B",
+   "contrast": "concordance FL own \u2212 other latent",
+   "point": -0.0022060549166862246,
+   "rater": [
+    -0.0043539531619623375,
+    -8.252914220716672e-05
+   ],
+   "twoway": [
+    -0.008953508715512218,
+    0.0040086316486607826
+   ],
+   "se2": 0.0031884149091137657,
+   "p": 0.4890019741235371,
+   "primary": null,
+   "p_holm_family": 1.0,
+   "p_holm_union": 1.0,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's interaction)",
+   "point": 1.318711367853476e-06,
+   "rater": [
+    2.1617881046566911e-07,
+    2.391156992931867e-06
+   ],
+   "twoway": [
+    -6.535132597373753e-07,
+    3.480224986420278e-06
+   ],
+   "se2": 1.0456228729843827e-06,
+   "p": 0.20724651302635955,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "LL L own \u2212 (other's shift)",
+   "point": 0.2114158944694305,
+   "rater": [
+    0.19836030370370467,
+    0.22532234971808549
+   ],
+   "twoway": [
+    0.19044977636779586,
+    0.23336256978002784
+   ],
+   "se2": 0.010677572633313329,
+   "p": 2.9771792456762455e-87,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": true,
+   "reproduced": null
+  },
+  {
+   "panel": "dorn_raters",
+   "family": "\u2013",
+   "contrast": "concordance L own \u2212 (other's interaction)",
+   "point": 0.0,
+   "rater": [
+    0.0,
+    0.0
+   ],
+   "twoway": [
+    0.0,
+    0.0
+   ],
+   "se2": 0.0,
+   "p": 1.0,
+   "primary": null,
+   "p_holm_family": NaN,
+   "p_holm_union": NaN,
+   "nominal_sig": false,
+   "reproduced": null
+  }
+ ],
+ "meta": {
+  "multipref_overall": {
+   "k": 20,
+   "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "n_raters": 209,
+   "n_clusters": 4225,
+   "n_pairs": 163399
+  },
+  "dices": {
+   "k": 20,
+   "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "n_raters": 104,
+   "n_clusters": 350,
+   "n_pairs": 112980
+  },
+  "prism": {
+   "k": 20,
+   "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "n_raters": 941,
+   "n_clusters": 1473,
+   "n_pairs": 72758
+  },
+  "dorn_raters": {
+   "k": 10,
+   "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "n_raters": 3393,
+   "n_clusters": 360,
+   "n_pairs": 17044
+  }
+ },
+ "reproduced": false,
+ "not_reproduced": [
+  "prism: LL L \u2212 F (-1.81 \u2192 -1.58)",
+  "prism: direction L own \u2212 other (+2.68 \u2192 +2.50)"
+ ],
+ "reading_twoway": {
+  "multipref_overall": {
+   "DFL": "no interaction beyond the offsets",
+   "DL": "shift",
+   "FL": "no interaction beyond the offsets",
+   "L": "shift + interaction"
+  },
+  "dices": {
+   "DFL": "inconclusive",
+   "DL": "shift",
+   "FL": "inconclusive",
+   "L": "neither rule met"
+  },
+  "prism": {
+   "DFL": "no interaction beyond the offsets",
+   "DL": "shift",
+   "FL": "no interaction beyond the offsets",
+   "L": "shift + interaction"
+  },
+  "dorn_raters": {
+   "DFL": "no interaction beyond the offsets",
+   "DL": "neither rule met",
+   "FL": "no interaction beyond the offsets",
+   "L": "shift"
+  }
+ }
+}
